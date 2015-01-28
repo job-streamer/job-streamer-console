@@ -8,9 +8,10 @@
             [goog.events :as events]
             [goog.ui.Component])
   (:use [cljs.reader :only [read-string]]
-        [job-streamer.console.agents :only [agents-view]])
-  (:import [goog.net.EventType]
-           [goog.events EventType]
+        (job-streamer.console.agents :only [agents-view])
+        (job-streamer.console.blocks :only [blocks-view]))
+  (:import [goog.net EventType]
+           [goog.events KeyCodes]
            [goog.i18n DateTimeFormat]))
 
 (enable-console-print!)
@@ -25,13 +26,13 @@
 
 (defn execute-job [job-id]
   (let [xhrio (net/xhr-connection)]
-    (events/listen xhrio goog.net.EventType.SUCCESS
+    (events/listen xhrio EventType.SUCCESS
                    (fn [e]))
     (.send xhrio (str control-bus-url "/job/" job-id "/executions") "post")))
 
 (defn search-jobs [app job-query]
   (let [xhrio (net/xhr-connection)]
-      (events/listen xhrio goog.net.EventType.SUCCESS
+      (events/listen xhrio EventType.SUCCESS
                      (fn [e]
                        (om/update! app :jobs
                                    (read-string (.getResponseText xhrio)))))
@@ -39,7 +40,7 @@
 
 (defn search-execution [last-execution job-id execution-id]
   (let [xhrio (net/xhr-connection)]
-    (events/listen xhrio goog.net.EventType.SUCCESS
+    (events/listen xhrio EventType.SUCCESS
                    (fn [e]
                      (let [steps (-> (.getResponseText xhrio)
                                     (read-string)
@@ -47,6 +48,15 @@
                        (om/transact! last-execution
                                      #(assoc % :job-execution/step-executions steps)))))
     (.send xhrio (str control-bus-url "/job/" job-id "/execution/" execution-id))))
+
+(defn schedule-job [job cron-notation]
+  (let [xhrio (net/xhr-connection)]
+    (events/listen xhrio EventType.SUCCESS
+                   (fn [e]
+                     (om/update! job :scheduling false)))
+    (.send xhrio (str control-bus-url "/job/" (:job/id @job) "/schedule") "post"
+           {:job/id (:job/id @job) :schedule/cron-notation cron-notation}
+           (clj->js {:content-type "application/edn"}))))
 
 (defcomponent execution-view [step-executions owner]
   (render [_]
@@ -84,86 +94,108 @@
 (defcomponent job-list-view [app owner]
   (will-mount [_]
     (search-jobs app ""))
-  (render [_]
-    (html [:div.ui.grid
-           [:div.ui.two.column.row
-            [:div.column
-             [:button.ui.button
-              {:type "button"
-               :on-click (fn [e]
-                           (set! (.-href js/location) "/job/new"))}
-              [:i.plus.icon] "New"]]
-            [:div.ui.right.aligned.column
-             [:button.ui.circular.icon.button
-              {:type "button"
-               :on-click (fn [e]
-                           (search-jobs app ""))}
-              [:i.refresh.icon]]]]
-           [:div.row
-            [:div.column
-             [:table.ui.table
-              [:thead
-               [:tr
-                [:th {:rowSpan 2} "Job name"]
-                [:th {:colSpan 3} "Last execution"]
-                [:th "Next execution"]
-                [:th {:rowSpan 2} "Operations"]]
-               [:tr
-                [:th "start"]
-                [:th "end"]
-                [:th "status"]
-                [:th "start"]]]
-              [:tbody
-               (apply concat
-                      (for [{job-id :job/id :as job} (:jobs app)]
-                        [[:tr
-                          [:td (:job/id job)]
-                          (if-let [last-execution (:job/last-execution job)]
-                            (if (= (get-in last-execution [:job-execution/batch-status :db/ident]) :batch-status/registered)
-                              [:td.center.aligned {:colSpan 3} "Wait for an execution..."]
-                              (list
-                               [:td (if-let [start (:job-execution/start-time last-execution)]
-                                      (let [id (:db/id last-execution)]
-                                        [:a {:on-click (fn [e] (search-execution last-execution job-id id))}
-                                         (.format date-format start)]))]
-                               [:td (if-let [end (:job-execution/end-time  last-execution)]
-                                      (.format date-format end))]
-                               (let [status (name (get-in last-execution [:job-execution/batch-status :db/ident]))]
-                                      [:td {:class (condp =
-                                                       "completed" "positive"
-                                                       "failed" "negative")} 
-                                       status])))
-                            [:td.center.aligned {:colSpan 3} "No executions"])
-                          (if-let [next-execution (:next-execution job)]
-                            [:td (:start  next-execution)]
-                            [:td.center.aligned
-                             [:a {:on-click (fn [e]
-                                              (om/update! job :scheduling true)
-                                              (events/listenOnce js/document "click"
-                                                             (fn [e] (om/update! job :scheduling false))))}
-                              [:i.calendar.large.link.icon]]
-                             [:div.ui.top.left.flowing.popup
-                              {:class (when (:scheduling job) "visible")
-                               :on-click (fn [e]
-                                           (.stopPropagation e)
-                                           (.. e -nativeEvent stopImmediatePropagation)) }
-                              [:div.ui.form
-                               [:div.field
-                                [:label "format"]
-                                [:input {:type "text"}]]]]])
-                          [:td (if (some #{:batch-status/registered :batch-status/starting :batch-status/started :batch-status/stopping}
-                                         [(get-in job [:job/last-execution :job-execution/batch-status :db/ident])])
-                                 [:div.ui.circular.icon.orange.button
-                                    [:i.setting.loading.icon]]
-                                 [:button.ui.circular.icon.green.button
-                                    {:on-click (fn [e]
-                                                 (om/update! job :job/last-execution {:job-execution/batch-status {:db/ident :batch-status/registered}})
-                                                 (execute-job job-id))}
-                                    [:i.play.icon]])]]
-                         (when-let [step-executions (not-empty (get-in job [:job/last-execution :job-execution/step-executions]))]
-                           [:tr
-                            [:td {:colSpan 8}
-                             (om/build execution-view step-executions)]])]))]]]]])))
+  (render-state [_ {:keys [comm]}]
+    (html (if (empty? (:jobs app))
+             [:div.ui.grid
+              [:div.ui.one.column.row
+               [:div.column
+                [:div.ui.icon.message
+                 [:i.child.icon]
+                 [:div.content
+                  [:div.header "Let's create a job!"]
+                  [:p [:button.ui.primary.button
+                       {:type "button"
+                        :on-click (fn [e]
+                                    (put! comm [:edit nil]))}
+                       [:i.plus.icon] "Create the first job"]]]]]]]
+             [:div.ui.grid
+              [:div.ui.two.column.row
+               [:div.column
+                [:button.ui.button
+                 {:type "button"
+                  :on-click (fn [e]
+                              (put! comm [:edit nil]))}
+                 [:i.plus.icon] "New"]]
+               [:div.ui.right.aligned.column
+                [:button.ui.circular.icon.button
+                 {:type "button"
+                  :on-click (fn [e]
+                              (search-jobs app ""))}
+                 [:i.refresh.icon]]]]
+              [:div.row
+               [:div.column
+                [:table.ui.table
+                 [:thead
+                  [:tr
+                   [:th {:rowSpan 2} "Job name"]
+                   [:th {:colSpan 3} "Last execution"]
+                   [:th "Next execution"]
+                   [:th {:rowSpan 2} "Operations"]]
+                  [:tr
+                   [:th "start"]
+                   [:th "end"]
+                   [:th "status"]
+                   [:th "start"]]]
+                 [:tbody
+                  (apply concat
+                         (for [{job-id :job/id :as job} (:jobs app)]
+                           [[:tr
+                             [:td (:job/id job)]
+                             (if-let [last-execution (:job/last-execution job)]
+                               (if (= (get-in last-execution [:job-execution/batch-status :db/ident]) :batch-status/registered)
+                                 [:td.center.aligned {:colSpan 3} "Wait for an execution..."]
+                                 (list
+                                  [:td (if-let [start (:job-execution/start-time last-execution)]
+                                         (let [id (:db/id last-execution)]
+                                           [:a {:on-click (fn [e] (search-execution last-execution job-id id))}
+                                            (.format date-format start)]))]
+                                  [:td (if-let [end (:job-execution/end-time  last-execution)]
+                                         (.format date-format end))]
+                                  (let [status (name (get-in last-execution [:job-execution/batch-status :db/ident]))]
+                                    [:td {:class (condp = status
+                                                   "completed" "positive"
+                                                   "failed" "negative")} 
+                                     status])))
+                               [:td.center.aligned {:colSpan 3} "No executions"])
+                             (if-let [next-execution (:job/next-execution job)]
+                               [:td (if-let [start (:job-execution/start-time next-execution)]
+                                      (.format date-format start))]
+                               [:td.center.aligned
+                                [:a {:on-click (fn [e]
+                                                 (om/update! job :scheduling true)
+                                                 (events/listenOnce js/document "click"
+                                                                    (fn [e] (om/update! job :scheduling false))))}
+                                 [:i.calendar.large.link.icon]]
+                                [:div.ui.top.left.flowing.popup
+                                 {:class (when (:scheduling job) "visible")
+                                  :on-click (fn [e]
+                                              (.stopPropagation e)
+                                              (.. e -nativeEvent stopImmediatePropagation))}
+                                 [:div.ui.form
+                                  [:div.field
+                                   [:label "format"]
+                                   [:input {:type "text"
+                                            :on-key-press (fn [e]
+                                                            (if (= (.-ENTER KeyCodes) (.-charCode e))
+                                                              (schedule-job job (.. e -target -value))))}]]]]])
+                             [:td (if (some #{:batch-status/registered :batch-status/starting :batch-status/started :batch-status/stopping}
+                                            [(get-in job [:job/last-execution :job-execution/batch-status :db/ident])])
+                                    [:div.ui.circular.icon.orange.button
+                                     [:i.setting.loading.icon]]
+                                    [:button.ui.circular.icon.green.button
+                                     {:on-click (fn [e]
+                                                  (om/update! job :job/last-execution {:job-execution/batch-status {:db/ident :batch-status/registered}})
+                                                  (execute-job job-id))}
+                                     [:i.play.icon]])
+
+                              [:button.ui.circular.icon.button
+                               {:on-click (fn [e]
+                                            (put! comm [:edit job-id]))}
+                               [:i.edit.icon]]]]
+                            (when-let [step-executions (not-empty (get-in job [:job/last-execution :job-execution/step-executions]))]
+                              [:tr
+                               [:td {:colSpan 8}
+                                (om/build execution-view step-executions)]])]))]]]]]))))
 
 
 (def Timeline (.-Timeline js/vis))
@@ -215,33 +247,56 @@
 (defcomponent jobs-view [app owner]
   (init-state [_]
     {:mode :list})
-  (render-state [_ {:keys [mode]}]
+  (will-mount [_]
+    (let [comm (chan)]
+      (om/set-state! owner :comm comm)
+      (go-loop []
+        (let [[type value] (<! comm)]
+          (case type
+            :edit (om/update-state!
+                   owner
+                   (fn [state]
+                     (-> state
+                         (assoc :mode :edit)
+                         (assoc :job-id value))))
+            :list (om/update-state!
+                   owner
+                   (fn [state]
+                     (-> state
+                         (assoc :mode :list)
+                         (assoc :job-id nil)))))
+          (recur)))))
+  (render-state [_ {:keys [mode comm job-id]}]
     (html [:div
            [:h2.ui.purple.header
             [:i.setting.icon]
             [:div.content
              "Job"
             [:div.sub.header "Edit and execute a job."]]]
-           [:div.ui.top.attached.tabular.menu
-            [:a (merge {:class "item"
-                        :on-click #(om/set-state! owner :mode :list)}
-                       (when (= mode :list) {:class "item active"}))
-             "list"]
-            [:a (merge {:class "item"
-                        :on-click #(om/set-state! owner :mode :timeline)}
-                       (when (= mode :timeline) {:class "item active"}))
-             "timeline"]]
-           [:div.ui.bottom.attached.active.tab.segment
-            [:div#tab-content
-             (om/build (case mode
-                        :timeline timeline-view
-                        :list     job-list-view)
-                      app)]]])))
+           (if (= mode :edit)
+             (om/build blocks-view job-id
+                       {:init-state {:comm comm}})
+             [:div
+              [:div.ui.top.attached.tabular.menu
+               [:a (merge {:class "item"
+                           :on-click #(om/set-state! owner :mode :list)}
+                          (when (= mode :list) {:class "item active"}))
+                "list"]
+               [:a (merge {:class "item"
+                           :on-click #(om/set-state! owner :mode :timeline)}
+                          (when (= mode :timeline) {:class "item active"}))
+                "timeline"]]
+              [:div.ui.bottom.attached.active.tab.segment
+               [:div#tab-content
+                (om/build (case mode
+                            :timeline timeline-view
+                            :list     job-list-view)
+                          app {:init-state {:comm comm}})]]])])))
 
 (defcomponent main-view [app owner]
   (will-mount [_]
     (let [xhrio (net/xhr-connection)]
-      (events/listen xhrio goog.net.EventType.SUCCESS
+      (events/listen xhrio EventType.SUCCESS
                      (fn [e]
                        (om/update! app :agents
                                    (read-string (.getResponseText xhrio)))))

@@ -1,6 +1,7 @@
 (ns job-streamer.console.jobxml
-  (:require [clojure.java.io :as io])
-  (:import [org.jsoup Jsoup] ))
+  (:require [clojure.java.io :as io]
+            [clojure.xml :as xml])
+  (:import [org.jsoup Jsoup]))
 
 (defn field-value [el field-name]
   (some-> el
@@ -15,37 +16,41 @@
                            first)]
     {:ref (field-value block "ref")}))
 
-(defn deserialize-chunk [chunk]
-  {:reader    (item-component "reader")
-   :processor (item-component "processor")
-   :writer    (item-component "writer")})
+(defn xml->chunk [chunk]
+  {:chunk/reader    (item-component "reader")
+   :chunk/processor (item-component "processor")
+   :chunk/writer    (item-component "writer")})
 
-(defn deserialize-batchlet [batchlet]
-  {:ref (field-value batchlet "ref")})
+(defn xml->batchlet [batchlet]
+  {:batchlet/ref (field-value batchlet "ref")})
 
-(defn deserialize-step [step]
+(defn xml->step [step]
   (merge
-   {:id (field-value step "id")}
+   {:step/id (field-value step "id")}
    (when-let [batchlet (some-> step
                                (.select "block[type=batchlet]")
                                first
-                               deserialize-batchlet)]
-     {:batchlet batchlet})
+                               xml->batchlet)]
+     {:step/batchlet batchlet})
    (when-let [chunk (some-> step
                             (.select "block[type=chunk]")
                             first
-                            deserialize-chunk)])))
+                            xml->chunk)])
+   (when-let [next-step (some-> step
+                                (.select "next > block[type=step]")
+                                first
+                                (field-value "id"))]
+     {:step/next next-step})))
 
-(defn deserialize-job [job]
-  {:id (field-value job "id")
-   :steps (some->> (.select job "> statement[name=steps] block[type=step]")
-                   (map (fn [step] (deserialize-step step)))
-                   vec)})
-
-(defn deserialize [xml]
+(defn xml->job [xml]
   (let [doc (Jsoup/parse xml)
         job-els (. doc select "xml > block[type=job]")]
     (if (= (count job-els) 1)
-      (deserialize-job (first job-els))
+      (let [job (first job-els)]
+        {:job/id (field-value job "id")
+         :job/steps (some->> (.select job "> statement[name=steps] block[type=step]")
+                         (map (fn [step] (xml->step step)))
+                         vec)})
       (throw (IllegalStateException. "Block must be one.")))))
+
 

@@ -82,6 +82,14 @@
             :name "ref"
             :label ""}])
 
+(defn save-job [xml]
+  (let [xhrio (net/xhr-connection)]
+    (events/listen xhrio EventType.SUCCESS
+                   (fn [e]
+                     (println (.getResponseText xhrio))))
+    (.send xhrio (str "/job/from-xml") "post" xml
+           (clj->js {:content-type "application/xml"}))))
+
 (defcomponent blocks-view [app owner]
   (render [_]
     (html [:div
@@ -89,7 +97,7 @@
             [:button.ui.button
              {:on-click (fn [e]
                           (let [xml (.. js/Blockly -Xml (workspaceToDom (.-mainWorkspace js/Blockly)))]
-                            (println (.. js/Blockly -Xml (domToText xml)))))} [:i.save.icon]]]
+                            (save-job (.. js/Blockly -Xml (domToText xml)))))} [:i.save.icon]]]
            [:div#job-blocks-inner]]))
   (did-mount
    [_]

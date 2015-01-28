@@ -3,10 +3,11 @@
         [hiccup.page :only [html5 include-css include-js]]
         [ring.util.response :only [resource-response content-type header]])
   (:require [hiccup.middleware :refer [wrap-base-url]]
-            [compojure.core :refer [defroutes GET]]
+            [compojure.core :refer [defroutes GET POST]]
             [compojure.handler :as handler]
             [compojure.route :as route]
-            [job-streamer.console.style :as style]))
+            (job-streamer.console [style :as style]
+                                  [jobxml :as jobxml])))
 
 (def control-bus-url "http://localhost:45102")
 
@@ -16,7 +17,7 @@
     [:meta {:charset "utf-8"}]
     [:meta {:http-equiv "X-UA-Compatible" :content "IE=edge,chrome=1"}]
     [:meta {:name "viewport" :content "width=device-width, initial-scale=1, maximum-scale=1"}]
-    (include-css "https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/1.6.4/semantic.min.css"
+    (include-css "https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/1.8.0/semantic.min.css"
                  "/css/vis.min.css"
                  "/css/job-streamer.css")
     (include-js  "/js/vis.min.js"
@@ -35,14 +36,6 @@
             [:div.ui.items
              [:div.ui.item
               [:div#main.content]]]]]
-          (include-js "/js/jobs.js")))
-
-(defn job-edit-view []
-  (layout [:div.row
-           [:div.column
-            [:div.ui.items
-             [:div.ui.item
-              [:div#job-blocks]]]]]
           [:xml#job-toolbox
            [:block {:type "job"}]
            [:block {:type "step"}]
@@ -50,14 +43,17 @@
            [:block {:type "chunk"}]
            [:block {:type "reader"}]
            [:block {:type "processor"}]
-           [:block {:type "writer"}]
-           ]
+           [:block {:type "writer"}]]
           (include-js "/js/blockly_compressed.js"
-                      "/js/blocks.js")))
+                      "/js/jobs.js")))
 
 (defroutes app-routes
   (GET "/" [] (index))
-  (GET "/job/new" [] (job-edit-view))
+  (POST "/job/from-xml" [:as request]
+    (when-let [body (:body request)]
+      (let [xml (slurp body)]
+        {:headers {"Content-Type" "application/edn"}
+         :body (pr-str (jobxml/xml->job xml))})))
   (GET "/react/react.js" [] (-> (resource-response "react/react.js")
                                 (content-type "text/javascript")))
   (GET "/react/react.min.js" [] (resource-response "react/react.min.js"))
