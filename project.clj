@@ -17,14 +17,6 @@
   :ring {:handler job-streamer.console.core/app}
   :cljsbuild {:builds
               [{:id "dev"
-                :source-paths ["src/cljs/timeline"]
-                :compiler {:output-to "resources/public/js/timeline.js"
-                           :optimizations :simple}}
-               {:id "job-blocks"
-                :source-paths ["src/cljs/blocks"]
-                :compiler {:output-to "resources/public/js/blocks.js"
-                           :optimizations :simple}}
-               {:id "jobs"
-                :source-paths ["src/cljs/jobs"]
+                :source-paths ["src/cljs"]
                 :compiler {:output-to "resources/public/js/jobs.js"
                            :optimizations :simple}}]})

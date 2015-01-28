@@ -18,9 +18,9 @@
     [:meta {:http-equiv "X-UA-Compatible" :content "IE=edge,chrome=1"}]
     [:meta {:name "viewport" :content "width=device-width, initial-scale=1, maximum-scale=1"}]
     (include-css "https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/1.8.0/semantic.min.css"
-                 "/css/vis.min.css"
+                 "/css/vendors/vis.min.css"
                  "/css/job-streamer.css")
-    (include-js  "/js/vis.min.js"
+    (include-js  "/js/vendors/vis.min.js"
                  "/react/react.js")]
    [:body
     [:div.ui.page
@@ -44,7 +44,7 @@
            [:block {:type "reader"}]
            [:block {:type "processor"}]
            [:block {:type "writer"}]]
-          (include-js "/js/blockly_compressed.js"
+          (include-js "/js/vendors/blockly_compressed.js"
                       "/js/jobs.js")))
 
 (defroutes app-routes
