@@ -38,12 +38,14 @@
               [:div#main.content]]]]]
           [:xml#job-toolbox
            [:block {:type "job"}]
+           [:block {:type "property"}]
            [:block {:type "step"}]
-           [:block {:type "batchlet"}]
-           [:block {:type "chunk"}]
-           [:block {:type "reader"}]
-           [:block {:type "processor"}]
-           [:block {:type "writer"}]]
+            [:block {:type "batchlet"}]
+            [:block {:type "chunk"}]
+            [:block {:type "reader"}]
+            [:block {:type "processor"}]
+            [:block {:type "writer"}]
+           ]
           (include-js "/js/vendors/blockly_compressed.js"
                       "/js/jobs.js")))
 
@@ -54,9 +56,9 @@
       (let [xml (slurp body)]
         {:headers {"Content-Type" "application/edn"}
          :body (pr-str (jobxml/xml->job xml))})))
-  (GET "/react/react.js" [] (-> (resource-response "react/react.js")
+  (GET "/react/react.js" [] (-> (resource-response "cljsjs/development/react.inc.js")
                                 (content-type "text/javascript")))
-  (GET "/react/react.min.js" [] (resource-response "react/react.min.js"))
+  (GET "/react/react.min.js" [] (resource-response "cljsjs/production/react.min.inc.js"))
   (GET "/css/job-streamer.css" [] (-> {:body (style/build)}
                                       (content-type "")))
   (route/resources "/"))

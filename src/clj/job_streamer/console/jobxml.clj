@@ -11,22 +11,31 @@
           (.text)))
 
 (defn item-component [el type]
-  (when-let [block (some-> chunk
+  (when-let [block (some-> el
                            (.select (str "block[type=" type "]"))
                            first)]
-    {:ref (field-value block "ref")}))
+    {(keyword type "ref") (field-value block "ref")}))
 
 (defn xml->chunk [chunk]
-  {:chunk/reader    (item-component "reader")
-   :chunk/processor (item-component "processor")
-   :chunk/writer    (item-component "writer")})
+  {:chunk/reader    (item-component chunk "reader")
+   :chunk/processor (item-component chunk "processor")
+   :chunk/writer    (item-component chunk "writer")})
 
 (defn xml->batchlet [batchlet]
   {:batchlet/ref (field-value batchlet "ref")})
 
+(defn xml->property [prop]
+  (when-let [prop-block (some-> prop
+                                (.select "block[type=property]")
+                                first)]
+    {(keyword (field-value prop-block "name")) (field-value prop-block "value")}))
+
 (defn xml->step [step]
   (merge
-   {:step/id (field-value step "id")}
+   {:step/id (field-value step "id")
+    :step/properties (some->> (.select step "> value[name^=ADD]")
+                                  (map (fn [prop] (xml->property prop)))
+                                  (reduce merge))}
    (when-let [batchlet (some-> step
                                (.select "block[type=batchlet]")
                                first
@@ -35,7 +44,8 @@
    (when-let [chunk (some-> step
                             (.select "block[type=chunk]")
                             first
-                            xml->chunk)])
+                            xml->chunk)]
+     {:step/chunk chunk})
    (when-let [next-step (some-> step
                                 (.select "next > block[type=step]")
                                 first
@@ -50,7 +60,10 @@
         {:job/id (field-value job "id")
          :job/steps (some->> (.select job "> statement[name=steps] block[type=step]")
                          (map (fn [step] (xml->step step)))
-                         vec)})
+                         vec)
+         :job/properties (some->> (.select job "> value[name^=ADD]")
+                                  (map (fn [prop] (xml->property prop)))
+                                  (reduce merge))})
       (throw (IllegalStateException. "Block must be one.")))))
 
 
