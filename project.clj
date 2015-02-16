@@ -4,6 +4,7 @@
                  [hiccup "1.0.5"]
                  [garden "1.2.5"]
                  [compojure "1.3.1"]
+                 [environ "1.0.0"]
                  [org.jsoup/jsoup "1.8.1"]
 
                  [org.clojure/clojurescript "0.0-2755"]
@@ -11,6 +12,7 @@
                  [sablono "0.3.1"]
                  [prismatic/om-tools "0.3.10"]
                  [bouncer "0.3.2"]
+                 [secretary "1.2.1"]
                  [org.omcljs/om "0.8.8"]]
   :plugins [[lein-ring "0.9.1"]
             [lein-cljsbuild "1.0.4"]]

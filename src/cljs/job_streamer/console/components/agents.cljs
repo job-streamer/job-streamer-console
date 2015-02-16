@@ -1,4 +1,4 @@
-(ns job-streamer.console.agents
+(ns job-streamer.console.components.agents
   (:require-macros [cljs.core.async.macros :refer [go go-loop]])
   (:require [om.core :as om :include-macros true]
             [om-tools.core :refer-macros [defcomponent]]
