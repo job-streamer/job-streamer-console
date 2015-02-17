@@ -7,89 +7,74 @@
             [cljs.core.async :refer [put! <! chan pub sub unsub-all]]
             [clojure.browser.net :as net]
             [clojure.string :as string]
-            [goog.events :as events]
-            [goog.ui.Component]
             [goog.string :as gstring]
             [bouncer.core :as b]
             [bouncer.validators :as v]
+            [job-streamer.console.api :as api]
+            [job-streamer.console.validators :as cv]
             [job-streamer.console.format :as fmt])
   (:use [cljs.reader :only [read-string]]
+        [clojure.walk :only [postwalk]]
         [job-streamer.console.blocks :only [job->xml]]
+        [job-streamer.console.components.job-settings :only [job-settings-view]]
         [job-streamer.console.components.execution :only [execution-view]])
-  (:import [goog.net EventType]
-           [goog.events KeyCodes]
-           [goog.ui.tree TreeControl]))
+  (:import [goog.ui.tree TreeControl]))
 
 (enable-console-print!)
 
-(def control-bus-url (.. js/document
-                         (querySelector "meta[name=control-bus-url]")
-                         (getAttribute "content")))
-
-(defn save-job-control-bus [edn owner job-id]
-  (let [xhrio (net/xhr-connection)]
-    (events/listen xhrio EventType.SUCCESS
-                   (fn [e]
-                     (case (.getStatus xhrio)
-                       201 (om/set-state! owner :message {:class "success"
-                                                          :header "Save successful"
-                                                          :body "If you back to list"})
-                       (om/set-state! owner :message {:class "error"
-                                                      :header "Save failed"
-                                                      :body "Somethig is wrong."}))))
-    (let [job (read-string edn)]
-      (if-let [message (first (b/validate job
-                                          :job/id v/required))]
-        (om/set-state! owner :message {:class "error"
-                                       :header "Invalid job format"
-                                       :body message})
-        (.send xhrio (str "http://localhost:45102"
-                        (if job-id (str "/job/" job-id) "/jobs"))
-             (if job-id "put" "post") 
-             edn 
-             (clj->js {:content-type "application/edn"}))))))
+(defn save-job-control-bus [job owner job-id]
+  (if-let [messages (first (b/validate job
+                                       :job/id [v/required [v/matches #"^[\w\-]+$"]]
+                                       :job/steps [cv/more-than-one]))]
+    (om/set-state! owner :message {:class "error"
+                                   :header "Invalid job format"
+                                   :body [:ul
+                                          (for [msg (->> messages
+                                                         (postwalk #(if (map? %) (vals %) %))
+                                                         flatten)]
+                                            [:li msg])]})
+    (api/request (if job-id (str "/job/" job-id) "/jobs") (if job-id :PUT :POST)
+                 job
+                 {:handler (fn [response]
+                             (om/set-state! owner :message {:class "success"
+                                                            :header "Save successful"
+                                                            :body [:p "If you back to list, click a breadcrumb menu."]}))
+                  :error-handler (fn [response]
+                                   (om/set-state! owner :message {:class "error"
+                                                                  :header "Save failed"
+                                                                  :body [:p "Somethig is wrong."]}))})))
 
 (defn save-job [xml owner job-id]
-  (let [xhrio (net/xhr-connection)]
-    (events/listen xhrio EventType.SUCCESS
-                   (fn [e]
-                     (let [edn (.getResponseText xhrio)]
-                       (save-job-control-bus edn owner job-id))))
-    (.send xhrio (str "/job/from-xml") "post" xml
-           (clj->js {:content-type "application/xml"}))))
-
+  (let [uri (goog.Uri. (.-href js/location))
+        port (.getPort uri)]
+    (api/request (str (.getScheme uri) "://" (.getDomain uri) (when port (str ":" port)) "/job/from-xml")
+                 :POST
+                 xml
+                 {:handler (fn [response]
+                             (save-job-control-bus response owner job-id))
+                  :format :xml})))
 
 
 (defn search-execution [owner job-id execution-id idx]
-  (let [xhrio (net/xhr-connection)]
-    (events/listen xhrio EventType.SUCCESS
-                   (fn [e]
-                     (let [steps (-> (.getResponseText xhrio)
-                                    (read-string)
-                                    :job-execution/step-executions)]
-                       (om/update-state! owner [:executions idx] 
-                                         #(assoc % :job-execution/step-executions steps)))))
-    (.send xhrio (str control-bus-url "/job/" job-id "/execution/" execution-id))))
+  (api/request (str "/job/" job-id "/execution/" execution-id)
+               {:handler (fn [response]
+                           (let [steps (:job-execution/step-executions response)]
+                             (om/update-state! owner [:executions idx] 
+                                               #(assoc % :job-execution/step-executions steps))))}))
 
 (defn schedule-job [job cron-notation success-ch error-ch]
-  (let [xhrio (net/xhr-connection)]
-    (events/listen xhrio EventType.SUCCESS
-                   (fn [e]
-                     (put! success-ch [:success cron-notation])))
-    (events/listen xhrio EventType.ERROR
-                   (fn [e]
-                     (put! error-ch (read-string (.getResponseText xhrio)))))
-    (.send xhrio (str control-bus-url "/job/" (:job/id job) "/schedule") "post"
-           {:job/id (:job/id job) :schedule/cron-notation cron-notation}
-           (clj->js {:content-type "application/edn"}))))
+  (api/request (str "/job/" (:job/id job) "/schedule") :POST
+                {:job/id (:job/id job) :schedule/cron-notation cron-notation}
+                {:handler (fn [response]
+                            (put! success-ch [:success cron-notation]))
+                 :error-handler (fn [response]
+                                  (put! error-ch response))}))
 
 (defn drop-schedule [job owner]
-  (let [xhrio (net/xhr-connection)]
-    (events/listen xhrio EventType.SUCCESS
-                   (fn [e]
-                     (om/update-state! owner :job
-                                       #(dissoc % :job/schedule))))
-    (.send xhrio (str control-bus-url "/job/" (:job/id job) "/schedule") "delete")))
+  (api/request (str "/job/" (:job/id job) "/schedule") :DELETE
+               {:handler (fn [response]
+                           (om/update-state! owner :job
+                                             #(dissoc % :job/schedule :job/next-execution)))}))
 
 ;;;
 ;;; Om view components
@@ -97,9 +82,11 @@
 
 (def breadcrumb-elements
   {:jobs {:name "Jobs" :href "#/"}
-   :jobs.detail.current {:name "Job: %s" :href "#/job/%s"}
+   :jobs.new {:name "New" :href "#/jobs/new"}
+   :jobs.detail {:name "Job: %s" :href "#/job/%s"}
    :jobs.detail.current.edit {:name "Edit" :href "#/job/%s/edit"}
-   :jobs.detail.history {:name "History" :href "#/job/%s/history"}})
+   :jobs.detail.history {:name "History" :href "#/job/%s/history"}
+   :jobs.detail.settings {:name "Settings" :href "#/job/%s/settings"}})
 
 (defcomponent breadcrumb-view [mode owner]
   (render-state [_ {:keys [job-id]}]
@@ -118,7 +105,9 @@
                                                        keyword))]
                                  [:a.section {:href (gstring/format (:href item) job-id)}
                                   (gstring/format (:name item) job-id)])))
-            (keep identity items)))
+            (let [res (keep identity items)]
+              (conj (vec (drop-last res))
+                    (into [:div.section.active] (rest (last res)))))))
         (repeat [:i.right.chevron.icon.divider])))])))
 
 (defcomponent job-edit-view [job owner]
@@ -127,7 +116,7 @@
            (when message
              [:div.ui.message {:class (:class message)}
               [:div.header (:header message)]
-              [:p (:body message)]])
+              [:div (:body message)]])
            [:div.ui.menu
             [:div.item
              [:div.icon.ui.buttons
@@ -150,17 +139,14 @@
 (defcomponent job-new-view [app owner]
   (render-state [_ {:keys [message]}]
     (html [:div
-           (om/build breadcrumb-view app)
+           (om/build breadcrumb-view (:mode app))
            (om/build job-edit-view (:job-id app))])))
 
 (defcomponent job-history-view [{:keys [job-id]} owner]
   (will-mount [_]
-    (let [xhrio (net/xhr-connection)]
-      (events/listen xhrio EventType.SUCCESS
-                     (fn [e]
-                       (om/set-state! owner :executions
-                                      (read-string (.getResponseText xhrio)))))
-      (.send xhrio (str control-bus-url "/job/" job-id "/executions") "get")))
+    (api/request (str "/job/" job-id "/executions")
+                 {:handler (fn [response]
+                             (om/set-state! owner :executions response))}))
   (render-state [_ {:keys [executions]}]
     (html
      [:table.ui.compact.table
@@ -215,7 +201,7 @@
       [:div.fields
        [:div.field (when has-error {:class "error"})
         [:input {:id "cron-notation" :type "text" :placeholder "Quartz format"
-                 :value (get-in job [:job/schedule :schedule/cron-notation])}]]]
+                 :default-value (get-in job [:job/schedule :schedule/cron-notation])}]]]
       [:div.ui.buttons
         [:button.ui.button
          {:type "button"
@@ -231,9 +217,7 @@
       (when-let [first-child (.-firstChild node)]
         (.removeChild node first-child)
         (recur node))) 
-    (events/listen xhrio EventType.SUCCESS
-                   (fn [e]
-                     (put! fetch-job-ch  (read-string (.getResponseText xhrio)))))
+    
     (go
       (let [job (<! fetch-job-ch)
             xml (job->xml (read-string (:job/edn-notation job)))]
@@ -241,7 +225,10 @@
         (.. js/Blockly -Xml (domToWorkspace
                              (.-mainWorkspace js/Blockly)
                              (.. js/Blockly -Xml (textToDom (str "<xml>" xml "</xml>")))))))
-    (.send xhrio (str control-bus-url "/job/" job-id) "get")
+
+    (api/request (str "/job/" job-id)
+                 {:handler (fn [response]
+                             (put! fetch-job-ch response))})
     (.inject js/Blockly
              (.getElementById js/document "job-blocks-inner")
              (clj->js {:toolbox "<xml></xml>"
@@ -255,13 +242,10 @@
       (let [[type cron-notation] (<! (om/get-state owner :scheduling-ch))]
         (case type
           :success
-          (let [xhrio (net/xhr-connection)]
-            (events/listen xhrio EventType.SUCCESS
-                         (fn [e]
-                           (om/set-state! owner :scheduling? false)
-                           (om/set-state! owner :job (read-string (.getResponseText xhrio)))))
-            (.send xhrio (str control-bus-url "/job/" job-id) "get"))
-
+          (api/request (str  "/job/" job-id)
+                       {:handler (fn [response]
+                                   (om/set-state! owner :scheduling? false)
+                                   (om/set-state! owner :job response))})
           :cancel
           (om/set-state! owner :scheduling? false))
         (recur))))
@@ -382,10 +366,15 @@
          [:a (merge {:class "item"
                      :href (str "#/job/" job-id "/history")}
                     (when (= mode :history) {:class "item active"}))
-          [:i.wait.icon] "History"]]
+          [:i.wait.icon] "History"]
+         [:a (merge {:class "item"
+                     :href (str "#/job/" job-id "/settings")}
+                    (when (= mode :settings) {:class "item active"}))
+          [:i.setting.icon] "Settings"]]
         [:div.ui.bottom.attached.active.tab.segment
          [:div#tab-content
           (om/build (case mode
                       :current current-job-view
-                      :history job-history-view)
+                      :history job-history-view
+                      :settings job-settings-view)
                     app)]]]))))

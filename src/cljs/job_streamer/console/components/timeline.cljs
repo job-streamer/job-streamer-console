@@ -5,13 +5,10 @@
             [sablono.core :as html :refer-macros [html]]
             [cljs.core.async :refer [put! <! chan pub sub unsub-all]]
             [clojure.browser.net :as net]
-            [goog.events :as events]
             [goog.ui.Component]
             (job-streamer.console.format :as fmt))
   (:use [cljs.reader :only [read-string]])
-  (:import [goog.net EventType]
-           [goog.events KeyCodes]
-           [goog.i18n DateTimeFormat]))
+  (:import [goog.i18n DateTimeFormat]))
 
 (enable-console-print!)
 

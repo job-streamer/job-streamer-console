@@ -4,50 +4,30 @@
             [om-tools.core :refer-macros [defcomponent]]
             [sablono.core :as html :refer-macros [html]]
             [cljs.core.async :refer [put! <! chan pub sub unsub-all]]
-            [clojure.browser.net :as net]
-            [goog.events :as events]
-            [goog.ui.Component]
-            (job-streamer.console.format :as fmt))
-  (:use [cljs.reader :only [read-string]]
-        (job-streamer.console.components.agents :only [agents-view])
+            (job-streamer.console.format :as fmt)
+            (job-streamer.console.api :as api))
+  (:use (job-streamer.console.components.agents :only [agents-view])
         (job-streamer.console.components.timeline :only [timeline-view])
         (job-streamer.console.components.job-detail :only [job-new-view job-detail-view])
-        (job-streamer.console.components.execution :only [execution-view]))
-  (:import [goog.net EventType]
-           [goog.events KeyCodes]))
+        (job-streamer.console.components.execution :only [execution-view])))
 
 (enable-console-print!)
 
-(def control-bus-url (.. js/document
-                         (querySelector "meta[name=control-bus-url]")
-                         (getAttribute "content")))
-
-
-
 (defn execute-job [job-id]
-  (let [xhrio (net/xhr-connection)]
-    (events/listen xhrio EventType.SUCCESS
-                   (fn [e]))
-    (.send xhrio (str control-bus-url "/job/" job-id "/executions") "post")))
+  (api/request (str "/job/" job-id "/executions") :POST
+               {:handler (fn [response])}))
 
 (defn search-jobs [app job-query]
-  (let [xhrio (net/xhr-connection)]
-      (events/listen xhrio EventType.SUCCESS
-                     (fn [e]
-                       (om/update! app :jobs
-                                   (read-string (.getResponseText xhrio)))))
-      (.send xhrio (str control-bus-url "/jobs?q=" (js/encodeURIComponent job-query)) "get")))
+  (api/request (str "/jobs?q=" (js/encodeURIComponent job-query)) :GET
+               {:handler (fn [response]
+                           (om/update! app :jobs response))}))
 
 (defn search-execution [latest-execution job-id execution-id]
-  (let [xhrio (net/xhr-connection)]
-    (events/listen xhrio EventType.SUCCESS
-                   (fn [e]
-                     (let [steps (-> (.getResponseText xhrio)
-                                    (read-string)
-                                    :job-execution/step-executions)]
-                       (om/transact! latest-execution
-                                     #(assoc % :job-execution/step-executions steps)))))
-    (.send xhrio (str control-bus-url "/job/" job-id "/execution/" execution-id))))
+  (api/request (str "/job/" job-id "/execution/" execution-id)
+               {:handler (fn [response]
+                           (let [steps (:job-execution/step-executions response)]
+                             (om/transact! latest-execution
+                                           #(assoc % :job-execution/step-executions steps))))}))
 
 (defcomponent job-list-view [app owner]
   (will-mount [_]
@@ -150,7 +130,7 @@
         "Job"
         [:div.sub.header "Edit and execute a job."]]]
       (case mode
-        :create
+        :new
         (om/build job-new-view (select-keys app [:job-id :mode]))
 
         :detail

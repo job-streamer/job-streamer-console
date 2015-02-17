@@ -25,10 +25,10 @@
       (.send xhrio (str control-bus-url "/agents") "get"))
     (om/update! app-state :mode [:jobs :list]))
 
-  (sec/defroute #"/jobs/new" [job-name]
+  (sec/defroute #"/jobs/new" []
     (om/transact! app-state
                   #(assoc %
-                          :mode [:jobs :create])))
+                          :mode [:jobs :new])))
 
   (sec/defroute #"/job/(\w+)" [job-name]
     (om/transact! app-state
@@ -46,6 +46,12 @@
     (om/transact! app-state
                   #(assoc %
                           :mode [:jobs :detail :history]
+                          :job-id job-name)))
+
+  (sec/defroute #"/job/(\w+)/settings" [job-name]
+    (om/transact! app-state
+                  #(assoc %
+                          :mode [:jobs :detail :settings]
                           :job-id job-name)))
 
   (sec/defroute "/jobs/timeline" []
