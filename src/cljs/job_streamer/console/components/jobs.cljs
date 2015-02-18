@@ -9,18 +9,14 @@
   (:use (job-streamer.console.components.agents :only [agents-view])
         (job-streamer.console.components.timeline :only [timeline-view])
         (job-streamer.console.components.job-detail :only [job-new-view job-detail-view])
-        (job-streamer.console.components.execution :only [execution-view])))
+        (job-streamer.console.components.execution :only [execution-view])
+        [job-streamer.console.search :only [search-jobs]]))
 
 (enable-console-print!)
 
 (defn execute-job [job-id]
   (api/request (str "/job/" job-id "/executions") :POST
                {:handler (fn [response])}))
-
-(defn search-jobs [app job-query]
-  (api/request (str "/jobs?q=" (js/encodeURIComponent job-query)) :GET
-               {:handler (fn [response]
-                           (om/update! app :jobs response))}))
 
 (defn search-execution [latest-execution job-id execution-id]
   (api/request (str "/job/" job-id "/execution/" execution-id)
@@ -121,7 +117,6 @@
 (defcomponent jobs-view [app owner]
   (render [_]
     (let [mode (second (:mode app) )]
-      (print mode)
       (html
      [:div
       [:h2.ui.purple.header

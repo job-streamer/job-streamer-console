@@ -1,5 +1,6 @@
 (ns job-streamer.console.format
-  (:require [goog.date.duration :as dr])
+  (:require [goog.date.duration :as dr]
+            [goog.string :as gstring])
   (:import [goog.i18n DateTimeFormat]))
 
 (def date-format-s (DateTimeFormat. goog.i18n.DateTimeFormat.Format.SHORT_DATETIME
@@ -18,7 +19,7 @@
 
 (defn duration [msec]
   (if (< msec 60000)
-      (str (/ msec 1000) "secs")
+      (gstring/format "%.3f secs" (/ msec 1000))
       (dr/format msec)))
 
 (defn duration-between [start end]

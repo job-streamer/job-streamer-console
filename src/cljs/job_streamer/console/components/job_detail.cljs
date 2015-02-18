@@ -70,11 +70,45 @@
                  :error-handler (fn [response]
                                   (put! error-ch response))}))
 
+(defn pause-schedule [job owner success-ch]
+  (api/request (str "/job/" (:job/id job) "/schedule/pause") :PUT
+               {:handler (fn [response]
+                           (put! success-ch [:success (get-in job [:job/schedule :schedule/cron-notation])]))}))
+
+(defn resume-schedule [job owner success-ch]
+  (api/request (str "/job/" (:job/id job) "/schedule/resume") :PUT
+               {:handler (fn [response]
+                           (put! success-ch [:success (get-in job [:job/schedule :schedule/cron-notation])]))}))
+
 (defn drop-schedule [job owner]
   (api/request (str "/job/" (:job/id job) "/schedule") :DELETE
                {:handler (fn [response]
                            (om/update-state! owner :job
                                              #(dissoc % :job/schedule :job/next-execution)))}))
+
+(defn render-job-structure [job-id owner]
+  (let [xhrio (net/xhr-connection)
+        fetch-job-ch (chan)]
+    (loop [node (.getElementById js/document "job-blocks-inner")]
+      (when-let [first-child (.-firstChild node)]
+        (.removeChild node first-child)
+        (recur node))) 
+    
+    (go
+      (let [job (<! fetch-job-ch)
+            xml (job->xml (read-string (:job/edn-notation job)))]
+        (om/set-state! owner :job job)
+        (.. js/Blockly -Xml (domToWorkspace
+                             (.-mainWorkspace js/Blockly)
+                             (.. js/Blockly -Xml (textToDom (str "<xml>" xml "</xml>")))))))
+
+    (api/request (str "/job/" job-id)
+                 {:handler (fn [response]
+                             (put! fetch-job-ch response))})
+    (.inject js/Blockly
+             (.getElementById js/document "job-blocks-inner")
+             (clj->js {:toolbox "<xml></xml>"
+                       :readOnly true}))))
 
 ;;;
 ;;; Om view components
@@ -210,29 +244,49 @@
         [:div.or]
         [:button.ui.positive.button {:type "submit"} "Save"]]])))
 
-(defn render-job-structure [job-id owner]
-  (let [xhrio (net/xhr-connection)
-        fetch-job-ch (chan)]
-    (loop [node (.getElementById js/document "job-blocks-inner")]
-      (when-let [first-child (.-firstChild node)]
-        (.removeChild node first-child)
-        (recur node))) 
-    
-    (go
-      (let [job (<! fetch-job-ch)
-            xml (job->xml (read-string (:job/edn-notation job)))]
-        (om/set-state! owner :job job)
-        (.. js/Blockly -Xml (domToWorkspace
-                             (.-mainWorkspace js/Blockly)
-                             (.. js/Blockly -Xml (textToDom (str "<xml>" xml "</xml>")))))))
-
-    (api/request (str "/job/" job-id)
-                 {:handler (fn [response]
-                             (put! fetch-job-ch response))})
-    (.inject js/Blockly
-             (.getElementById js/document "job-blocks-inner")
-             (clj->js {:toolbox "<xml></xml>"
-                       :readOnly true}))))
+(defcomponent next-execution-view [job owner]
+  (render-state [_ {:keys [scheduling-ch scheduling?]}]
+    (html
+     [:div.ui.raised.segment
+      [:h3.ui.header "Next"]
+      (if scheduling?
+        (om/build scheduling-view job
+                  {:init-state {:scheduling-ch scheduling-ch}})
+        (if-let [schedule (:job/schedule job)]
+          (let [exe (:job/next-execution job)]
+            [:div
+             [:div.ui.list
+              (if exe
+                [:div.item
+                 [:i.wait.icon]
+                 [:div.content
+                  [:div.description (fmt/date-medium (:job-execution/start-time exe))]]]
+                [:div.item
+                 [:div.content
+                  [:div.header "Pausing"]
+                  [:div.description (:schedule/cron-notation schedule)]]])
+              ]
+             [:div.ui.labeled.icon.menu
+              (if exe
+                [:a.item {:on-click (fn [e]
+                                    (pause-schedule job owner scheduling-ch))}
+                 [:i.pause.icon] "Pause"]
+                [:a.item {:on-click (fn [e]
+                                    (resume-schedule job owner scheduling-ch))}
+                 [:i.play.icon] "Resume"])
+              [:a.item {:on-click (fn [e]
+                                    (drop-schedule job owner))}
+               [:i.remove.icon] "Drop"]
+              [:a.item {:on-click (fn [e]
+                                    (om/set-state! owner :scheduling? true))}
+               [:i.calendar.icon] "Edit"]]])
+          
+          [:div
+           [:div.header "No schedule"]
+           [:button.ui.primary.button
+            {:on-click (fn [e]
+                         (om/set-state! owner :scheduling? true))}
+            "Schedule this job"]]))])))
 
 (defcomponent current-job-view [{:keys [job-id] :as app} owner]
   (init-state [_]
@@ -249,8 +303,7 @@
           :cancel
           (om/set-state! owner :scheduling? false))
         (recur))))
-
-  (render-state [_ {:keys [job dimmed? scheduling? scheduling-ch]}]
+  (render-state [_ {:keys [job dimmed? scheduling-ch scheduling?]}]
     (let [mode (->> app :mode (drop 3) first)]
       (html
        (case mode
@@ -316,36 +369,10 @@
                 [:i.marker.icon]
                 [:div.content
                  [:div.description (get-in exe [:job-execution/agent :agent/name])]]]])]
-           [:div.ui.raised.segment
-            [:h3.ui.header "Next"]
-            (if-let [exe (:job/next-execution job)]
-              (if scheduling?
-                (om/build scheduling-view job
-                          {:init-state {:scheduling-ch scheduling-ch}})
-                [:div
-                 [:div.ui.list
-                  [:div.item
-                   [:i.wait.icon]
-                   [:div.content
-                    [:div.description (fmt/date-medium (:job-execution/start-time exe))]]]]
-                 [:div.ui.labeled.icon.menu
-                  [:a.item {:on-click (fn [e]
-                                        (drop-schedule job owner))}
-                   [:i.remove.icon] "Drop"]
-                  [:a.item {:on-click (fn [e]
-                                        (om/set-state! owner :scheduling? true))}
-                   [:i.calendar.icon] "Edit"]]])
-              
-              
-              (if scheduling?
-                (om/build scheduling-view job 
-                          {:init-state {:scheduling-ch scheduling-ch}})
-                [:div
-                 [:div.header "No schedule"]
-                 [:button.ui.primary.button
-                  {:on-click (fn [e]
-                               (om/set-state! owner :scheduling? true))}
-                  "Schedule this job"]]))]]]))))
+           (om/build next-execution-view job
+                     {:init-state {:scheduling-ch scheduling-ch
+                                   :scheduling? scheduling?}})]]))))
+
   (did-update [_ _ _]
     (when-not (.-firstChild (.getElementById js/document "job-blocks-inner"))
       (render-job-structure job-id owner)))
