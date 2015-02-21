@@ -45,8 +45,10 @@
                                          {:id (:db/id exe)
                                           :content (:job/id exe)
                                           :title (:job/id exe)
-                                          :start (:job-execution/start-time exe) 
-                                          :end (:job-execution/end-time exe)})))))))
+                                          :start (:job-execution/start-time exe)
+                                          :end (:job-execution/end-time exe)
+                                          :className (name (get-in exe [:job-execution/batch-status :db/ident]))}))
+                                  (filter #(and (:start %))))))))
   (did-mount
    [_]
    (.. (Timeline.

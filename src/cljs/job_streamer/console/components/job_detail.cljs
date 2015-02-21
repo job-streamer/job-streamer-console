@@ -80,11 +80,10 @@
                {:handler (fn [response]
                            (put! success-ch [:success (get-in job [:job/schedule :schedule/cron-notation])]))}))
 
-(defn drop-schedule [job owner]
+(defn drop-schedule [job owner success-ch]
   (api/request (str "/job/" (:job/id job) "/schedule") :DELETE
                {:handler (fn [response]
-                           (om/update-state! owner :job
-                                             #(dissoc % :job/schedule :job/next-execution)))}))
+                           (put! success-ch [:success (get-in job [:job/schedule :schedule/cron-notation])]))}))
 
 (defn render-job-structure [job-id owner]
   (let [xhrio (net/xhr-connection)
@@ -239,7 +238,8 @@
       [:div.ui.buttons
         [:button.ui.button
          {:type "button"
-          :on-click (fn [e] (put! scheduling-ch [:cancel nil]))}
+          :on-click (fn [e]
+                      (put! scheduling-ch [:cancel nil]))}
          "Cancel"]
         [:div.or]
         [:button.ui.positive.button {:type "submit"} "Save"]]])))
@@ -275,7 +275,7 @@
                                     (resume-schedule job owner scheduling-ch))}
                  [:i.play.icon] "Resume"])
               [:a.item {:on-click (fn [e]
-                                    (drop-schedule job owner))}
+                                    (drop-schedule job owner scheduling-ch))}
                [:i.remove.icon] "Drop"]
               [:a.item {:on-click (fn [e]
                                     (om/set-state! owner :scheduling? true))}
@@ -294,6 +294,7 @@
   (will-mount [_]
     (go-loop []
       (let [[type cron-notation] (<! (om/get-state owner :scheduling-ch))]
+        (println "type=" type)
         (case type
           :success
           (api/request (str  "/job/" job-id)
@@ -302,6 +303,7 @@
                                    (om/set-state! owner :job response))})
           :cancel
           (om/set-state! owner :scheduling? false))
+        (println "scheduling?=" (om/get-state owner :scheduling?))
         (recur))))
   (render-state [_ {:keys [job dimmed? scheduling-ch scheduling?]}]
     (let [mode (->> app :mode (drop 3) first)]
@@ -370,8 +372,7 @@
                 [:div.content
                  [:div.description (get-in exe [:job-execution/agent :agent/name])]]]])]
            (om/build next-execution-view job
-                     {:init-state {:scheduling-ch scheduling-ch
-                                   :scheduling? scheduling?}})]]))))
+                     {:init-state {:scheduling-ch scheduling-ch}})]]))))
 
   (did-update [_ _ _]
     (when-not (.-firstChild (.getElementById js/document "job-blocks-inner"))

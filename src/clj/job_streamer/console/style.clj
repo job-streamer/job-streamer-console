@@ -37,7 +37,15 @@
          [:.description {:color "#dcdccc"}
           [:span {:margin {:right (em 1)}}]
           [:span.date {:color "#dca3a3"}]
-          [:pre {:overflow "visible"}]]]]]]]]])
+          [:pre {:overflow "visible"}]]]]]]]]
+
+   [:.vis.timeline
+    [:.completed {:color "#3c763d"
+                  :background {:color "#eeffe7"}
+                  :border {:color "#3c763d"}}]
+    [:.failed    {:color "#cd2929"
+                  :background {:color "#fff0f0"}
+                  :border {:color "#cd2929"}}]]])
 
 
 (defn build []

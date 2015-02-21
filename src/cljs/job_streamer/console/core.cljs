@@ -3,7 +3,7 @@
   (:use [job-streamer.console.components.root :only [root-view]]))
 
 (def app-state (atom {:query nil
-                      :jobs []
+                      :jobs nil
                       :agents []
                       :mode [:jobs]}))
 

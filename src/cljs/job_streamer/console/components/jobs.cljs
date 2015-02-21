@@ -26,8 +26,6 @@
                                            #(assoc % :job-execution/step-executions steps))))}))
 
 (defcomponent job-list-view [app owner]
-  (will-mount [_]
-    (search-jobs app ""))
   (render [_]
     (html
      (if (empty? (:jobs app))
@@ -115,6 +113,8 @@
 
 
 (defcomponent jobs-view [app owner]
+  (will-mount [_]
+    (search-jobs app ""))
   (render [_]
     (let [mode (second (:mode app) )]
       (html
@@ -144,8 +144,10 @@
            [:i.wait.icon] "timeline"]]
          [:div.ui.bottom.attached.active.tab.segment
           [:div#tab-content
-           (om/build (case mode
+           (if (nil? (:jobs app))
+             [:img {:src "/img/loader.gif"}]
+             (om/build (case mode
                        :timeline timeline-view
                        ;; default
                        job-list-view)
-                     app)]]])]))))
+                     app))]]])]))))

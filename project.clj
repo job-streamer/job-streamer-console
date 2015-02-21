@@ -22,4 +22,8 @@
               [{:id "dev"
                 :source-paths ["src/cljs"]
                 :compiler {:output-to "resources/public/js/jobs.js"
-                           :optimizations :simple}}]})
+                           :optimizations :simple}}]
+              [{:id "production"
+                :source-paths ["src/cljs"]
+                :compiler {:output-to "resorces/public/js/job-streamer.min.js"
+                           :opttimizations :advanced}}]})
