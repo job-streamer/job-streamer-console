@@ -12,13 +12,37 @@
             [goog.string :as gstring]
             [bouncer.core :as b]
             [bouncer.validators :as v]
+            [Blockly :as Blockly]
+            [Blockly.Block :as Block]
             [job-streamer.console.format :as fmt])
   (:use [cljs.reader :only [read-string]])
   (:import [goog.net EventType]
            [goog.events KeyCodes]
-           [goog.ui.tree TreeControl]))
+           [goog.ui.tree TreeControl]
+           [Blockly Blocks Mutator FieldTextInput FieldCheckbox]))
 
 (enable-console-print!)
+
+(aset Blocks "property-container"
+ (clj->js {:init (fn []
+                   (this-as
+                    this
+                    (.. this appendDummyInput (appendField "Properties"))
+                    (doto this
+                      (.setColour 180)
+                      (.appendStatementInput "STACK"))
+                    (set! (.-contextMenu this) false)))}))
+
+(aset Blocks  "property-item"
+ (clj->js {:init (fn []
+                   (this-as
+                    this
+                    (doto this
+                      (.setColour 180)
+                      (.setPreviousStatement true)
+                      (.setNextStatement true))
+                    (set! (.-contextMenu this) false)
+                    (.. this appendDummyInput (appendField "Property"))))}))
 
 (def mutate-behavior
   {:mutationToDom (fn []
@@ -36,12 +60,12 @@
    :decompose (fn [workspace]
                 (this-as
                  this
-                 (let [container-block (.. js/Blockly -Block (obtain workspace (str "property-container")))]
+                 (let [container-block (Block/obtain workspace (str "property-container"))]
                    (.initSvg container-block)
                    (loop [connection (.. container-block (getInput "STACK") -connection)
                           i 0]
                      (when (< i (.-itemCount this))
-                       (let [item-block (.. js/Blockly -Block (obtain workspace (str "property-item")))]
+                       (let [item-block (Block/obtain workspace (str "property-item"))]
                          (.initSvg item-block)
                          (.connect connection (.-previousConnection item-block))
                          (recur (.-nextConnection item-block) (inc i)))))
@@ -100,29 +124,6 @@
                              (.appendField input "Properties"))
                            (recur (inc i))))))))})
 
-(aset
- (.-Blocks js/Blockly) "property-container"
- (clj->js {:init (fn []
-                   (this-as
-                    this
-                    (.. this appendDummyInput (appendField "Properties"))
-                    (doto this
-                      (.setColour 180)
-                      (.appendStatementInput "STACK"))
-                    (set! (.-contextMenu this) false)))}))
-
-(aset
- (.-Blocks js/Blockly) "property-item"
- (clj->js {:init (fn []
-                   (this-as
-                    this
-                    (doto this
-                      (.setColour 180)
-                      (.setPreviousStatement true)
-                      (.setNextStatement true))
-                    (set! (.-contextMenu this) false)
-                    (.. this appendDummyInput (appendField "Property"))))}))
-
 (defblock job
   :colour 160
   :previous-statement? false
@@ -134,7 +135,7 @@
            {:type :statement
             :name "steps"}])
 
-(let [block (aget (.-Blocks js/Blockly) "job")]
+(let [block (aget Blocks "job")]
   (doseq [[k f] mutate-behavior]
     (aset block (name k) f)))
   
@@ -151,7 +152,7 @@
             :label ""
             :acceptable ["Batchlet" "Chunk"]}])
 
-(let [block (aget (.-Blocks js/Blockly) "step")]
+(let [block (aget Blocks "step")]
   (doseq [[k f] mutate-behavior]
     (aset block (name k) f)))
 

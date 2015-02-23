@@ -22,8 +22,8 @@
     (include-css "https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/1.8.0/semantic.min.css"
                  "/css/vendors/vis.min.css"
                  "/css/job-streamer.css")
-    (include-js  "/js/vendors/vis.min.js"
-                 "/react/react.js")]
+    (include-js  "/js/vendors/vis.min.js")
+    (when (:dev env) (include-js "/react/react.js"))]
    [:body body]))
 
 (defn index []
@@ -38,8 +38,8 @@
             [:block {:type "reader"}]
             [:block {:type "processor"}]
             [:block {:type "writer"}]]
-   (include-js "/js/vendors/blockly_compressed.js"
-                      "/js/jobs.js")))
+   (include-js (str "/js/extern/job-streamer"
+                    (when-not (:dev env) ".min") ".js"))))
 
 (defroutes app-routes
   (GET "/" [] (index))
@@ -52,7 +52,7 @@
                                 (content-type "text/javascript")))
   (GET "/react/react.min.js" [] (resource-response "cljsjs/production/react.min.inc.js"))
   (GET "/css/job-streamer.css" [] (-> {:body (style/build)}
-                                      (content-type "")))
+                                      (content-type "text/css")))
   (route/resources "/"))
 
 (def app

@@ -12,7 +12,9 @@
             [bouncer.validators :as v]
             [job-streamer.console.api :as api]
             [job-streamer.console.validators :as cv]
-            [job-streamer.console.format :as fmt])
+            [job-streamer.console.format :as fmt]
+            [Blockly :as Blockly]
+            [Blockly.Xml :as blockly-xml])
   (:use [cljs.reader :only [read-string]]
         [clojure.walk :only [postwalk]]
         [job-streamer.console.blocks :only [job->xml]]
@@ -62,28 +64,29 @@
                              (om/update-state! owner [:executions idx] 
                                                #(assoc % :job-execution/step-executions steps))))}))
 
-(defn schedule-job [job cron-notation success-ch error-ch]
+(defn schedule-job [job cron-notation refresh-job-ch scheduling-ch error-ch]
   (api/request (str "/job/" (:job/id job) "/schedule") :POST
                 {:job/id (:job/id job) :schedule/cron-notation cron-notation}
                 {:handler (fn [response]
-                            (put! success-ch [:success cron-notation]))
+                            (put! refresh-job-ch (:job/id job))
+                            (put! scheduling-ch false))
                  :error-handler (fn [response]
                                   (put! error-ch response))}))
 
 (defn pause-schedule [job owner success-ch]
   (api/request (str "/job/" (:job/id job) "/schedule/pause") :PUT
                {:handler (fn [response]
-                           (put! success-ch [:success (get-in job [:job/schedule :schedule/cron-notation])]))}))
+                           (put! success-ch (:job/id job)))}))
 
 (defn resume-schedule [job owner success-ch]
   (api/request (str "/job/" (:job/id job) "/schedule/resume") :PUT
                {:handler (fn [response]
-                           (put! success-ch [:success (get-in job [:job/schedule :schedule/cron-notation])]))}))
+                           (put! success-ch (:job/id job)))}))
 
 (defn drop-schedule [job owner success-ch]
   (api/request (str "/job/" (:job/id job) "/schedule") :DELETE
                {:handler (fn [response]
-                           (put! success-ch [:success (get-in job [:job/schedule :schedule/cron-notation])]))}))
+                           (put! success-ch (:job/id job)))}))
 
 (defn render-job-structure [job-id owner]
   (let [xhrio (net/xhr-connection)
@@ -97,14 +100,13 @@
       (let [job (<! fetch-job-ch)
             xml (job->xml (read-string (:job/edn-notation job)))]
         (om/set-state! owner :job job)
-        (.. js/Blockly -Xml (domToWorkspace
-                             (.-mainWorkspace js/Blockly)
-                             (.. js/Blockly -Xml (textToDom (str "<xml>" xml "</xml>")))))))
+        (blockly-xml/domToWorkspace Blockly/mainWorkspace
+                                    (blockly-xml/textToDom (str "<xml>" xml "</xml>")))))
 
     (api/request (str "/job/" job-id)
                  {:handler (fn [response]
                              (put! fetch-job-ch response))})
-    (.inject js/Blockly
+    (Blockly/inject
              (.getElementById js/document "job-blocks-inner")
              (clj->js {:toolbox "<xml></xml>"
                        :readOnly true}))))
@@ -155,19 +157,19 @@
              [:div.icon.ui.buttons
               [:button.ui.primary.button
                {:on-click (fn [e]
-                            (let [xml (.. js/Blockly -Xml (workspaceToDom (.-mainWorkspace js/Blockly)))]
-                              (save-job (.. js/Blockly -Xml (domToText xml))
+                            (let [xml (blockly-xml/workspaceToDom Blockly/mainWorkspace)]
+                              (save-job (blockly-xml/domToText xml)
                                         owner (:job/id job))))} [:i.save.icon]]]]]
            [:div#job-blocks-inner]]))
   (did-mount [_]
-    (.inject js/Blockly
+    (Blockly/inject
              (.getElementById js/document "job-blocks-inner")
              (clj->js {:toolbox (.getElementById js/document "job-toolbox")}))
     (when job
       (let [xml (job->xml (read-string (:job/edn-notation job)))]
-        (.. js/Blockly -Xml (domToWorkspace
-                             (.-mainWorkspace js/Blockly)
-                             (.. js/Blockly -Xml (textToDom (str "<xml>" xml "</xml>") ))))))))
+        (blockly-xml/domToWorkspace
+         Blockly/mainWorkspace
+         (blockly-xml/textToDom (str "<xml>" xml "</xml>") ))))))
 
 (defcomponent job-new-view [app owner]
   (render-state [_ {:keys [message]}]
@@ -218,14 +220,14 @@
     (go-loop []
       (let [{message :message} (<! (om/get-state owner :error-ch))]
         (om/set-state! owner :has-error message))))
-  (render-state [_ {:keys [scheduling-ch error-ch has-error]}]
+  (render-state [_ {:keys [scheduling-ch refresh-job-ch error-ch has-error]}]
     (html
      [:form.ui.form 
       (merge {:on-submit (fn [e]
                            (.. e -nativeEvent preventDefault)
                            (schedule-job job
                                          (.. js/document (getElementById "cron-notation") -value)
-                                         scheduling-ch error-ch)
+                                         refresh-job-ch scheduling-ch error-ch)
                            false)}
              (when has-error {:class "error"}))
       (when has-error
@@ -239,19 +241,27 @@
         [:button.ui.button
          {:type "button"
           :on-click (fn [e]
-                      (put! scheduling-ch [:cancel nil]))}
+                      (put! scheduling-ch false))}
          "Cancel"]
         [:div.or]
         [:button.ui.positive.button {:type "submit"} "Save"]]])))
 
 (defcomponent next-execution-view [job owner]
-  (render-state [_ {:keys [scheduling-ch scheduling?]}]
+  (init-state [_]
+    {:scheduling-ch (chan)
+     :scheduling?   false})
+  (will-mount [_]
+    (go-loop []
+      (om/set-state! owner :scheduling? (<! (om/get-state owner :scheduling-ch)))
+      (recur)))
+  (render-state [_ {:keys [refresh-job-ch scheduling-ch scheduling?]}]
     (html
      [:div.ui.raised.segment
       [:h3.ui.header "Next"]
       (if scheduling?
         (om/build scheduling-view job
-                  {:init-state {:scheduling-ch scheduling-ch}})
+                  {:init-state {:scheduling-ch scheduling-ch
+                                :refresh-job-ch refresh-job-ch}})
         (if-let [schedule (:job/schedule job)]
           (let [exe (:job/next-execution job)]
             [:div
@@ -269,13 +279,13 @@
              [:div.ui.labeled.icon.menu
               (if exe
                 [:a.item {:on-click (fn [e]
-                                    (pause-schedule job owner scheduling-ch))}
+                                    (pause-schedule job owner refresh-job-ch))}
                  [:i.pause.icon] "Pause"]
                 [:a.item {:on-click (fn [e]
-                                    (resume-schedule job owner scheduling-ch))}
+                                    (resume-schedule job owner refresh-job-ch))}
                  [:i.play.icon] "Resume"])
               [:a.item {:on-click (fn [e]
-                                    (drop-schedule job owner scheduling-ch))}
+                                    (drop-schedule job owner refresh-job-ch))}
                [:i.remove.icon] "Drop"]
               [:a.item {:on-click (fn [e]
                                     (om/set-state! owner :scheduling? true))}
@@ -290,22 +300,15 @@
 
 (defcomponent current-job-view [{:keys [job-id] :as app} owner]
   (init-state [_]
-    {:scheduling-ch (chan)})
+    {:refresh-job-ch (chan)})
   (will-mount [_]
     (go-loop []
-      (let [[type cron-notation] (<! (om/get-state owner :scheduling-ch))]
-        (println "type=" type)
-        (case type
-          :success
-          (api/request (str  "/job/" job-id)
-                       {:handler (fn [response]
-                                   (om/set-state! owner :scheduling? false)
-                                   (om/set-state! owner :job response))})
-          :cancel
-          (om/set-state! owner :scheduling? false))
-        (println "scheduling?=" (om/get-state owner :scheduling?))
+      (let [_ (<! (om/get-state owner :refresh-job-ch))]
+        (api/request (str  "/job/" job-id)
+                     {:handler (fn [response]
+                                 (om/set-state! owner :job response))})
         (recur))))
-  (render-state [_ {:keys [job dimmed? scheduling-ch scheduling?]}]
+  (render-state [_ {:keys [job dimmed? refresh-job-ch]}]
     (let [mode (->> app :mode (drop 3) first)]
       (html
        (case mode
@@ -372,7 +375,7 @@
                 [:div.content
                  [:div.description (get-in exe [:job-execution/agent :agent/name])]]]])]
            (om/build next-execution-view job
-                     {:init-state {:scheduling-ch scheduling-ch}})]]))))
+                     {:init-state {:refresh-job-ch refresh-job-ch}})]]))))
 
   (did-update [_ _ _]
     (when-not (.-firstChild (.getElementById js/document "job-blocks-inner"))
