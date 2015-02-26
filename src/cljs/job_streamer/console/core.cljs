@@ -4,7 +4,7 @@
 
 (def app-state (atom {:query nil
                       :jobs nil
-                      :agents []
+                      :agents nil
                       :mode [:jobs]}))
 
 (om/root root-view app-state

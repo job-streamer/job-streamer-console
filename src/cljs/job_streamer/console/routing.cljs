@@ -9,6 +9,7 @@
   (:use [cljs.reader :only [read-string]])
   (:import [goog.History]))
 
+(enable-console-print!)
 
 (def control-bus-url (.. js/document
                          (querySelector "meta[name=control-bus-url]")
@@ -17,12 +18,6 @@
 (defn- setup-routing [app-state]
   (sec/set-config! :prefix "#")
   (sec/defroute "/" []
-    (let [xhrio (net/xhr-connection)]
-      (events/listen xhrio EventType/SUCCESS
-                     (fn [e]
-                       (om/update! app-state :agents
-                                   (read-string (.getResponseText xhrio)))))
-      (.send xhrio (str control-bus-url "/agents") "get"))
     (om/update! app-state :mode [:jobs :list]))
 
   (sec/defroute #"/jobs/new" []
@@ -58,7 +53,14 @@
     (om/update! app-state :mode [:jobs :timeline]))
 
   (sec/defroute "/agents" []
-    (om/update! app-state :mode [:agents])))
+    (om/update! app-state :mode [:agents]))
+
+  (sec/defroute #"/agent/([a-z0-9\\-]+)" [instance-id]
+    (println "agents detail")
+    (om/transact! app-state
+                  #(assoc %
+                          :mode [:agents :detail]
+                          :agent/instance-id instance-id))))
 
 (defn- setup-history [owner]
   (let [history (goog.History.)
@@ -71,6 +73,4 @@
 (defn init [app-state owner]
   (setup-routing app-state)
   (setup-history owner))
-
-
 

@@ -6,8 +6,10 @@
             [cljs.core.async :refer [put! <! chan pub sub unsub-all]]
             [job-streamer.console.api :as api]))
 
+(def app-name "default")
+
 (defn delete-job [job-id]
-  (api/request (str "/job/" job-id) :DELETE
+  (api/request (str "/" app-name "/job/" job-id) :DELETE
                {:handler (fn [response]
                            (set! (.-href js/location) "#/"))}))
 

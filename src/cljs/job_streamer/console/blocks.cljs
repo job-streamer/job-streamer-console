@@ -130,7 +130,7 @@
   :next-statement? false
   :mutator "property-item"
   :fields [{:type :text
-            :name "id"
+            :name "name"
             :label "Job"}
            {:type :statement
             :name "steps"}])
@@ -145,7 +145,7 @@
   :next-statement? true
   :mutator "property-item"
   :fields [{:type :text
-            :name "id"
+            :name "name"
             :label "Step"}
            {:type :value-input
             :name "step-component"

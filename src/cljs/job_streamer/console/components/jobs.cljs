@@ -6,20 +6,20 @@
             [cljs.core.async :refer [put! <! chan pub sub unsub-all]]
             (job-streamer.console.format :as fmt)
             (job-streamer.console.api :as api))
-  (:use (job-streamer.console.components.agents :only [agents-view])
-        (job-streamer.console.components.timeline :only [timeline-view])
+  (:use (job-streamer.console.components.timeline :only [timeline-view])
         (job-streamer.console.components.job-detail :only [job-new-view job-detail-view])
         (job-streamer.console.components.execution :only [execution-view])
         [job-streamer.console.search :only [search-jobs]]))
 
 (enable-console-print!)
+(def app-name "default")
 
-(defn execute-job [job-id]
-  (api/request (str "/job/" job-id "/executions") :POST
+(defn execute-job [job-name]
+  (api/request (str "/" app-name "/job/" job-name "/executions") :POST
                {:handler (fn [response])}))
 
-(defn search-execution [latest-execution job-id execution-id]
-  (api/request (str "/job/" job-id "/execution/" execution-id)
+(defn search-execution [latest-execution job-name execution-id]
+  (api/request (str "/" app-name "/job/" job-name "/execution/" execution-id)
                {:handler (fn [response]
                            (let [steps (:job-execution/step-executions response)]
                              (om/transact! latest-execution
@@ -71,10 +71,10 @@
              [:th "Start"]]]
            [:tbody
             (apply concat
-                   (for [{job-id :job/id :as job} (:jobs app)]
+                   (for [{job-name :job/name :as job} (:jobs app)]
                      [[:tr
                        [:td 
-                        [:a {:href (str "#/job/" job-id)} job-id]]
+                        [:a {:href (str "#/job/" job-name)} job-name]]
                        (if-let [latest-execution (:job/latest-execution job)]
                          (if (= (get-in latest-execution [:job-execution/batch-status :db/ident]) :batch-status/registered)
                            [:td.center.aligned {:colSpan 3} "Wait for an execution..."]
@@ -83,7 +83,7 @@
                              (list
                               [:td (when start
                                      (let [id (:db/id latest-execution)]
-                                       [:a {:on-click (fn [e] (search-execution latest-execution job-id id))}
+                                       [:a {:on-click (fn [e] (search-execution latest-execution job-name id))}
                                         (fmt/date-medium start)]))]
                               [:td (fmt/duration-between start end)]
                               (let [status (name (get-in latest-execution [:job-execution/batch-status :db/ident]))]
@@ -104,7 +104,7 @@
                               [:button.ui.circular.icon.green.button
                                {:on-click (fn [e]
                                             (om/update! job :job/latest-execution {:job-execution/batch-status {:db/ident :batch-status/registered}})
-                                            (execute-job job-id))}
+                                            (execute-job job-name))}
                                [:i.play.icon]])]]
                       (when-let [step-executions (not-empty (get-in job [:job/latest-execution :job-execution/step-executions]))]
                         [:tr
@@ -126,10 +126,10 @@
         [:div.sub.header "Edit and execute a job."]]]
       (case mode
         :new
-        (om/build job-new-view (select-keys app [:job-id :mode]))
+        (om/build job-new-view (select-keys app [:job-name :mode]))
 
         :detail
-        (om/build job-detail-view (select-keys app [:job-id :mode]))
+        (om/build job-detail-view (select-keys app [:job-name :mode]))
 
         ;; default
         [:div

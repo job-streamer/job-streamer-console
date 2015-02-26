@@ -24989,85 +24989,85 @@ cljs.core._invoke = function() {
     }
     var w;
     w = cljs.core._invoke;
-    var C;
-    C = goog.typeOf(null == a ? null : a);
-    w = w[C];
+    var D;
+    D = goog.typeOf(null == a ? null : a);
+    w = w[D];
     if (!w && (w = cljs.core._invoke._, !w)) {
       throw cljs.core.missing_protocol("IFn.-invoke", a);
     }
     return w.call(null, a, b, c, d, e, f, g, h, k, l, q, m, n, r, p, s, t, u, v, x);
-  }, C = function(a, b, c, d, e, f, g, h, k, l, q, m, n, r, p, s, t, u, v, x, w) {
+  }, D = function(a, b, c, d, e, f, g, h, k, l, q, m, n, r, p, s, t, u, v, x, w) {
     if (a ? a.cljs$core$IFn$_invoke$arity$21 : a) {
       return a.cljs$core$IFn$_invoke$arity$21(a, b, c, d, e, f, g, h, k, l, q, m, n, r, p, s, t, u, v, x, w);
     }
-    var C;
-    C = cljs.core._invoke;
-    var P;
-    P = goog.typeOf(null == a ? null : a);
-    C = C[P];
-    if (!C && (C = cljs.core._invoke._, !C)) {
+    var D;
+    D = cljs.core._invoke;
+    var I;
+    I = goog.typeOf(null == a ? null : a);
+    D = D[I];
+    if (!D && (D = cljs.core._invoke._, !D)) {
       throw cljs.core.missing_protocol("IFn.-invoke", a);
     }
-    return C.call(null, a, b, c, d, e, f, g, h, k, l, q, m, n, r, p, s, t, u, v, x, w);
-  }, P = function(a, b, c, d, e, f, g, h, k, l, q, m, n, r, p, s, t, u, v, x, w, C) {
+    return D.call(null, a, b, c, d, e, f, g, h, k, l, q, m, n, r, p, s, t, u, v, x, w);
+  }, I = function(a, b, c, d, e, f, g, h, k, l, q, m, n, r, p, s, t, u, v, x, w, D) {
     if (a ? a.cljs$core$IFn$_invoke$arity$22 : a) {
-      return a.cljs$core$IFn$_invoke$arity$22(a, b, c, d, e, f, g, h, k, l, q, m, n, r, p, s, t, u, v, x, w, C);
+      return a.cljs$core$IFn$_invoke$arity$22(a, b, c, d, e, f, g, h, k, l, q, m, n, r, p, s, t, u, v, x, w, D);
     }
-    var P;
-    P = cljs.core._invoke;
+    var I;
+    I = cljs.core._invoke;
     var Z;
     Z = goog.typeOf(null == a ? null : a);
-    P = P[Z];
-    if (!P && (P = cljs.core._invoke._, !P)) {
+    I = I[Z];
+    if (!I && (I = cljs.core._invoke._, !I)) {
       throw cljs.core.missing_protocol("IFn.-invoke", a);
     }
-    return P.call(null, a, b, c, d, e, f, g, h, k, l, q, m, n, r, p, s, t, u, v, x, w, C);
-  }, a = function(a, z, A, y, B, D, E, F, H, G, I, K, M, O, L, N, Q, R, S, T, V, U) {
+    return I.call(null, a, b, c, d, e, f, g, h, k, l, q, m, n, r, p, s, t, u, v, x, w, D);
+  }, a = function(a, y, A, z, B, F, C, H, J, G, K, L, N, O, M, P, Q, R, S, T, V, U) {
     switch(arguments.length) {
       case 1:
         return b.call(this, a);
       case 2:
-        return c.call(this, a, z);
+        return c.call(this, a, y);
       case 3:
-        return d.call(this, a, z, A);
+        return d.call(this, a, y, A);
       case 4:
-        return e.call(this, a, z, A, y);
+        return e.call(this, a, y, A, z);
       case 5:
-        return f.call(this, a, z, A, y, B);
+        return f.call(this, a, y, A, z, B);
       case 6:
-        return g.call(this, a, z, A, y, B, D);
+        return g.call(this, a, y, A, z, B, F);
       case 7:
-        return h.call(this, a, z, A, y, B, D, E);
+        return h.call(this, a, y, A, z, B, F, C);
       case 8:
-        return k.call(this, a, z, A, y, B, D, E, F);
+        return k.call(this, a, y, A, z, B, F, C, H);
       case 9:
-        return l.call(this, a, z, A, y, B, D, E, F, H);
+        return l.call(this, a, y, A, z, B, F, C, H, J);
       case 10:
-        return m.call(this, a, z, A, y, B, D, E, F, H, G);
+        return m.call(this, a, y, A, z, B, F, C, H, J, G);
       case 11:
-        return n.call(this, a, z, A, y, B, D, E, F, H, G, I);
+        return n.call(this, a, y, A, z, B, F, C, H, J, G, K);
       case 12:
-        return p.call(this, a, z, A, y, B, D, E, F, H, G, I, K);
+        return p.call(this, a, y, A, z, B, F, C, H, J, G, K, L);
       case 13:
-        return q.call(this, a, z, A, y, B, D, E, F, H, G, I, K, M);
+        return q.call(this, a, y, A, z, B, F, C, H, J, G, K, L, N);
       case 14:
-        return r.call(this, a, z, A, y, B, D, E, F, H, G, I, K, M, O);
+        return r.call(this, a, y, A, z, B, F, C, H, J, G, K, L, N, O);
       case 15:
-        return s.call(this, a, z, A, y, B, D, E, F, H, G, I, K, M, O, L);
+        return s.call(this, a, y, A, z, B, F, C, H, J, G, K, L, N, O, M);
       case 16:
-        return t.call(this, a, z, A, y, B, D, E, F, H, G, I, K, M, O, L, N);
+        return t.call(this, a, y, A, z, B, F, C, H, J, G, K, L, N, O, M, P);
       case 17:
-        return u.call(this, a, z, A, y, B, D, E, F, H, G, I, K, M, O, L, N, Q);
+        return u.call(this, a, y, A, z, B, F, C, H, J, G, K, L, N, O, M, P, Q);
       case 18:
-        return v.call(this, a, z, A, y, B, D, E, F, H, G, I, K, M, O, L, N, Q, R);
+        return v.call(this, a, y, A, z, B, F, C, H, J, G, K, L, N, O, M, P, Q, R);
       case 19:
-        return x.call(this, a, z, A, y, B, D, E, F, H, G, I, K, M, O, L, N, Q, R, S);
+        return x.call(this, a, y, A, z, B, F, C, H, J, G, K, L, N, O, M, P, Q, R, S);
       case 20:
-        return w.call(this, a, z, A, y, B, D, E, F, H, G, I, K, M, O, L, N, Q, R, S, T);
+        return w.call(this, a, y, A, z, B, F, C, H, J, G, K, L, N, O, M, P, Q, R, S, T);
       case 21:
-        return C.call(this, a, z, A, y, B, D, E, F, H, G, I, K, M, O, L, N, Q, R, S, T, V);
+        return D.call(this, a, y, A, z, B, F, C, H, J, G, K, L, N, O, M, P, Q, R, S, T, V);
       case 22:
-        return P.call(this, a, z, A, y, B, D, E, F, H, G, I, K, M, O, L, N, Q, R, S, T, V, U);
+        return I.call(this, a, y, A, z, B, F, C, H, J, G, K, L, N, O, M, P, Q, R, S, T, V, U);
     }
     throw Error("Invalid arity: " + arguments.length);
   };
@@ -25091,8 +25091,8 @@ cljs.core._invoke = function() {
   a.cljs$core$IFn$_invoke$arity$18 = v;
   a.cljs$core$IFn$_invoke$arity$19 = x;
   a.cljs$core$IFn$_invoke$arity$20 = w;
-  a.cljs$core$IFn$_invoke$arity$21 = C;
-  a.cljs$core$IFn$_invoke$arity$22 = P;
+  a.cljs$core$IFn$_invoke$arity$21 = D;
+  a.cljs$core$IFn$_invoke$arity$22 = I;
   return a;
 }();
 cljs.core.ICloneable = function() {
@@ -26491,59 +26491,59 @@ cljs.core.Var.prototype.call = function() {
   }, w = function(a, b, c, d, e, f, g, h, k, l, q, m, n, r, p, s, t, u, v, x) {
     a = this;
     return(a.val.cljs$core$IFn$_invoke$arity$0 ? a.val.cljs$core$IFn$_invoke$arity$0() : a.val.call(null)).call(null, b, c, d, e, f, g, h, k, l, q, m, n, r, p, s, t, u, v, x);
-  }, C = function(a, b, c, d, e, f, g, h, k, l, q, m, n, r, p, s, t, u, v, x, w) {
+  }, D = function(a, b, c, d, e, f, g, h, k, l, q, m, n, r, p, s, t, u, v, x, w) {
     a = this;
     return(a.val.cljs$core$IFn$_invoke$arity$0 ? a.val.cljs$core$IFn$_invoke$arity$0() : a.val.call(null)).call(null, b, c, d, e, f, g, h, k, l, q, m, n, r, p, s, t, u, v, x, w);
-  }, P = function(a, b, c, d, e, f, g, h, k, l, q, m, n, r, p, s, t, u, v, x, w, C) {
+  }, I = function(a, b, c, d, e, f, g, h, k, l, q, m, n, r, p, s, t, u, v, x, w, D) {
     a = this;
     a = a.val.cljs$core$IFn$_invoke$arity$0 ? a.val.cljs$core$IFn$_invoke$arity$0() : a.val.call(null);
-    return cljs.core.apply.cljs$core$IFn$_invoke$arity$22 ? cljs.core.apply.cljs$core$IFn$_invoke$arity$22(a, b, c, d, e, f, g, h, k, l, q, m, n, r, p, s, t, u, v, x, w, C) : cljs.core.apply.call(null, a, b, c, d, e, f, g, h, k, l, q, m, n, r, p, s, t, u, v, x, w, C);
-  }, a = function(a, z, A, y, B, D, E, F, H, G, I, K, M, O, L, N, Q, R, S, T, V, U) {
+    return cljs.core.apply.cljs$core$IFn$_invoke$arity$22 ? cljs.core.apply.cljs$core$IFn$_invoke$arity$22(a, b, c, d, e, f, g, h, k, l, q, m, n, r, p, s, t, u, v, x, w, D) : cljs.core.apply.call(null, a, b, c, d, e, f, g, h, k, l, q, m, n, r, p, s, t, u, v, x, w, D);
+  }, a = function(a, y, A, z, B, F, C, H, J, G, K, L, N, O, M, P, Q, R, S, T, V, U) {
     switch(arguments.length) {
       case 1:
         return b.call(this, a);
       case 2:
-        return c.call(this, a, z);
+        return c.call(this, a, y);
       case 3:
-        return d.call(this, a, z, A);
+        return d.call(this, a, y, A);
       case 4:
-        return e.call(this, a, z, A, y);
+        return e.call(this, a, y, A, z);
       case 5:
-        return f.call(this, a, z, A, y, B);
+        return f.call(this, a, y, A, z, B);
       case 6:
-        return g.call(this, a, z, A, y, B, D);
+        return g.call(this, a, y, A, z, B, F);
       case 7:
-        return h.call(this, a, z, A, y, B, D, E);
+        return h.call(this, a, y, A, z, B, F, C);
       case 8:
-        return k.call(this, a, z, A, y, B, D, E, F);
+        return k.call(this, a, y, A, z, B, F, C, H);
       case 9:
-        return l.call(this, a, z, A, y, B, D, E, F, H);
+        return l.call(this, a, y, A, z, B, F, C, H, J);
       case 10:
-        return m.call(this, a, z, A, y, B, D, E, F, H, G);
+        return m.call(this, a, y, A, z, B, F, C, H, J, G);
       case 11:
-        return n.call(this, a, z, A, y, B, D, E, F, H, G, I);
+        return n.call(this, a, y, A, z, B, F, C, H, J, G, K);
       case 12:
-        return p.call(this, a, z, A, y, B, D, E, F, H, G, I, K);
+        return p.call(this, a, y, A, z, B, F, C, H, J, G, K, L);
       case 13:
-        return q.call(this, a, z, A, y, B, D, E, F, H, G, I, K, M);
+        return q.call(this, a, y, A, z, B, F, C, H, J, G, K, L, N);
       case 14:
-        return r.call(this, a, z, A, y, B, D, E, F, H, G, I, K, M, O);
+        return r.call(this, a, y, A, z, B, F, C, H, J, G, K, L, N, O);
       case 15:
-        return s.call(this, a, z, A, y, B, D, E, F, H, G, I, K, M, O, L);
+        return s.call(this, a, y, A, z, B, F, C, H, J, G, K, L, N, O, M);
       case 16:
-        return t.call(this, a, z, A, y, B, D, E, F, H, G, I, K, M, O, L, N);
+        return t.call(this, a, y, A, z, B, F, C, H, J, G, K, L, N, O, M, P);
       case 17:
-        return u.call(this, a, z, A, y, B, D, E, F, H, G, I, K, M, O, L, N, Q);
+        return u.call(this, a, y, A, z, B, F, C, H, J, G, K, L, N, O, M, P, Q);
       case 18:
-        return v.call(this, a, z, A, y, B, D, E, F, H, G, I, K, M, O, L, N, Q, R);
+        return v.call(this, a, y, A, z, B, F, C, H, J, G, K, L, N, O, M, P, Q, R);
       case 19:
-        return x.call(this, a, z, A, y, B, D, E, F, H, G, I, K, M, O, L, N, Q, R, S);
+        return x.call(this, a, y, A, z, B, F, C, H, J, G, K, L, N, O, M, P, Q, R, S);
       case 20:
-        return w.call(this, a, z, A, y, B, D, E, F, H, G, I, K, M, O, L, N, Q, R, S, T);
+        return w.call(this, a, y, A, z, B, F, C, H, J, G, K, L, N, O, M, P, Q, R, S, T);
       case 21:
-        return C.call(this, a, z, A, y, B, D, E, F, H, G, I, K, M, O, L, N, Q, R, S, T, V);
+        return D.call(this, a, y, A, z, B, F, C, H, J, G, K, L, N, O, M, P, Q, R, S, T, V);
       case 22:
-        return P.call(this, a, z, A, y, B, D, E, F, H, G, I, K, M, O, L, N, Q, R, S, T, V, U);
+        return I.call(this, a, y, A, z, B, F, C, H, J, G, K, L, N, O, M, P, Q, R, S, T, V, U);
     }
     throw Error("Invalid arity: " + arguments.length);
   };
@@ -26567,8 +26567,8 @@ cljs.core.Var.prototype.call = function() {
   a.cljs$core$IFn$_invoke$arity$18 = v;
   a.cljs$core$IFn$_invoke$arity$19 = x;
   a.cljs$core$IFn$_invoke$arity$20 = w;
-  a.cljs$core$IFn$_invoke$arity$21 = C;
-  a.cljs$core$IFn$_invoke$arity$22 = P;
+  a.cljs$core$IFn$_invoke$arity$21 = D;
+  a.cljs$core$IFn$_invoke$arity$22 = I;
   return a;
 }();
 cljs.core.Var.prototype.apply = function(a, b) {
@@ -26638,8 +26638,8 @@ cljs.core.Var.prototype.cljs$core$IFn$_invoke$arity$20 = function(a, b, c, d, e,
   return(this.val.cljs$core$IFn$_invoke$arity$0 ? this.val.cljs$core$IFn$_invoke$arity$0() : this.val.call(null)).call(null, a, b, c, d, e, f, g, h, k, l, m, n, p, q, r, s, t, u, v, x);
 };
 cljs.core.Var.prototype.cljs$core$IFn$_invoke$arity$21 = function(a, b, c, d, e, f, g, h, k, l, m, n, p, q, r, s, t, u, v, x, w) {
-  var C = this.val.cljs$core$IFn$_invoke$arity$0 ? this.val.cljs$core$IFn$_invoke$arity$0() : this.val.call(null);
-  return cljs.core.apply.cljs$core$IFn$_invoke$arity$22 ? cljs.core.apply.cljs$core$IFn$_invoke$arity$22(C, a, b, c, d, e, f, g, h, k, l, m, n, p, q, r, s, t, u, v, x, w) : cljs.core.apply.call(null, C, a, b, c, d, e, f, g, h, k, l, m, n, p, q, r, s, t, u, v, x, w);
+  var D = this.val.cljs$core$IFn$_invoke$arity$0 ? this.val.cljs$core$IFn$_invoke$arity$0() : this.val.call(null);
+  return cljs.core.apply.cljs$core$IFn$_invoke$arity$22 ? cljs.core.apply.cljs$core$IFn$_invoke$arity$22(D, a, b, c, d, e, f, g, h, k, l, m, n, p, q, r, s, t, u, v, x, w) : cljs.core.apply.call(null, D, a, b, c, d, e, f, g, h, k, l, m, n, p, q, r, s, t, u, v, x, w);
 };
 cljs.core.Var.prototype.cljs$core$Fn$ = !0;
 cljs.core.Var.prototype.cljs$core$IMeta$_meta$arity$1 = function(a) {
@@ -27647,58 +27647,58 @@ cljs.core.MetaFn.prototype.call = function() {
   }, w = function(a, b, c, d, e, f, g, h, k, l, q, m, n, r, p, s, t, u, v, x) {
     a = this;
     return a.afn.cljs$core$IFn$_invoke$arity$19 ? a.afn.cljs$core$IFn$_invoke$arity$19(b, c, d, e, f, g, h, k, l, q, m, n, r, p, s, t, u, v, x) : a.afn.call(null, b, c, d, e, f, g, h, k, l, q, m, n, r, p, s, t, u, v, x);
-  }, C = function(a, b, c, d, e, f, g, h, k, l, q, m, n, r, p, s, t, u, v, x, w) {
+  }, D = function(a, b, c, d, e, f, g, h, k, l, q, m, n, r, p, s, t, u, v, x, w) {
     a = this;
     return a.afn.cljs$core$IFn$_invoke$arity$20 ? a.afn.cljs$core$IFn$_invoke$arity$20(b, c, d, e, f, g, h, k, l, q, m, n, r, p, s, t, u, v, x, w) : a.afn.call(null, b, c, d, e, f, g, h, k, l, q, m, n, r, p, s, t, u, v, x, w);
-  }, P = function(a, b, c, d, e, f, g, h, k, l, q, m, n, r, p, s, t, u, v, x, w, C) {
+  }, I = function(a, b, c, d, e, f, g, h, k, l, q, m, n, r, p, s, t, u, v, x, w, D) {
     a = this.afn;
-    return cljs.core.apply.cljs$core$IFn$_invoke$arity$22 ? cljs.core.apply.cljs$core$IFn$_invoke$arity$22(a, b, c, d, e, f, g, h, k, l, q, m, n, r, p, s, t, u, v, x, w, C) : cljs.core.apply.call(null, a, b, c, d, e, f, g, h, k, l, q, m, n, r, p, s, t, u, v, x, w, C);
-  }, a = function(a, z, A, y, B, D, E, F, H, G, I, K, M, O, L, N, Q, R, S, T, V, U) {
+    return cljs.core.apply.cljs$core$IFn$_invoke$arity$22 ? cljs.core.apply.cljs$core$IFn$_invoke$arity$22(a, b, c, d, e, f, g, h, k, l, q, m, n, r, p, s, t, u, v, x, w, D) : cljs.core.apply.call(null, a, b, c, d, e, f, g, h, k, l, q, m, n, r, p, s, t, u, v, x, w, D);
+  }, a = function(a, y, A, z, B, F, C, H, J, G, K, L, N, O, M, P, Q, R, S, T, V, U) {
     switch(arguments.length) {
       case 1:
         return b.call(this, a);
       case 2:
-        return c.call(this, a, z);
+        return c.call(this, a, y);
       case 3:
-        return d.call(this, a, z, A);
+        return d.call(this, a, y, A);
       case 4:
-        return e.call(this, a, z, A, y);
+        return e.call(this, a, y, A, z);
       case 5:
-        return f.call(this, a, z, A, y, B);
+        return f.call(this, a, y, A, z, B);
       case 6:
-        return g.call(this, a, z, A, y, B, D);
+        return g.call(this, a, y, A, z, B, F);
       case 7:
-        return h.call(this, a, z, A, y, B, D, E);
+        return h.call(this, a, y, A, z, B, F, C);
       case 8:
-        return k.call(this, a, z, A, y, B, D, E, F);
+        return k.call(this, a, y, A, z, B, F, C, H);
       case 9:
-        return l.call(this, a, z, A, y, B, D, E, F, H);
+        return l.call(this, a, y, A, z, B, F, C, H, J);
       case 10:
-        return m.call(this, a, z, A, y, B, D, E, F, H, G);
+        return m.call(this, a, y, A, z, B, F, C, H, J, G);
       case 11:
-        return n.call(this, a, z, A, y, B, D, E, F, H, G, I);
+        return n.call(this, a, y, A, z, B, F, C, H, J, G, K);
       case 12:
-        return p.call(this, a, z, A, y, B, D, E, F, H, G, I, K);
+        return p.call(this, a, y, A, z, B, F, C, H, J, G, K, L);
       case 13:
-        return q.call(this, a, z, A, y, B, D, E, F, H, G, I, K, M);
+        return q.call(this, a, y, A, z, B, F, C, H, J, G, K, L, N);
       case 14:
-        return r.call(this, a, z, A, y, B, D, E, F, H, G, I, K, M, O);
+        return r.call(this, a, y, A, z, B, F, C, H, J, G, K, L, N, O);
       case 15:
-        return s.call(this, a, z, A, y, B, D, E, F, H, G, I, K, M, O, L);
+        return s.call(this, a, y, A, z, B, F, C, H, J, G, K, L, N, O, M);
       case 16:
-        return t.call(this, a, z, A, y, B, D, E, F, H, G, I, K, M, O, L, N);
+        return t.call(this, a, y, A, z, B, F, C, H, J, G, K, L, N, O, M, P);
       case 17:
-        return u.call(this, a, z, A, y, B, D, E, F, H, G, I, K, M, O, L, N, Q);
+        return u.call(this, a, y, A, z, B, F, C, H, J, G, K, L, N, O, M, P, Q);
       case 18:
-        return v.call(this, a, z, A, y, B, D, E, F, H, G, I, K, M, O, L, N, Q, R);
+        return v.call(this, a, y, A, z, B, F, C, H, J, G, K, L, N, O, M, P, Q, R);
       case 19:
-        return x.call(this, a, z, A, y, B, D, E, F, H, G, I, K, M, O, L, N, Q, R, S);
+        return x.call(this, a, y, A, z, B, F, C, H, J, G, K, L, N, O, M, P, Q, R, S);
       case 20:
-        return w.call(this, a, z, A, y, B, D, E, F, H, G, I, K, M, O, L, N, Q, R, S, T);
+        return w.call(this, a, y, A, z, B, F, C, H, J, G, K, L, N, O, M, P, Q, R, S, T);
       case 21:
-        return C.call(this, a, z, A, y, B, D, E, F, H, G, I, K, M, O, L, N, Q, R, S, T, V);
+        return D.call(this, a, y, A, z, B, F, C, H, J, G, K, L, N, O, M, P, Q, R, S, T, V);
       case 22:
-        return P.call(this, a, z, A, y, B, D, E, F, H, G, I, K, M, O, L, N, Q, R, S, T, V, U);
+        return I.call(this, a, y, A, z, B, F, C, H, J, G, K, L, N, O, M, P, Q, R, S, T, V, U);
     }
     throw Error("Invalid arity: " + arguments.length);
   };
@@ -27722,8 +27722,8 @@ cljs.core.MetaFn.prototype.call = function() {
   a.cljs$core$IFn$_invoke$arity$18 = v;
   a.cljs$core$IFn$_invoke$arity$19 = x;
   a.cljs$core$IFn$_invoke$arity$20 = w;
-  a.cljs$core$IFn$_invoke$arity$21 = C;
-  a.cljs$core$IFn$_invoke$arity$22 = P;
+  a.cljs$core$IFn$_invoke$arity$21 = D;
+  a.cljs$core$IFn$_invoke$arity$22 = I;
   return a;
 }();
 cljs.core.MetaFn.prototype.apply = function(a, b) {
@@ -27793,8 +27793,8 @@ cljs.core.MetaFn.prototype.cljs$core$IFn$_invoke$arity$20 = function(a, b, c, d,
   return this.afn.cljs$core$IFn$_invoke$arity$20 ? this.afn.cljs$core$IFn$_invoke$arity$20(a, b, c, d, e, f, g, h, k, l, m, n, p, q, r, s, t, u, v, x) : this.afn.call(null, a, b, c, d, e, f, g, h, k, l, m, n, p, q, r, s, t, u, v, x);
 };
 cljs.core.MetaFn.prototype.cljs$core$IFn$_invoke$arity$21 = function(a, b, c, d, e, f, g, h, k, l, m, n, p, q, r, s, t, u, v, x, w) {
-  var C = this.afn;
-  return cljs.core.apply.cljs$core$IFn$_invoke$arity$22 ? cljs.core.apply.cljs$core$IFn$_invoke$arity$22(C, a, b, c, d, e, f, g, h, k, l, m, n, p, q, r, s, t, u, v, x, w) : cljs.core.apply.call(null, C, a, b, c, d, e, f, g, h, k, l, m, n, p, q, r, s, t, u, v, x, w);
+  var D = this.afn;
+  return cljs.core.apply.cljs$core$IFn$_invoke$arity$22 ? cljs.core.apply.cljs$core$IFn$_invoke$arity$22(D, a, b, c, d, e, f, g, h, k, l, m, n, p, q, r, s, t, u, v, x, w) : cljs.core.apply.call(null, D, a, b, c, d, e, f, g, h, k, l, m, n, p, q, r, s, t, u, v, x, w);
 };
 cljs.core.MetaFn.prototype.cljs$core$Fn$ = !0;
 cljs.core.MetaFn.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b) {
@@ -31157,19 +31157,19 @@ cljs.core.apply_to = function(a, b, c) {
   if (17 === b) {
     return a.cljs$core$IFn$_invoke$arity$17 ? a.cljs$core$IFn$_invoke$arity$17(c, d, e, f, g, h, k, l, m, n, p, q, r, s, t, u, v) : a.cljs$core$IFn$_invoke$arity$17 ? a.cljs$core$IFn$_invoke$arity$17(c, d, e, f, g, h, k, l, m, n, p, q, r, s, t, u, v) : a.call(null, c, d, e, f, g, h, k, l, m, n, p, q, r, s, t, u, v);
   }
-  var x = cljs.core._first(w), C = cljs.core._rest(w);
+  var x = cljs.core._first(w), D = cljs.core._rest(w);
   if (18 === b) {
     return a.cljs$core$IFn$_invoke$arity$18 ? a.cljs$core$IFn$_invoke$arity$18(c, d, e, f, g, h, k, l, m, n, p, q, r, s, t, u, v, x) : a.cljs$core$IFn$_invoke$arity$18 ? a.cljs$core$IFn$_invoke$arity$18(c, d, e, f, g, h, k, l, m, n, p, q, r, s, t, u, v, x) : a.call(null, c, d, e, f, g, h, k, l, m, n, p, q, r, s, t, u, v, x);
   }
-  w = cljs.core._first(C);
-  C = cljs.core._rest(C);
+  w = cljs.core._first(D);
+  D = cljs.core._rest(D);
   if (19 === b) {
     return a.cljs$core$IFn$_invoke$arity$19 ? a.cljs$core$IFn$_invoke$arity$19(c, d, e, f, g, h, k, l, m, n, p, q, r, s, t, u, v, x, w) : a.cljs$core$IFn$_invoke$arity$19 ? a.cljs$core$IFn$_invoke$arity$19(c, d, e, f, g, h, k, l, m, n, p, q, r, s, t, u, v, x, w) : a.call(null, c, d, e, f, g, h, k, l, m, n, p, q, r, s, t, u, v, x, w);
   }
-  var P = cljs.core._first(C);
-  cljs.core._rest(C);
+  var I = cljs.core._first(D);
+  cljs.core._rest(D);
   if (20 === b) {
-    return a.cljs$core$IFn$_invoke$arity$20 ? a.cljs$core$IFn$_invoke$arity$20(c, d, e, f, g, h, k, l, m, n, p, q, r, s, t, u, v, x, w, P) : a.cljs$core$IFn$_invoke$arity$20 ? a.cljs$core$IFn$_invoke$arity$20(c, d, e, f, g, h, k, l, m, n, p, q, r, s, t, u, v, x, w, P) : a.call(null, c, d, e, f, g, h, k, l, m, n, p, q, r, s, t, u, v, x, w, P);
+    return a.cljs$core$IFn$_invoke$arity$20 ? a.cljs$core$IFn$_invoke$arity$20(c, d, e, f, g, h, k, l, m, n, p, q, r, s, t, u, v, x, w, I) : a.cljs$core$IFn$_invoke$arity$20 ? a.cljs$core$IFn$_invoke$arity$20(c, d, e, f, g, h, k, l, m, n, p, q, r, s, t, u, v, x, w, I) : a.call(null, c, d, e, f, g, h, k, l, m, n, p, q, r, s, t, u, v, x, w, I);
   }
   throw Error("Only up to 20 arguments supported on functions");
 };
@@ -41159,7 +41159,7 @@ cljs.core.js__GT_clj = function() {
           return(f ? cljs.core.truth_(cljs.core.truth_(null) ? null : f.cljs$core$IEncodeClojure$) || (f.cljs$lang$protocol_mask$partition$ ? 0 : cljs.core.native_satisfies_QMARK_(cljs.core.IEncodeClojure, f)) : cljs.core.native_satisfies_QMARK_(cljs.core.IEncodeClojure, f)) ? cljs.core._js__GT_clj(f, cljs.core.apply.cljs$core$IFn$_invoke$arity$2(cljs.core.array_map, b)) : cljs.core.seq_QMARK_(f) ? cljs.core.doall.cljs$core$IFn$_invoke$arity$1(cljs.core.map.cljs$core$IFn$_invoke$arity$2(s, f)) : 
           cljs.core.coll_QMARK_(f) ? cljs.core.into.cljs$core$IFn$_invoke$arity$2(cljs.core.empty(f), cljs.core.map.cljs$core$IFn$_invoke$arity$2(s, f)) : f instanceof Array ? cljs.core.vec(cljs.core.map.cljs$core$IFn$_invoke$arity$2(s, f)) : cljs.core.type(f) === Object ? cljs.core.into.cljs$core$IFn$_invoke$arity$2(cljs.core.PersistentArrayMap.EMPTY, function() {
             return function(a, b, c, d) {
-              return function P(e) {
+              return function I(e) {
                 return new cljs.core.LazySeq(null, function(a, b, c, d) {
                   return function() {
                     for (;;) {
@@ -41180,13 +41180,13 @@ cljs.core.js__GT_clj = function() {
                                 return!0;
                               }
                             }
-                          }() ? cljs.core.chunk_cons(cljs.core.chunk(g), P(cljs.core.chunk_rest(a))) : cljs.core.chunk_cons(cljs.core.chunk(g), null);
+                          }() ? cljs.core.chunk_cons(cljs.core.chunk(g), I(cljs.core.chunk_rest(a))) : cljs.core.chunk_cons(cljs.core.chunk(g), null);
                         }
                         var h = cljs.core.first(a);
                         return cljs.core.cons(new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [function() {
                           var a = h;
                           return d.cljs$core$IFn$_invoke$arity$1 ? d.cljs$core$IFn$_invoke$arity$1(a) : d.call(null, a);
-                        }(), s(f[h])], null), P(cljs.core.rest(a)));
+                        }(), s(f[h])], null), I(cljs.core.rest(a)));
                       }
                       return null;
                     }
@@ -41966,67 +41966,67 @@ cljs.core.MultiFn.prototype.call = function() {
     a = this;
     var x;
     x = a.dispatch_fn.cljs$core$IFn$_invoke$arity$19 ? a.dispatch_fn.cljs$core$IFn$_invoke$arity$19(b, c, d, e, f, g, h, k, l, m, q, n, p, r, s, t, u, v, w) : a.dispatch_fn.call(null, b, c, d, e, f, g, h, k, l, m, q, n, p, r, s, t, u, v, w);
-    var C = this.cljs$core$IMultiFn$_get_method$arity$2(null, x);
-    cljs.core.truth_(C) || cljs.core.throw_no_method_error(a.name, x);
-    return C.cljs$core$IFn$_invoke$arity$19 ? C.cljs$core$IFn$_invoke$arity$19(b, c, d, e, f, g, h, k, l, m, q, n, p, r, s, t, u, v, w) : C.call(null, b, c, d, e, f, g, h, k, l, m, q, n, p, r, s, t, u, v, w);
-  }, C = function(a, b, c, d, e, f, g, h, k, l, m, q, n, p, r, s, t, u, v, w, x) {
+    var I = this.cljs$core$IMultiFn$_get_method$arity$2(null, x);
+    cljs.core.truth_(I) || cljs.core.throw_no_method_error(a.name, x);
+    return I.cljs$core$IFn$_invoke$arity$19 ? I.cljs$core$IFn$_invoke$arity$19(b, c, d, e, f, g, h, k, l, m, q, n, p, r, s, t, u, v, w) : I.call(null, b, c, d, e, f, g, h, k, l, m, q, n, p, r, s, t, u, v, w);
+  }, D = function(a, b, c, d, e, f, g, h, k, l, m, q, n, p, r, s, t, u, v, w, x) {
     a = this;
-    var C;
-    C = a.dispatch_fn.cljs$core$IFn$_invoke$arity$20 ? a.dispatch_fn.cljs$core$IFn$_invoke$arity$20(b, c, d, e, f, g, h, k, l, m, q, n, p, r, s, t, u, v, w, x) : a.dispatch_fn.call(null, b, c, d, e, f, g, h, k, l, m, q, n, p, r, s, t, u, v, w, x);
-    var P = this.cljs$core$IMultiFn$_get_method$arity$2(null, C);
-    cljs.core.truth_(P) || cljs.core.throw_no_method_error(a.name, C);
-    return P.cljs$core$IFn$_invoke$arity$20 ? P.cljs$core$IFn$_invoke$arity$20(b, c, d, e, f, g, h, k, l, m, q, n, p, r, s, t, u, v, w, x) : P.call(null, b, c, d, e, f, g, h, k, l, m, q, n, p, r, s, t, u, v, w, x);
-  }, P = function(a, b, c, d, e, f, g, h, k, l, m, q, n, p, r, s, t, u, v, w, x, C) {
+    var I;
+    I = a.dispatch_fn.cljs$core$IFn$_invoke$arity$20 ? a.dispatch_fn.cljs$core$IFn$_invoke$arity$20(b, c, d, e, f, g, h, k, l, m, q, n, p, r, s, t, u, v, w, x) : a.dispatch_fn.call(null, b, c, d, e, f, g, h, k, l, m, q, n, p, r, s, t, u, v, w, x);
+    var D = this.cljs$core$IMultiFn$_get_method$arity$2(null, I);
+    cljs.core.truth_(D) || cljs.core.throw_no_method_error(a.name, I);
+    return D.cljs$core$IFn$_invoke$arity$20 ? D.cljs$core$IFn$_invoke$arity$20(b, c, d, e, f, g, h, k, l, m, q, n, p, r, s, t, u, v, w, x) : D.call(null, b, c, d, e, f, g, h, k, l, m, q, n, p, r, s, t, u, v, w, x);
+  }, I = function(a, b, c, d, e, f, g, h, k, l, m, q, n, p, r, s, t, u, v, w, x, I) {
     a = this;
-    var P = cljs.core.apply.cljs$core$IFn$_invoke$arity$variadic(a.dispatch_fn, b, c, d, e, cljs.core.array_seq([f, g, h, k, l, m, q, n, p, r, s, t, u, v, w, x, C], 0)), Z = this.cljs$core$IMultiFn$_get_method$arity$2(null, P);
-    cljs.core.truth_(Z) || cljs.core.throw_no_method_error(a.name, P);
-    return cljs.core.apply.cljs$core$IFn$_invoke$arity$variadic(Z, b, c, d, e, cljs.core.array_seq([f, g, h, k, l, m, q, n, p, r, s, t, u, v, w, x, C], 0));
-  }, a = function(a, z, A, y, B, D, E, F, H, G, I, K, M, O, L, N, Q, R, S, T, V, U) {
+    var D = cljs.core.apply.cljs$core$IFn$_invoke$arity$variadic(a.dispatch_fn, b, c, d, e, cljs.core.array_seq([f, g, h, k, l, m, q, n, p, r, s, t, u, v, w, x, I], 0)), Z = this.cljs$core$IMultiFn$_get_method$arity$2(null, D);
+    cljs.core.truth_(Z) || cljs.core.throw_no_method_error(a.name, D);
+    return cljs.core.apply.cljs$core$IFn$_invoke$arity$variadic(Z, b, c, d, e, cljs.core.array_seq([f, g, h, k, l, m, q, n, p, r, s, t, u, v, w, x, I], 0));
+  }, a = function(a, y, A, z, B, F, C, H, J, G, K, L, N, O, M, P, Q, R, S, T, V, U) {
     switch(arguments.length) {
       case 1:
         return b.call(this, a);
       case 2:
-        return c.call(this, a, z);
+        return c.call(this, a, y);
       case 3:
-        return d.call(this, a, z, A);
+        return d.call(this, a, y, A);
       case 4:
-        return e.call(this, a, z, A, y);
+        return e.call(this, a, y, A, z);
       case 5:
-        return f.call(this, a, z, A, y, B);
+        return f.call(this, a, y, A, z, B);
       case 6:
-        return g.call(this, a, z, A, y, B, D);
+        return g.call(this, a, y, A, z, B, F);
       case 7:
-        return h.call(this, a, z, A, y, B, D, E);
+        return h.call(this, a, y, A, z, B, F, C);
       case 8:
-        return k.call(this, a, z, A, y, B, D, E, F);
+        return k.call(this, a, y, A, z, B, F, C, H);
       case 9:
-        return l.call(this, a, z, A, y, B, D, E, F, H);
+        return l.call(this, a, y, A, z, B, F, C, H, J);
       case 10:
-        return m.call(this, a, z, A, y, B, D, E, F, H, G);
+        return m.call(this, a, y, A, z, B, F, C, H, J, G);
       case 11:
-        return n.call(this, a, z, A, y, B, D, E, F, H, G, I);
+        return n.call(this, a, y, A, z, B, F, C, H, J, G, K);
       case 12:
-        return p.call(this, a, z, A, y, B, D, E, F, H, G, I, K);
+        return p.call(this, a, y, A, z, B, F, C, H, J, G, K, L);
       case 13:
-        return q.call(this, a, z, A, y, B, D, E, F, H, G, I, K, M);
+        return q.call(this, a, y, A, z, B, F, C, H, J, G, K, L, N);
       case 14:
-        return r.call(this, a, z, A, y, B, D, E, F, H, G, I, K, M, O);
+        return r.call(this, a, y, A, z, B, F, C, H, J, G, K, L, N, O);
       case 15:
-        return s.call(this, a, z, A, y, B, D, E, F, H, G, I, K, M, O, L);
+        return s.call(this, a, y, A, z, B, F, C, H, J, G, K, L, N, O, M);
       case 16:
-        return t.call(this, a, z, A, y, B, D, E, F, H, G, I, K, M, O, L, N);
+        return t.call(this, a, y, A, z, B, F, C, H, J, G, K, L, N, O, M, P);
       case 17:
-        return u.call(this, a, z, A, y, B, D, E, F, H, G, I, K, M, O, L, N, Q);
+        return u.call(this, a, y, A, z, B, F, C, H, J, G, K, L, N, O, M, P, Q);
       case 18:
-        return v.call(this, a, z, A, y, B, D, E, F, H, G, I, K, M, O, L, N, Q, R);
+        return v.call(this, a, y, A, z, B, F, C, H, J, G, K, L, N, O, M, P, Q, R);
       case 19:
-        return x.call(this, a, z, A, y, B, D, E, F, H, G, I, K, M, O, L, N, Q, R, S);
+        return x.call(this, a, y, A, z, B, F, C, H, J, G, K, L, N, O, M, P, Q, R, S);
       case 20:
-        return w.call(this, a, z, A, y, B, D, E, F, H, G, I, K, M, O, L, N, Q, R, S, T);
+        return w.call(this, a, y, A, z, B, F, C, H, J, G, K, L, N, O, M, P, Q, R, S, T);
       case 21:
-        return C.call(this, a, z, A, y, B, D, E, F, H, G, I, K, M, O, L, N, Q, R, S, T, V);
+        return D.call(this, a, y, A, z, B, F, C, H, J, G, K, L, N, O, M, P, Q, R, S, T, V);
       case 22:
-        return P.call(this, a, z, A, y, B, D, E, F, H, G, I, K, M, O, L, N, Q, R, S, T, V, U);
+        return I.call(this, a, y, A, z, B, F, C, H, J, G, K, L, N, O, M, P, Q, R, S, T, V, U);
     }
     throw Error("Invalid arity: " + arguments.length);
   };
@@ -42050,8 +42050,8 @@ cljs.core.MultiFn.prototype.call = function() {
   a.cljs$core$IFn$_invoke$arity$18 = v;
   a.cljs$core$IFn$_invoke$arity$19 = x;
   a.cljs$core$IFn$_invoke$arity$20 = w;
-  a.cljs$core$IFn$_invoke$arity$21 = C;
-  a.cljs$core$IFn$_invoke$arity$22 = P;
+  a.cljs$core$IFn$_invoke$arity$21 = D;
+  a.cljs$core$IFn$_invoke$arity$22 = I;
   return a;
 }();
 cljs.core.MultiFn.prototype.apply = function(a, b) {
@@ -42198,14 +42198,14 @@ cljs.core.MultiFn.prototype.cljs$core$IFn$_invoke$arity$19 = function(a, b, c, d
 cljs.core.MultiFn.prototype.cljs$core$IFn$_invoke$arity$20 = function(a, b, c, d, e, f, g, h, k, l, m, n, p, q, r, s, t, u, v, x) {
   var w;
   w = this.dispatch_fn.cljs$core$IFn$_invoke$arity$20 ? this.dispatch_fn.cljs$core$IFn$_invoke$arity$20(a, b, c, d, e, f, g, h, k, l, m, n, p, q, r, s, t, u, v, x) : this.dispatch_fn.call(null, a, b, c, d, e, f, g, h, k, l, m, n, p, q, r, s, t, u, v, x);
-  var C = this.cljs$core$IMultiFn$_get_method$arity$2(null, w);
-  cljs.core.truth_(C) || cljs.core.throw_no_method_error(this.name, w);
-  return C.cljs$core$IFn$_invoke$arity$20 ? C.cljs$core$IFn$_invoke$arity$20(a, b, c, d, e, f, g, h, k, l, m, n, p, q, r, s, t, u, v, x) : C.call(null, a, b, c, d, e, f, g, h, k, l, m, n, p, q, r, s, t, u, v, x);
+  var D = this.cljs$core$IMultiFn$_get_method$arity$2(null, w);
+  cljs.core.truth_(D) || cljs.core.throw_no_method_error(this.name, w);
+  return D.cljs$core$IFn$_invoke$arity$20 ? D.cljs$core$IFn$_invoke$arity$20(a, b, c, d, e, f, g, h, k, l, m, n, p, q, r, s, t, u, v, x) : D.call(null, a, b, c, d, e, f, g, h, k, l, m, n, p, q, r, s, t, u, v, x);
 };
 cljs.core.MultiFn.prototype.cljs$core$IFn$_invoke$arity$21 = function(a, b, c, d, e, f, g, h, k, l, m, n, p, q, r, s, t, u, v, x, w) {
-  var C = cljs.core.apply.cljs$core$IFn$_invoke$arity$variadic(this.dispatch_fn, a, b, c, d, cljs.core.array_seq([e, f, g, h, k, l, m, n, p, q, r, s, t, u, v, x, w], 0)), P = this.cljs$core$IMultiFn$_get_method$arity$2(null, C);
-  cljs.core.truth_(P) || cljs.core.throw_no_method_error(this.name, C);
-  return cljs.core.apply.cljs$core$IFn$_invoke$arity$variadic(P, a, b, c, d, cljs.core.array_seq([e, f, g, h, k, l, m, n, p, q, r, s, t, u, v, x, w], 0));
+  var D = cljs.core.apply.cljs$core$IFn$_invoke$arity$variadic(this.dispatch_fn, a, b, c, d, cljs.core.array_seq([e, f, g, h, k, l, m, n, p, q, r, s, t, u, v, x, w], 0)), I = this.cljs$core$IMultiFn$_get_method$arity$2(null, D);
+  cljs.core.truth_(I) || cljs.core.throw_no_method_error(this.name, D);
+  return cljs.core.apply.cljs$core$IFn$_invoke$arity$variadic(I, a, b, c, d, cljs.core.array_seq([e, f, g, h, k, l, m, n, p, q, r, s, t, u, v, x, w], 0));
 };
 cljs.core.MultiFn.cljs$lang$type = !0;
 cljs.core.MultiFn.cljs$lang$ctorStr = "cljs.core/MultiFn";
@@ -48575,9 +48575,9 @@ cljs.core.PersistentVector.prototype.schema$core$Schema$walker$arity$1 = functio
       for (var t = d, u = r, v = cljs.core.PersistentVector.EMPTY;;) {
         var x = cljs.core.first.call(null, t);
         if (cljs.core.truth_(x)) {
-          var w = x, C = cljs.core.nth.call(null, w, 0, null), P = cljs.core.nth.call(null, w, 1, null);
+          var w = x, D = cljs.core.nth.call(null, w, 0, null), I = cljs.core.nth.call(null, w, 1, null);
           if (cljs.core.empty_QMARK_.call(null, u)) {
-            return cljs.core.truth_(C.optional_QMARK_) ? v : f.call(null, v, schema.utils.error.call(null, schema.utils.__GT_ValidationError.call(null, cljs.core.vec.call(null, cljs.core.map.call(null, cljs.core.first, t)), null, new cljs.core.Delay(function(a, b, c, d, e, f, g, h, k, l, m, n, q, p, r) {
+            return cljs.core.truth_(D.optional_QMARK_) ? v : f.call(null, v, schema.utils.error.call(null, schema.utils.__GT_ValidationError.call(null, cljs.core.vec.call(null, cljs.core.map.call(null, cljs.core.first, t)), null, new cljs.core.Delay(function(a, b, c, d, e, f, g, h, k, l, m, n, q, p, r) {
               return function() {
                 return cljs.core.list_STAR_.call(null, new cljs.core.Symbol(null, "present?", "present?", -1810613791, null), function() {
                   return function(a, b, c, d, e, f, g, h, k, l, m, n, q, p, r) {
@@ -48620,11 +48620,11 @@ cljs.core.PersistentVector.prototype.schema$core$Schema$walker$arity$1 = functio
                   }(a, b, c, d, e, f, g, h, k, l, m, n, q, p, r).call(null, a);
                 }());
               };
-            }(t, u, v, w, C, P, x, s, a, b, c, d, e, f, g), null), null)));
+            }(t, u, v, w, D, I, x, s, a, b, c, d, e, f, g), null), null)));
           }
           t = cljs.core.next.call(null, t);
           x = cljs.core.rest.call(null, u);
-          v = f.call(null, v, schema.utils.wrap_error_name.call(null, C.name, P.call(null, cljs.core.first.call(null, u))));
+          v = f.call(null, v, schema.utils.wrap_error_name.call(null, D.name, I.call(null, cljs.core.first.call(null, u))));
           u = x;
         } else {
           return cljs.core.truth_(c) ? cljs.core.reduce.call(null, f, v, cljs.core.map.call(null, e, u)) : cljs.core.seq.call(null, u) ? f.call(null, v, schema.utils.error.call(null, schema.utils.__GT_ValidationError.call(null, null, u, new cljs.core.Delay(function(a, b, c, d, e, f, g, h, k, l, m, n) {
@@ -54556,8 +54556,8 @@ om.core.root = function(a, b, c) {
   b = (b ? b.cljs$lang$protocol_mask$partition1$ & 16384 || b.cljs$core$IAtom$ || (b.cljs$lang$protocol_mask$partition1$ ? 0 : cljs.core.native_satisfies_QMARK_.call(null, cljs.core.IAtom, b)) : cljs.core.native_satisfies_QMARK_.call(null, cljs.core.IAtom, b)) ? b : cljs.core.atom.call(null, b);
   var p = om.core.setup.call(null, b, n, l), q = cljs.core.truth_(f) ? f : cljs.core.identity, r = cljs.core.dissoc.call(null, d, new cljs.core.Keyword(null, "target", "target", 253001721), new cljs.core.Keyword(null, "tx-listen", "tx-listen", 119130367), new cljs.core.Keyword(null, "path", "path", -188191168), new cljs.core.Keyword(null, "adapt", "adapt", -1817022327), new cljs.core.Keyword(null, "raf", "raf", -1295410152)), s = cljs.core.atom.call(null, null), t = function(b, c, d, e, f, g, h, 
   k, l, m, n, q, p, r, s, t) {
-    return function K() {
-      cljs.core.swap_BANG_.call(null, om.core.refresh_set, cljs.core.disj, K);
+    return function L() {
+      cljs.core.swap_BANG_.call(null, om.core.refresh_set, cljs.core.disj, L);
       var c = cljs.core.deref.call(null, d), h = e.call(null, om.core.tag_root_key.call(null, null == r ? om.core.to_cursor.call(null, c, d, cljs.core.PersistentVector.EMPTY) : om.core.to_cursor.call(null, cljs.core.get_in.call(null, c, r), d, r), b));
       cljs.core.truth_(om.core._get_property.call(null, d, b, new cljs.core.Keyword(null, "skip-render-root", "skip-render-root", -5219643))) || (c = om.dom.render.call(null, function() {
         var c = om.core._STAR_descriptor_STAR_, e = om.core._STAR_instrument_STAR_, g = om.core._STAR_state_STAR_, k = om.core._STAR_root_key_STAR_;
@@ -54614,16 +54614,16 @@ om.core.root = function(a, b, c) {
           if (m < l) {
             s = cljs.core._nth.call(null, k, m);
             cljs.core.nth.call(null, s, 0, null);
-            for (var s = cljs.core.nth.call(null, s, 1, null), s = cljs.core.deref.call(null, s), s = cljs.core.seq.call(null, s), y = null, z = 0, B = 0;;) {
-              if (B < z) {
-                var J = cljs.core._nth.call(null, y, B);
-                cljs.core.nth.call(null, J, 0, null);
-                J = cljs.core.nth.call(null, J, 1, null);
-                cljs.core.truth_(J.shouldComponentUpdate(J.props, J.state)) && J.forceUpdate();
+            for (var s = cljs.core.nth.call(null, s, 1, null), s = cljs.core.deref.call(null, s), s = cljs.core.seq.call(null, s), z = null, y = 0, B = 0;;) {
+              if (B < y) {
+                var E = cljs.core._nth.call(null, z, B);
+                cljs.core.nth.call(null, E, 0, null);
+                E = cljs.core.nth.call(null, E, 1, null);
+                cljs.core.truth_(E.shouldComponentUpdate(E.props, E.state)) && E.forceUpdate();
                 B += 1;
               } else {
                 if (s = cljs.core.seq.call(null, s)) {
-                  cljs.core.chunked_seq_QMARK_.call(null, s) ? (z = cljs.core.chunk_first.call(null, s), s = cljs.core.chunk_rest.call(null, s), y = z, z = cljs.core.count.call(null, z)) : (y = cljs.core.first.call(null, s), cljs.core.nth.call(null, y, 0, null), y = cljs.core.nth.call(null, y, 1, null), cljs.core.truth_(y.shouldComponentUpdate(y.props, y.state)) && y.forceUpdate(), s = cljs.core.next.call(null, s), y = null, z = 0), B = 0;
+                  cljs.core.chunked_seq_QMARK_.call(null, s) ? (y = cljs.core.chunk_first.call(null, s), s = cljs.core.chunk_rest.call(null, s), z = y, y = cljs.core.count.call(null, y)) : (z = cljs.core.first.call(null, s), cljs.core.nth.call(null, z, 0, null), z = cljs.core.nth.call(null, z, 1, null), cljs.core.truth_(z.shouldComponentUpdate(z.props, z.state)) && z.forceUpdate(), s = cljs.core.next.call(null, s), z = null, y = 0), B = 0;
                 } else {
                   break;
                 }
@@ -54643,7 +54643,7 @@ om.core.root = function(a, b, c) {
                 l = null;
                 for (s = m = 0;;) {
                   if (s < m) {
-                    y = cljs.core._nth.call(null, l, s), cljs.core.nth.call(null, y, 0, null), y = cljs.core.nth.call(null, y, 1, null), cljs.core.truth_(y.shouldComponentUpdate(y.props, y.state)) && y.forceUpdate(), s += 1;
+                    z = cljs.core._nth.call(null, l, s), cljs.core.nth.call(null, z, 0, null), z = cljs.core.nth.call(null, z, 1, null), cljs.core.truth_(z.shouldComponentUpdate(z.props, z.state)) && z.forceUpdate(), s += 1;
                   } else {
                     if (k = cljs.core.seq.call(null, k)) {
                       cljs.core.chunked_seq_QMARK_.call(null, k) ? (m = cljs.core.chunk_first.call(null, k), k = cljs.core.chunk_rest.call(null, k), l = m, m = cljs.core.count.call(null, m)) : (l = cljs.core.first.call(null, k), cljs.core.nth.call(null, l, 0, null), l = cljs.core.nth.call(null, l, 1, null), cljs.core.truth_(l.shouldComponentUpdate(l.props, l.state)) && l.forceUpdate(), k = cljs.core.next.call(null, k), l = null, m = 0), s = 0;
@@ -54668,8 +54668,8 @@ om.core.root = function(a, b, c) {
     };
   }(n, b, p, q, r, s, c, d, d, e, f, g, h, k, l, m);
   cljs.core.add_watch.call(null, p, n, function(a, b, c, d, e, f, g, h, k, l, m, n, q, p, r, s, t) {
-    return function(K, M, O, L) {
-      cljs.core.not.call(null, om.core._get_property.call(null, c, a, new cljs.core.Keyword(null, "ignore", "ignore", -1631542033))) && O !== L && om.core._set_property_BANG_.call(null, c, a, new cljs.core.Keyword(null, "skip-render-root", "skip-render-root", -5219643), !1);
+    return function(L, N, O, M) {
+      cljs.core.not.call(null, om.core._get_property.call(null, c, a, new cljs.core.Keyword(null, "ignore", "ignore", -1631542033))) && O !== M && om.core._set_property_BANG_.call(null, c, a, new cljs.core.Keyword(null, "skip-render-root", "skip-render-root", -5219643), !1);
       om.core._set_property_BANG_.call(null, c, a, new cljs.core.Keyword(null, "ignore", "ignore", -1631542033), !1);
       cljs.core.contains_QMARK_.call(null, cljs.core.deref.call(null, om.core.refresh_set), g) || cljs.core.swap_BANG_.call(null, om.core.refresh_set, cljs.core.conj, g);
       if (cljs.core.truth_(om.core.refresh_queued)) {
@@ -58417,10 +58417,10 @@ cljs.core.async.mult = function mult(b) {
               return new cljs.core.Keyword(null, "recur", "recur", -437573268);
             }
             if (27 === k) {
-              var s = c[9], t = c[10], G = c[11], I = c[12], K = cljs.core._nth.call(null, t, G), M = cljs.core.async.put_BANG_.call(null, K, I, h);
-              c[9] = K;
+              var s = c[9], t = c[10], G = c[11], K = c[12], L = cljs.core._nth.call(null, t, G), N = cljs.core.async.put_BANG_.call(null, L, K, h);
+              c[9] = L;
               l = c;
-              cljs.core.truth_(M) ? l[1] = 30 : l[1] = 31;
+              cljs.core.truth_(N) ? l[1] = 30 : l[1] = 31;
               return new cljs.core.Keyword(null, "recur", "recur", -437573268);
             }
             if (1 === k) {
@@ -58430,12 +58430,12 @@ cljs.core.async.mult = function mult(b) {
               return new cljs.core.Keyword(null, "recur", "recur", -437573268);
             }
             if (24 === k) {
-              var q = c[7], L = c[2], N = cljs.core.next.call(null, q), Q = null, R = 0, S = 0;
-              c[13] = N;
+              var q = c[7], M = c[2], P = cljs.core.next.call(null, q), Q = null, R = 0, S = 0;
+              c[13] = P;
               c[14] = Q;
               c[15] = S;
               c[16] = R;
-              c[17] = L;
+              c[17] = M;
               var T = l = c;
               T[2] = null;
               T[1] = 8;
@@ -58448,15 +58448,15 @@ cljs.core.async.mult = function mult(b) {
               return new cljs.core.Keyword(null, "recur", "recur", -437573268);
             }
             if (4 === k) {
-              var I = c[12], U = c[2], La = null == U;
+              var K = c[12], U = c[2], La = null == U;
               c[12] = U;
               l = c;
               cljs.core.truth_(La) ? l[1] = 5 : l[1] = 6;
               return new cljs.core.Keyword(null, "recur", "recur", -437573268);
             }
             if (15 === k) {
-              var N = c[13], Q = c[14], S = c[15], R = c[16], Z = c[2], Ma = Q, Na = R, Oa = S + 1;
-              c[13] = N;
+              var P = c[13], Q = c[14], S = c[15], R = c[16], Z = c[2], Ma = Q, Na = R, Oa = S + 1;
+              c[13] = P;
               c[14] = Ma;
               c[15] = Oa;
               c[16] = Na;
@@ -58622,8 +58622,8 @@ cljs.core.async.mult = function mult(b) {
               return new cljs.core.Keyword(null, "recur", "recur", -437573268);
             }
             if (19 === k) {
-              var q = c[7], za = cljs.core.chunk_first.call(null, q), jb = cljs.core.chunk_rest.call(null, q), kb = cljs.core.count.call(null, za), N = jb, Q = za, R = kb, S = 0;
-              c[13] = N;
+              var q = c[7], za = cljs.core.chunk_first.call(null, q), jb = cljs.core.chunk_rest.call(null, q), kb = cljs.core.count.call(null, za), P = jb, Q = za, R = kb, S = 0;
+              c[13] = P;
               c[14] = Q;
               c[15] = S;
               c[16] = R;
@@ -58633,7 +58633,7 @@ cljs.core.async.mult = function mult(b) {
               return new cljs.core.Keyword(null, "recur", "recur", -437573268);
             }
             if (11 === k) {
-              var N = c[13], q = c[7], Ba = cljs.core.seq.call(null, N);
+              var P = c[13], q = c[7], Ba = cljs.core.seq.call(null, P);
               c[7] = Ba;
               l = c;
               l[1] = Ba ? 16 : 17;
@@ -58646,8 +58646,8 @@ cljs.core.async.mult = function mult(b) {
               return new cljs.core.Keyword(null, "recur", "recur", -437573268);
             }
             if (5 === k) {
-              var mb = cljs.core.deref.call(null, d), N = cljs.core.seq.call(null, mb), Q = null, S = R = 0;
-              c[13] = N;
+              var mb = cljs.core.deref.call(null, d), P = cljs.core.seq.call(null, mb), Q = null, S = R = 0;
+              c[13] = P;
               c[14] = Q;
               c[15] = S;
               c[16] = R;
@@ -58709,7 +58709,7 @@ cljs.core.async.mult = function mult(b) {
               return l = c, cljs.core.async.impl.ioc_helpers.take_BANG_.call(null, l, 45, f);
             }
             if (37 === k) {
-              var Y = c[25], ha = c[23], I = c[12], Ka = cljs.core.first.call(null, Y), ub = cljs.core.async.put_BANG_.call(null, Ka, I, h);
+              var Y = c[25], ha = c[23], K = c[12], Ka = cljs.core.first.call(null, Y), ub = cljs.core.async.put_BANG_.call(null, Ka, K, h);
               c[23] = Ka;
               l = c;
               cljs.core.truth_(ub) ? l[1] = 39 : l[1] = 40;
@@ -58938,7 +58938,7 @@ cljs.core.async.mix = function mix(b) {
   }(), n = cljs.core.async.chan.call(null, 1);
   cljs.core.async.impl.dispatch.run.call(null, function(c, d, e, f, g, h, k, l, m, n) {
     return function() {
-      var P = function() {
+      var I = function() {
         return function(b, c, d, e, f, g, h, k, l, m, q) {
           return function() {
             var c = null, d = function() {
@@ -59024,12 +59024,12 @@ cljs.core.async.mix = function mix(b) {
             -437573268)) : 8 === e ? (e = c[7], c[2] = e, c[1] = 9, new cljs.core.Keyword(null, "recur", "recur", -437573268)) : null;
           };
         }(c, d, e, f, g, h, k, l, m, n), c, d, e, f, g, h, k, l, m, n);
-      }(), J = function() {
-        var b = P.call(null);
+      }(), E = function() {
+        var b = I.call(null);
         b[cljs.core.async.impl.ioc_helpers.USER_START_IDX] = c;
         return b;
       }();
-      return cljs.core.async.impl.ioc_helpers.run_state_machine_wrapped.call(null, J);
+      return cljs.core.async.impl.ioc_helpers.run_state_machine_wrapped.call(null, E);
     };
   }(n, c, d, e, f, g, h, k, l, m));
   return m;
@@ -78399,25 +78399,25 @@ Blockly.Blocks.job = cljs.core.clj__GT_js.call(null, new cljs.core.PersistentArr
   this.setColour(160);
   this.setMutator(new Blockly.Mutator(["property-item"]));
   this.itemCount = 0;
-  this.appendDummyInput().appendField((new cljs.core.Keyword(null, "label", "label", 1718410804)).cljs$core$IFn$_invoke$arity$1(new cljs.core.PersistentArrayMap(null, 3, [new cljs.core.Keyword(null, "type", "type", 1174270348), new cljs.core.Keyword(null, "text", "text", -1790561697), new cljs.core.Keyword(null, "name", "name", 1843675177), "id", new cljs.core.Keyword(null, "label", "label", 1718410804), "Job"], null))).appendField(new Blockly.FieldTextInput(""), (new cljs.core.Keyword(null, "name", 
-  "name", 1843675177)).cljs$core$IFn$_invoke$arity$1(new cljs.core.PersistentArrayMap(null, 3, [new cljs.core.Keyword(null, "type", "type", 1174270348), new cljs.core.Keyword(null, "text", "text", -1790561697), new cljs.core.Keyword(null, "name", "name", 1843675177), "id", new cljs.core.Keyword(null, "label", "label", 1718410804), "Job"], null)));
+  this.appendDummyInput().appendField((new cljs.core.Keyword(null, "label", "label", 1718410804)).cljs$core$IFn$_invoke$arity$1(new cljs.core.PersistentArrayMap(null, 3, [new cljs.core.Keyword(null, "type", "type", 1174270348), new cljs.core.Keyword(null, "text", "text", -1790561697), new cljs.core.Keyword(null, "name", "name", 1843675177), "name", new cljs.core.Keyword(null, "label", "label", 1718410804), "Job"], null))).appendField(new Blockly.FieldTextInput(""), (new cljs.core.Keyword(null, "name", 
+  "name", 1843675177)).cljs$core$IFn$_invoke$arity$1(new cljs.core.PersistentArrayMap(null, 3, [new cljs.core.Keyword(null, "type", "type", 1174270348), new cljs.core.Keyword(null, "text", "text", -1790561697), new cljs.core.Keyword(null, "name", "name", 1843675177), "name", new cljs.core.Keyword(null, "label", "label", 1718410804), "Job"], null)));
   return this.appendStatementInput((new cljs.core.Keyword(null, "name", "name", 1843675177)).cljs$core$IFn$_invoke$arity$1(new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "type", "type", 1174270348), new cljs.core.Keyword(null, "statement", "statement", -32780863), new cljs.core.Keyword(null, "name", "name", 1843675177), "steps"], null)));
 }], null));
-for (var block_17705 = Blockly.Blocks.job, seq__17699_17706 = cljs.core.seq.call(null, job_streamer.console.blocks.mutate_behavior), chunk__17700_17707 = null, count__17701_17708 = 0, i__17702_17709 = 0;;) {
-  if (i__17702_17709 < count__17701_17708) {
-    var vec__17703_17710 = cljs.core._nth.call(null, chunk__17700_17707, i__17702_17709), k_17711 = cljs.core.nth.call(null, vec__17703_17710, 0, null), f_17712 = cljs.core.nth.call(null, vec__17703_17710, 1, null);
-    block_17705[cljs.core.name.call(null, k_17711)] = f_17712;
-    var G__17713 = seq__17699_17706, G__17714 = chunk__17700_17707, G__17715 = count__17701_17708, G__17716 = i__17702_17709 + 1, seq__17699_17706 = G__17713, chunk__17700_17707 = G__17714, count__17701_17708 = G__17715, i__17702_17709 = G__17716;
+for (var block_79168 = Blockly.Blocks.job, seq__79162_79169 = cljs.core.seq.call(null, job_streamer.console.blocks.mutate_behavior), chunk__79163_79170 = null, count__79164_79171 = 0, i__79165_79172 = 0;;) {
+  if (i__79165_79172 < count__79164_79171) {
+    var vec__79166_79173 = cljs.core._nth.call(null, chunk__79163_79170, i__79165_79172), k_79174 = cljs.core.nth.call(null, vec__79166_79173, 0, null), f_79175 = cljs.core.nth.call(null, vec__79166_79173, 1, null);
+    block_79168[cljs.core.name.call(null, k_79174)] = f_79175;
+    var G__79176 = seq__79162_79169, G__79177 = chunk__79163_79170, G__79178 = count__79164_79171, G__79179 = i__79165_79172 + 1, seq__79162_79169 = G__79176, chunk__79163_79170 = G__79177, count__79164_79171 = G__79178, i__79165_79172 = G__79179;
   } else {
-    var temp__4126__auto___17717 = cljs.core.seq.call(null, seq__17699_17706);
-    if (temp__4126__auto___17717) {
-      var seq__17699_17718__$1 = temp__4126__auto___17717;
-      if (cljs.core.chunked_seq_QMARK_.call(null, seq__17699_17718__$1)) {
-        var c__4770__auto___17719 = cljs.core.chunk_first.call(null, seq__17699_17718__$1), G__17720 = cljs.core.chunk_rest.call(null, seq__17699_17718__$1), G__17721 = c__4770__auto___17719, G__17722 = cljs.core.count.call(null, c__4770__auto___17719), G__17723 = 0, seq__17699_17706 = G__17720, chunk__17700_17707 = G__17721, count__17701_17708 = G__17722, i__17702_17709 = G__17723
+    var temp__4126__auto___79180 = cljs.core.seq.call(null, seq__79162_79169);
+    if (temp__4126__auto___79180) {
+      var seq__79162_79181__$1 = temp__4126__auto___79180;
+      if (cljs.core.chunked_seq_QMARK_.call(null, seq__79162_79181__$1)) {
+        var c__4770__auto___79182 = cljs.core.chunk_first.call(null, seq__79162_79181__$1), G__79183 = cljs.core.chunk_rest.call(null, seq__79162_79181__$1), G__79184 = c__4770__auto___79182, G__79185 = cljs.core.count.call(null, c__4770__auto___79182), G__79186 = 0, seq__79162_79169 = G__79183, chunk__79163_79170 = G__79184, count__79164_79171 = G__79185, i__79165_79172 = G__79186
       } else {
-        var vec__17704_17724 = cljs.core.first.call(null, seq__17699_17718__$1), k_17725 = cljs.core.nth.call(null, vec__17704_17724, 0, null), f_17726 = cljs.core.nth.call(null, vec__17704_17724, 1, null);
-        block_17705[cljs.core.name.call(null, k_17725)] = f_17726;
-        var G__17727 = cljs.core.next.call(null, seq__17699_17718__$1), G__17728 = null, G__17729 = 0, G__17730 = 0, seq__17699_17706 = G__17727, chunk__17700_17707 = G__17728, count__17701_17708 = G__17729, i__17702_17709 = G__17730;
+        var vec__79167_79187 = cljs.core.first.call(null, seq__79162_79181__$1), k_79188 = cljs.core.nth.call(null, vec__79167_79187, 0, null), f_79189 = cljs.core.nth.call(null, vec__79167_79187, 1, null);
+        block_79168[cljs.core.name.call(null, k_79188)] = f_79189;
+        var G__79190 = cljs.core.next.call(null, seq__79162_79181__$1), G__79191 = null, G__79192 = 0, G__79193 = 0, seq__79162_79169 = G__79190, chunk__79163_79170 = G__79191, count__79164_79171 = G__79192, i__79165_79172 = G__79193;
       }
     } else {
       break;
@@ -78430,27 +78430,27 @@ Blockly.Blocks.step = cljs.core.clj__GT_js.call(null, new cljs.core.PersistentAr
   this.setNextStatement(!0);
   this.setMutator(new Blockly.Mutator(["property-item"]));
   this.itemCount = 0;
-  this.appendDummyInput().appendField((new cljs.core.Keyword(null, "label", "label", 1718410804)).cljs$core$IFn$_invoke$arity$1(new cljs.core.PersistentArrayMap(null, 3, [new cljs.core.Keyword(null, "type", "type", 1174270348), new cljs.core.Keyword(null, "text", "text", -1790561697), new cljs.core.Keyword(null, "name", "name", 1843675177), "id", new cljs.core.Keyword(null, "label", "label", 1718410804), "Step"], null))).appendField(new Blockly.FieldTextInput(""), (new cljs.core.Keyword(null, "name", 
-  "name", 1843675177)).cljs$core$IFn$_invoke$arity$1(new cljs.core.PersistentArrayMap(null, 3, [new cljs.core.Keyword(null, "type", "type", 1174270348), new cljs.core.Keyword(null, "text", "text", -1790561697), new cljs.core.Keyword(null, "name", "name", 1843675177), "id", new cljs.core.Keyword(null, "label", "label", 1718410804), "Step"], null)));
+  this.appendDummyInput().appendField((new cljs.core.Keyword(null, "label", "label", 1718410804)).cljs$core$IFn$_invoke$arity$1(new cljs.core.PersistentArrayMap(null, 3, [new cljs.core.Keyword(null, "type", "type", 1174270348), new cljs.core.Keyword(null, "text", "text", -1790561697), new cljs.core.Keyword(null, "name", "name", 1843675177), "name", new cljs.core.Keyword(null, "label", "label", 1718410804), "Step"], null))).appendField(new Blockly.FieldTextInput(""), (new cljs.core.Keyword(null, "name", 
+  "name", 1843675177)).cljs$core$IFn$_invoke$arity$1(new cljs.core.PersistentArrayMap(null, 3, [new cljs.core.Keyword(null, "type", "type", 1174270348), new cljs.core.Keyword(null, "text", "text", -1790561697), new cljs.core.Keyword(null, "name", "name", 1843675177), "name", new cljs.core.Keyword(null, "label", "label", 1718410804), "Step"], null)));
   return this.appendValueInput((new cljs.core.Keyword(null, "name", "name", 1843675177)).cljs$core$IFn$_invoke$arity$1(new cljs.core.PersistentArrayMap(null, 4, [new cljs.core.Keyword(null, "type", "type", 1174270348), new cljs.core.Keyword(null, "value-input", "value-input", 738715483), new cljs.core.Keyword(null, "name", "name", 1843675177), "step-component", new cljs.core.Keyword(null, "label", "label", 1718410804), "", new cljs.core.Keyword(null, "acceptable", "acceptable", -1772335575), new cljs.core.PersistentVector(null, 
   2, 5, cljs.core.PersistentVector.EMPTY_NODE, ["Batchlet", "Chunk"], null)], null))).appendField((new cljs.core.Keyword(null, "label", "label", 1718410804)).cljs$core$IFn$_invoke$arity$1(new cljs.core.PersistentArrayMap(null, 4, [new cljs.core.Keyword(null, "type", "type", 1174270348), new cljs.core.Keyword(null, "value-input", "value-input", 738715483), new cljs.core.Keyword(null, "name", "name", 1843675177), "step-component", new cljs.core.Keyword(null, "label", "label", 1718410804), "", new cljs.core.Keyword(null, 
   "acceptable", "acceptable", -1772335575), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, ["Batchlet", "Chunk"], null)], null)));
 }], null));
-for (var block_17738 = Blockly.Blocks.step, seq__17732_17739 = cljs.core.seq.call(null, job_streamer.console.blocks.mutate_behavior), chunk__17733_17740 = null, count__17734_17741 = 0, i__17735_17742 = 0;;) {
-  if (i__17735_17742 < count__17734_17741) {
-    var vec__17736_17743 = cljs.core._nth.call(null, chunk__17733_17740, i__17735_17742), k_17744 = cljs.core.nth.call(null, vec__17736_17743, 0, null), f_17745 = cljs.core.nth.call(null, vec__17736_17743, 1, null);
-    block_17738[cljs.core.name.call(null, k_17744)] = f_17745;
-    var G__17746 = seq__17732_17739, G__17747 = chunk__17733_17740, G__17748 = count__17734_17741, G__17749 = i__17735_17742 + 1, seq__17732_17739 = G__17746, chunk__17733_17740 = G__17747, count__17734_17741 = G__17748, i__17735_17742 = G__17749;
+for (var block_79201 = Blockly.Blocks.step, seq__79195_79202 = cljs.core.seq.call(null, job_streamer.console.blocks.mutate_behavior), chunk__79196_79203 = null, count__79197_79204 = 0, i__79198_79205 = 0;;) {
+  if (i__79198_79205 < count__79197_79204) {
+    var vec__79199_79206 = cljs.core._nth.call(null, chunk__79196_79203, i__79198_79205), k_79207 = cljs.core.nth.call(null, vec__79199_79206, 0, null), f_79208 = cljs.core.nth.call(null, vec__79199_79206, 1, null);
+    block_79201[cljs.core.name.call(null, k_79207)] = f_79208;
+    var G__79209 = seq__79195_79202, G__79210 = chunk__79196_79203, G__79211 = count__79197_79204, G__79212 = i__79198_79205 + 1, seq__79195_79202 = G__79209, chunk__79196_79203 = G__79210, count__79197_79204 = G__79211, i__79198_79205 = G__79212;
   } else {
-    var temp__4126__auto___17750 = cljs.core.seq.call(null, seq__17732_17739);
-    if (temp__4126__auto___17750) {
-      var seq__17732_17751__$1 = temp__4126__auto___17750;
-      if (cljs.core.chunked_seq_QMARK_.call(null, seq__17732_17751__$1)) {
-        var c__4770__auto___17752 = cljs.core.chunk_first.call(null, seq__17732_17751__$1), G__17753 = cljs.core.chunk_rest.call(null, seq__17732_17751__$1), G__17754 = c__4770__auto___17752, G__17755 = cljs.core.count.call(null, c__4770__auto___17752), G__17756 = 0, seq__17732_17739 = G__17753, chunk__17733_17740 = G__17754, count__17734_17741 = G__17755, i__17735_17742 = G__17756
+    var temp__4126__auto___79213 = cljs.core.seq.call(null, seq__79195_79202);
+    if (temp__4126__auto___79213) {
+      var seq__79195_79214__$1 = temp__4126__auto___79213;
+      if (cljs.core.chunked_seq_QMARK_.call(null, seq__79195_79214__$1)) {
+        var c__4770__auto___79215 = cljs.core.chunk_first.call(null, seq__79195_79214__$1), G__79216 = cljs.core.chunk_rest.call(null, seq__79195_79214__$1), G__79217 = c__4770__auto___79215, G__79218 = cljs.core.count.call(null, c__4770__auto___79215), G__79219 = 0, seq__79195_79202 = G__79216, chunk__79196_79203 = G__79217, count__79197_79204 = G__79218, i__79198_79205 = G__79219
       } else {
-        var vec__17737_17757 = cljs.core.first.call(null, seq__17732_17751__$1), k_17758 = cljs.core.nth.call(null, vec__17737_17757, 0, null), f_17759 = cljs.core.nth.call(null, vec__17737_17757, 1, null);
-        block_17738[cljs.core.name.call(null, k_17758)] = f_17759;
-        var G__17760 = cljs.core.next.call(null, seq__17732_17751__$1), G__17761 = null, G__17762 = 0, G__17763 = 0, seq__17732_17739 = G__17760, chunk__17733_17740 = G__17761, count__17734_17741 = G__17762, i__17735_17742 = G__17763;
+        var vec__79200_79220 = cljs.core.first.call(null, seq__79195_79214__$1), k_79221 = cljs.core.nth.call(null, vec__79200_79220, 0, null), f_79222 = cljs.core.nth.call(null, vec__79200_79220, 1, null);
+        block_79201[cljs.core.name.call(null, k_79221)] = f_79222;
+        var G__79223 = cljs.core.next.call(null, seq__79195_79214__$1), G__79224 = null, G__79225 = 0, G__79226 = 0, seq__79195_79202 = G__79223, chunk__79196_79203 = G__79224, count__79197_79204 = G__79225, i__79198_79205 = G__79226;
       }
     } else {
       break;
@@ -78650,20 +78650,22 @@ job_streamer.console.api.request = function() {
   return a;
 }();
 job_streamer.console.search = {};
+job_streamer.console.search.app_name = "default";
 job_streamer.console.search.search_jobs = function(a, b) {
-  return job_streamer.console.api.request.call(null, [cljs.core.str("/jobs?q\x3d"), cljs.core.str(encodeURIComponent(b))].join(""), new cljs.core.Keyword(null, "GET", "GET", 1736591026), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "handler", "handler", -195596612), function(b) {
+  return job_streamer.console.api.request.call(null, [cljs.core.str("/"), cljs.core.str(job_streamer.console.search.app_name), cljs.core.str("/jobs?q\x3d"), cljs.core.str(encodeURIComponent(b))].join(""), new cljs.core.Keyword(null, "GET", "GET", 1736591026), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "handler", "handler", -195596612), function(b) {
     return om.core.update_BANG_.call(null, a, new cljs.core.Keyword(null, "jobs", "jobs", -313607120), b);
   }], null));
 };
 job_streamer.console.components = {};
 job_streamer.console.components.job_settings = {};
+job_streamer.console.components.job_settings.app_name = "default";
 job_streamer.console.components.job_settings.delete_job = function(a) {
-  return job_streamer.console.api.request.call(null, [cljs.core.str("/job/"), cljs.core.str(a)].join(""), new cljs.core.Keyword(null, "DELETE", "DELETE", 1688673772), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "handler", "handler", -195596612), function(a) {
+  return job_streamer.console.api.request.call(null, [cljs.core.str("/"), cljs.core.str(job_streamer.console.components.job_settings.app_name), cljs.core.str("/job/"), cljs.core.str(a)].join(""), new cljs.core.Keyword(null, "DELETE", "DELETE", 1688673772), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "handler", "handler", -195596612), function(a) {
     return location.href = "#/";
   }], null));
 };
-var ufv___17329 = schema.utils.use_fn_validation, output_schema17309_17330 = schema.core.Any, input_schema17310_17331 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "app", "app", 1079569820, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker17311_17332 = schema.core.checker.call(null, input_schema17310_17331), 
-output_checker17312_17333 = schema.core.checker.call(null, output_schema17309_17330);
+var ufv___73825 = schema.utils.use_fn_validation, output_schema73805_73826 = schema.core.Any, input_schema73806_73827 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "app", "app", 1079569820, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker73807_73828 = schema.core.checker.call(null, input_schema73806_73827), 
+output_checker73808_73829 = schema.core.checker.call(null, output_schema73805_73826);
 job_streamer.console.components.job_settings.job_settings_view = function(a, b, c, d, e) {
   return function g(h, k) {
     var l = a.get_cell();
@@ -78676,26 +78678,26 @@ job_streamer.console.components.job_settings.job_settings_view = function(a, b, 
     }
     m = function() {
       for (;;) {
-        return "undefined" === typeof job_streamer.console.components.job_settings.t17322 && (job_streamer.console.components.job_settings.t17322 = function(a, b, c, d, e, g, h, k, l, m, n, J) {
-          this.G__17313 = a;
-          this.output_checker17312 = b;
-          this.owner = c;
-          this.validate__11398__auto__ = d;
-          this.job_settings_view = e;
-          this.G__17314 = g;
-          this.input_checker17311 = h;
-          this.input_schema17310 = k;
-          this.output_schema17309 = l;
-          this.app = m;
+        return "undefined" === typeof job_streamer.console.components.job_settings.t73818 && (job_streamer.console.components.job_settings.t73818 = function(a, b, c, d, e, g, h, k, l, m, n, E) {
+          this.output_checker73808 = a;
+          this.owner = b;
+          this.validate__11398__auto__ = c;
+          this.job_settings_view = d;
+          this.output_schema73805 = e;
+          this.input_checker73807 = g;
+          this.G__73809 = h;
+          this.input_schema73806 = k;
+          this.app = l;
+          this.G__73810 = m;
           this.ufv__ = n;
-          this.meta17323 = J;
+          this.meta73819 = E;
           this.cljs$lang$protocol_mask$partition1$ = 0;
           this.cljs$lang$protocol_mask$partition0$ = 393216;
-        }, job_streamer.console.components.job_settings.t17322.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.job_settings.t17322.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
+        }, job_streamer.console.components.job_settings.t73818.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.job_settings.t73818.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
             return "job-settings-view";
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_settings.t17322.prototype.om$core$IRender$ = !0, job_streamer.console.components.job_settings.t17322.prototype.om$core$IRender$render$arity$1 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_settings.t73818.prototype.om$core$IRender$ = !0, job_streamer.console.components.job_settings.t73818.prototype.om$core$IRender$render$arity$1 = function(a, b, c, d, e, g) {
           return function(h) {
             var k = this;
             return React.DOM.div({className:"ui segment"}, React.DOM.div({className:"ui top attached label"}, "Danger Zone"), React.DOM.div({className:"content"}, React.DOM.h4({className:"ui header"}, "Delete this job"), "Once you delete a job, there is no going back.", React.DOM.button({className:"ui red button", type:"button", onClick:function(a, b, c, d, e, g, h) {
@@ -78704,23 +78706,23 @@ job_streamer.console.components.job_settings.job_settings_view = function(a, b, 
               };
             }(this, a, b, c, d, e, g)}, "Delete this job")));
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_settings.t17322.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_settings.t73818.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
-            return this.meta17323;
+            return this.meta73819;
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_settings.t17322.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_settings.t73818.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
           return function(a, b) {
-            return new job_streamer.console.components.job_settings.t17322(this.G__17313, this.output_checker17312, this.owner, this.validate__11398__auto__, this.job_settings_view, this.G__17314, this.input_checker17311, this.input_schema17310, this.output_schema17309, this.app, this.ufv__, b);
+            return new job_streamer.console.components.job_settings.t73818(this.output_checker73808, this.owner, this.validate__11398__auto__, this.job_settings_view, this.output_schema73805, this.input_checker73807, this.G__73809, this.input_schema73806, this.app, this.G__73810, this.ufv__, b);
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_settings.t17322.cljs$lang$type = !0, job_streamer.console.components.job_settings.t17322.cljs$lang$ctorStr = "job-streamer.console.components.job-settings/t17322", job_streamer.console.components.job_settings.t17322.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_settings.t73818.cljs$lang$type = !0, job_streamer.console.components.job_settings.t73818.cljs$lang$ctorStr = "job-streamer.console.components.job-settings/t73818", job_streamer.console.components.job_settings.t73818.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
           return function(a, b, c) {
-            return cljs.core._write.call(null, b, "job-streamer.console.components.job-settings/t17322");
+            return cljs.core._write.call(null, b, "job-streamer.console.components.job-settings/t73818");
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_settings.__GT_t17322 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_settings.__GT_t73818 = function(a, b, c, d, e, g) {
           return function(a, b, c, d, e, g, h, k, l, m, n, p) {
-            return new job_streamer.console.components.job_settings.t17322(a, b, c, d, e, g, h, k, l, m, n, p);
+            return new job_streamer.console.components.job_settings.t73818(a, b, c, d, e, g, h, k, l, m, n, p);
           };
-        }(l, a, b, c, d, e)), new job_streamer.console.components.job_settings.t17322(h, e, k, l, g, k, d, c, b, h, a, null);
+        }(l, a, b, c, d, e)), new job_streamer.console.components.job_settings.t73818(e, k, l, g, b, d, h, c, h, k, a, null);
       }
     }();
     if (cljs.core.truth_(l) && (n = e.call(null, m), cljs.core.truth_(n))) {
@@ -78729,8 +78731,8 @@ job_streamer.console.components.job_settings.job_settings_view = function(a, b, 
     }
     return m;
   };
-}(ufv___17329, output_schema17309_17330, input_schema17310_17331, input_checker17311_17332, output_checker17312_17333);
-schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.job_settings.job_settings_view), schema.core.make_fn_schema.call(null, output_schema17309_17330, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema17310_17331], null)));
+}(ufv___73825, output_schema73805_73826, input_schema73806_73827, input_checker73807_73828, output_checker73808_73829);
+schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.job_settings.job_settings_view), schema.core.make_fn_schema.call(null, output_schema73805_73826, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema73806_73827], null)));
 job_streamer.console.components.job_settings.__GT_job_settings_view = function() {
   var a = null, b = function(a) {
     return om.core.build.call(null, job_streamer.console.components.job_settings.job_settings_view, a);
@@ -78764,7 +78766,7 @@ job_streamer.console.components.execution.execution_view = function(a, b, c, d, 
     }
     m = function() {
       for (;;) {
-        return "undefined" === typeof job_streamer.console.components.execution.t17553 && (job_streamer.console.components.execution.t17553 = function(a, b, c, d, e, g, h, k, l, m, n, J) {
+        return "undefined" === typeof job_streamer.console.components.execution.t17553 && (job_streamer.console.components.execution.t17553 = function(a, b, c, d, e, g, h, k, l, m, n, E) {
           this.output_schema17503 = a;
           this.owner = b;
           this.input_schema17504 = c;
@@ -78776,7 +78778,7 @@ job_streamer.console.components.execution.execution_view = function(a, b, c, d, 
           this.G__17507 = l;
           this.execution_view = m;
           this.ufv__ = n;
-          this.meta17554 = J;
+          this.meta17554 = E;
           this.cljs$lang$protocol_mask$partition1$ = 0;
           this.cljs$lang$protocol_mask$partition0$ = 393216;
         }, job_streamer.console.components.execution.t17553.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.execution.t17553.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
@@ -78788,7 +78790,7 @@ job_streamer.console.components.execution.execution_view = function(a, b, c, d, 
             var k = this, l = this;
             return React.DOM.div({className:"ui list step-view"}, cljs.core.into_array.call(null, function() {
               return function(a, b, c, d, e, g, h) {
-                return function E(k) {
+                return function C(k) {
                   return new cljs.core.LazySeq(null, function(a, b, c, d, e, g, h) {
                     return function() {
                       for (;;) {
@@ -78891,7 +78893,7 @@ job_streamer.console.components.execution.execution_view = function(a, b, c, d, 
                                   return!0;
                                 }
                               }
-                            }() ? cljs.core.chunk_cons.call(null, cljs.core.chunk.call(null, q), E.call(null, cljs.core.chunk_rest.call(null, m))) : cljs.core.chunk_cons.call(null, cljs.core.chunk.call(null, q), null);
+                            }() ? cljs.core.chunk_cons.call(null, cljs.core.chunk.call(null, q), C.call(null, cljs.core.chunk_rest.call(null, m))) : cljs.core.chunk_cons.call(null, cljs.core.chunk.call(null, q), null);
                           }
                           var r = cljs.core.first.call(null, m);
                           return cljs.core.cons.call(null, React.DOM.div({className:"item"}, React.DOM.div({className:"top aligned image"}, React.DOM.i({className:"play icon"})), React.DOM.div({className:"content"}, function() {
@@ -78978,7 +78980,7 @@ job_streamer.console.components.execution.execution_view = function(a, b, c, d, 
                                 }(a, b, c, d, e, g, h, k, l, m), null, null);
                               };
                             }(r, m, l, a, b, c, d, e, g, h).call(null, (new cljs.core.Keyword("step-execution", "logs", "step-execution/logs", -427669553)).cljs$core$IFn$_invoke$arity$1(r));
-                          }())))), E.call(null, cljs.core.rest.call(null, m)));
+                          }())))), C.call(null, cljs.core.rest.call(null, m)));
                         }
                         return null;
                       }
@@ -79039,8 +79041,9 @@ job_streamer.console.validators.more_than_one = cljs.core.with_meta.call(null, f
 }, new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "validator", "validator", -1966190681), new cljs.core.Keyword("job-streamer.console.validators", "more-than-one", "job-streamer.console.validators/more-than-one", -255711901), new cljs.core.Keyword(null, "default-message-format", "default-message-format", 179806141), "%s must be more than one."], null));
 job_streamer.console.components.job_detail = {};
 cljs.core.enable_console_print_BANG_.call(null);
+job_streamer.console.components.job_detail.app_name = "default";
 job_streamer.console.components.job_detail.save_job_control_bus = function(a, b, c) {
-  var d = cljs.core.first.call(null, bouncer.core.validate.call(null, a, new cljs.core.Keyword("job", "id", "job/id", -1388425577), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [bouncer.validators.required, new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [bouncer.validators.matches, /^[\w\-]+$/], null)], null), new cljs.core.Keyword("job", "steps", "job/steps", -128331987), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, 
+  var d = cljs.core.first.call(null, bouncer.core.validate.call(null, a, new cljs.core.Keyword("job", "name", "job/name", 1843780588), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [bouncer.validators.required, new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [bouncer.validators.matches, /^[\w\-]+$/], null)], null), new cljs.core.Keyword("job", "steps", "job/steps", -128331987), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, 
   [job_streamer.console.validators.more_than_one], null)));
   return cljs.core.truth_(d) ? om.core.set_state_BANG_.call(null, b, new cljs.core.Keyword(null, "message", "message", -406056002), new cljs.core.PersistentArrayMap(null, 3, [new cljs.core.Keyword(null, "class", "class", -2030961996), "error", new cljs.core.Keyword(null, "header", "header", 119441134), "Invalid job format", new cljs.core.Keyword(null, "body", "body", -2049205669), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "ul", 
   "ul", -1349521403), function() {
@@ -79082,7 +79085,8 @@ job_streamer.console.components.job_detail.save_job_control_bus = function(a, b,
         return cljs.core.map_QMARK_.call(null, a) ? cljs.core.vals.call(null, a) : a;
       };
     }(a, d, d), d)));
-  }()], null)], null)) : job_streamer.console.api.request.call(null, cljs.core.truth_(c) ? [cljs.core.str("/job/"), cljs.core.str(c)].join("") : "/jobs", cljs.core.truth_(c) ? new cljs.core.Keyword(null, "PUT", "PUT", -1841999943) : new cljs.core.Keyword(null, "POST", "POST", 110456857), a, new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "handler", "handler", -195596612), function(a) {
+  }()], null)], null)) : job_streamer.console.api.request.call(null, [cljs.core.str("/"), cljs.core.str(job_streamer.console.components.job_detail.app_name), cljs.core.str(cljs.core.truth_(c) ? [cljs.core.str("/job/"), cljs.core.str(c)].join("") : "/jobs")].join(""), cljs.core.truth_(c) ? new cljs.core.Keyword(null, "PUT", "PUT", -1841999943) : new cljs.core.Keyword(null, "POST", "POST", 110456857), a, new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "handler", "handler", -195596612), 
+  function(a) {
     return function(a) {
       return om.core.set_state_BANG_.call(null, b, new cljs.core.Keyword(null, "message", "message", -406056002), new cljs.core.PersistentArrayMap(null, 3, [new cljs.core.Keyword(null, "class", "class", -2030961996), "success", new cljs.core.Keyword(null, "header", "header", 119441134), "Save successful", new cljs.core.Keyword(null, "body", "body", -2049205669), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "p", "p", 151049309), "If you back to list, click a breadcrumb menu."], 
       null)], null));
@@ -79103,7 +79107,7 @@ job_streamer.console.components.job_detail.save_job = function(a, b, c) {
   }(d, e), new cljs.core.Keyword(null, "format", "format", -1306924766), new cljs.core.Keyword(null, "xml", "xml", -1170142052)], null));
 };
 job_streamer.console.components.job_detail.search_execution = function(a, b, c, d) {
-  return job_streamer.console.api.request.call(null, [cljs.core.str("/job/"), cljs.core.str(b), cljs.core.str("/execution/"), cljs.core.str(c)].join(""), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "handler", "handler", -195596612), function(b) {
+  return job_streamer.console.api.request.call(null, [cljs.core.str("/"), cljs.core.str(job_streamer.console.components.job_detail.app_name), cljs.core.str("/job/"), cljs.core.str(b), cljs.core.str("/execution/"), cljs.core.str(c)].join(""), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "handler", "handler", -195596612), function(b) {
     b = (new cljs.core.Keyword("job-execution", "step-executions", "job-execution/step-executions", -1002976124)).cljs$core$IFn$_invoke$arity$1(b);
     return om.core.update_state_BANG_.call(null, a, new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "executions", "executions", 1302642273), d], null), function(a) {
       return function(b) {
@@ -79113,27 +79117,27 @@ job_streamer.console.components.job_detail.search_execution = function(a, b, c, 
   }], null));
 };
 job_streamer.console.components.job_detail.schedule_job = function(a, b, c, d, e) {
-  return job_streamer.console.api.request.call(null, [cljs.core.str("/job/"), cljs.core.str((new cljs.core.Keyword("job", "id", "job/id", -1388425577)).cljs$core$IFn$_invoke$arity$1(a)), cljs.core.str("/schedule")].join(""), new cljs.core.Keyword(null, "POST", "POST", 110456857), new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword("job", "id", "job/id", -1388425577), (new cljs.core.Keyword("job", "id", "job/id", -1388425577)).cljs$core$IFn$_invoke$arity$1(a), new cljs.core.Keyword("schedule", 
-  "cron-notation", "schedule/cron-notation", -303220655), b], null), new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "handler", "handler", -195596612), function(b) {
-    cljs.core.async.put_BANG_.call(null, c, (new cljs.core.Keyword("job", "id", "job/id", -1388425577)).cljs$core$IFn$_invoke$arity$1(a));
+  return job_streamer.console.api.request.call(null, [cljs.core.str("/"), cljs.core.str(job_streamer.console.components.job_detail.app_name), cljs.core.str("/job/"), cljs.core.str((new cljs.core.Keyword("job", "name", "job/name", 1843780588)).cljs$core$IFn$_invoke$arity$1(a)), cljs.core.str("/schedule")].join(""), new cljs.core.Keyword(null, "POST", "POST", 110456857), new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword("job", "name", "job/name", 1843780588), (new cljs.core.Keyword("job", 
+  "name", "job/name", 1843780588)).cljs$core$IFn$_invoke$arity$1(a), new cljs.core.Keyword("schedule", "cron-notation", "schedule/cron-notation", -303220655), b], null), new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "handler", "handler", -195596612), function(b) {
+    cljs.core.async.put_BANG_.call(null, c, (new cljs.core.Keyword("job", "name", "job/name", 1843780588)).cljs$core$IFn$_invoke$arity$1(a));
     return cljs.core.async.put_BANG_.call(null, d, !1);
   }, new cljs.core.Keyword(null, "error-handler", "error-handler", -484945776), function(a) {
     return cljs.core.async.put_BANG_.call(null, e, a);
   }], null));
 };
 job_streamer.console.components.job_detail.pause_schedule = function(a, b, c) {
-  return job_streamer.console.api.request.call(null, [cljs.core.str("/job/"), cljs.core.str((new cljs.core.Keyword("job", "id", "job/id", -1388425577)).cljs$core$IFn$_invoke$arity$1(a)), cljs.core.str("/schedule/pause")].join(""), new cljs.core.Keyword(null, "PUT", "PUT", -1841999943), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "handler", "handler", -195596612), function(b) {
-    return cljs.core.async.put_BANG_.call(null, c, (new cljs.core.Keyword("job", "id", "job/id", -1388425577)).cljs$core$IFn$_invoke$arity$1(a));
+  return job_streamer.console.api.request.call(null, [cljs.core.str("/"), cljs.core.str(job_streamer.console.components.job_detail.app_name), cljs.core.str("/job/"), cljs.core.str((new cljs.core.Keyword("job", "name", "job/name", 1843780588)).cljs$core$IFn$_invoke$arity$1(a)), cljs.core.str("/schedule/pause")].join(""), new cljs.core.Keyword(null, "PUT", "PUT", -1841999943), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "handler", "handler", -195596612), function(b) {
+    return cljs.core.async.put_BANG_.call(null, c, (new cljs.core.Keyword("job", "name", "job/name", 1843780588)).cljs$core$IFn$_invoke$arity$1(a));
   }], null));
 };
 job_streamer.console.components.job_detail.resume_schedule = function(a, b, c) {
-  return job_streamer.console.api.request.call(null, [cljs.core.str("/job/"), cljs.core.str((new cljs.core.Keyword("job", "id", "job/id", -1388425577)).cljs$core$IFn$_invoke$arity$1(a)), cljs.core.str("/schedule/resume")].join(""), new cljs.core.Keyword(null, "PUT", "PUT", -1841999943), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "handler", "handler", -195596612), function(b) {
-    return cljs.core.async.put_BANG_.call(null, c, (new cljs.core.Keyword("job", "id", "job/id", -1388425577)).cljs$core$IFn$_invoke$arity$1(a));
+  return job_streamer.console.api.request.call(null, [cljs.core.str("/"), cljs.core.str(job_streamer.console.components.job_detail.app_name), cljs.core.str("/job/"), cljs.core.str((new cljs.core.Keyword("job", "name", "job/name", 1843780588)).cljs$core$IFn$_invoke$arity$1(a)), cljs.core.str("/schedule/resume")].join(""), new cljs.core.Keyword(null, "PUT", "PUT", -1841999943), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "handler", "handler", -195596612), function(b) {
+    return cljs.core.async.put_BANG_.call(null, c, (new cljs.core.Keyword("job", "name", "job/name", 1843780588)).cljs$core$IFn$_invoke$arity$1(a));
   }], null));
 };
 job_streamer.console.components.job_detail.drop_schedule = function(a, b, c) {
-  return job_streamer.console.api.request.call(null, [cljs.core.str("/job/"), cljs.core.str((new cljs.core.Keyword("job", "id", "job/id", -1388425577)).cljs$core$IFn$_invoke$arity$1(a)), cljs.core.str("/schedule")].join(""), new cljs.core.Keyword(null, "DELETE", "DELETE", 1688673772), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "handler", "handler", -195596612), function(b) {
-    return cljs.core.async.put_BANG_.call(null, c, (new cljs.core.Keyword("job", "id", "job/id", -1388425577)).cljs$core$IFn$_invoke$arity$1(a));
+  return job_streamer.console.api.request.call(null, [cljs.core.str("/"), cljs.core.str(job_streamer.console.components.job_detail.app_name), cljs.core.str("/job/"), cljs.core.str((new cljs.core.Keyword("job", "name", "job/name", 1843780588)).cljs$core$IFn$_invoke$arity$1(a)), cljs.core.str("/schedule")].join(""), new cljs.core.Keyword(null, "DELETE", "DELETE", 1688673772), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "handler", "handler", -195596612), function(b) {
+    return cljs.core.async.put_BANG_.call(null, c, (new cljs.core.Keyword("job", "name", "job/name", 1843780588)).cljs$core$IFn$_invoke$arity$1(a));
   }], null));
 };
 job_streamer.console.components.job_detail.render_job_structure = function(a, b) {
@@ -79217,19 +79221,29 @@ job_streamer.console.components.job_detail.render_job_structure = function(a, b)
       return cljs.core.async.impl.ioc_helpers.run_state_machine_wrapped.call(null, f);
     };
   }(e, c, d));
-  job_streamer.console.api.request.call(null, [cljs.core.str("/job/"), cljs.core.str(a)].join(""), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "handler", "handler", -195596612), function(a, b) {
+  job_streamer.console.api.request.call(null, [cljs.core.str("/"), cljs.core.str(job_streamer.console.components.job_detail.app_name), cljs.core.str("/job/"), cljs.core.str(a)].join(""), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "handler", "handler", -195596612), function(a, b) {
     return function(a) {
       return cljs.core.async.put_BANG_.call(null, b, a);
     };
   }(c, d)], null));
   return Blockly.inject.call(null, document.getElementById("job-blocks-inner"), cljs.core.clj__GT_js.call(null, new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "toolbox", "toolbox", 762819836), "\x3cxml\x3e\x3c/xml\x3e", new cljs.core.Keyword(null, "readOnly", "readOnly", -1749118317), !0], null)));
 };
+job_streamer.console.components.job_detail.status_color = function(a) {
+  switch(a instanceof cljs.core.Keyword ? a.fqn : null) {
+    case "batch-status/failed":
+      return "red";
+    case "batch-status/completed":
+      return "green";
+    default:
+      throw Error([cljs.core.str("No matching clause: "), cljs.core.str(a)].join(""));;
+  }
+};
 job_streamer.console.components.job_detail.breadcrumb_elements = new cljs.core.PersistentArrayMap(null, 6, [new cljs.core.Keyword(null, "jobs", "jobs", -313607120), new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "name", "name", 1843675177), "Jobs", new cljs.core.Keyword(null, "href", "href", -793805698), "#/"], null), new cljs.core.Keyword(null, "jobs.new", "jobs.new", 617188098), new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "name", "name", 1843675177), 
 "New", new cljs.core.Keyword(null, "href", "href", -793805698), "#/jobs/new"], null), new cljs.core.Keyword(null, "jobs.detail", "jobs.detail", -2009404242), new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "name", "name", 1843675177), "Job: %s", new cljs.core.Keyword(null, "href", "href", -793805698), "#/job/%s"], null), new cljs.core.Keyword(null, "jobs.detail.current.edit", "jobs.detail.current.edit", -949837139), new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, 
 "name", "name", 1843675177), "Edit", new cljs.core.Keyword(null, "href", "href", -793805698), "#/job/%s/edit"], null), new cljs.core.Keyword(null, "jobs.detail.history", "jobs.detail.history", 1960402676), new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "name", "name", 1843675177), "History", new cljs.core.Keyword(null, "href", "href", -793805698), "#/job/%s/history"], null), new cljs.core.Keyword(null, "jobs.detail.settings", "jobs.detail.settings", 147483705), new cljs.core.PersistentArrayMap(null, 
 2, [new cljs.core.Keyword(null, "name", "name", 1843675177), "Settings", new cljs.core.Keyword(null, "href", "href", -793805698), "#/job/%s/settings"], null)], null);
-var ufv___16776 = schema.utils.use_fn_validation, output_schema16758_16777 = schema.core.Any, input_schema16759_16778 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "mode", "mode", -2000032078, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker16760_16779 = schema.core.checker.call(null, input_schema16759_16778), 
-output_checker16761_16780 = schema.core.checker.call(null, output_schema16758_16777);
+var ufv___79451 = schema.utils.use_fn_validation, output_schema79433_79452 = schema.core.Any, input_schema79434_79453 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "mode", "mode", -2000032078, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker79435_79454 = schema.core.checker.call(null, input_schema79434_79453), 
+output_checker79436_79455 = schema.core.checker.call(null, output_schema79433_79452);
 job_streamer.console.components.job_detail.breadcrumb_view = function(a, b, c, d, e) {
   return function g(h, k) {
     var l = a.get_cell();
@@ -79242,26 +79256,26 @@ job_streamer.console.components.job_detail.breadcrumb_view = function(a, b, c, d
     }
     m = function() {
       for (;;) {
-        return "undefined" === typeof job_streamer.console.components.job_detail.t16770 && (job_streamer.console.components.job_detail.t16770 = function(a, b, c, d, e, g, h, k, l, m, n, J) {
-          this.input_schema16759 = a;
-          this.owner = b;
-          this.validate__11398__auto__ = c;
-          this.output_checker16761 = d;
-          this.G__16762 = e;
-          this.input_checker16760 = g;
-          this.G__16763 = h;
-          this.mode = k;
-          this.breadcrumb_view = l;
-          this.output_schema16758 = m;
-          this.ufv__ = n;
-          this.meta16771 = J;
+        return "undefined" === typeof job_streamer.console.components.job_detail.t79445 && (job_streamer.console.components.job_detail.t79445 = function(a, b, c, d, e, g, h, k, l, m, n, E) {
+          this.owner = a;
+          this.validate__11398__auto__ = b;
+          this.output_checker79436 = c;
+          this.input_checker79435 = d;
+          this.mode = e;
+          this.breadcrumb_view = g;
+          this.G__79438 = h;
+          this.input_schema79434 = k;
+          this.ufv__ = l;
+          this.output_schema79433 = m;
+          this.G__79437 = n;
+          this.meta79446 = E;
           this.cljs$lang$protocol_mask$partition1$ = 0;
           this.cljs$lang$protocol_mask$partition0$ = 393216;
-        }, job_streamer.console.components.job_detail.t16770.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.job_detail.t16770.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
+        }, job_streamer.console.components.job_detail.t79445.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.job_detail.t79445.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
             return "breadcrumb-view";
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t16770.prototype.om$core$IRenderState$ = !0, job_streamer.console.components.job_detail.t16770.prototype.om$core$IRenderState$render_state$arity$2 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t79445.prototype.om$core$IRenderState$ = !0, job_streamer.console.components.job_detail.t79445.prototype.om$core$IRenderState$render_state$arity$2 = function(a, b, c, d, e, g) {
           return function(a, b) {
             var c = this, d = cljs.core.seq_QMARK_.call(null, b) ? cljs.core.apply.call(null, cljs.core.hash_map, b) : b, e = cljs.core.get.call(null, d, new cljs.core.Keyword(null, "job-id", "job-id", 651349542)), d = cljs.core.drop_last.call(null, cljs.core.interleave.call(null, function() {
               for (var a = 1, b = cljs.core.PersistentVector.EMPTY;;) {
@@ -79279,23 +79293,23 @@ job_streamer.console.components.job_detail.breadcrumb_view = function(a, b, c, d
             return cljs.core.apply.call(null, React.DOM.div, cljs.core.map_QMARK_.call(null, d) ? sablono.interpreter.attributes.call(null, sablono.util.merge_with_class.call(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "class", "class", -2030961996), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, ["ui", "breadcrumb"], null)], null), d)) : {className:"ui breadcrumb"}, cljs.core.remove.call(null, cljs.core.nil_QMARK_, cljs.core.map_QMARK_.call(null, 
             d) ? cljs.core.PersistentVector.EMPTY : new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [sablono.interpreter.interpret.call(null, d)], null)));
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t16770.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t79445.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
-            return this.meta16771;
+            return this.meta79446;
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t16770.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t79445.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
           return function(a, b) {
-            return new job_streamer.console.components.job_detail.t16770(this.input_schema16759, this.owner, this.validate__11398__auto__, this.output_checker16761, this.G__16762, this.input_checker16760, this.G__16763, this.mode, this.breadcrumb_view, this.output_schema16758, this.ufv__, b);
+            return new job_streamer.console.components.job_detail.t79445(this.owner, this.validate__11398__auto__, this.output_checker79436, this.input_checker79435, this.mode, this.breadcrumb_view, this.G__79438, this.input_schema79434, this.ufv__, this.output_schema79433, this.G__79437, b);
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t16770.cljs$lang$type = !0, job_streamer.console.components.job_detail.t16770.cljs$lang$ctorStr = "job-streamer.console.components.job-detail/t16770", job_streamer.console.components.job_detail.t16770.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t79445.cljs$lang$type = !0, job_streamer.console.components.job_detail.t79445.cljs$lang$ctorStr = "job-streamer.console.components.job-detail/t79445", job_streamer.console.components.job_detail.t79445.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
           return function(a, b, c) {
-            return cljs.core._write.call(null, b, "job-streamer.console.components.job-detail/t16770");
+            return cljs.core._write.call(null, b, "job-streamer.console.components.job-detail/t79445");
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.__GT_t16770 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.__GT_t79445 = function(a, b, c, d, e, g) {
           return function(a, b, c, d, e, g, h, k, l, m, n, p) {
-            return new job_streamer.console.components.job_detail.t16770(a, b, c, d, e, g, h, k, l, m, n, p);
+            return new job_streamer.console.components.job_detail.t79445(a, b, c, d, e, g, h, k, l, m, n, p);
           };
-        }(l, a, b, c, d, e)), new job_streamer.console.components.job_detail.t16770(c, k, l, e, h, d, k, h, g, b, a, null);
+        }(l, a, b, c, d, e)), new job_streamer.console.components.job_detail.t79445(k, l, e, d, h, g, k, c, a, b, h, null);
       }
     }();
     if (cljs.core.truth_(l) && (n = e.call(null, m), cljs.core.truth_(n))) {
@@ -79304,8 +79318,8 @@ job_streamer.console.components.job_detail.breadcrumb_view = function(a, b, c, d
     }
     return m;
   };
-}(ufv___16776, output_schema16758_16777, input_schema16759_16778, input_checker16760_16779, output_checker16761_16780);
-schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.job_detail.breadcrumb_view), schema.core.make_fn_schema.call(null, output_schema16758_16777, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema16759_16778], null)));
+}(ufv___79451, output_schema79433_79452, input_schema79434_79453, input_checker79435_79454, output_checker79436_79455);
+schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.job_detail.breadcrumb_view), schema.core.make_fn_schema.call(null, output_schema79433_79452, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema79434_79453], null)));
 job_streamer.console.components.job_detail.__GT_breadcrumb_view = function() {
   var a = null, b = function(a) {
     return om.core.build.call(null, job_streamer.console.components.job_detail.breadcrumb_view, a);
@@ -79324,8 +79338,8 @@ job_streamer.console.components.job_detail.__GT_breadcrumb_view = function() {
   a.cljs$core$IFn$_invoke$arity$2 = c;
   return a;
 }();
-var ufv___16823 = schema.utils.use_fn_validation, output_schema16789_16824 = schema.core.Any, input_schema16790_16825 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "job", "job", -1803562682, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker16791_16826 = schema.core.checker.call(null, input_schema16790_16825), 
-output_checker16792_16827 = schema.core.checker.call(null, output_schema16789_16824);
+var ufv___79498 = schema.utils.use_fn_validation, output_schema79464_79499 = schema.core.Any, input_schema79465_79500 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "job", "job", -1803562682, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker79466_79501 = schema.core.checker.call(null, input_schema79465_79500), 
+output_checker79467_79502 = schema.core.checker.call(null, output_schema79464_79499);
 job_streamer.console.components.job_detail.job_edit_view = function(a, b, c, d, e) {
   return function g(h, k) {
     var l = a.get_cell();
@@ -79338,65 +79352,65 @@ job_streamer.console.components.job_detail.job_edit_view = function(a, b, c, d, 
     }
     m = function() {
       for (;;) {
-        return "undefined" === typeof job_streamer.console.components.job_detail.t16809 && (job_streamer.console.components.job_detail.t16809 = function(a, b, c, d, e, g, h, k, l, m, n, J) {
-          this.input_schema16790 = a;
-          this.owner = b;
-          this.validate__11398__auto__ = c;
-          this.job = d;
-          this.G__16794 = e;
-          this.output_checker16792 = g;
-          this.output_schema16789 = h;
-          this.input_checker16791 = k;
-          this.job_edit_view = l;
-          this.G__16793 = m;
+        return "undefined" === typeof job_streamer.console.components.job_detail.t79484 && (job_streamer.console.components.job_detail.t79484 = function(a, b, c, d, e, g, h, k, l, m, n, E) {
+          this.input_schema79465 = a;
+          this.output_schema79464 = b;
+          this.owner = c;
+          this.validate__11398__auto__ = d;
+          this.job = e;
+          this.G__79469 = g;
+          this.job_edit_view = h;
+          this.output_checker79467 = k;
+          this.input_checker79466 = l;
+          this.G__79468 = m;
           this.ufv__ = n;
-          this.meta16810 = J;
+          this.meta79485 = E;
           this.cljs$lang$protocol_mask$partition1$ = 0;
           this.cljs$lang$protocol_mask$partition0$ = 393216;
-        }, job_streamer.console.components.job_detail.t16809.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.job_detail.t16809.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
+        }, job_streamer.console.components.job_detail.t79484.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.job_detail.t79484.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
             return "job-edit-view";
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t16809.prototype.om$core$IDidMount$ = !0, job_streamer.console.components.job_detail.t16809.prototype.om$core$IDidMount$did_mount$arity$1 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t79484.prototype.om$core$IDidMount$ = !0, job_streamer.console.components.job_detail.t79484.prototype.om$core$IDidMount$did_mount$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
             Blockly.inject.call(null, document.getElementById("job-blocks-inner"), cljs.core.clj__GT_js.call(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "toolbox", "toolbox", 762819836), document.getElementById("job-toolbox")], null)));
             return cljs.core.truth_(this.job) ? (a = job_streamer.console.blocks.job__GT_xml.call(null, cljs.reader.read_string.call(null, (new cljs.core.Keyword("job", "edn-notation", "job/edn-notation", -630511151)).cljs$core$IFn$_invoke$arity$1(this.job))), Blockly.Xml.domToWorkspace.call(null, Blockly.mainWorkspace, Blockly.Xml.textToDom.call(null, [cljs.core.str("\x3cxml\x3e"), cljs.core.str(a), cljs.core.str("\x3c/xml\x3e")].join("")))) : null;
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t16809.prototype.om$core$IRenderState$ = !0, job_streamer.console.components.job_detail.t16809.prototype.om$core$IRenderState$render_state$arity$2 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t79484.prototype.om$core$IRenderState$ = !0, job_streamer.console.components.job_detail.t79484.prototype.om$core$IRenderState$render_state$arity$2 = function(a, b, c, d, e, g) {
           return function(h, k) {
-            var l = this, m = cljs.core.seq_QMARK_.call(null, k) ? cljs.core.apply.call(null, cljs.core.hash_map, k) : k, n = cljs.core.get.call(null, m, new cljs.core.Keyword(null, "message", "message", -406056002)), J = cljs.core.truth_(n) ? new cljs.core.PersistentVector(null, 4, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div.ui.message", "div.ui.message", -654087095), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "class", "class", -2030961996), 
+            var l = this, m = cljs.core.seq_QMARK_.call(null, k) ? cljs.core.apply.call(null, cljs.core.hash_map, k) : k, n = cljs.core.get.call(null, m, new cljs.core.Keyword(null, "message", "message", -406056002)), E = cljs.core.truth_(n) ? new cljs.core.PersistentVector(null, 4, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div.ui.message", "div.ui.message", -654087095), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "class", "class", -2030961996), 
             (new cljs.core.Keyword(null, "class", "class", -2030961996)).cljs$core$IFn$_invoke$arity$1(n)], null), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div.header", "div.header", 1964513620), (new cljs.core.Keyword(null, "header", "header", 119441134)).cljs$core$IFn$_invoke$arity$1(n)], null), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div", "div", 1057191632), 
             (new cljs.core.Keyword(null, "body", "body", -2049205669)).cljs$core$IFn$_invoke$arity$1(n)], null)], null) : null;
-            return cljs.core.apply.call(null, React.DOM.div, cljs.core.map_QMARK_.call(null, J) ? sablono.interpreter.attributes.call(null, J) : null, cljs.core.remove.call(null, cljs.core.nil_QMARK_, cljs.core.map_QMARK_.call(null, J) ? new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [React.DOM.div({className:"ui menu"}, React.DOM.div({className:"item"}, React.DOM.div({className:"icon ui buttons"}, React.DOM.button({className:"ui primary button", onClick:function(a, 
+            return cljs.core.apply.call(null, React.DOM.div, cljs.core.map_QMARK_.call(null, E) ? sablono.interpreter.attributes.call(null, E) : null, cljs.core.remove.call(null, cljs.core.nil_QMARK_, cljs.core.map_QMARK_.call(null, E) ? new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [React.DOM.div({className:"ui menu"}, React.DOM.div({className:"item"}, React.DOM.div({className:"icon ui buttons"}, React.DOM.button({className:"ui primary button", onClick:function(a, 
             b, c, d, e, g, h, k, m, n, p) {
               return function(a) {
                 a = Blockly.Xml.workspaceToDom.call(null, Blockly.mainWorkspace);
-                return job_streamer.console.components.job_detail.save_job.call(null, Blockly.Xml.domToText.call(null, a), l.owner, (new cljs.core.Keyword("job", "id", "job/id", -1388425577)).cljs$core$IFn$_invoke$arity$1(l.job));
+                return job_streamer.console.components.job_detail.save_job.call(null, Blockly.Xml.domToText.call(null, a), l.owner, (new cljs.core.Keyword("job", "name", "job/name", 1843780588)).cljs$core$IFn$_invoke$arity$1(l.job));
               };
-            }(J, this, k, m, n, a, b, c, d, e, g)}, React.DOM.i({className:"save icon"}))))), React.DOM.div({id:"job-blocks-inner"})], null) : new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [sablono.interpreter.interpret.call(null, J), React.DOM.div({className:"ui menu"}, React.DOM.div({className:"item"}, React.DOM.div({className:"icon ui buttons"}, React.DOM.button({className:"ui primary button", onClick:function(a, b, c, d, e, g, h, k, m, n, p) {
+            }(E, this, k, m, n, a, b, c, d, e, g)}, React.DOM.i({className:"save icon"}))))), React.DOM.div({id:"job-blocks-inner"})], null) : new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [sablono.interpreter.interpret.call(null, E), React.DOM.div({className:"ui menu"}, React.DOM.div({className:"item"}, React.DOM.div({className:"icon ui buttons"}, React.DOM.button({className:"ui primary button", onClick:function(a, b, c, d, e, g, h, k, m, n, p) {
               return function(a) {
                 a = Blockly.Xml.workspaceToDom.call(null, Blockly.mainWorkspace);
-                return job_streamer.console.components.job_detail.save_job.call(null, Blockly.Xml.domToText.call(null, a), l.owner, (new cljs.core.Keyword("job", "id", "job/id", -1388425577)).cljs$core$IFn$_invoke$arity$1(l.job));
+                return job_streamer.console.components.job_detail.save_job.call(null, Blockly.Xml.domToText.call(null, a), l.owner, (new cljs.core.Keyword("job", "name", "job/name", 1843780588)).cljs$core$IFn$_invoke$arity$1(l.job));
               };
-            }(J, this, k, m, n, a, b, c, d, e, g)}, React.DOM.i({className:"save icon"}))))), React.DOM.div({id:"job-blocks-inner"})], null)));
+            }(E, this, k, m, n, a, b, c, d, e, g)}, React.DOM.i({className:"save icon"}))))), React.DOM.div({id:"job-blocks-inner"})], null)));
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t16809.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t79484.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
-            return this.meta16810;
+            return this.meta79485;
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t16809.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t79484.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
           return function(a, b) {
-            return new job_streamer.console.components.job_detail.t16809(this.input_schema16790, this.owner, this.validate__11398__auto__, this.job, this.G__16794, this.output_checker16792, this.output_schema16789, this.input_checker16791, this.job_edit_view, this.G__16793, this.ufv__, b);
+            return new job_streamer.console.components.job_detail.t79484(this.input_schema79465, this.output_schema79464, this.owner, this.validate__11398__auto__, this.job, this.G__79469, this.job_edit_view, this.output_checker79467, this.input_checker79466, this.G__79468, this.ufv__, b);
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t16809.cljs$lang$type = !0, job_streamer.console.components.job_detail.t16809.cljs$lang$ctorStr = "job-streamer.console.components.job-detail/t16809", job_streamer.console.components.job_detail.t16809.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t79484.cljs$lang$type = !0, job_streamer.console.components.job_detail.t79484.cljs$lang$ctorStr = "job-streamer.console.components.job-detail/t79484", job_streamer.console.components.job_detail.t79484.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
           return function(a, b, c) {
-            return cljs.core._write.call(null, b, "job-streamer.console.components.job-detail/t16809");
+            return cljs.core._write.call(null, b, "job-streamer.console.components.job-detail/t79484");
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.__GT_t16809 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.__GT_t79484 = function(a, b, c, d, e, g) {
           return function(a, b, c, d, e, g, h, k, l, m, n, p) {
-            return new job_streamer.console.components.job_detail.t16809(a, b, c, d, e, g, h, k, l, m, n, p);
+            return new job_streamer.console.components.job_detail.t79484(a, b, c, d, e, g, h, k, l, m, n, p);
           };
-        }(l, a, b, c, d, e)), new job_streamer.console.components.job_detail.t16809(c, k, l, h, k, e, b, d, g, h, a, null);
+        }(l, a, b, c, d, e)), new job_streamer.console.components.job_detail.t79484(c, b, k, l, h, k, g, e, d, h, a, null);
       }
     }();
     if (cljs.core.truth_(l) && (n = e.call(null, m), cljs.core.truth_(n))) {
@@ -79405,8 +79419,8 @@ job_streamer.console.components.job_detail.job_edit_view = function(a, b, c, d, 
     }
     return m;
   };
-}(ufv___16823, output_schema16789_16824, input_schema16790_16825, input_checker16791_16826, output_checker16792_16827);
-schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.job_detail.job_edit_view), schema.core.make_fn_schema.call(null, output_schema16789_16824, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema16790_16825], null)));
+}(ufv___79498, output_schema79464_79499, input_schema79465_79500, input_checker79466_79501, output_checker79467_79502);
+schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.job_detail.job_edit_view), schema.core.make_fn_schema.call(null, output_schema79464_79499, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema79465_79500], null)));
 job_streamer.console.components.job_detail.__GT_job_edit_view = function() {
   var a = null, b = function(a) {
     return om.core.build.call(null, job_streamer.console.components.job_detail.job_edit_view, a);
@@ -79425,8 +79439,8 @@ job_streamer.console.components.job_detail.__GT_job_edit_view = function() {
   a.cljs$core$IFn$_invoke$arity$2 = c;
   return a;
 }();
-var ufv___16852 = schema.utils.use_fn_validation, output_schema16834_16853 = schema.core.Any, input_schema16835_16854 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "app", "app", 1079569820, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker16836_16855 = schema.core.checker.call(null, input_schema16835_16854), 
-output_checker16837_16856 = schema.core.checker.call(null, output_schema16834_16853);
+var ufv___79527 = schema.utils.use_fn_validation, output_schema79509_79528 = schema.core.Any, input_schema79510_79529 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "app", "app", 1079569820, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker79511_79530 = schema.core.checker.call(null, input_schema79510_79529), 
+output_checker79512_79531 = schema.core.checker.call(null, output_schema79509_79528);
 job_streamer.console.components.job_detail.job_new_view = function(a, b, c, d, e) {
   return function g(h, k) {
     var l = a.get_cell();
@@ -79439,50 +79453,50 @@ job_streamer.console.components.job_detail.job_new_view = function(a, b, c, d, e
     }
     m = function() {
       for (;;) {
-        return "undefined" === typeof job_streamer.console.components.job_detail.t16846 && (job_streamer.console.components.job_detail.t16846 = function(a, b, c, d, e, g, h, k, l, m, n, J) {
-          this.input_checker16836 = a;
-          this.owner = b;
-          this.validate__11398__auto__ = c;
-          this.job_new_view = d;
-          this.output_schema16834 = e;
-          this.output_checker16837 = g;
-          this.G__16839 = h;
-          this.input_schema16835 = k;
-          this.G__16838 = l;
-          this.app = m;
-          this.ufv__ = n;
-          this.meta16847 = J;
+        return "undefined" === typeof job_streamer.console.components.job_detail.t79521 && (job_streamer.console.components.job_detail.t79521 = function(a, b, c, d, e, g, h, k, l, m, n, E) {
+          this.owner = a;
+          this.input_checker79511 = b;
+          this.output_checker79512 = c;
+          this.validate__11398__auto__ = d;
+          this.job_new_view = e;
+          this.G__79513 = g;
+          this.G__79514 = h;
+          this.app = k;
+          this.ufv__ = l;
+          this.output_schema79509 = m;
+          this.input_schema79510 = n;
+          this.meta79522 = E;
           this.cljs$lang$protocol_mask$partition1$ = 0;
           this.cljs$lang$protocol_mask$partition0$ = 393216;
-        }, job_streamer.console.components.job_detail.t16846.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.job_detail.t16846.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
+        }, job_streamer.console.components.job_detail.t79521.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.job_detail.t79521.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
             return "job-new-view";
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t16846.prototype.om$core$IRenderState$ = !0, job_streamer.console.components.job_detail.t16846.prototype.om$core$IRenderState$render_state$arity$2 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t79521.prototype.om$core$IRenderState$ = !0, job_streamer.console.components.job_detail.t79521.prototype.om$core$IRenderState$render_state$arity$2 = function(a, b, c, d, e, g) {
           return function(a, b) {
             var c = cljs.core.seq_QMARK_.call(null, b) ? cljs.core.apply.call(null, cljs.core.hash_map, b) : b;
             cljs.core.get.call(null, c, new cljs.core.Keyword(null, "message", "message", -406056002));
             c = om.core.build.call(null, job_streamer.console.components.job_detail.breadcrumb_view, (new cljs.core.Keyword(null, "mode", "mode", 654403691)).cljs$core$IFn$_invoke$arity$1(this.app));
-            return cljs.core.apply.call(null, React.DOM.div, cljs.core.map_QMARK_.call(null, c) ? sablono.interpreter.attributes.call(null, c) : null, cljs.core.remove.call(null, cljs.core.nil_QMARK_, cljs.core.map_QMARK_.call(null, c) ? new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [sablono.interpreter.interpret.call(null, om.core.build.call(null, job_streamer.console.components.job_detail.job_edit_view, (new cljs.core.Keyword(null, "job-id", "job-id", 651349542)).cljs$core$IFn$_invoke$arity$1(this.app)))], 
-            null) : new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [sablono.interpreter.interpret.call(null, c), sablono.interpreter.interpret.call(null, om.core.build.call(null, job_streamer.console.components.job_detail.job_edit_view, (new cljs.core.Keyword(null, "job-id", "job-id", 651349542)).cljs$core$IFn$_invoke$arity$1(this.app)))], null)));
+            return cljs.core.apply.call(null, React.DOM.div, cljs.core.map_QMARK_.call(null, c) ? sablono.interpreter.attributes.call(null, c) : null, cljs.core.remove.call(null, cljs.core.nil_QMARK_, cljs.core.map_QMARK_.call(null, c) ? new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [sablono.interpreter.interpret.call(null, om.core.build.call(null, job_streamer.console.components.job_detail.job_edit_view, (new cljs.core.Keyword(null, "job-name", "job-name", 607418212)).cljs$core$IFn$_invoke$arity$1(this.app)))], 
+            null) : new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [sablono.interpreter.interpret.call(null, c), sablono.interpreter.interpret.call(null, om.core.build.call(null, job_streamer.console.components.job_detail.job_edit_view, (new cljs.core.Keyword(null, "job-name", "job-name", 607418212)).cljs$core$IFn$_invoke$arity$1(this.app)))], null)));
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t16846.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t79521.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
-            return this.meta16847;
+            return this.meta79522;
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t16846.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t79521.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
           return function(a, b) {
-            return new job_streamer.console.components.job_detail.t16846(this.input_checker16836, this.owner, this.validate__11398__auto__, this.job_new_view, this.output_schema16834, this.output_checker16837, this.G__16839, this.input_schema16835, this.G__16838, this.app, this.ufv__, b);
+            return new job_streamer.console.components.job_detail.t79521(this.owner, this.input_checker79511, this.output_checker79512, this.validate__11398__auto__, this.job_new_view, this.G__79513, this.G__79514, this.app, this.ufv__, this.output_schema79509, this.input_schema79510, b);
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t16846.cljs$lang$type = !0, job_streamer.console.components.job_detail.t16846.cljs$lang$ctorStr = "job-streamer.console.components.job-detail/t16846", job_streamer.console.components.job_detail.t16846.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t79521.cljs$lang$type = !0, job_streamer.console.components.job_detail.t79521.cljs$lang$ctorStr = "job-streamer.console.components.job-detail/t79521", job_streamer.console.components.job_detail.t79521.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
           return function(a, b, c) {
-            return cljs.core._write.call(null, b, "job-streamer.console.components.job-detail/t16846");
+            return cljs.core._write.call(null, b, "job-streamer.console.components.job-detail/t79521");
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.__GT_t16846 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.__GT_t79521 = function(a, b, c, d, e, g) {
           return function(a, b, c, d, e, g, h, k, l, m, n, p) {
-            return new job_streamer.console.components.job_detail.t16846(a, b, c, d, e, g, h, k, l, m, n, p);
+            return new job_streamer.console.components.job_detail.t79521(a, b, c, d, e, g, h, k, l, m, n, p);
           };
-        }(l, a, b, c, d, e)), new job_streamer.console.components.job_detail.t16846(d, k, l, g, b, e, k, c, h, h, a, null);
+        }(l, a, b, c, d, e)), new job_streamer.console.components.job_detail.t79521(k, d, e, l, g, h, k, h, a, b, c, null);
       }
     }();
     if (cljs.core.truth_(l) && (n = e.call(null, m), cljs.core.truth_(n))) {
@@ -79491,8 +79505,8 @@ job_streamer.console.components.job_detail.job_new_view = function(a, b, c, d, e
     }
     return m;
   };
-}(ufv___16852, output_schema16834_16853, input_schema16835_16854, input_checker16836_16855, output_checker16837_16856);
-schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.job_detail.job_new_view), schema.core.make_fn_schema.call(null, output_schema16834_16853, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema16835_16854], null)));
+}(ufv___79527, output_schema79509_79528, input_schema79510_79529, input_checker79511_79530, output_checker79512_79531);
+schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.job_detail.job_new_view), schema.core.make_fn_schema.call(null, output_schema79509_79528, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema79510_79529], null)));
 job_streamer.console.components.job_detail.__GT_job_new_view = function() {
   var a = null, b = function(a) {
     return om.core.build.call(null, job_streamer.console.components.job_detail.job_new_view, a);
@@ -79511,8 +79525,8 @@ job_streamer.console.components.job_detail.__GT_job_new_view = function() {
   a.cljs$core$IFn$_invoke$arity$2 = c;
   return a;
 }();
-var ufv___16897 = schema.utils.use_fn_validation, output_schema16863_16898 = schema.core.Any, input_schema16864_16899 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "arg0", "arg0", -1024593414, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker16865_16900 = schema.core.checker.call(null, input_schema16864_16899), 
-output_checker16866_16901 = schema.core.checker.call(null, output_schema16863_16898);
+var ufv___79572 = schema.utils.use_fn_validation, output_schema79538_79573 = schema.core.Any, input_schema79539_79574 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "arg0", "arg0", -1024593414, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker79540_79575 = schema.core.checker.call(null, input_schema79539_79574), 
+output_checker79541_79576 = schema.core.checker.call(null, output_schema79538_79573);
 job_streamer.console.components.job_detail.job_history_view = function(a, b, c, d, e) {
   return function g(h, k) {
     var l = a.get_cell();
@@ -79524,82 +79538,82 @@ job_streamer.console.components.job_detail.job_history_view = function(a, b, c, 
       }
     }
     m = function() {
-      for (var m = cljs.core.seq_QMARK_.call(null, h) ? cljs.core.apply.call(null, cljs.core.hash_map, h) : h, n = cljs.core.get.call(null, m, new cljs.core.Keyword(null, "job-id", "job-id", 651349542));;) {
-        var r = h, s = cljs.core.seq_QMARK_.call(null, r) ? cljs.core.apply.call(null, cljs.core.hash_map, r) : r, t = cljs.core.get.call(null, s, new cljs.core.Keyword(null, "job-id", "job-id", 651349542)), u = k;
-        "undefined" === typeof job_streamer.console.components.job_detail.t16887 && (job_streamer.console.components.job_detail.t16887 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s) {
+      for (var m = cljs.core.seq_QMARK_.call(null, h) ? cljs.core.apply.call(null, cljs.core.hash_map, h) : h, n = cljs.core.get.call(null, m, new cljs.core.Keyword(null, "job-name", "job-name", 607418212));;) {
+        var r = h, s = cljs.core.seq_QMARK_.call(null, r) ? cljs.core.apply.call(null, cljs.core.hash_map, r) : r, t = cljs.core.get.call(null, s, new cljs.core.Keyword(null, "job-name", "job-name", 607418212)), u = k;
+        "undefined" === typeof job_streamer.console.components.job_detail.t79562 && (job_streamer.console.components.job_detail.t79562 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s) {
           this.job_history_view = a;
-          this.owner = b;
-          this.validate__11398__auto__ = c;
-          this.job_id = d;
-          this.input_checker16865 = e;
-          this.output_checker16866 = g;
-          this.output_schema16863 = h;
-          this.G__16868 = k;
-          this.G__16884 = l;
-          this.map__16885 = m;
-          this.ufv__ = n;
-          this.G__16867 = p;
-          this.input_schema16864 = q;
-          this.map__16886 = r;
-          this.meta16888 = s;
+          this.map__79560 = b;
+          this.G__79542 = c;
+          this.G__79559 = d;
+          this.owner = e;
+          this.validate__11398__auto__ = g;
+          this.output_schema79538 = h;
+          this.input_schema79539 = k;
+          this.map__79561 = l;
+          this.job_name = m;
+          this.G__79543 = n;
+          this.input_checker79540 = p;
+          this.output_checker79541 = q;
+          this.ufv__ = r;
+          this.meta79563 = s;
           this.cljs$lang$protocol_mask$partition1$ = 0;
           this.cljs$lang$protocol_mask$partition0$ = 393216;
-        }, job_streamer.console.components.job_detail.t16887.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.job_detail.t16887.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s) {
+        }, job_streamer.console.components.job_detail.t79562.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.job_detail.t79562.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s) {
           return function(a) {
             return "job-history-view";
           };
-        }(r, s, t, u, h, h, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t16887.prototype.om$core$IRenderState$ = !0, job_streamer.console.components.job_detail.t16887.prototype.om$core$IRenderState$render_state$arity$2 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s) {
+        }(r, s, t, u, h, h, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t79562.prototype.om$core$IRenderState$ = !0, job_streamer.console.components.job_detail.t79562.prototype.om$core$IRenderState$render_state$arity$2 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s) {
           return function(t, u) {
-            var M = this, O = cljs.core.seq_QMARK_.call(null, u) ? cljs.core.apply.call(null, cljs.core.hash_map, u) : u, L = cljs.core.get.call(null, O, new cljs.core.Keyword(null, "executions", "executions", 1302642273)), N = this;
+            var N = this, O = cljs.core.seq_QMARK_.call(null, u) ? cljs.core.apply.call(null, cljs.core.hash_map, u) : u, M = cljs.core.get.call(null, O, new cljs.core.Keyword(null, "executions", "executions", 1302642273)), P = this;
             return React.DOM.table({className:"ui compact table"}, React.DOM.thead(null, React.DOM.tr(null, React.DOM.th(null, "#"), React.DOM.th(null, "Agent"), React.DOM.th(null, "Started at"), React.DOM.th(null, "Duration"), React.DOM.th(null, "Status"))), function() {
               var t = cljs.core.map_indexed.call(null, function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u, v, x) {
-                return function(w, C) {
-                  var y = cljs.core.seq_QMARK_.call(null, C) ? cljs.core.apply.call(null, cljs.core.hash_map, C) : C, z = cljs.core.get.call(null, y, new cljs.core.Keyword("job-execution", "end-time", "job-execution/end-time", -696268892)), B = cljs.core.get.call(null, y, new cljs.core.Keyword("job-execution", "start-time", "job-execution/start-time", -398843134));
+                return function(w, z) {
+                  var y = cljs.core.seq_QMARK_.call(null, z) ? cljs.core.apply.call(null, cljs.core.hash_map, z) : z, A = cljs.core.get.call(null, y, new cljs.core.Keyword("job-execution", "end-time", "job-execution/end-time", -696268892)), D = cljs.core.get.call(null, y, new cljs.core.Keyword("job-execution", "start-time", "job-execution/start-time", -398843134));
                   return cljs.core._conj.call(null, cljs.core._conj.call(null, cljs.core.List.EMPTY, function() {
                     var a = cljs.core.not_empty.call(null, (new cljs.core.Keyword("job-execution", "step-executions", "job-execution/step-executions", -1002976124)).cljs$core$IFn$_invoke$arity$1(y));
                     return cljs.core.truth_(a) ? new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "tr", "tr", -1424774646), new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "td", "td", 1479933353), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "colSpan", "colSpan", 872137394), 5], null), om.core.build.call(null, job_streamer.console.components.execution.execution_view, 
                     a)], null)], null) : null;
                   }()), new cljs.core.PersistentVector(null, 6, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "tr", "tr", -1424774646), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "td", "td", 1479933353), new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "a", "a", -2123407586), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, 
-                  "on-click", "on-click", 1632826543), function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u, v, x, C, y, z, B, A) {
+                  "on-click", "on-click", 1632826543), function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u, v, x, z, y, A, D, I) {
                     return function(a) {
-                      return job_streamer.console.components.job_detail.search_execution.call(null, M.owner, M.job_id, (new cljs.core.Keyword("db", "id", "db/id", -1388397098)).cljs$core$IFn$_invoke$arity$1(c), w);
+                      return job_streamer.console.components.job_detail.search_execution.call(null, N.owner, N.job_name, (new cljs.core.Keyword("db", "id", "db/id", -1388397098)).cljs$core$IFn$_invoke$arity$1(c), w);
                     };
-                  }(C, y, y, z, B, a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u, v, x)], null), (new cljs.core.Keyword("db", "id", "db/id", -1388397098)).cljs$core$IFn$_invoke$arity$1(y)], null)], null), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "td", "td", 1479933353), cljs.core.get_in.call(null, y, new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword("job-execution", "agent", 
+                  }(z, y, y, A, D, a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u, v, x)], null), (new cljs.core.Keyword("db", "id", "db/id", -1388397098)).cljs$core$IFn$_invoke$arity$1(y)], null)], null), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "td", "td", 1479933353), cljs.core.get_in.call(null, y, new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword("job-execution", "agent", 
                   "job-execution/agent", 237408789), new cljs.core.Keyword("agent", "name", "agent/name", 1617105732)], null))], null), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "td", "td", 1479933353), job_streamer.console.format.date_medium.call(null, (new cljs.core.Keyword("job-execution", "start-time", "job-execution/start-time", -398843134)).cljs$core$IFn$_invoke$arity$1(y))], null), new cljs.core.PersistentVector(null, 2, 
                   5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "td", "td", 1479933353), job_streamer.console.format.duration_between.call(null, (new cljs.core.Keyword("job-execution", "start-time", "job-execution/start-time", -398843134)).cljs$core$IFn$_invoke$arity$1(y), (new cljs.core.Keyword("job-execution", "end-time", "job-execution/end-time", -696268892)).cljs$core$IFn$_invoke$arity$1(y))], null), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, 
                   [new cljs.core.Keyword(null, "td", "td", 1479933353), cljs.core.name.call(null, cljs.core.get_in.call(null, y, new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword("job-execution", "batch-status", "job-execution/batch-status", 1615935519), new cljs.core.Keyword("db", "ident", "db/ident", -737096)], null)))], null)], null));
                 };
-              }(N, u, O, L, a, b, c, d, e, g, h, k, l, m, n, p, q, r, s), L);
+              }(P, u, O, M, a, b, c, d, e, g, h, k, l, m, n, p, q, r, s), M);
               return cljs.core.apply.call(null, React.DOM.tbody, cljs.core.map_QMARK_.call(null, t) ? sablono.interpreter.attributes.call(null, t) : null, cljs.core.remove.call(null, cljs.core.nil_QMARK_, cljs.core.map_QMARK_.call(null, t) ? cljs.core.PersistentVector.EMPTY : new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [sablono.interpreter.interpret.call(null, t)], null)));
             }());
           };
-        }(r, s, t, u, h, h, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t16887.prototype.om$core$IWillMount$ = !0, job_streamer.console.components.job_detail.t16887.prototype.om$core$IWillMount$will_mount$arity$1 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s) {
+        }(r, s, t, u, h, h, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t79562.prototype.om$core$IWillMount$ = !0, job_streamer.console.components.job_detail.t79562.prototype.om$core$IWillMount$will_mount$arity$1 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s) {
           return function(t) {
             var u = this;
-            return job_streamer.console.api.request.call(null, [cljs.core.str("/job/"), cljs.core.str(u.job_id), cljs.core.str("/executions")].join(""), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "handler", "handler", -195596612), function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t) {
+            return job_streamer.console.api.request.call(null, [cljs.core.str("/"), cljs.core.str(job_streamer.console.components.job_detail.app_name), cljs.core.str("/job/"), cljs.core.str(u.job_name), cljs.core.str("/executions")].join(""), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "handler", "handler", -195596612), function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t) {
               return function(a) {
                 return om.core.set_state_BANG_.call(null, u.owner, new cljs.core.Keyword(null, "executions", "executions", 1302642273), a);
               };
             }(this, a, b, c, d, e, g, h, k, l, m, n, p, q, r, s)], null));
           };
-        }(r, s, t, u, h, h, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t16887.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s) {
+        }(r, s, t, u, h, h, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t79562.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s) {
           return function(a) {
-            return this.meta16888;
+            return this.meta79563;
           };
-        }(r, s, t, u, h, h, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t16887.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s) {
+        }(r, s, t, u, h, h, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t79562.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s) {
           return function(a, b) {
-            return new job_streamer.console.components.job_detail.t16887(this.job_history_view, this.owner, this.validate__11398__auto__, this.job_id, this.input_checker16865, this.output_checker16866, this.output_schema16863, this.G__16868, this.G__16884, this.map__16885, this.ufv__, this.G__16867, this.input_schema16864, this.map__16886, b);
+            return new job_streamer.console.components.job_detail.t79562(this.job_history_view, this.map__79560, this.G__79542, this.G__79559, this.owner, this.validate__11398__auto__, this.output_schema79538, this.input_schema79539, this.map__79561, this.job_name, this.G__79543, this.input_checker79540, this.output_checker79541, this.ufv__, b);
           };
-        }(r, s, t, u, h, h, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t16887.cljs$lang$type = !0, job_streamer.console.components.job_detail.t16887.cljs$lang$ctorStr = "job-streamer.console.components.job-detail/t16887", job_streamer.console.components.job_detail.t16887.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s) {
+        }(r, s, t, u, h, h, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t79562.cljs$lang$type = !0, job_streamer.console.components.job_detail.t79562.cljs$lang$ctorStr = "job-streamer.console.components.job-detail/t79562", job_streamer.console.components.job_detail.t79562.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s) {
           return function(a, b, c) {
-            return cljs.core._write.call(null, b, "job-streamer.console.components.job-detail/t16887");
+            return cljs.core._write.call(null, b, "job-streamer.console.components.job-detail/t79562");
           };
-        }(r, s, t, u, h, h, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.__GT_t16887 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s) {
+        }(r, s, t, u, h, h, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.__GT_t79562 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s) {
           return function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s) {
-            return new job_streamer.console.components.job_detail.t16887(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s);
+            return new job_streamer.console.components.job_detail.t79562(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s);
           };
         }(r, s, t, u, h, h, m, n, k, l, a, b, c, d, e));
-        return new job_streamer.console.components.job_detail.t16887(g, u, l, t, d, e, b, k, h, m, a, h, c, s, null);
+        return new job_streamer.console.components.job_detail.t79562(g, m, h, h, u, l, b, c, s, t, k, d, e, a, null);
       }
     }();
     if (cljs.core.truth_(l) && (n = e.call(null, m), cljs.core.truth_(n))) {
@@ -79608,8 +79622,8 @@ job_streamer.console.components.job_detail.job_history_view = function(a, b, c, 
     }
     return m;
   };
-}(ufv___16897, output_schema16863_16898, input_schema16864_16899, input_checker16865_16900, output_checker16866_16901);
-schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.job_detail.job_history_view), schema.core.make_fn_schema.call(null, output_schema16863_16898, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema16864_16899], null)));
+}(ufv___79572, output_schema79538_79573, input_schema79539_79574, input_checker79540_79575, output_checker79541_79576);
+schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.job_detail.job_history_view), schema.core.make_fn_schema.call(null, output_schema79538_79573, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema79539_79574], null)));
 job_streamer.console.components.job_detail.__GT_job_history_view = function() {
   var a = null, b = function(a) {
     return om.core.build.call(null, job_streamer.console.components.job_detail.job_history_view, a);
@@ -79628,8 +79642,8 @@ job_streamer.console.components.job_detail.__GT_job_history_view = function() {
   a.cljs$core$IFn$_invoke$arity$2 = c;
   return a;
 }();
-var ufv___17010 = schema.utils.use_fn_validation, output_schema16908_17011 = schema.core.Any, input_schema16909_17012 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "job", "job", -1803562682, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker16910_17013 = schema.core.checker.call(null, input_schema16909_17012), 
-output_checker16911_17014 = schema.core.checker.call(null, output_schema16908_17011);
+var ufv___79685 = schema.utils.use_fn_validation, output_schema79583_79686 = schema.core.Any, input_schema79584_79687 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "job", "job", -1803562682, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker79585_79688 = schema.core.checker.call(null, input_schema79584_79687), 
+output_checker79586_79689 = schema.core.checker.call(null, output_schema79583_79686);
 job_streamer.console.components.job_detail.scheduling_view = function(a, b, c, d, e) {
   return function g(h, k) {
     var l = a.get_cell();
@@ -79642,37 +79656,37 @@ job_streamer.console.components.job_detail.scheduling_view = function(a, b, c, d
     }
     m = function() {
       for (;;) {
-        return "undefined" === typeof job_streamer.console.components.job_detail.t16962 && (job_streamer.console.components.job_detail.t16962 = function(a, b, c, d, e, g, h, k, l, m, n, J) {
-          this.output_checker16911 = a;
+        return "undefined" === typeof job_streamer.console.components.job_detail.t79637 && (job_streamer.console.components.job_detail.t79637 = function(a, b, c, d, e, g, h, k, l, m, n, E) {
+          this.output_schema79583 = a;
           this.owner = b;
           this.validate__11398__auto__ = c;
           this.job = d;
-          this.input_schema16909 = e;
-          this.input_checker16910 = g;
-          this.output_schema16908 = h;
-          this.G__16913 = k;
-          this.G__16912 = l;
+          this.output_checker79586 = e;
+          this.G__79587 = g;
+          this.input_schema79584 = h;
+          this.G__79588 = k;
+          this.input_checker79585 = l;
           this.scheduling_view = m;
           this.ufv__ = n;
-          this.meta16963 = J;
+          this.meta79638 = E;
           this.cljs$lang$protocol_mask$partition1$ = 0;
           this.cljs$lang$protocol_mask$partition0$ = 393216;
-        }, job_streamer.console.components.job_detail.t16962.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.job_detail.t16962.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
+        }, job_streamer.console.components.job_detail.t79637.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.job_detail.t79637.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
             return "scheduling-view";
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t16962.prototype.om$core$IRenderState$ = !0, job_streamer.console.components.job_detail.t16962.prototype.om$core$IRenderState$render_state$arity$2 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t79637.prototype.om$core$IRenderState$ = !0, job_streamer.console.components.job_detail.t79637.prototype.om$core$IRenderState$render_state$arity$2 = function(a, b, c, d, e, g) {
           return function(h, k) {
-            var l = this, m = cljs.core.seq_QMARK_.call(null, k) ? cljs.core.apply.call(null, cljs.core.hash_map, k) : k, n = cljs.core.get.call(null, m, new cljs.core.Keyword(null, "has-error", "has-error", -786302929)), J = cljs.core.get.call(null, m, new cljs.core.Keyword(null, "error-ch", "error-ch", -1177587736)), z = cljs.core.get.call(null, m, new cljs.core.Keyword(null, "refresh-job-ch", "refresh-job-ch", -1511210105)), A = cljs.core.get.call(null, m, new cljs.core.Keyword(null, "scheduling-ch", 
-            "scheduling-ch", 1344950219)), y = cljs.core.merge.call(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "on-submit", "on-submit", 1227871159), function(a, b, c, d, e, g, h, k, m, n, p, q, r) {
+            var l = this, m = cljs.core.seq_QMARK_.call(null, k) ? cljs.core.apply.call(null, cljs.core.hash_map, k) : k, n = cljs.core.get.call(null, m, new cljs.core.Keyword(null, "has-error", "has-error", -786302929)), E = cljs.core.get.call(null, m, new cljs.core.Keyword(null, "error-ch", "error-ch", -1177587736)), y = cljs.core.get.call(null, m, new cljs.core.Keyword(null, "refresh-job-ch", "refresh-job-ch", -1511210105)), A = cljs.core.get.call(null, m, new cljs.core.Keyword(null, "scheduling-ch", 
+            "scheduling-ch", 1344950219)), z = cljs.core.merge.call(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "on-submit", "on-submit", 1227871159), function(a, b, c, d, e, g, h, k, m, n, p, q, r) {
               return function(a) {
                 a.nativeEvent.preventDefault();
                 job_streamer.console.components.job_detail.schedule_job.call(null, l.job, document.getElementById("cron-notation").value, g, h, e);
                 return!1;
               };
-            }(this, k, m, n, J, z, A, a, b, c, d, e, g)], null), cljs.core.truth_(n) ? new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "class", "class", -2030961996), "error"], null) : null);
-            return cljs.core.apply.call(null, React.DOM.form, cljs.core.map_QMARK_.call(null, y) ? sablono.interpreter.attributes.call(null, sablono.util.merge_with_class.call(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "class", "class", -2030961996), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, ["ui", "form"], null)], null), y)) : {className:"ui form"}, cljs.core.remove.call(null, cljs.core.nil_QMARK_, cljs.core.map_QMARK_.call(null, 
-            y) ? new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [sablono.interpreter.interpret.call(null, cljs.core.truth_(n) ? new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div.ui.error.message", "div.ui.error.message", -658647675), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "p", "p", 151049309), n], null)], null) : null), React.DOM.div({className:"fields"}, 
+            }(this, k, m, n, E, y, A, a, b, c, d, e, g)], null), cljs.core.truth_(n) ? new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "class", "class", -2030961996), "error"], null) : null);
+            return cljs.core.apply.call(null, React.DOM.form, cljs.core.map_QMARK_.call(null, z) ? sablono.interpreter.attributes.call(null, sablono.util.merge_with_class.call(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "class", "class", -2030961996), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, ["ui", "form"], null)], null), z)) : {className:"ui form"}, cljs.core.remove.call(null, cljs.core.nil_QMARK_, cljs.core.map_QMARK_.call(null, 
+            z) ? new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [sablono.interpreter.interpret.call(null, cljs.core.truth_(n) ? new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div.ui.error.message", "div.ui.error.message", -658647675), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "p", "p", 151049309), n], null)], null) : null), React.DOM.div({className:"fields"}, 
             function() {
               var a = cljs.core.truth_(n) ? new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "class", "class", -2030961996), "error"], null) : null;
               return cljs.core.apply.call(null, React.DOM.div, cljs.core.map_QMARK_.call(null, a) ? sablono.interpreter.attributes.call(null, sablono.util.merge_with_class.call(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "class", "class", -2030961996), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, ["field"], null)], null), a)) : {className:"field"}, cljs.core.remove.call(null, cljs.core.nil_QMARK_, cljs.core.map_QMARK_.call(null, 
@@ -79683,7 +79697,7 @@ job_streamer.console.components.job_detail.scheduling_view = function(a, b, c, d
               return function(a) {
                 return cljs.core.async.put_BANG_.call(null, k, !1);
               };
-            }(y, this, k, m, n, J, z, A, a, b, c, d, e, g)}, "Cancel"), React.DOM.div({className:"or"}), React.DOM.button({className:"ui positive button", type:"submit"}, "Save"))], null) : new cljs.core.PersistentVector(null, 4, 5, cljs.core.PersistentVector.EMPTY_NODE, [sablono.interpreter.interpret.call(null, y), sablono.interpreter.interpret.call(null, cljs.core.truth_(n) ? new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div.ui.error.message", 
+            }(z, this, k, m, n, E, y, A, a, b, c, d, e, g)}, "Cancel"), React.DOM.div({className:"or"}), React.DOM.button({className:"ui positive button", type:"submit"}, "Save"))], null) : new cljs.core.PersistentVector(null, 4, 5, cljs.core.PersistentVector.EMPTY_NODE, [sablono.interpreter.interpret.call(null, z), sablono.interpreter.interpret.call(null, cljs.core.truth_(n) ? new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div.ui.error.message", 
             "div.ui.error.message", -658647675), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "p", "p", 151049309), n], null)], null) : null), React.DOM.div({className:"fields"}, function() {
               var a = cljs.core.truth_(n) ? new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "class", "class", -2030961996), "error"], null) : null;
               return cljs.core.apply.call(null, React.DOM.div, cljs.core.map_QMARK_.call(null, a) ? sablono.interpreter.attributes.call(null, sablono.util.merge_with_class.call(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "class", "class", -2030961996), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, ["field"], null)], null), a)) : {className:"field"}, cljs.core.remove.call(null, cljs.core.nil_QMARK_, cljs.core.map_QMARK_.call(null, 
@@ -79694,9 +79708,9 @@ job_streamer.console.components.job_detail.scheduling_view = function(a, b, c, d
               return function(a) {
                 return cljs.core.async.put_BANG_.call(null, k, !1);
               };
-            }(y, this, k, m, n, J, z, A, a, b, c, d, e, g)}, "Cancel"), React.DOM.div({className:"or"}), React.DOM.button({className:"ui positive button", type:"submit"}, "Save"))], null)));
+            }(z, this, k, m, n, E, y, A, a, b, c, d, e, g)}, "Cancel"), React.DOM.div({className:"or"}), React.DOM.button({className:"ui positive button", type:"submit"}, "Save"))], null)));
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t16962.prototype.om$core$IWillMount$ = !0, job_streamer.console.components.job_detail.t16962.prototype.om$core$IWillMount$will_mount$arity$1 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t79637.prototype.om$core$IWillMount$ = !0, job_streamer.console.components.job_detail.t79637.prototype.om$core$IWillMount$will_mount$arity$1 = function(a, b, c, d, e, g) {
           return function(h) {
             var k = this;
             h = cljs.core.async.chan.call(null, 1);
@@ -79782,27 +79796,27 @@ job_streamer.console.components.job_detail.scheduling_view = function(a, b, c, d
             }(h, this, a, b, c, d, e, g));
             return h;
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t16962.prototype.om$core$IInitState$ = !0, job_streamer.console.components.job_detail.t16962.prototype.om$core$IInitState$init_state$arity$1 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t79637.prototype.om$core$IInitState$ = !0, job_streamer.console.components.job_detail.t79637.prototype.om$core$IInitState$init_state$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
             return new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "error-ch", "error-ch", -1177587736), cljs.core.async.chan.call(null), new cljs.core.Keyword(null, "has-error", "has-error", -786302929), !1], null);
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t16962.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t79637.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
-            return this.meta16963;
+            return this.meta79638;
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t16962.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t79637.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
           return function(a, b) {
-            return new job_streamer.console.components.job_detail.t16962(this.output_checker16911, this.owner, this.validate__11398__auto__, this.job, this.input_schema16909, this.input_checker16910, this.output_schema16908, this.G__16913, this.G__16912, this.scheduling_view, this.ufv__, b);
+            return new job_streamer.console.components.job_detail.t79637(this.output_schema79583, this.owner, this.validate__11398__auto__, this.job, this.output_checker79586, this.G__79587, this.input_schema79584, this.G__79588, this.input_checker79585, this.scheduling_view, this.ufv__, b);
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t16962.cljs$lang$type = !0, job_streamer.console.components.job_detail.t16962.cljs$lang$ctorStr = "job-streamer.console.components.job-detail/t16962", job_streamer.console.components.job_detail.t16962.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t79637.cljs$lang$type = !0, job_streamer.console.components.job_detail.t79637.cljs$lang$ctorStr = "job-streamer.console.components.job-detail/t79637", job_streamer.console.components.job_detail.t79637.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
           return function(a, b, c) {
-            return cljs.core._write.call(null, b, "job-streamer.console.components.job-detail/t16962");
+            return cljs.core._write.call(null, b, "job-streamer.console.components.job-detail/t79637");
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.__GT_t16962 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.__GT_t79637 = function(a, b, c, d, e, g) {
           return function(a, b, c, d, e, g, h, k, l, m, n, p) {
-            return new job_streamer.console.components.job_detail.t16962(a, b, c, d, e, g, h, k, l, m, n, p);
+            return new job_streamer.console.components.job_detail.t79637(a, b, c, d, e, g, h, k, l, m, n, p);
           };
-        }(l, a, b, c, d, e)), new job_streamer.console.components.job_detail.t16962(e, k, l, h, c, d, b, k, h, g, a, null);
+        }(l, a, b, c, d, e)), new job_streamer.console.components.job_detail.t79637(b, k, l, h, e, h, c, k, d, g, a, null);
       }
     }();
     if (cljs.core.truth_(l) && (n = e.call(null, m), cljs.core.truth_(n))) {
@@ -79811,8 +79825,8 @@ job_streamer.console.components.job_detail.scheduling_view = function(a, b, c, d
     }
     return m;
   };
-}(ufv___17010, output_schema16908_17011, input_schema16909_17012, input_checker16910_17013, output_checker16911_17014);
-schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.job_detail.scheduling_view), schema.core.make_fn_schema.call(null, output_schema16908_17011, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema16909_17012], null)));
+}(ufv___79685, output_schema79583_79686, input_schema79584_79687, input_checker79585_79688, output_checker79586_79689);
+schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.job_detail.scheduling_view), schema.core.make_fn_schema.call(null, output_schema79583_79686, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema79584_79687], null)));
 job_streamer.console.components.job_detail.__GT_scheduling_view = function() {
   var a = null, b = function(a) {
     return om.core.build.call(null, job_streamer.console.components.job_detail.scheduling_view, a);
@@ -79831,8 +79845,8 @@ job_streamer.console.components.job_detail.__GT_scheduling_view = function() {
   a.cljs$core$IFn$_invoke$arity$2 = c;
   return a;
 }();
-var ufv___17091 = schema.utils.use_fn_validation, output_schema17029_17092 = schema.core.Any, input_schema17030_17093 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "job", "job", -1803562682, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker17031_17094 = schema.core.checker.call(null, input_schema17030_17093), 
-output_checker17032_17095 = schema.core.checker.call(null, output_schema17029_17092);
+var ufv___79766 = schema.utils.use_fn_validation, output_schema79704_79767 = schema.core.Any, input_schema79705_79768 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "job", "job", -1803562682, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker79706_79769 = schema.core.checker.call(null, input_schema79705_79768), 
+output_checker79707_79770 = schema.core.checker.call(null, output_schema79704_79767);
 job_streamer.console.components.job_detail.next_execution_view = function(a, b, c, d, e) {
   return function g(h, k) {
     var l = a.get_cell();
@@ -79845,30 +79859,30 @@ job_streamer.console.components.job_detail.next_execution_view = function(a, b, 
     }
     m = function() {
       for (;;) {
-        return "undefined" === typeof job_streamer.console.components.job_detail.t17063 && (job_streamer.console.components.job_detail.t17063 = function(a, b, c, d, e, g, h, k, l, m, n, J) {
-          this.input_checker17031 = a;
-          this.owner = b;
-          this.validate__11398__auto__ = c;
-          this.next_execution_view = d;
-          this.job = e;
-          this.G__17034 = g;
-          this.input_schema17030 = h;
-          this.G__17033 = k;
-          this.output_checker17032 = l;
-          this.output_schema17029 = m;
-          this.ufv__ = n;
-          this.meta17064 = J;
+        return "undefined" === typeof job_streamer.console.components.job_detail.t79738 && (job_streamer.console.components.job_detail.t79738 = function(a, b, c, d, e, g, h, k, l, m, n, E) {
+          this.owner = a;
+          this.validate__11398__auto__ = b;
+          this.next_execution_view = c;
+          this.job = d;
+          this.input_checker79706 = e;
+          this.input_schema79705 = g;
+          this.G__79709 = h;
+          this.output_checker79707 = k;
+          this.ufv__ = l;
+          this.output_schema79704 = m;
+          this.G__79708 = n;
+          this.meta79739 = E;
           this.cljs$lang$protocol_mask$partition1$ = 0;
           this.cljs$lang$protocol_mask$partition0$ = 393216;
-        }, job_streamer.console.components.job_detail.t17063.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.job_detail.t17063.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
+        }, job_streamer.console.components.job_detail.t79738.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.job_detail.t79738.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
             return "next-execution-view";
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t17063.prototype.om$core$IRenderState$ = !0, job_streamer.console.components.job_detail.t17063.prototype.om$core$IRenderState$render_state$arity$2 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t79738.prototype.om$core$IRenderState$ = !0, job_streamer.console.components.job_detail.t79738.prototype.om$core$IRenderState$render_state$arity$2 = function(a, b, c, d, e, g) {
           return function(h, k) {
-            var l = this, m = cljs.core.seq_QMARK_.call(null, k) ? cljs.core.apply.call(null, cljs.core.hash_map, k) : k, n = cljs.core.get.call(null, m, new cljs.core.Keyword(null, "scheduling?", "scheduling?", 428287461)), J = cljs.core.get.call(null, m, new cljs.core.Keyword(null, "scheduling-ch", "scheduling-ch", 1344950219)), z = cljs.core.get.call(null, m, new cljs.core.Keyword(null, "refresh-job-ch", "refresh-job-ch", -1511210105)), A = this;
-            return React.DOM.div({className:"ui raised segment"}, React.DOM.h3({className:"ui header"}, "Next"), cljs.core.truth_(n) ? sablono.interpreter.interpret.call(null, om.core.build.call(null, job_streamer.console.components.job_detail.scheduling_view, l.job, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "init-state", "init-state", 1450863212), new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "scheduling-ch", "scheduling-ch", 1344950219), J, 
-            new cljs.core.Keyword(null, "refresh-job-ch", "refresh-job-ch", -1511210105), z], null)], null))) : sablono.interpreter.interpret.call(null, function() {
+            var l = this, m = cljs.core.seq_QMARK_.call(null, k) ? cljs.core.apply.call(null, cljs.core.hash_map, k) : k, n = cljs.core.get.call(null, m, new cljs.core.Keyword(null, "scheduling?", "scheduling?", 428287461)), E = cljs.core.get.call(null, m, new cljs.core.Keyword(null, "scheduling-ch", "scheduling-ch", 1344950219)), y = cljs.core.get.call(null, m, new cljs.core.Keyword(null, "refresh-job-ch", "refresh-job-ch", -1511210105)), A = this;
+            return React.DOM.div({className:"ui raised segment"}, React.DOM.h3({className:"ui header"}, "Next"), cljs.core.truth_(n) ? sablono.interpreter.interpret.call(null, om.core.build.call(null, job_streamer.console.components.job_detail.scheduling_view, l.job, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "init-state", "init-state", 1450863212), new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "scheduling-ch", "scheduling-ch", 1344950219), E, 
+            new cljs.core.Keyword(null, "refresh-job-ch", "refresh-job-ch", -1511210105), y], null)], null))) : sablono.interpreter.interpret.call(null, function() {
               var h = (new cljs.core.Keyword("job", "schedule", "job/schedule", 349401155)).cljs$core$IFn$_invoke$arity$1(l.job);
               if (cljs.core.truth_(h)) {
                 var v = (new cljs.core.Keyword("job", "next-execution", "job/next-execution", -1120949836)).cljs$core$IFn$_invoke$arity$1(l.job);
@@ -79880,32 +79894,32 @@ job_streamer.console.components.job_detail.next_execution_view = function(a, b, 
                   return function(a) {
                     return job_streamer.console.components.job_detail.pause_schedule.call(null, l.job, l.owner, m);
                   };
-                }(v, h, h, A, k, m, n, J, z, a, b, c, d, e, g)], null), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "i.pause.icon", "i.pause.icon", -1694638860)], null), "Pause"], null) : new cljs.core.PersistentVector(null, 4, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "a.item", "a.item", 725358035), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "on-click", "on-click", 1632826543), 
+                }(v, h, h, A, k, m, n, E, y, a, b, c, d, e, g)], null), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "i.pause.icon", "i.pause.icon", -1694638860)], null), "Pause"], null) : new cljs.core.PersistentVector(null, 4, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "a.item", "a.item", 725358035), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "on-click", "on-click", 1632826543), 
                 function(a, b, c, d, e, g, h, k, m, n, p, q, r, s, t) {
                   return function(a) {
                     return job_streamer.console.components.job_detail.resume_schedule.call(null, l.job, l.owner, m);
                   };
-                }(v, h, h, A, k, m, n, J, z, a, b, c, d, e, g)], null), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "i.play.icon", "i.play.icon", -1516903259)], null), "Resume"], null), new cljs.core.PersistentVector(null, 4, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "a.item", "a.item", 725358035), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "on-click", "on-click", 1632826543), 
+                }(v, h, h, A, k, m, n, E, y, a, b, c, d, e, g)], null), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "i.play.icon", "i.play.icon", -1516903259)], null), "Resume"], null), new cljs.core.PersistentVector(null, 4, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "a.item", "a.item", 725358035), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "on-click", "on-click", 1632826543), 
                 function(a, b, c, d, e, g, h, k, m, n, p, q, r, s, t) {
                   return function(a) {
                     return job_streamer.console.components.job_detail.drop_schedule.call(null, l.job, l.owner, m);
                   };
-                }(v, h, h, A, k, m, n, J, z, a, b, c, d, e, g)], null), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "i.remove.icon", "i.remove.icon", 1455856198)], null), "Drop"], null), new cljs.core.PersistentVector(null, 4, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "a.item", "a.item", 725358035), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "on-click", "on-click", 1632826543), 
+                }(v, h, h, A, k, m, n, E, y, a, b, c, d, e, g)], null), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "i.remove.icon", "i.remove.icon", 1455856198)], null), "Drop"], null), new cljs.core.PersistentVector(null, 4, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "a.item", "a.item", 725358035), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "on-click", "on-click", 1632826543), 
                 function(a, b, c, d, e, g, h, k, m, n, p, q, r, s, t) {
                   return function(a) {
                     return om.core.set_state_BANG_.call(null, l.owner, new cljs.core.Keyword(null, "scheduling?", "scheduling?", 428287461), !0);
                   };
-                }(v, h, h, A, k, m, n, J, z, a, b, c, d, e, g)], null), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "i.calendar.icon", "i.calendar.icon", 1045340142)], null), "Edit"], null)], null)], null);
+                }(v, h, h, A, k, m, n, E, y, a, b, c, d, e, g)], null), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "i.calendar.icon", "i.calendar.icon", 1045340142)], null), "Edit"], null)], null)], null);
               }
               return new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div", "div", 1057191632), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div.header", "div.header", 1964513620), "No schedule"], null), new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "button.ui.primary.button", "button.ui.primary.button", 
               -646259243), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "on-click", "on-click", 1632826543), function(a, b, c, d, e, g, h, k, m, n, p, q, r) {
                 return function(a) {
                   return om.core.set_state_BANG_.call(null, l.owner, new cljs.core.Keyword(null, "scheduling?", "scheduling?", 428287461), !0);
                 };
-              }(h, A, k, m, n, J, z, a, b, c, d, e, g)], null), "Schedule this job"], null)], null);
+              }(h, A, k, m, n, E, y, a, b, c, d, e, g)], null), "Schedule this job"], null)], null);
             }()));
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t17063.prototype.om$core$IWillMount$ = !0, job_streamer.console.components.job_detail.t17063.prototype.om$core$IWillMount$will_mount$arity$1 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t79738.prototype.om$core$IWillMount$ = !0, job_streamer.console.components.job_detail.t79738.prototype.om$core$IWillMount$will_mount$arity$1 = function(a, b, c, d, e, g) {
           return function(h) {
             var k = this;
             h = cljs.core.async.chan.call(null, 1);
@@ -79977,27 +79991,27 @@ job_streamer.console.components.job_detail.next_execution_view = function(a, b, 
             }(h, this, a, b, c, d, e, g));
             return h;
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t17063.prototype.om$core$IInitState$ = !0, job_streamer.console.components.job_detail.t17063.prototype.om$core$IInitState$init_state$arity$1 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t79738.prototype.om$core$IInitState$ = !0, job_streamer.console.components.job_detail.t79738.prototype.om$core$IInitState$init_state$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
             return new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "scheduling-ch", "scheduling-ch", 1344950219), cljs.core.async.chan.call(null), new cljs.core.Keyword(null, "scheduling?", "scheduling?", 428287461), !1], null);
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t17063.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t79738.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
-            return this.meta17064;
+            return this.meta79739;
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t17063.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t79738.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
           return function(a, b) {
-            return new job_streamer.console.components.job_detail.t17063(this.input_checker17031, this.owner, this.validate__11398__auto__, this.next_execution_view, this.job, this.G__17034, this.input_schema17030, this.G__17033, this.output_checker17032, this.output_schema17029, this.ufv__, b);
+            return new job_streamer.console.components.job_detail.t79738(this.owner, this.validate__11398__auto__, this.next_execution_view, this.job, this.input_checker79706, this.input_schema79705, this.G__79709, this.output_checker79707, this.ufv__, this.output_schema79704, this.G__79708, b);
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t17063.cljs$lang$type = !0, job_streamer.console.components.job_detail.t17063.cljs$lang$ctorStr = "job-streamer.console.components.job-detail/t17063", job_streamer.console.components.job_detail.t17063.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t79738.cljs$lang$type = !0, job_streamer.console.components.job_detail.t79738.cljs$lang$ctorStr = "job-streamer.console.components.job-detail/t79738", job_streamer.console.components.job_detail.t79738.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
           return function(a, b, c) {
-            return cljs.core._write.call(null, b, "job-streamer.console.components.job-detail/t17063");
+            return cljs.core._write.call(null, b, "job-streamer.console.components.job-detail/t79738");
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.__GT_t17063 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.__GT_t79738 = function(a, b, c, d, e, g) {
           return function(a, b, c, d, e, g, h, k, l, m, n, p) {
-            return new job_streamer.console.components.job_detail.t17063(a, b, c, d, e, g, h, k, l, m, n, p);
+            return new job_streamer.console.components.job_detail.t79738(a, b, c, d, e, g, h, k, l, m, n, p);
           };
-        }(l, a, b, c, d, e)), new job_streamer.console.components.job_detail.t17063(d, k, l, g, h, k, c, h, e, b, a, null);
+        }(l, a, b, c, d, e)), new job_streamer.console.components.job_detail.t79738(k, l, g, h, d, c, k, e, a, b, h, null);
       }
     }();
     if (cljs.core.truth_(l) && (n = e.call(null, m), cljs.core.truth_(n))) {
@@ -80006,8 +80020,8 @@ job_streamer.console.components.job_detail.next_execution_view = function(a, b, 
     }
     return m;
   };
-}(ufv___17091, output_schema17029_17092, input_schema17030_17093, input_checker17031_17094, output_checker17032_17095);
-schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.job_detail.next_execution_view), schema.core.make_fn_schema.call(null, output_schema17029_17092, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema17030_17093], null)));
+}(ufv___79766, output_schema79704_79767, input_schema79705_79768, input_checker79706_79769, output_checker79707_79770);
+schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.job_detail.next_execution_view), schema.core.make_fn_schema.call(null, output_schema79704_79767, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema79705_79768], null)));
 job_streamer.console.components.job_detail.__GT_next_execution_view = function() {
   var a = null, b = function(a) {
     return om.core.build.call(null, job_streamer.console.components.job_detail.next_execution_view, a);
@@ -80026,8 +80040,8 @@ job_streamer.console.components.job_detail.__GT_next_execution_view = function()
   a.cljs$core$IFn$_invoke$arity$2 = c;
   return a;
 }();
-var ufv___17184 = schema.utils.use_fn_validation, output_schema17106_17185 = schema.core.Any, input_schema17107_17186 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "arg0", "arg0", -1024593414, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker17108_17187 = schema.core.checker.call(null, input_schema17107_17186), 
-output_checker17109_17188 = schema.core.checker.call(null, output_schema17106_17185);
+var ufv___79859 = schema.utils.use_fn_validation, output_schema79781_79860 = schema.core.Any, input_schema79782_79861 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "arg0", "arg0", -1024593414, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker79783_79862 = schema.core.checker.call(null, input_schema79782_79861), 
+output_checker79784_79863 = schema.core.checker.call(null, output_schema79781_79860);
 job_streamer.console.components.job_detail.current_job_view = function(a, b, c, d, e) {
   return function g(h, k) {
     var l = a.get_cell();
@@ -80039,43 +80053,43 @@ job_streamer.console.components.job_detail.current_job_view = function(a, b, c, 
       }
     }
     m = function() {
-      for (var m = cljs.core.seq_QMARK_.call(null, h) ? cljs.core.apply.call(null, cljs.core.hash_map, h) : h, n = cljs.core.get.call(null, m, new cljs.core.Keyword(null, "job-id", "job-id", 651349542));;) {
-        var r = h, s = cljs.core.seq_QMARK_.call(null, r) ? cljs.core.apply.call(null, cljs.core.hash_map, r) : r, t = s, u = cljs.core.get.call(null, s, new cljs.core.Keyword(null, "job-id", "job-id", 651349542)), v = k;
-        "undefined" === typeof job_streamer.console.components.job_detail.t17152 && (job_streamer.console.components.job_detail.t17152 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t) {
-          this.G__17111 = a;
+      for (var m = cljs.core.seq_QMARK_.call(null, h) ? cljs.core.apply.call(null, cljs.core.hash_map, h) : h, n = cljs.core.get.call(null, m, new cljs.core.Keyword(null, "job-name", "job-name", 607418212));;) {
+        var r = h, s = cljs.core.seq_QMARK_.call(null, r) ? cljs.core.apply.call(null, cljs.core.hash_map, r) : r, t = s, u = cljs.core.get.call(null, s, new cljs.core.Keyword(null, "job-name", "job-name", 607418212)), v = k;
+        "undefined" === typeof job_streamer.console.components.job_detail.t79827 && (job_streamer.console.components.job_detail.t79827 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t) {
+          this.G__79786 = a;
           this.owner = b;
           this.validate__11398__auto__ = c;
-          this.current_job_view = d;
-          this.G__17149 = e;
-          this.job_id = g;
-          this.output_schema17106 = h;
-          this.input_schema17107 = k;
-          this.input_checker17108 = l;
-          this.G__17110 = m;
-          this.map__17150 = n;
-          this.map__17151 = p;
-          this.app = q;
-          this.output_checker17109 = r;
+          this.output_checker79784 = d;
+          this.G__79785 = e;
+          this.G__79824 = g;
+          this.current_job_view = h;
+          this.job_name = k;
+          this.output_schema79781 = l;
+          this.map__79825 = m;
+          this.input_checker79783 = n;
+          this.input_schema79782 = p;
+          this.map__79826 = q;
+          this.app = r;
           this.ufv__ = s;
-          this.meta17153 = t;
+          this.meta79828 = t;
           this.cljs$lang$protocol_mask$partition1$ = 0;
           this.cljs$lang$protocol_mask$partition0$ = 393216;
-        }, job_streamer.console.components.job_detail.t17152.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.job_detail.t17152.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
+        }, job_streamer.console.components.job_detail.t79827.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.job_detail.t79827.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
           return function(a) {
             return "current-job-view";
           };
-        }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t17152.prototype.om$core$IDidMount$ = !0, job_streamer.console.components.job_detail.t17152.prototype.om$core$IDidMount$did_mount$arity$1 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
+        }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t79827.prototype.om$core$IDidMount$ = !0, job_streamer.console.components.job_detail.t79827.prototype.om$core$IDidMount$did_mount$arity$1 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
           return function(a) {
-            return job_streamer.console.components.job_detail.render_job_structure.call(null, this.job_id, this.owner);
+            return job_streamer.console.components.job_detail.render_job_structure.call(null, this.job_name, this.owner);
           };
-        }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t17152.prototype.om$core$IDidUpdate$ = !0, job_streamer.console.components.job_detail.t17152.prototype.om$core$IDidUpdate$did_update$arity$3 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
+        }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t79827.prototype.om$core$IDidUpdate$ = !0, job_streamer.console.components.job_detail.t79827.prototype.om$core$IDidUpdate$did_update$arity$3 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
           return function(a, b, c) {
-            return cljs.core.truth_(document.getElementById("job-blocks-inner").firstChild) ? null : job_streamer.console.components.job_detail.render_job_structure.call(null, this.job_id, this.owner);
+            return cljs.core.truth_(document.getElementById("job-blocks-inner").firstChild) ? null : job_streamer.console.components.job_detail.render_job_structure.call(null, this.job_name, this.owner);
           };
-        }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t17152.prototype.om$core$IRenderState$ = !0, job_streamer.console.components.job_detail.t17152.prototype.om$core$IRenderState$render_state$arity$2 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
-          return function(v, L) {
-            var N = this, Q = cljs.core.seq_QMARK_.call(null, L) ? cljs.core.apply.call(null, cljs.core.hash_map, L) : L, R = cljs.core.get.call(null, Q, new cljs.core.Keyword(null, "refresh-job-ch", "refresh-job-ch", -1511210105)), S = cljs.core.get.call(null, Q, new cljs.core.Keyword(null, "dimmed?", "dimmed?", -111032912)), T = cljs.core.get.call(null, Q, new cljs.core.Keyword(null, "job", "job", 850873087)), V = this, U = cljs.core.first.call(null, cljs.core.drop.call(null, 3, (new cljs.core.Keyword(null, 
-            "mode", "mode", 654403691)).cljs$core$IFn$_invoke$arity$1(N.app)));
+        }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t79827.prototype.om$core$IRenderState$ = !0, job_streamer.console.components.job_detail.t79827.prototype.om$core$IRenderState$render_state$arity$2 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
+          return function(v, M) {
+            var P = this, Q = cljs.core.seq_QMARK_.call(null, M) ? cljs.core.apply.call(null, cljs.core.hash_map, M) : M, R = cljs.core.get.call(null, Q, new cljs.core.Keyword(null, "refresh-job-ch", "refresh-job-ch", -1511210105)), S = cljs.core.get.call(null, Q, new cljs.core.Keyword(null, "dimmed?", "dimmed?", -111032912)), T = cljs.core.get.call(null, Q, new cljs.core.Keyword(null, "job", "job", 850873087)), V = this, U = cljs.core.first.call(null, cljs.core.drop.call(null, 3, (new cljs.core.Keyword(null, 
+            "mode", "mode", 654403691)).cljs$core$IFn$_invoke$arity$1(P.app)));
             return sablono.interpreter.interpret.call(null, function() {
               var v = U instanceof cljs.core.Keyword ? U.fqn : null;
               switch(v) {
@@ -80084,22 +80098,22 @@ job_streamer.console.components.job_detail.current_job_view = function(a, b, c, 
                 default:
                   return new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div.ui.stackable.two.column.grid", "div.ui.stackable.two.column.grid", 49176723), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div.column", "div.column", -1380853326), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div.ui.special.cards", 
                   "div.ui.special.cards", 1807949530), new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div.card", "div.card", -459317104), new cljs.core.PersistentVector(null, 4, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div.dimmable.image.dimmed", "div.dimmable.image.dimmed", -655963804), new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "on-mouse-enter", "on-mouse-enter", -1664921661), 
-                  function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u, v, x, w, C, y, z, A, B) {
+                  function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u, v, x, w, y, z, A, D, I) {
                     return function(a) {
-                      return om.core.set_state_BANG_.call(null, N.owner, new cljs.core.Keyword(null, "dimmed?", "dimmed?", -111032912), !0);
+                      return om.core.set_state_BANG_.call(null, P.owner, new cljs.core.Keyword(null, "dimmed?", "dimmed?", -111032912), !0);
                     };
-                  }(v, U, V, L, Q, R, S, T, a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u), new cljs.core.Keyword(null, "on-mouse-leave", "on-mouse-leave", -1864319528), function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u, v, x, w, C, y, z, A, B) {
+                  }(v, U, V, M, Q, R, S, T, a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u), new cljs.core.Keyword(null, "on-mouse-leave", "on-mouse-leave", -1864319528), function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u, v, x, w, y, z, A, D, I) {
                     return function(a) {
-                      return om.core.set_state_BANG_.call(null, N.owner, new cljs.core.Keyword(null, "dimmed?", "dimmed?", -111032912), !1);
+                      return om.core.set_state_BANG_.call(null, P.owner, new cljs.core.Keyword(null, "dimmed?", "dimmed?", -111032912), !1);
                     };
-                  }(v, U, V, L, Q, R, S, T, a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u)], null), new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div.ui.inverted.dimmer", "div.ui.inverted.dimmer", -1872302285), cljs.core.truth_(S) ? new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "class", "class", -2030961996), "visible"], null) : null, new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, 
+                  }(v, U, V, M, Q, R, S, T, a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u)], null), new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div.ui.inverted.dimmer", "div.ui.inverted.dimmer", -1872302285), cljs.core.truth_(S) ? new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "class", "class", -2030961996), "visible"], null) : null, new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, 
                   [new cljs.core.Keyword(null, "div.content", "div.content", -298042649), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div.center", "div.center", 1338956224), new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "button.ui.primary.button", "button.ui.primary.button", -646259243), new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "type", 
-                  "type", 1174270348), "button", new cljs.core.Keyword(null, "on-click", "on-click", 1632826543), function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u, v, x, w, C, y, z, A, B) {
+                  "type", 1174270348), "button", new cljs.core.Keyword(null, "on-click", "on-click", 1632826543), function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u, v, x, w, y, z, A, D, I) {
                     return function(a) {
-                      return location.href = [cljs.core.str("#/job/"), cljs.core.str(N.job_id), cljs.core.str("/edit")].join("");
+                      return location.href = [cljs.core.str("#/job/"), cljs.core.str(job_streamer.console.components.job_detail.job_id), cljs.core.str("/edit")].join("");
                     };
-                  }(v, U, V, L, Q, R, S, T, a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u)], null), "Edit"], null)], null)], null)], null), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div#job-blocks-inner.ui.big.image", "div#job-blocks-inner.ui.big.image", -399648981)], null)], null), new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div.content", "div.content", -298042649), 
-                  new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div.header", "div.header", 1964513620), (new cljs.core.Keyword("job", "id", "job/id", -1388425577)).cljs$core$IFn$_invoke$arity$1(T)], null), new cljs.core.PersistentVector(null, 4, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div.description", "div.description", 1049154676), new cljs.core.PersistentVector(null, 4, 5, cljs.core.PersistentVector.EMPTY_NODE, 
+                  }(v, U, V, M, Q, R, S, T, a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u)], null), "Edit"], null)], null)], null)], null), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div#job-blocks-inner.ui.big.image", "div#job-blocks-inner.ui.big.image", -399648981)], null)], null), new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div.content", "div.content", -298042649), 
+                  new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div.header", "div.header", 1964513620), (new cljs.core.Keyword("job", "name", "job/name", 1843780588)).cljs$core$IFn$_invoke$arity$1(T)], null), new cljs.core.PersistentVector(null, 4, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div.description", "div.description", 1049154676), new cljs.core.PersistentVector(null, 4, 5, cljs.core.PersistentVector.EMPTY_NODE, 
                   [new cljs.core.Keyword(null, "div.ui.tiny.statistics", "div.ui.tiny.statistics", -1402362735), new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div.statistic", "div.statistic", -629252311), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div.value", "div.value", 841295219), cljs.core.get_in.call(null, T, new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, 
                   [new cljs.core.Keyword("job", "stats", "job/stats", -85619520), new cljs.core.Keyword(null, "total", "total", 1916810418)], null))], null), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div.label", "div.label", 1974310659), "Total"], null)], null), new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div.statistic", "div.statistic", -629252311), new cljs.core.PersistentVector(null, 
                   2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div.value", "div.value", 841295219), cljs.core.get_in.call(null, T, new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword("job", "stats", "job/stats", -85619520), new cljs.core.Keyword(null, "success", "success", 1890645906)], null))], null), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div.label", 
@@ -80110,21 +80124,26 @@ job_streamer.console.components.job_detail.current_job_view = function(a, b, c, 
                   null), new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div.column", "div.column", -1380853326), new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div.ui.raised.segment", "div.ui.raised.segment", -1330125361), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "h3.ui.header", "h3.ui.header", -375183742), 
                   "Latest"], null), function() {
                     var a = (new cljs.core.Keyword("job", "latest-execution", "job/latest-execution", -1364961031)).cljs$core$IFn$_invoke$arity$1(T);
-                    return cljs.core.truth_(a) ? new cljs.core.PersistentVector(null, 5, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div.ui.list", "div.ui.list", -92101773), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div.item", "div.item", 517680018), new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div.ui.huge.label", "div.ui.huge.label", 
-                    -702031597), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "i.check.circle.icon", "i.check.circle.icon", -982857055)], null), cljs.core.name.call(null, cljs.core.get_in.call(null, a, new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword("job-execution", "batch-status", "job-execution/batch-status", 1615935519), new cljs.core.Keyword("db", "ident", "db/ident", -737096)], 
-                    null)))], null)], null), new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div.item", "div.item", 517680018), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "i.calendar.outline.icon", "i.calendar.outline.icon", -691745708)], null), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div.content", 
-                    "div.content", -298042649), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div.description", "div.description", 1049154676), job_streamer.console.format.duration_between.call(null, (new cljs.core.Keyword("job-execution", "start-time", "job-execution/start-time", -398843134)).cljs$core$IFn$_invoke$arity$1(a), (new cljs.core.Keyword("job-execution", "end-time", "job-execution/end-time", -696268892)).cljs$core$IFn$_invoke$arity$1(a))], 
-                    null)], null)], null), new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div.item", "div.item", 517680018), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "i.wait.icon", "i.wait.icon", 1609011700)], null), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div.content", "div.content", -298042649), 
-                    new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div.description", "div.description", 1049154676), job_streamer.console.format.date_medium.call(null, (new cljs.core.Keyword("job-execution", "start-time", "job-execution/start-time", -398843134)).cljs$core$IFn$_invoke$arity$1(a))], null)], null)], null), new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div.item", 
-                    "div.item", 517680018), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "i.marker.icon", "i.marker.icon", 1737624643)], null), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div.content", "div.content", -298042649), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div.description", "div.description", 
-                    1049154676), cljs.core.get_in.call(null, a, new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword("job-execution", "agent", "job-execution/agent", 237408789), new cljs.core.Keyword("agent", "name", "agent/name", 1617105732)], null))], null)], null)], null)], null) : null;
+                    if (cljs.core.truth_(a)) {
+                      var b = cljs.core.PersistentVector, c = cljs.core.PersistentVector.EMPTY_NODE, d = new cljs.core.Keyword(null, "div.ui.list", "div.ui.list", -92101773), e = cljs.core.PersistentVector, g = cljs.core.PersistentVector.EMPTY_NODE, h = new cljs.core.Keyword(null, "div.item", "div.item", 517680018), k;
+                      k = cljs.core.get_in.call(null, a, new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword("job-execution", "batch-status", "job-execution/batch-status", 1615935519), new cljs.core.Keyword("db", "ident", "db/ident", -737096)], null));
+                      k = new cljs.core.PersistentVector(null, 4, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div.ui.huge.label", "div.ui.huge.label", -702031597), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "class", "class", -2030961996), job_streamer.console.components.job_detail.status_color.call(null, k)], null), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "i.check.circle.icon", 
+                      "i.check.circle.icon", -982857055)], null), cljs.core.name.call(null, k)], null);
+                      return new b(null, 5, 5, c, [d, new e(null, 2, 5, g, [h, k], null), new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div.item", "div.item", 517680018), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "i.calendar.outline.icon", "i.calendar.outline.icon", -691745708)], null), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, 
+                      [new cljs.core.Keyword(null, "div.content", "div.content", -298042649), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div.description", "div.description", 1049154676), job_streamer.console.format.duration_between.call(null, (new cljs.core.Keyword("job-execution", "start-time", "job-execution/start-time", -398843134)).cljs$core$IFn$_invoke$arity$1(a), (new cljs.core.Keyword("job-execution", "end-time", "job-execution/end-time", 
+                      -696268892)).cljs$core$IFn$_invoke$arity$1(a))], null)], null)], null), new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div.item", "div.item", 517680018), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "i.wait.icon", "i.wait.icon", 1609011700)], null), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, 
+                      "div.content", "div.content", -298042649), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div.description", "div.description", 1049154676), job_streamer.console.format.date_medium.call(null, (new cljs.core.Keyword("job-execution", "start-time", "job-execution/start-time", -398843134)).cljs$core$IFn$_invoke$arity$1(a))], null)], null)], null), new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, 
+                      [new cljs.core.Keyword(null, "div.item", "div.item", 517680018), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "i.marker.icon", "i.marker.icon", 1737624643)], null), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div.content", "div.content", -298042649), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, 
+                      "div.description", "div.description", 1049154676), cljs.core.get_in.call(null, a, new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword("job-execution", "agent", "job-execution/agent", 237408789), new cljs.core.Keyword("agent", "name", "agent/name", 1617105732)], null))], null)], null)], null)], null);
+                    }
+                    return null;
                   }()], null), om.core.build.call(null, job_streamer.console.components.job_detail.next_execution_view, T, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "init-state", "init-state", 1450863212), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "refresh-job-ch", "refresh-job-ch", -1511210105), R], null)], null))], null)], null);
               }
             }());
           };
-        }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t17152.prototype.om$core$IWillMount$ = !0, job_streamer.console.components.job_detail.t17152.prototype.om$core$IWillMount$will_mount$arity$1 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
+        }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t79827.prototype.om$core$IWillMount$ = !0, job_streamer.console.components.job_detail.t79827.prototype.om$core$IWillMount$will_mount$arity$1 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
           return function(v) {
-            var L = this;
+            var M = this;
             v = cljs.core.async.chan.call(null, 1);
             cljs.core.async.impl.dispatch.run.call(null, function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u, v, x) {
               return function() {
@@ -80179,55 +80198,55 @@ job_streamer.console.components.job_detail.current_job_view = function(a, b, c, 
                     }();
                   }(function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u, v, x) {
                     return function(w) {
-                      var C = w[1];
-                      if (4 === C) {
-                        var y = w[2], z = [cljs.core.str("/job/"), cljs.core.str(L.job_id)].join(""), A = [new cljs.core.Keyword(null, "handler", "handler", -195596612)], B = [function() {
-                          return function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u, v, x, w, C, y, z, A) {
+                      var y = w[1];
+                      if (4 === y) {
+                        var z = w[2], A = [cljs.core.str("/"), cljs.core.str(job_streamer.console.components.job_detail.app_name), cljs.core.str("/job/"), cljs.core.str(M.job_name)].join(""), D = [new cljs.core.Keyword(null, "handler", "handler", -195596612)], I = [function() {
+                          return function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u, v, x, w, y, z, A, D) {
                             return function(a) {
-                              return om.core.set_state_BANG_.call(null, L.owner, new cljs.core.Keyword(null, "job", "job", 850873087), a);
+                              return om.core.set_state_BANG_.call(null, M.owner, new cljs.core.Keyword(null, "job", "job", 850873087), a);
                             };
-                          }(y, y, z, A, C, a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u, v, x);
-                        }()], B = cljs.core.PersistentHashMap.fromArrays(A, B), B = job_streamer.console.api.request.call(null, z, B);
-                        w[7] = B;
+                          }(z, z, A, D, y, a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u, v, x);
+                        }()], I = cljs.core.PersistentHashMap.fromArrays(D, I), I = job_streamer.console.api.request.call(null, A, I);
+                        w[7] = I;
                         w[2] = null;
                         w[1] = 2;
                         return new cljs.core.Keyword(null, "recur", "recur", -437573268);
                       }
-                      return 3 === C ? (B = w[2], cljs.core.async.impl.ioc_helpers.return_chan.call(null, w, B)) : 2 === C ? (B = om.core.get_state.call(null, L.owner, new cljs.core.Keyword(null, "refresh-job-ch", "refresh-job-ch", -1511210105)), cljs.core.async.impl.ioc_helpers.take_BANG_.call(null, w, 4, B)) : 1 === C ? (w[2] = null, w[1] = 2, new cljs.core.Keyword(null, "recur", "recur", -437573268)) : null;
+                      return 3 === y ? (I = w[2], cljs.core.async.impl.ioc_helpers.return_chan.call(null, w, I)) : 2 === y ? (I = om.core.get_state.call(null, M.owner, new cljs.core.Keyword(null, "refresh-job-ch", "refresh-job-ch", -1511210105)), cljs.core.async.impl.ioc_helpers.take_BANG_.call(null, w, 4, I)) : 1 === y ? (w[2] = null, w[1] = 2, new cljs.core.Keyword(null, "recur", "recur", -437573268)) : null;
                     };
                   }(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u, v, x), a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u, v, x);
-                }(), C = function() {
+                }(), y = function() {
                   var b = w.call(null);
                   b[cljs.core.async.impl.ioc_helpers.USER_START_IDX] = a;
                   return b;
                 }();
-                return cljs.core.async.impl.ioc_helpers.run_state_machine_wrapped.call(null, C);
+                return cljs.core.async.impl.ioc_helpers.run_state_machine_wrapped.call(null, y);
               };
             }(v, this, a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u));
             return v;
           };
-        }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t17152.prototype.om$core$IInitState$ = !0, job_streamer.console.components.job_detail.t17152.prototype.om$core$IInitState$init_state$arity$1 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
+        }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t79827.prototype.om$core$IInitState$ = !0, job_streamer.console.components.job_detail.t79827.prototype.om$core$IInitState$init_state$arity$1 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
           return function(a) {
             return new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "refresh-job-ch", "refresh-job-ch", -1511210105), cljs.core.async.chan.call(null)], null);
           };
-        }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t17152.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
+        }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t79827.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
           return function(a) {
-            return this.meta17153;
+            return this.meta79828;
           };
-        }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t17152.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
+        }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t79827.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
           return function(a, b) {
-            return new job_streamer.console.components.job_detail.t17152(this.G__17111, this.owner, this.validate__11398__auto__, this.current_job_view, this.G__17149, this.job_id, this.output_schema17106, this.input_schema17107, this.input_checker17108, this.G__17110, this.map__17150, this.map__17151, this.app, this.output_checker17109, this.ufv__, b);
+            return new job_streamer.console.components.job_detail.t79827(this.G__79786, this.owner, this.validate__11398__auto__, this.output_checker79784, this.G__79785, this.G__79824, this.current_job_view, this.job_name, this.output_schema79781, this.map__79825, this.input_checker79783, this.input_schema79782, this.map__79826, this.app, this.ufv__, b);
           };
-        }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t17152.cljs$lang$type = !0, job_streamer.console.components.job_detail.t17152.cljs$lang$ctorStr = "job-streamer.console.components.job-detail/t17152", job_streamer.console.components.job_detail.t17152.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
+        }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t79827.cljs$lang$type = !0, job_streamer.console.components.job_detail.t79827.cljs$lang$ctorStr = "job-streamer.console.components.job-detail/t79827", job_streamer.console.components.job_detail.t79827.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
           return function(a, b, c) {
-            return cljs.core._write.call(null, b, "job-streamer.console.components.job-detail/t17152");
+            return cljs.core._write.call(null, b, "job-streamer.console.components.job-detail/t79827");
           };
-        }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.__GT_t17152 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
+        }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.__GT_t79827 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
           return function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t) {
-            return new job_streamer.console.components.job_detail.t17152(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t);
+            return new job_streamer.console.components.job_detail.t79827(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t);
           };
         }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e));
-        return new job_streamer.console.components.job_detail.t17152(k, v, l, g, h, u, b, c, d, h, m, s, t, e, a, null);
+        return new job_streamer.console.components.job_detail.t79827(k, v, l, e, h, h, g, u, b, m, d, c, s, t, a, null);
       }
     }();
     if (cljs.core.truth_(l) && (n = e.call(null, m), cljs.core.truth_(n))) {
@@ -80236,8 +80255,8 @@ job_streamer.console.components.job_detail.current_job_view = function(a, b, c, 
     }
     return m;
   };
-}(ufv___17184, output_schema17106_17185, input_schema17107_17186, input_checker17108_17187, output_checker17109_17188);
-schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.job_detail.current_job_view), schema.core.make_fn_schema.call(null, output_schema17106_17185, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema17107_17186], null)));
+}(ufv___79859, output_schema79781_79860, input_schema79782_79861, input_checker79783_79862, output_checker79784_79863);
+schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.job_detail.current_job_view), schema.core.make_fn_schema.call(null, output_schema79781_79860, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema79782_79861], null)));
 job_streamer.console.components.job_detail.__GT_current_job_view = function() {
   var a = null, b = function(a) {
     return om.core.build.call(null, job_streamer.console.components.job_detail.current_job_view, a);
@@ -80256,8 +80275,8 @@ job_streamer.console.components.job_detail.__GT_current_job_view = function() {
   a.cljs$core$IFn$_invoke$arity$2 = c;
   return a;
 }();
-var ufv___17294 = schema.utils.use_fn_validation, output_schema17200_17295 = schema.core.Any, input_schema17201_17296 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "arg0", "arg0", -1024593414, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker17202_17297 = schema.core.checker.call(null, input_schema17201_17296), 
-output_checker17203_17298 = schema.core.checker.call(null, output_schema17200_17295);
+var ufv___79969 = schema.utils.use_fn_validation, output_schema79875_79970 = schema.core.Any, input_schema79876_79971 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "arg0", "arg0", -1024593414, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker79877_79972 = schema.core.checker.call(null, input_schema79876_79971), 
+output_checker79878_79973 = schema.core.checker.call(null, output_schema79875_79970);
 job_streamer.console.components.job_detail.job_detail_view = function(a, b, c, d, e) {
   return function g(h, k) {
     var l = a.get_cell();
@@ -80269,51 +80288,51 @@ job_streamer.console.components.job_detail.job_detail_view = function(a, b, c, d
       }
     }
     m = function() {
-      for (var m = cljs.core.seq_QMARK_.call(null, h) ? cljs.core.apply.call(null, cljs.core.hash_map, h) : h, n = cljs.core.get.call(null, m, new cljs.core.Keyword(null, "job-id", "job-id", 651349542));;) {
-        var r = h, s = cljs.core.seq_QMARK_.call(null, r) ? cljs.core.apply.call(null, cljs.core.hash_map, r) : r, t = s, u = cljs.core.get.call(null, s, new cljs.core.Keyword(null, "job-id", "job-id", 651349542)), v = k;
-        "undefined" === typeof job_streamer.console.components.job_detail.t17254 && (job_streamer.console.components.job_detail.t17254 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t) {
-          this.G__17251 = a;
-          this.map__17253 = b;
+      for (var m = cljs.core.seq_QMARK_.call(null, h) ? cljs.core.apply.call(null, cljs.core.hash_map, h) : h, n = cljs.core.get.call(null, m, new cljs.core.Keyword(null, "job-name", "job-name", 607418212));;) {
+        var r = h, s = cljs.core.seq_QMARK_.call(null, r) ? cljs.core.apply.call(null, cljs.core.hash_map, r) : r, t = s, u = cljs.core.get.call(null, s, new cljs.core.Keyword(null, "job-name", "job-name", 607418212)), v = k;
+        "undefined" === typeof job_streamer.console.components.job_detail.t79929 && (job_streamer.console.components.job_detail.t79929 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t) {
+          this.map__79928 = a;
+          this.input_schema79876 = b;
           this.owner = c;
           this.validate__11398__auto__ = d;
-          this.job_detail_view = e;
-          this.input_schema17201 = g;
-          this.job_id = h;
-          this.G__17205 = k;
-          this.G__17204 = l;
-          this.map__17252 = m;
-          this.input_checker17202 = n;
-          this.app = p;
-          this.output_checker17203 = q;
-          this.output_schema17200 = r;
+          this.G__79879 = e;
+          this.job_detail_view = g;
+          this.output_schema79875 = h;
+          this.job_name = k;
+          this.input_checker79877 = l;
+          this.output_checker79878 = m;
+          this.G__79926 = n;
+          this.G__79880 = p;
+          this.map__79927 = q;
+          this.app = r;
           this.ufv__ = s;
-          this.meta17255 = t;
+          this.meta79930 = t;
           this.cljs$lang$protocol_mask$partition1$ = 0;
           this.cljs$lang$protocol_mask$partition0$ = 393216;
-        }, job_streamer.console.components.job_detail.t17254.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.job_detail.t17254.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
+        }, job_streamer.console.components.job_detail.t79929.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.job_detail.t79929.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
           return function(a) {
             return "job-detail-view";
           };
-        }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t17254.prototype.om$core$IRenderState$ = !0, job_streamer.console.components.job_detail.t17254.prototype.om$core$IRenderState$render_state$arity$2 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
+        }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t79929.prototype.om$core$IRenderState$ = !0, job_streamer.console.components.job_detail.t79929.prototype.om$core$IRenderState$render_state$arity$2 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
           return function(a, b) {
             var c = this, d = cljs.core.seq_QMARK_.call(null, b) ? cljs.core.apply.call(null, cljs.core.hash_map, b) : b;
             cljs.core.get.call(null, d, new cljs.core.Keyword(null, "breadcrumbs", "breadcrumbs", -354629220));
             cljs.core.get.call(null, d, new cljs.core.Keyword(null, "message", "message", -406056002));
             var e = cljs.core.first.call(null, cljs.core.drop.call(null, 2, (new cljs.core.Keyword(null, "mode", "mode", 654403691)).cljs$core$IFn$_invoke$arity$1(c.app))), d = om.core.build.call(null, job_streamer.console.components.job_detail.breadcrumb_view, (new cljs.core.Keyword(null, "mode", "mode", 654403691)).cljs$core$IFn$_invoke$arity$1(c.app), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "init-state", "init-state", 1450863212), new cljs.core.PersistentArrayMap(null, 
-            1, [new cljs.core.Keyword(null, "job-id", "job-id", 651349542), c.job_id], null)], null));
+            1, [new cljs.core.Keyword(null, "job-name", "job-name", 607418212), c.job_name], null)], null));
             return cljs.core.apply.call(null, React.DOM.div, cljs.core.map_QMARK_.call(null, d) ? sablono.interpreter.attributes.call(null, d) : null, cljs.core.remove.call(null, cljs.core.nil_QMARK_, cljs.core.map_QMARK_.call(null, d) ? new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [React.DOM.div({className:"ui top attached tabular menu"}, function() {
-              var a = cljs.core.merge.call(null, new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "class", "class", -2030961996), "item", new cljs.core.Keyword(null, "href", "href", -793805698), [cljs.core.str("#/job/"), cljs.core.str(c.job_id)].join("")], null), cljs.core._EQ_.call(null, e, new cljs.core.Keyword(null, "current", "current", -1088038603)) ? new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "class", "class", -2030961996), "item active"], null) : 
-              null);
+              var a = cljs.core.merge.call(null, new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "class", "class", -2030961996), "item", new cljs.core.Keyword(null, "href", "href", -793805698), [cljs.core.str("#/job/"), cljs.core.str(c.job_name)].join("")], null), cljs.core._EQ_.call(null, e, new cljs.core.Keyword(null, "current", "current", -1088038603)) ? new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "class", "class", -2030961996), "item active"], 
+              null) : null);
               return cljs.core.apply.call(null, React.DOM.a, cljs.core.map_QMARK_.call(null, a) ? sablono.interpreter.attributes.call(null, a) : null, cljs.core.remove.call(null, cljs.core.nil_QMARK_, cljs.core.map_QMARK_.call(null, a) ? new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [React.DOM.i({className:"tag icon"}), "Current"], null) : new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [sablono.interpreter.interpret.call(null, 
               a), React.DOM.i({className:"tag icon"}), "Current"], null)));
             }(), function() {
-              var a = cljs.core.merge.call(null, new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "class", "class", -2030961996), "item", new cljs.core.Keyword(null, "href", "href", -793805698), [cljs.core.str("#/job/"), cljs.core.str(c.job_id), cljs.core.str("/history")].join("")], null), cljs.core._EQ_.call(null, e, new cljs.core.Keyword(null, "history", "history", -247395220)) ? new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "class", "class", -2030961996), 
+              var a = cljs.core.merge.call(null, new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "class", "class", -2030961996), "item", new cljs.core.Keyword(null, "href", "href", -793805698), [cljs.core.str("#/job/"), cljs.core.str(c.job_name), cljs.core.str("/history")].join("")], null), cljs.core._EQ_.call(null, e, new cljs.core.Keyword(null, "history", "history", -247395220)) ? new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "class", "class", -2030961996), 
               "item active"], null) : null);
               return cljs.core.apply.call(null, React.DOM.a, cljs.core.map_QMARK_.call(null, a) ? sablono.interpreter.attributes.call(null, a) : null, cljs.core.remove.call(null, cljs.core.nil_QMARK_, cljs.core.map_QMARK_.call(null, a) ? new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [React.DOM.i({className:"wait icon"}), "History"], null) : new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [sablono.interpreter.interpret.call(null, 
               a), React.DOM.i({className:"wait icon"}), "History"], null)));
             }(), function() {
-              var a = cljs.core.merge.call(null, new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "class", "class", -2030961996), "item", new cljs.core.Keyword(null, "href", "href", -793805698), [cljs.core.str("#/job/"), cljs.core.str(c.job_id), cljs.core.str("/settings")].join("")], null), cljs.core._EQ_.call(null, e, new cljs.core.Keyword(null, "settings", "settings", 1556144875)) ? new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "class", "class", -2030961996), 
-              "item active"], null) : null);
+              var a = cljs.core.merge.call(null, new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "class", "class", -2030961996), "item", new cljs.core.Keyword(null, "href", "href", -793805698), [cljs.core.str("#/job/"), cljs.core.str(c.job_name), cljs.core.str("/settings")].join("")], null), cljs.core._EQ_.call(null, e, new cljs.core.Keyword(null, "settings", "settings", 1556144875)) ? new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "class", "class", 
+              -2030961996), "item active"], null) : null);
               return cljs.core.apply.call(null, React.DOM.a, cljs.core.map_QMARK_.call(null, a) ? sablono.interpreter.attributes.call(null, a) : null, cljs.core.remove.call(null, cljs.core.nil_QMARK_, cljs.core.map_QMARK_.call(null, a) ? new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [React.DOM.i({className:"setting icon"}), "Settings"], null) : new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [sablono.interpreter.interpret.call(null, 
               a), React.DOM.i({className:"setting icon"}), "Settings"], null)));
             }()), React.DOM.div({className:"ui bottom attached active tab segment"}, function() {
@@ -80332,18 +80351,18 @@ job_streamer.console.components.job_detail.job_detail_view = function(a, b, c, d
               return cljs.core.apply.call(null, React.DOM.div, cljs.core.map_QMARK_.call(null, a) ? sablono.interpreter.attributes.call(null, sablono.util.merge_with_class.call(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "id", "id", -1388402092), "tab-content"], null), a)) : {id:"tab-content"}, cljs.core.remove.call(null, cljs.core.nil_QMARK_, cljs.core.map_QMARK_.call(null, a) ? cljs.core.PersistentVector.EMPTY : new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, 
               [sablono.interpreter.interpret.call(null, a)], null)));
             }())], null) : new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [sablono.interpreter.interpret.call(null, d), React.DOM.div({className:"ui top attached tabular menu"}, function() {
-              var a = cljs.core.merge.call(null, new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "class", "class", -2030961996), "item", new cljs.core.Keyword(null, "href", "href", -793805698), [cljs.core.str("#/job/"), cljs.core.str(c.job_id)].join("")], null), cljs.core._EQ_.call(null, e, new cljs.core.Keyword(null, "current", "current", -1088038603)) ? new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "class", "class", -2030961996), "item active"], null) : 
-              null);
+              var a = cljs.core.merge.call(null, new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "class", "class", -2030961996), "item", new cljs.core.Keyword(null, "href", "href", -793805698), [cljs.core.str("#/job/"), cljs.core.str(c.job_name)].join("")], null), cljs.core._EQ_.call(null, e, new cljs.core.Keyword(null, "current", "current", -1088038603)) ? new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "class", "class", -2030961996), "item active"], 
+              null) : null);
               return cljs.core.apply.call(null, React.DOM.a, cljs.core.map_QMARK_.call(null, a) ? sablono.interpreter.attributes.call(null, a) : null, cljs.core.remove.call(null, cljs.core.nil_QMARK_, cljs.core.map_QMARK_.call(null, a) ? new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [React.DOM.i({className:"tag icon"}), "Current"], null) : new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [sablono.interpreter.interpret.call(null, 
               a), React.DOM.i({className:"tag icon"}), "Current"], null)));
             }(), function() {
-              var a = cljs.core.merge.call(null, new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "class", "class", -2030961996), "item", new cljs.core.Keyword(null, "href", "href", -793805698), [cljs.core.str("#/job/"), cljs.core.str(c.job_id), cljs.core.str("/history")].join("")], null), cljs.core._EQ_.call(null, e, new cljs.core.Keyword(null, "history", "history", -247395220)) ? new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "class", "class", -2030961996), 
+              var a = cljs.core.merge.call(null, new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "class", "class", -2030961996), "item", new cljs.core.Keyword(null, "href", "href", -793805698), [cljs.core.str("#/job/"), cljs.core.str(c.job_name), cljs.core.str("/history")].join("")], null), cljs.core._EQ_.call(null, e, new cljs.core.Keyword(null, "history", "history", -247395220)) ? new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "class", "class", -2030961996), 
               "item active"], null) : null);
               return cljs.core.apply.call(null, React.DOM.a, cljs.core.map_QMARK_.call(null, a) ? sablono.interpreter.attributes.call(null, a) : null, cljs.core.remove.call(null, cljs.core.nil_QMARK_, cljs.core.map_QMARK_.call(null, a) ? new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [React.DOM.i({className:"wait icon"}), "History"], null) : new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [sablono.interpreter.interpret.call(null, 
               a), React.DOM.i({className:"wait icon"}), "History"], null)));
             }(), function() {
-              var a = cljs.core.merge.call(null, new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "class", "class", -2030961996), "item", new cljs.core.Keyword(null, "href", "href", -793805698), [cljs.core.str("#/job/"), cljs.core.str(c.job_id), cljs.core.str("/settings")].join("")], null), cljs.core._EQ_.call(null, e, new cljs.core.Keyword(null, "settings", "settings", 1556144875)) ? new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "class", "class", -2030961996), 
-              "item active"], null) : null);
+              var a = cljs.core.merge.call(null, new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "class", "class", -2030961996), "item", new cljs.core.Keyword(null, "href", "href", -793805698), [cljs.core.str("#/job/"), cljs.core.str(c.job_name), cljs.core.str("/settings")].join("")], null), cljs.core._EQ_.call(null, e, new cljs.core.Keyword(null, "settings", "settings", 1556144875)) ? new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "class", "class", 
+              -2030961996), "item active"], null) : null);
               return cljs.core.apply.call(null, React.DOM.a, cljs.core.map_QMARK_.call(null, a) ? sablono.interpreter.attributes.call(null, a) : null, cljs.core.remove.call(null, cljs.core.nil_QMARK_, cljs.core.map_QMARK_.call(null, a) ? new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [React.DOM.i({className:"setting icon"}), "Settings"], null) : new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [sablono.interpreter.interpret.call(null, 
               a), React.DOM.i({className:"setting icon"}), "Settings"], null)));
             }()), React.DOM.div({className:"ui bottom attached active tab segment"}, function() {
@@ -80363,24 +80382,24 @@ job_streamer.console.components.job_detail.job_detail_view = function(a, b, c, d
               [sablono.interpreter.interpret.call(null, a)], null)));
             }())], null)));
           };
-        }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t17254.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
+        }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t79929.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
           return function(a) {
-            return this.meta17255;
+            return this.meta79930;
           };
-        }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t17254.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
+        }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t79929.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
           return function(a, b) {
-            return new job_streamer.console.components.job_detail.t17254(this.G__17251, this.map__17253, this.owner, this.validate__11398__auto__, this.job_detail_view, this.input_schema17201, this.job_id, this.G__17205, this.G__17204, this.map__17252, this.input_checker17202, this.app, this.output_checker17203, this.output_schema17200, this.ufv__, b);
+            return new job_streamer.console.components.job_detail.t79929(this.map__79928, this.input_schema79876, this.owner, this.validate__11398__auto__, this.G__79879, this.job_detail_view, this.output_schema79875, this.job_name, this.input_checker79877, this.output_checker79878, this.G__79926, this.G__79880, this.map__79927, this.app, this.ufv__, b);
           };
-        }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t17254.cljs$lang$type = !0, job_streamer.console.components.job_detail.t17254.cljs$lang$ctorStr = "job-streamer.console.components.job-detail/t17254", job_streamer.console.components.job_detail.t17254.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
+        }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t79929.cljs$lang$type = !0, job_streamer.console.components.job_detail.t79929.cljs$lang$ctorStr = "job-streamer.console.components.job-detail/t79929", job_streamer.console.components.job_detail.t79929.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
           return function(a, b, c) {
-            return cljs.core._write.call(null, b, "job-streamer.console.components.job-detail/t17254");
+            return cljs.core._write.call(null, b, "job-streamer.console.components.job-detail/t79929");
           };
-        }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.__GT_t17254 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
+        }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.__GT_t79929 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
           return function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t) {
-            return new job_streamer.console.components.job_detail.t17254(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t);
+            return new job_streamer.console.components.job_detail.t79929(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t);
           };
         }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e));
-        return new job_streamer.console.components.job_detail.t17254(h, s, v, l, g, c, u, k, h, m, d, t, e, b, a, null);
+        return new job_streamer.console.components.job_detail.t79929(s, c, v, l, h, g, b, u, d, e, h, k, m, t, a, null);
       }
     }();
     if (cljs.core.truth_(l) && (n = e.call(null, m), cljs.core.truth_(n))) {
@@ -80389,8 +80408,8 @@ job_streamer.console.components.job_detail.job_detail_view = function(a, b, c, d
     }
     return m;
   };
-}(ufv___17294, output_schema17200_17295, input_schema17201_17296, input_checker17202_17297, output_checker17203_17298);
-schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.job_detail.job_detail_view), schema.core.make_fn_schema.call(null, output_schema17200_17295, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema17201_17296], null)));
+}(ufv___79969, output_schema79875_79970, input_schema79876_79971, input_checker79877_79972, output_checker79878_79973);
+schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.job_detail.job_detail_view), schema.core.make_fn_schema.call(null, output_schema79875_79970, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema79876_79971], null)));
 job_streamer.console.components.job_detail.__GT_job_detail_view = function() {
   var a = null, b = function(a) {
     return om.core.build.call(null, job_streamer.console.components.job_detail.job_detail_view, a);
@@ -80413,8 +80432,8 @@ job_streamer.console.components.timeline = {};
 cljs.core.enable_console_print_BANG_.call(null);
 job_streamer.console.components.timeline.Timeline = vis.Timeline;
 job_streamer.console.components.timeline.DataSet = vis.DataSet;
-var ufv___17490 = schema.utils.use_fn_validation, output_schema17470_17491 = schema.core.Any, input_schema17471_17492 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "app", "app", 1079569820, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker17472_17493 = schema.core.checker.call(null, input_schema17471_17492), 
-output_checker17473_17494 = schema.core.checker.call(null, output_schema17470_17491);
+var ufv___76871 = schema.utils.use_fn_validation, output_schema76851_76872 = schema.core.Any, input_schema76852_76873 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "app", "app", 1079569820, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker76853_76874 = schema.core.checker.call(null, input_schema76852_76873), 
+output_checker76854_76875 = schema.core.checker.call(null, output_schema76851_76872);
 job_streamer.console.components.timeline.timeline_view = function(a, b, c, d, e) {
   return function g(h, k) {
     var l = a.get_cell();
@@ -80427,26 +80446,26 @@ job_streamer.console.components.timeline.timeline_view = function(a, b, c, d, e)
     }
     m = function() {
       for (;;) {
-        return "undefined" === typeof job_streamer.console.components.timeline.t17483 && (job_streamer.console.components.timeline.t17483 = function(a, b, c, d, e, g, h, k, l, m, n, J) {
+        return "undefined" === typeof job_streamer.console.components.timeline.t76864 && (job_streamer.console.components.timeline.t76864 = function(a, b, c, d, e, g, h, k, l, m, n, E) {
           this.owner = a;
           this.validate__11398__auto__ = b;
-          this.output_schema17470 = c;
-          this.timeline_view = d;
-          this.input_schema17471 = e;
-          this.G__17475 = g;
-          this.app = h;
-          this.ufv__ = k;
-          this.input_checker17472 = l;
-          this.output_checker17473 = m;
-          this.G__17474 = n;
-          this.meta17484 = J;
+          this.output_checker76854 = c;
+          this.input_checker76853 = d;
+          this.G__76855 = e;
+          this.timeline_view = g;
+          this.input_schema76852 = h;
+          this.output_schema76851 = k;
+          this.app = l;
+          this.ufv__ = m;
+          this.G__76856 = n;
+          this.meta76865 = E;
           this.cljs$lang$protocol_mask$partition1$ = 0;
           this.cljs$lang$protocol_mask$partition0$ = 393216;
-        }, job_streamer.console.components.timeline.t17483.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.timeline.t17483.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
+        }, job_streamer.console.components.timeline.t76864.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.timeline.t76864.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
             return "timeline-view";
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.timeline.t17483.prototype.om$core$IDidMount$ = !0, job_streamer.console.components.timeline.t17483.prototype.om$core$IDidMount$did_mount$arity$1 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.timeline.t76864.prototype.om$core$IDidMount$ = !0, job_streamer.console.components.timeline.t76864.prototype.om$core$IDidMount$did_mount$arity$1 = function(a, b, c, d, e, g) {
           return function(h) {
             var k = this;
             return(new job_streamer.console.components.timeline.Timeline(document.getElementById("timeline-inner"), om.core.get_state.call(null, k.owner, new cljs.core.Keyword(null, "data-set", "data-set", -1844076932)), cljs.core.clj__GT_js.call(null, cljs.core.PersistentArrayMap.EMPTY))).on("select", function(a, b, c, d, e, g, h) {
@@ -80455,7 +80474,7 @@ job_streamer.console.components.timeline.timeline_view = function(a, b, c, d, e)
               };
             }(this, a, b, c, d, e, g));
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.timeline.t17483.prototype.om$core$IWillMount$ = !0, job_streamer.console.components.timeline.t17483.prototype.om$core$IWillMount$will_mount$arity$1 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.timeline.t76864.prototype.om$core$IWillMount$ = !0, job_streamer.console.components.timeline.t76864.prototype.om$core$IWillMount$will_mount$arity$1 = function(a, b, c, d, e, g) {
           return function(h) {
             return om.core.set_state_BANG_.call(null, this.owner, new cljs.core.Keyword(null, "data-set", "data-set", -1844076932), new job_streamer.console.components.timeline.DataSet(cljs.core.clj__GT_js.call(null, cljs.core.filter.call(null, function(a, b, c, d, e, g, h) {
               return function(a) {
@@ -80463,7 +80482,7 @@ job_streamer.console.components.timeline.timeline_view = function(a, b, c, d, e)
               };
             }(this, a, b, c, d, e, g), cljs.core.map.call(null, function(a, b, c, d, e, g, h) {
               return function(a) {
-                return new cljs.core.PersistentArrayMap(null, 6, [new cljs.core.Keyword(null, "id", "id", -1388402092), (new cljs.core.Keyword("db", "id", "db/id", -1388397098)).cljs$core$IFn$_invoke$arity$1(a), new cljs.core.Keyword(null, "content", "content", 15833224), (new cljs.core.Keyword("job", "id", "job/id", -1388425577)).cljs$core$IFn$_invoke$arity$1(a), new cljs.core.Keyword(null, "title", "title", 636505583), (new cljs.core.Keyword("job", "id", "job/id", -1388425577)).cljs$core$IFn$_invoke$arity$1(a), 
+                return new cljs.core.PersistentArrayMap(null, 6, [new cljs.core.Keyword(null, "id", "id", -1388402092), (new cljs.core.Keyword("db", "id", "db/id", -1388397098)).cljs$core$IFn$_invoke$arity$1(a), new cljs.core.Keyword(null, "content", "content", 15833224), (new cljs.core.Keyword("job", "name", "job/name", 1843780588)).cljs$core$IFn$_invoke$arity$1(a), new cljs.core.Keyword(null, "title", "title", 636505583), (new cljs.core.Keyword("job", "name", "job/name", 1843780588)).cljs$core$IFn$_invoke$arity$1(a), 
                 new cljs.core.Keyword(null, "start", "start", -355208981), (new cljs.core.Keyword("job-execution", "start-time", "job-execution/start-time", -398843134)).cljs$core$IFn$_invoke$arity$1(a), new cljs.core.Keyword(null, "end", "end", -268185958), (new cljs.core.Keyword("job-execution", "end-time", "job-execution/end-time", -696268892)).cljs$core$IFn$_invoke$arity$1(a), new cljs.core.Keyword(null, "className", "className", -1983287057), cljs.core.name.call(null, cljs.core.get_in.call(null, 
                 a, new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword("job-execution", "batch-status", "job-execution/batch-status", 1615935519), new cljs.core.Keyword("db", "ident", "db/ident", -737096)], null)))], null);
               };
@@ -80471,13 +80490,13 @@ job_streamer.console.components.timeline.timeline_view = function(a, b, c, d, e)
               return function(k) {
                 return cljs.core.map.call(null, function(a, b, c, d, e, g, h) {
                   return function(a) {
-                    return cljs.core.assoc.call(null, a, new cljs.core.Keyword("job", "id", "job/id", -1388425577), (new cljs.core.Keyword("job", "id", "job/id", -1388425577)).cljs$core$IFn$_invoke$arity$1(k));
+                    return cljs.core.assoc.call(null, a, new cljs.core.Keyword("job", "name", "job/name", 1843780588), (new cljs.core.Keyword("job", "name", "job/name", 1843780588)).cljs$core$IFn$_invoke$arity$1(k));
                   };
                 }(a, b, c, d, e, g, h), (new cljs.core.Keyword("job", "executions", "job/executions", 1302501926)).cljs$core$IFn$_invoke$arity$1(k));
               };
             }(this, a, b, c, d, e, g), (new cljs.core.Keyword(null, "jobs", "jobs", -313607120)).cljs$core$IFn$_invoke$arity$1(this.app))))))));
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.timeline.t17483.prototype.om$core$IRenderState$ = !0, job_streamer.console.components.timeline.t17483.prototype.om$core$IRenderState$render_state$arity$2 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.timeline.t76864.prototype.om$core$IRenderState$ = !0, job_streamer.console.components.timeline.t76864.prototype.om$core$IRenderState$render_state$arity$2 = function(a, b, c, d, e, g) {
           return function(a, b) {
             var c = this, d = cljs.core.seq_QMARK_.call(null, b) ? cljs.core.apply.call(null, cljs.core.hash_map, b) : b, e = cljs.core.get.call(null, d, new cljs.core.Keyword(null, "selected-job", "selected-job", -1487510531));
             return React.DOM.div({className:"ui grid"}, React.DOM.div({className:"ui row"}, React.DOM.div({className:"ui column"}, React.DOM.div({id:"timeline-inner"}))), sablono.interpreter.interpret.call(null, cljs.core.truth_(e) ? function() {
@@ -80488,23 +80507,23 @@ job_streamer.console.components.timeline.timeline_view = function(a, b, c, d, e)
               job_streamer.console.format.date_medium.call(null, cljs.core.get.call(null, a, "end"))], null)], null)], null)], null)], null)], null)], null);
             }() : null));
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.timeline.t17483.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.timeline.t76864.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
-            return this.meta17484;
+            return this.meta76865;
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.timeline.t17483.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.timeline.t76864.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
           return function(a, b) {
-            return new job_streamer.console.components.timeline.t17483(this.owner, this.validate__11398__auto__, this.output_schema17470, this.timeline_view, this.input_schema17471, this.G__17475, this.app, this.ufv__, this.input_checker17472, this.output_checker17473, this.G__17474, b);
+            return new job_streamer.console.components.timeline.t76864(this.owner, this.validate__11398__auto__, this.output_checker76854, this.input_checker76853, this.G__76855, this.timeline_view, this.input_schema76852, this.output_schema76851, this.app, this.ufv__, this.G__76856, b);
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.timeline.t17483.cljs$lang$type = !0, job_streamer.console.components.timeline.t17483.cljs$lang$ctorStr = "job-streamer.console.components.timeline/t17483", job_streamer.console.components.timeline.t17483.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.timeline.t76864.cljs$lang$type = !0, job_streamer.console.components.timeline.t76864.cljs$lang$ctorStr = "job-streamer.console.components.timeline/t76864", job_streamer.console.components.timeline.t76864.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
           return function(a, b, c) {
-            return cljs.core._write.call(null, b, "job-streamer.console.components.timeline/t17483");
+            return cljs.core._write.call(null, b, "job-streamer.console.components.timeline/t76864");
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.timeline.__GT_t17483 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.timeline.__GT_t76864 = function(a, b, c, d, e, g) {
           return function(a, b, c, d, e, g, h, k, l, m, n, p) {
-            return new job_streamer.console.components.timeline.t17483(a, b, c, d, e, g, h, k, l, m, n, p);
+            return new job_streamer.console.components.timeline.t76864(a, b, c, d, e, g, h, k, l, m, n, p);
           };
-        }(l, a, b, c, d, e)), new job_streamer.console.components.timeline.t17483(k, l, b, g, c, k, h, a, d, e, h, null);
+        }(l, a, b, c, d, e)), new job_streamer.console.components.timeline.t76864(k, l, e, d, h, g, c, b, h, a, k, null);
       }
     }();
     if (cljs.core.truth_(l) && (n = e.call(null, m), cljs.core.truth_(n))) {
@@ -80513,8 +80532,8 @@ job_streamer.console.components.timeline.timeline_view = function(a, b, c, d, e)
     }
     return m;
   };
-}(ufv___17490, output_schema17470_17491, input_schema17471_17492, input_checker17472_17493, output_checker17473_17494);
-schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.timeline.timeline_view), schema.core.make_fn_schema.call(null, output_schema17470_17491, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema17471_17492], null)));
+}(ufv___76871, output_schema76851_76872, input_schema76852_76873, input_checker76853_76874, output_checker76854_76875);
+schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.timeline.timeline_view), schema.core.make_fn_schema.call(null, output_schema76851_76872, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema76852_76873], null)));
 job_streamer.console.components.timeline.__GT_timeline_view = function() {
   var a = null, b = function(a) {
     return om.core.build.call(null, job_streamer.console.components.timeline.timeline_view, a);
@@ -80533,233 +80552,16 @@ job_streamer.console.components.timeline.__GT_timeline_view = function() {
   a.cljs$core$IFn$_invoke$arity$2 = c;
   return a;
 }();
-job_streamer.console.components.agents = {};
-var ufv___14542 = schema.utils.use_fn_validation, output_schema14526_14543 = schema.core.Any, input_schema14527_14544 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "app", "app", 1079569820, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker14528_14545 = schema.core.checker.call(null, input_schema14527_14544), 
-output_checker14529_14546 = schema.core.checker.call(null, output_schema14526_14543);
-job_streamer.console.components.agents.no_agents_view = function(a, b, c, d, e) {
-  return function g(h, k) {
-    var l = a.get_cell();
-    if (cljs.core.truth_(l)) {
-      var m = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [h, k], null), n = d.call(null, m);
-      if (cljs.core.truth_(n)) {
-        throw cljs.core.ex_info.call(null, schema.utils.format_STAR_.call(null, "Input to %s does not match schema: %s", new cljs.core.Symbol(null, "no-agents-view", "no-agents-view", 381181323, null), cljs.core.pr_str.call(null, n)), new cljs.core.PersistentArrayMap(null, 4, [new cljs.core.Keyword(null, "error", "error", -978969032), n, new cljs.core.Keyword(null, "value", "value", 305978217), m, new cljs.core.Keyword(null, "schema", "schema", -1582001791), c, new cljs.core.Keyword(null, "type", 
-        "type", 1174270348), new cljs.core.Keyword("schema.core", "error", "schema.core/error", 1991454308)], null));
-      }
-    }
-    m = function() {
-      for (;;) {
-        return "undefined" === typeof job_streamer.console.components.agents.t14537 && (job_streamer.console.components.agents.t14537 = function(a, b, c, d, e, g, h, k, l, m, n, J) {
-          this.input_schema14527 = a;
-          this.owner = b;
-          this.validate__11398__auto__ = c;
-          this.input_checker14528 = d;
-          this.output_schema14526 = e;
-          this.G__14530 = g;
-          this.no_agents_view = h;
-          this.G__14531 = k;
-          this.output_checker14529 = l;
-          this.app = m;
-          this.ufv__ = n;
-          this.meta14538 = J;
-          this.cljs$lang$protocol_mask$partition1$ = 0;
-          this.cljs$lang$protocol_mask$partition0$ = 393216;
-        }, job_streamer.console.components.agents.t14537.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.agents.t14537.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
-          return function(a) {
-            return "no-agents-view";
-          };
-        }(l, a, b, c, d, e), job_streamer.console.components.agents.t14537.prototype.om$core$IRender$ = !0, job_streamer.console.components.agents.t14537.prototype.om$core$IRender$render$arity$1 = function(a, b, c, d, e, g) {
-          return function(a) {
-            return React.DOM.div({className:"ui icon message"}, React.DOM.i({className:"child icon"}), React.DOM.div({className:"content"}, React.DOM.div({className:"header"}, "Let's setup agents!"), React.DOM.ol({className:"ui list"}, React.DOM.li(null, React.DOM.h4({className:"ui header"}, "Clone repository."), React.DOM.pre(null, React.DOM.code(null, "% git clone https://github.com/job-streamer/job-streamer-agent.git"))), React.DOM.li(null, React.DOM.h4({className:"ui header"}, "Build docker container."), 
-            React.DOM.pre(null, React.DOM.code(null, "% cd job-streamer-agent\n", "% docker build -t job-streamer/agent:0.1.0 ."))), React.DOM.li(null, React.DOM.h4({className:"ui header"}, "Run docker container."), React.DOM.pre(null, React.DOM.code(null, "% docker run job-streamer/agent:0.1.0"))))));
-          };
-        }(l, a, b, c, d, e), job_streamer.console.components.agents.t14537.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
-          return function(a) {
-            return this.meta14538;
-          };
-        }(l, a, b, c, d, e), job_streamer.console.components.agents.t14537.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
-          return function(a, b) {
-            return new job_streamer.console.components.agents.t14537(this.input_schema14527, this.owner, this.validate__11398__auto__, this.input_checker14528, this.output_schema14526, this.G__14530, this.no_agents_view, this.G__14531, this.output_checker14529, this.app, this.ufv__, b);
-          };
-        }(l, a, b, c, d, e), job_streamer.console.components.agents.t14537.cljs$lang$type = !0, job_streamer.console.components.agents.t14537.cljs$lang$ctorStr = "job-streamer.console.components.agents/t14537", job_streamer.console.components.agents.t14537.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
-          return function(a, b, c) {
-            return cljs.core._write.call(null, b, "job-streamer.console.components.agents/t14537");
-          };
-        }(l, a, b, c, d, e), job_streamer.console.components.agents.__GT_t14537 = function(a, b, c, d, e, g) {
-          return function(a, b, c, d, e, g, h, k, l, m, n, p) {
-            return new job_streamer.console.components.agents.t14537(a, b, c, d, e, g, h, k, l, m, n, p);
-          };
-        }(l, a, b, c, d, e)), new job_streamer.console.components.agents.t14537(c, k, l, d, b, h, g, k, e, h, a, null);
-      }
-    }();
-    if (cljs.core.truth_(l) && (n = e.call(null, m), cljs.core.truth_(n))) {
-      throw cljs.core.ex_info.call(null, schema.utils.format_STAR_.call(null, "Output of %s does not match schema: %s", new cljs.core.Symbol(null, "no-agents-view", "no-agents-view", 381181323, null), cljs.core.pr_str.call(null, n)), new cljs.core.PersistentArrayMap(null, 4, [new cljs.core.Keyword(null, "error", "error", -978969032), n, new cljs.core.Keyword(null, "value", "value", 305978217), m, new cljs.core.Keyword(null, "schema", "schema", -1582001791), b, new cljs.core.Keyword(null, "type", 
-      "type", 1174270348), new cljs.core.Keyword("schema.core", "error", "schema.core/error", 1991454308)], null));
-    }
-    return m;
-  };
-}(ufv___14542, output_schema14526_14543, input_schema14527_14544, input_checker14528_14545, output_checker14529_14546);
-schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.agents.no_agents_view), schema.core.make_fn_schema.call(null, output_schema14526_14543, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema14527_14544], null)));
-job_streamer.console.components.agents.__GT_no_agents_view = function() {
-  var a = null, b = function(a) {
-    return om.core.build.call(null, job_streamer.console.components.agents.no_agents_view, a);
-  }, c = function(a, b) {
-    return om.core.build.call(null, job_streamer.console.components.agents.no_agents_view, a, b);
-  }, a = function(a, e) {
-    switch(arguments.length) {
-      case 1:
-        return b.call(this, a);
-      case 2:
-        return c.call(this, a, e);
-    }
-    throw Error("Invalid arity: " + arguments.length);
-  };
-  a.cljs$core$IFn$_invoke$arity$1 = b;
-  a.cljs$core$IFn$_invoke$arity$2 = c;
-  return a;
-}();
-var ufv___14587 = schema.utils.use_fn_validation, output_schema14553_14588 = schema.core.Any, input_schema14554_14589 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "app", "app", 1079569820, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker14555_14590 = schema.core.checker.call(null, input_schema14554_14589), 
-output_checker14556_14591 = schema.core.checker.call(null, output_schema14553_14588);
-job_streamer.console.components.agents.agents_view = function(a, b, c, d, e) {
-  return function g(h, k) {
-    var l = a.get_cell();
-    if (cljs.core.truth_(l)) {
-      var m = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [h, k], null), n = d.call(null, m);
-      if (cljs.core.truth_(n)) {
-        throw cljs.core.ex_info.call(null, schema.utils.format_STAR_.call(null, "Input to %s does not match schema: %s", new cljs.core.Symbol(null, "agents-view", "agents-view", 1226063548, null), cljs.core.pr_str.call(null, n)), new cljs.core.PersistentArrayMap(null, 4, [new cljs.core.Keyword(null, "error", "error", -978969032), n, new cljs.core.Keyword(null, "value", "value", 305978217), m, new cljs.core.Keyword(null, "schema", "schema", -1582001791), c, new cljs.core.Keyword(null, "type", "type", 
-        1174270348), new cljs.core.Keyword("schema.core", "error", "schema.core/error", 1991454308)], null));
-      }
-    }
-    m = function() {
-      for (;;) {
-        return "undefined" === typeof job_streamer.console.components.agents.t14573 && (job_streamer.console.components.agents.t14573 = function(a, b, c, d, e, g, h, k, l, m, n, J) {
-          this.owner = a;
-          this.validate__11398__auto__ = b;
-          this.G__14557 = c;
-          this.input_checker14555 = d;
-          this.output_schema14553 = e;
-          this.app = g;
-          this.G__14558 = h;
-          this.agents_view = k;
-          this.ufv__ = l;
-          this.output_checker14556 = m;
-          this.input_schema14554 = n;
-          this.meta14574 = J;
-          this.cljs$lang$protocol_mask$partition1$ = 0;
-          this.cljs$lang$protocol_mask$partition0$ = 393216;
-        }, job_streamer.console.components.agents.t14573.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.agents.t14573.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
-          return function(a) {
-            return "agents-view";
-          };
-        }(l, a, b, c, d, e), job_streamer.console.components.agents.t14573.prototype.om$core$IRender$ = !0, job_streamer.console.components.agents.t14573.prototype.om$core$IRender$render$arity$1 = function(a, b, c, d, e, g) {
-          return function(h) {
-            var k = this, l = this;
-            return React.DOM.div({className:"ui grid"}, React.DOM.div({className:"ui row"}, React.DOM.div({className:"ui column"}, React.DOM.h2({className:"ui purple header"}, React.DOM.i({className:"laptop icon"}), React.DOM.div({className:"content"}, "Agent", React.DOM.div({className:"sub header"}, "Agents for executing jobs."))))), React.DOM.div({className:"ui row"}, function() {
-              var h = cljs.core.empty_QMARK_.call(null, (new cljs.core.Keyword(null, "agents", "agents", -1112413700)).cljs$core$IFn$_invoke$arity$1(k.app)) ? om.core.build.call(null, job_streamer.console.components.agents.no_agents_view, k.app) : new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "table.ui.celled.striped.table", "table.ui.celled.striped.table", 740472716), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, 
-              [new cljs.core.Keyword(null, "thead", "thead", -291875296), new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "tr", "tr", -1424774646), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "th", "th", -545608566), "Name"], null), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "th", "th", -545608566), "CPU"], 
-              null)], null)], null), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "tbody", "tbody", -80678300), function() {
-                return function(a, b, c, d, e, g, h) {
-                  return function F(k) {
-                    return new cljs.core.LazySeq(null, function(a, b, c, d, e, g, h) {
-                      return function() {
-                        for (;;) {
-                          var a = cljs.core.seq.call(null, k);
-                          if (a) {
-                            if (cljs.core.chunked_seq_QMARK_.call(null, a)) {
-                              var b = cljs.core.chunk_first.call(null, a), c = cljs.core.count.call(null, b), d = cljs.core.chunk_buffer.call(null, c);
-                              return function() {
-                                for (var a = 0;;) {
-                                  if (a < c) {
-                                    var e = cljs.core._nth.call(null, b, a);
-                                    cljs.core.chunk_append.call(null, d, new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "tr", "tr", -1424774646), new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "td", "td", 1479933353), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "i.icon", "i.icon", -1882858807), function() {
-                                      switch((new cljs.core.Keyword(null, "os-name", "os-name", -2109973734)).cljs$core$IFn$_invoke$arity$1(e)) {
-                                        case "Linux":
-                                          return new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "class", "class", -2030961996), "linux"], null);
-                                        default:
-                                          return new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "class", "class", -2030961996), "help"], null);
-                                      }
-                                    }()], null), (new cljs.core.Keyword(null, "name", "name", 1843675177)).cljs$core$IFn$_invoke$arity$1(e)], null), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "td", "td", 1479933353), [cljs.core.str((new cljs.core.Keyword(null, "cpu-core", "cpu-core", 1871618329)).cljs$core$IFn$_invoke$arity$1(e)), cljs.core.str("core")].join("")], null)], null));
-                                    a += 1;
-                                  } else {
-                                    return!0;
-                                  }
-                                }
-                              }() ? cljs.core.chunk_cons.call(null, cljs.core.chunk.call(null, d), F.call(null, cljs.core.chunk_rest.call(null, a))) : cljs.core.chunk_cons.call(null, cljs.core.chunk.call(null, d), null);
-                            }
-                            var e = cljs.core.first.call(null, a);
-                            return cljs.core.cons.call(null, new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "tr", "tr", -1424774646), new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "td", "td", 1479933353), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "i.icon", "i.icon", -1882858807), function() {
-                              switch((new cljs.core.Keyword(null, "os-name", "os-name", -2109973734)).cljs$core$IFn$_invoke$arity$1(e)) {
-                                case "Linux":
-                                  return new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "class", "class", -2030961996), "linux"], null);
-                                default:
-                                  return new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "class", "class", -2030961996), "help"], null);
-                              }
-                            }()], null), (new cljs.core.Keyword(null, "name", "name", 1843675177)).cljs$core$IFn$_invoke$arity$1(e)], null), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "td", "td", 1479933353), [cljs.core.str((new cljs.core.Keyword(null, "cpu-core", "cpu-core", 1871618329)).cljs$core$IFn$_invoke$arity$1(e)), cljs.core.str("core")].join("")], null)], null), F.call(null, cljs.core.rest.call(null, a)));
-                          }
-                          return null;
-                        }
-                      };
-                    }(a, b, c, d, e, g, h), null, null);
-                  };
-                }(l, a, b, c, d, e, g).call(null, (new cljs.core.Keyword(null, "agents", "agents", -1112413700)).cljs$core$IFn$_invoke$arity$1(k.app));
-              }()], null)], null);
-              return cljs.core.apply.call(null, React.DOM.div, cljs.core.map_QMARK_.call(null, h) ? sablono.interpreter.attributes.call(null, sablono.util.merge_with_class.call(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "class", "class", -2030961996), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, ["ui", "column"], null)], null), h)) : {className:"ui column"}, cljs.core.remove.call(null, cljs.core.nil_QMARK_, cljs.core.map_QMARK_.call(null, 
-              h) ? cljs.core.PersistentVector.EMPTY : new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [sablono.interpreter.interpret.call(null, h)], null)));
-            }()));
-          };
-        }(l, a, b, c, d, e), job_streamer.console.components.agents.t14573.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
-          return function(a) {
-            return this.meta14574;
-          };
-        }(l, a, b, c, d, e), job_streamer.console.components.agents.t14573.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
-          return function(a, b) {
-            return new job_streamer.console.components.agents.t14573(this.owner, this.validate__11398__auto__, this.G__14557, this.input_checker14555, this.output_schema14553, this.app, this.G__14558, this.agents_view, this.ufv__, this.output_checker14556, this.input_schema14554, b);
-          };
-        }(l, a, b, c, d, e), job_streamer.console.components.agents.t14573.cljs$lang$type = !0, job_streamer.console.components.agents.t14573.cljs$lang$ctorStr = "job-streamer.console.components.agents/t14573", job_streamer.console.components.agents.t14573.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
-          return function(a, b, c) {
-            return cljs.core._write.call(null, b, "job-streamer.console.components.agents/t14573");
-          };
-        }(l, a, b, c, d, e), job_streamer.console.components.agents.__GT_t14573 = function(a, b, c, d, e, g) {
-          return function(a, b, c, d, e, g, h, k, l, m, n, p) {
-            return new job_streamer.console.components.agents.t14573(a, b, c, d, e, g, h, k, l, m, n, p);
-          };
-        }(l, a, b, c, d, e)), new job_streamer.console.components.agents.t14573(k, l, h, d, b, h, k, g, a, e, c, null);
-      }
-    }();
-    if (cljs.core.truth_(l) && (n = e.call(null, m), cljs.core.truth_(n))) {
-      throw cljs.core.ex_info.call(null, schema.utils.format_STAR_.call(null, "Output of %s does not match schema: %s", new cljs.core.Symbol(null, "agents-view", "agents-view", 1226063548, null), cljs.core.pr_str.call(null, n)), new cljs.core.PersistentArrayMap(null, 4, [new cljs.core.Keyword(null, "error", "error", -978969032), n, new cljs.core.Keyword(null, "value", "value", 305978217), m, new cljs.core.Keyword(null, "schema", "schema", -1582001791), b, new cljs.core.Keyword(null, "type", "type", 
-      1174270348), new cljs.core.Keyword("schema.core", "error", "schema.core/error", 1991454308)], null));
-    }
-    return m;
-  };
-}(ufv___14587, output_schema14553_14588, input_schema14554_14589, input_checker14555_14590, output_checker14556_14591);
-schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.agents.agents_view), schema.core.make_fn_schema.call(null, output_schema14553_14588, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema14554_14589], null)));
-job_streamer.console.components.agents.__GT_agents_view = function() {
-  var a = null, b = function(a) {
-    return om.core.build.call(null, job_streamer.console.components.agents.agents_view, a);
-  }, c = function(a, b) {
-    return om.core.build.call(null, job_streamer.console.components.agents.agents_view, a, b);
-  }, a = function(a, e) {
-    switch(arguments.length) {
-      case 1:
-        return b.call(this, a);
-      case 2:
-        return c.call(this, a, e);
-    }
-    throw Error("Invalid arity: " + arguments.length);
-  };
-  a.cljs$core$IFn$_invoke$arity$1 = b;
-  a.cljs$core$IFn$_invoke$arity$2 = c;
-  return a;
-}();
 job_streamer.console.components.jobs = {};
 cljs.core.enable_console_print_BANG_.call(null);
+job_streamer.console.components.jobs.app_name = "default";
 job_streamer.console.components.jobs.execute_job = function(a) {
-  return job_streamer.console.api.request.call(null, [cljs.core.str("/job/"), cljs.core.str(a), cljs.core.str("/executions")].join(""), new cljs.core.Keyword(null, "POST", "POST", 110456857), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "handler", "handler", -195596612), function(a) {
+  return job_streamer.console.api.request.call(null, [cljs.core.str("/"), cljs.core.str(job_streamer.console.components.jobs.app_name), cljs.core.str("/job/"), cljs.core.str(a), cljs.core.str("/executions")].join(""), new cljs.core.Keyword(null, "POST", "POST", 110456857), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "handler", "handler", -195596612), function(a) {
     return null;
   }], null));
 };
 job_streamer.console.components.jobs.search_execution = function(a, b, c) {
-  return job_streamer.console.api.request.call(null, [cljs.core.str("/job/"), cljs.core.str(b), cljs.core.str("/execution/"), cljs.core.str(c)].join(""), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "handler", "handler", -195596612), function(b) {
+  return job_streamer.console.api.request.call(null, [cljs.core.str("/"), cljs.core.str(job_streamer.console.components.jobs.app_name), cljs.core.str("/job/"), cljs.core.str(b), cljs.core.str("/execution/"), cljs.core.str(c)].join(""), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "handler", "handler", -195596612), function(b) {
     b = (new cljs.core.Keyword("job-execution", "step-executions", "job-execution/step-executions", -1002976124)).cljs$core$IFn$_invoke$arity$1(b);
     return om.core.transact_BANG_.call(null, a, function(a) {
       return function(b) {
@@ -80768,8 +80570,8 @@ job_streamer.console.components.jobs.search_execution = function(a, b, c) {
     }(b));
   }], null));
 };
-var ufv___17421 = schema.utils.use_fn_validation, output_schema17343_17422 = schema.core.Any, input_schema17344_17423 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "app", "app", 1079569820, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker17345_17424 = schema.core.checker.call(null, input_schema17344_17423), 
-output_checker17346_17425 = schema.core.checker.call(null, output_schema17343_17422);
+var ufv___83971 = schema.utils.use_fn_validation, output_schema83893_83972 = schema.core.Any, input_schema83894_83973 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "app", "app", 1079569820, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker83895_83974 = schema.core.checker.call(null, input_schema83894_83973), 
+output_checker83896_83975 = schema.core.checker.call(null, output_schema83893_83972);
 job_streamer.console.components.jobs.job_list_view = function(a, b, c, d, e) {
   return function g(h, k) {
     var l = a.get_cell();
@@ -80782,26 +80584,26 @@ job_streamer.console.components.jobs.job_list_view = function(a, b, c, d, e) {
     }
     m = function() {
       for (;;) {
-        return "undefined" === typeof job_streamer.console.components.jobs.t17385 && (job_streamer.console.components.jobs.t17385 = function(a, b, c, d, e, g, h, k, l, m, n, J) {
+        return "undefined" === typeof job_streamer.console.components.jobs.t83935 && (job_streamer.console.components.jobs.t83935 = function(a, b, c, d, e, g, h, k, l, m, n, E) {
           this.job_list_view = a;
-          this.output_checker17346 = b;
-          this.owner = c;
+          this.owner = b;
+          this.input_checker83895 = c;
           this.validate__11398__auto__ = d;
-          this.input_checker17345 = e;
-          this.G__17347 = g;
-          this.output_schema17343 = h;
-          this.input_schema17344 = k;
-          this.G__17348 = l;
-          this.app = m;
-          this.ufv__ = n;
-          this.meta17386 = J;
+          this.G__83898 = e;
+          this.output_checker83896 = g;
+          this.G__83897 = h;
+          this.output_schema83893 = k;
+          this.app = l;
+          this.ufv__ = m;
+          this.input_schema83894 = n;
+          this.meta83936 = E;
           this.cljs$lang$protocol_mask$partition1$ = 0;
           this.cljs$lang$protocol_mask$partition0$ = 393216;
-        }, job_streamer.console.components.jobs.t17385.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.jobs.t17385.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
+        }, job_streamer.console.components.jobs.t83935.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.jobs.t83935.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
             return "job-list-view";
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.jobs.t17385.prototype.om$core$IRender$ = !0, job_streamer.console.components.jobs.t17385.prototype.om$core$IRender$render$arity$1 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.jobs.t83935.prototype.om$core$IRender$ = !0, job_streamer.console.components.jobs.t83935.prototype.om$core$IRender$render$arity$1 = function(a, b, c, d, e, g) {
           return function(h) {
             var k = this, l = this;
             return cljs.core.empty_QMARK_.call(null, (new cljs.core.Keyword(null, "jobs", "jobs", -313607120)).cljs$core$IFn$_invoke$arity$1(k.app)) ? React.DOM.div({className:"ui grid"}, React.DOM.div({className:"ui one column row"}, React.DOM.div({className:"column"}, React.DOM.div({className:"ui icon message"}, React.DOM.i({className:"child icon"}), React.DOM.div({className:"content"}, React.DOM.div({className:"header"}, "Let's create a job!"), React.DOM.p(null, React.DOM.button({className:"ui primary button", 
@@ -80821,7 +80623,7 @@ job_streamer.console.components.jobs.job_list_view = function(a, b, c, d, e) {
             React.DOM.th(null, "Start"))), function() {
               var h = cljs.core.apply.call(null, cljs.core.concat, function() {
                 return function(a, b, c, d, e, g, h) {
-                  return function F(k) {
+                  return function H(k) {
                     return new cljs.core.LazySeq(null, function(a, b, c, d, e, g, h) {
                       return function() {
                         for (;;) {
@@ -80833,7 +80635,7 @@ job_streamer.console.components.jobs.job_list_view = function(a, b, c, d, e) {
                               return function() {
                                 for (var k = 0;;) {
                                   if (k < p) {
-                                    var r = cljs.core._nth.call(null, n, k), s = cljs.core.seq_QMARK_.call(null, r) ? cljs.core.apply.call(null, cljs.core.hash_map, r) : r, t = s, u = cljs.core.get.call(null, s, new cljs.core.Keyword("job", "id", "job/id", -1388425577));
+                                    var r = cljs.core._nth.call(null, n, k), s = cljs.core.seq_QMARK_.call(null, r) ? cljs.core.apply.call(null, cljs.core.hash_map, r) : r, t = s, u = cljs.core.get.call(null, s, new cljs.core.Keyword("job", "name", "job/name", 1843780588));
                                     cljs.core.chunk_append.call(null, q, new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.PersistentVector(null, 5, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "tr", "tr", -1424774646), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "td", "td", 1479933353), new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, 
                                     [new cljs.core.Keyword(null, "a", "a", -2123407586), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "href", "href", -793805698), [cljs.core.str("#/job/"), cljs.core.str(u)].join("")], null), u], null)], null), function() {
                                       var v = (new cljs.core.Keyword("job", "latest-execution", "job/latest-execution", -1364961031)).cljs$core$IFn$_invoke$arity$1(t);
@@ -80849,12 +80651,12 @@ job_streamer.console.components.jobs.job_list_view = function(a, b, c, d, e) {
                                           h = cljs.core.truth_(h.call(null, "completed", a)) ? "positive" : cljs.core.truth_(h.call(null, "failed", a)) ? "negative" : "";
                                           return new b(null, 3, 5, c, [d, new e(null, 1, [g, h], null), a], null);
                                         }()), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "td", "td", 1479933353), job_streamer.console.format.duration_between.call(null, x, w)], null)), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "td", "td", 1479933353), cljs.core.truth_(x) ? function() {
-                                          var C = (new cljs.core.Keyword("db", "id", "db/id", -1388397098)).cljs$core$IFn$_invoke$arity$1(v);
-                                          return new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "a", "a", -2123407586), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "on-click", "on-click", 1632826543), function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u, v, x, w, C, y) {
+                                          var y = (new cljs.core.Keyword("db", "id", "db/id", -1388397098)).cljs$core$IFn$_invoke$arity$1(v);
+                                          return new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "a", "a", -2123407586), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "on-click", "on-click", 1632826543), function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u, v, x, w, y, A) {
                                             return function(a) {
                                               return job_streamer.console.components.jobs.search_execution.call(null, e, m, b);
                                             };
-                                          }(k, C, x, w, v, v, r, s, t, u, n, p, q, m, l, a, b, c, d, e, g, h)], null), job_streamer.console.format.date_medium.call(null, x)], null);
+                                          }(k, y, x, w, v, v, r, s, t, u, n, p, q, m, l, a, b, c, d, e, g, h)], null), job_streamer.console.format.date_medium.call(null, x)], null);
                                         }() : null], null));
                                       }
                                       return new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "td.center.aligned", "td.center.aligned", -1559180603), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "colSpan", "colSpan", 872137394), 3], null), "No executions"], null);
@@ -80880,9 +80682,9 @@ job_streamer.console.components.jobs.job_list_view = function(a, b, c, d, e) {
                                     return!0;
                                   }
                                 }
-                              }() ? cljs.core.chunk_cons.call(null, cljs.core.chunk.call(null, q), F.call(null, cljs.core.chunk_rest.call(null, m))) : cljs.core.chunk_cons.call(null, cljs.core.chunk.call(null, q), null);
+                              }() ? cljs.core.chunk_cons.call(null, cljs.core.chunk.call(null, q), H.call(null, cljs.core.chunk_rest.call(null, m))) : cljs.core.chunk_cons.call(null, cljs.core.chunk.call(null, q), null);
                             }
-                            var r = cljs.core.first.call(null, m), s = cljs.core.seq_QMARK_.call(null, r) ? cljs.core.apply.call(null, cljs.core.hash_map, r) : r, t = s, u = cljs.core.get.call(null, s, new cljs.core.Keyword("job", "id", "job/id", -1388425577));
+                            var r = cljs.core.first.call(null, m), s = cljs.core.seq_QMARK_.call(null, r) ? cljs.core.apply.call(null, cljs.core.hash_map, r) : r, t = s, u = cljs.core.get.call(null, s, new cljs.core.Keyword("job", "name", "job/name", 1843780588));
                             return cljs.core.cons.call(null, new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.PersistentVector(null, 5, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "tr", "tr", -1424774646), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "td", "td", 1479933353), new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, 
                             "a", "a", -2123407586), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "href", "href", -793805698), [cljs.core.str("#/job/"), cljs.core.str(u)].join("")], null), u], null)], null), function() {
                               var k = (new cljs.core.Keyword("job", "latest-execution", "job/latest-execution", -1364961031)).cljs$core$IFn$_invoke$arity$1(t);
@@ -80922,7 +80724,7 @@ job_streamer.console.components.jobs.job_list_view = function(a, b, c, d, e) {
                               var a = cljs.core.not_empty.call(null, cljs.core.get_in.call(null, t, new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword("job", "latest-execution", "job/latest-execution", -1364961031), new cljs.core.Keyword("job-execution", "step-executions", "job-execution/step-executions", -1002976124)], null)));
                               return cljs.core.truth_(a) ? new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "tr", "tr", -1424774646), new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "td", "td", 1479933353), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "colSpan", "colSpan", 872137394), 8], null), om.core.build.call(null, job_streamer.console.components.execution.execution_view, 
                               a)], null)], null) : null;
-                            }()], null), F.call(null, cljs.core.rest.call(null, m)));
+                            }()], null), H.call(null, cljs.core.rest.call(null, m)));
                           }
                           return null;
                         }
@@ -80934,23 +80736,23 @@ job_streamer.console.components.jobs.job_list_view = function(a, b, c, d, e) {
               return cljs.core.apply.call(null, React.DOM.tbody, cljs.core.map_QMARK_.call(null, h) ? sablono.interpreter.attributes.call(null, h) : null, cljs.core.remove.call(null, cljs.core.nil_QMARK_, cljs.core.map_QMARK_.call(null, h) ? cljs.core.PersistentVector.EMPTY : new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [sablono.interpreter.interpret.call(null, h)], null)));
             }()))));
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.jobs.t17385.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.jobs.t83935.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
-            return this.meta17386;
+            return this.meta83936;
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.jobs.t17385.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.jobs.t83935.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
           return function(a, b) {
-            return new job_streamer.console.components.jobs.t17385(this.job_list_view, this.output_checker17346, this.owner, this.validate__11398__auto__, this.input_checker17345, this.G__17347, this.output_schema17343, this.input_schema17344, this.G__17348, this.app, this.ufv__, b);
+            return new job_streamer.console.components.jobs.t83935(this.job_list_view, this.owner, this.input_checker83895, this.validate__11398__auto__, this.G__83898, this.output_checker83896, this.G__83897, this.output_schema83893, this.app, this.ufv__, this.input_schema83894, b);
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.jobs.t17385.cljs$lang$type = !0, job_streamer.console.components.jobs.t17385.cljs$lang$ctorStr = "job-streamer.console.components.jobs/t17385", job_streamer.console.components.jobs.t17385.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.jobs.t83935.cljs$lang$type = !0, job_streamer.console.components.jobs.t83935.cljs$lang$ctorStr = "job-streamer.console.components.jobs/t83935", job_streamer.console.components.jobs.t83935.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
           return function(a, b, c) {
-            return cljs.core._write.call(null, b, "job-streamer.console.components.jobs/t17385");
+            return cljs.core._write.call(null, b, "job-streamer.console.components.jobs/t83935");
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.jobs.__GT_t17385 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.jobs.__GT_t83935 = function(a, b, c, d, e, g) {
           return function(a, b, c, d, e, g, h, k, l, m, n, p) {
-            return new job_streamer.console.components.jobs.t17385(a, b, c, d, e, g, h, k, l, m, n, p);
+            return new job_streamer.console.components.jobs.t83935(a, b, c, d, e, g, h, k, l, m, n, p);
           };
-        }(l, a, b, c, d, e)), new job_streamer.console.components.jobs.t17385(g, e, k, l, d, h, b, c, k, h, a, null);
+        }(l, a, b, c, d, e)), new job_streamer.console.components.jobs.t83935(g, k, d, l, k, e, h, b, h, a, c, null);
       }
     }();
     if (cljs.core.truth_(l) && (n = e.call(null, m), cljs.core.truth_(n))) {
@@ -80959,8 +80761,8 @@ job_streamer.console.components.jobs.job_list_view = function(a, b, c, d, e) {
     }
     return m;
   };
-}(ufv___17421, output_schema17343_17422, input_schema17344_17423, input_checker17345_17424, output_checker17346_17425);
-schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.jobs.job_list_view), schema.core.make_fn_schema.call(null, output_schema17343_17422, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema17344_17423], null)));
+}(ufv___83971, output_schema83893_83972, input_schema83894_83973, input_checker83895_83974, output_checker83896_83975);
+schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.jobs.job_list_view), schema.core.make_fn_schema.call(null, output_schema83893_83972, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema83894_83973], null)));
 job_streamer.console.components.jobs.__GT_job_list_view = function() {
   var a = null, b = function(a) {
     return om.core.build.call(null, job_streamer.console.components.jobs.job_list_view, a);
@@ -80979,8 +80781,8 @@ job_streamer.console.components.jobs.__GT_job_list_view = function() {
   a.cljs$core$IFn$_invoke$arity$2 = c;
   return a;
 }();
-var ufv___17453 = schema.utils.use_fn_validation, output_schema17433_17454 = schema.core.Any, input_schema17434_17455 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "app", "app", 1079569820, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker17435_17456 = schema.core.checker.call(null, input_schema17434_17455), 
-output_checker17436_17457 = schema.core.checker.call(null, output_schema17433_17454);
+var ufv___84003 = schema.utils.use_fn_validation, output_schema83983_84004 = schema.core.Any, input_schema83984_84005 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "app", "app", 1079569820, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker83985_84006 = schema.core.checker.call(null, input_schema83984_84005), 
+output_checker83986_84007 = schema.core.checker.call(null, output_schema83983_84004);
 job_streamer.console.components.jobs.jobs_view = function(a, b, c, d, e) {
   return function g(h, k) {
     var l = a.get_cell();
@@ -80993,34 +80795,34 @@ job_streamer.console.components.jobs.jobs_view = function(a, b, c, d, e) {
     }
     m = function() {
       for (;;) {
-        return "undefined" === typeof job_streamer.console.components.jobs.t17446 && (job_streamer.console.components.jobs.t17446 = function(a, b, c, d, e, g, h, k, l, m, n, J) {
+        return "undefined" === typeof job_streamer.console.components.jobs.t83996 && (job_streamer.console.components.jobs.t83996 = function(a, b, c, d, e, g, h, k, l, m, n, E) {
           this.owner = a;
           this.validate__11398__auto__ = b;
-          this.G__17437 = c;
-          this.output_checker17436 = d;
-          this.G__17438 = e;
-          this.input_schema17434 = g;
-          this.jobs_view = h;
-          this.app = k;
-          this.ufv__ = l;
-          this.input_checker17435 = m;
-          this.output_schema17433 = n;
-          this.meta17447 = J;
+          this.G__83987 = c;
+          this.output_checker83986 = d;
+          this.input_checker83985 = e;
+          this.input_schema83984 = g;
+          this.output_schema83983 = h;
+          this.G__83988 = k;
+          this.jobs_view = l;
+          this.app = m;
+          this.ufv__ = n;
+          this.meta83997 = E;
           this.cljs$lang$protocol_mask$partition1$ = 0;
           this.cljs$lang$protocol_mask$partition0$ = 393216;
-        }, job_streamer.console.components.jobs.t17446.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.jobs.t17446.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
+        }, job_streamer.console.components.jobs.t83996.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.jobs.t83996.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
             return "jobs-view";
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.jobs.t17446.prototype.om$core$IRender$ = !0, job_streamer.console.components.jobs.t17446.prototype.om$core$IRender$render$arity$1 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.jobs.t83996.prototype.om$core$IRender$ = !0, job_streamer.console.components.jobs.t83996.prototype.om$core$IRender$render$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
             var b = this, c = cljs.core.second.call(null, (new cljs.core.Keyword(null, "mode", "mode", 654403691)).cljs$core$IFn$_invoke$arity$1(b.app));
             return React.DOM.div(null, React.DOM.h2({className:"ui purple header"}, React.DOM.i({className:"setting icon"}), React.DOM.div({className:"content"}, "Job", React.DOM.div({className:"sub header"}, "Edit and execute a job."))), sablono.interpreter.interpret.call(null, function() {
               switch(c instanceof cljs.core.Keyword ? c.fqn : null) {
                 case "detail":
-                  return om.core.build.call(null, job_streamer.console.components.job_detail.job_detail_view, cljs.core.select_keys.call(null, b.app, new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "job-id", "job-id", 651349542), new cljs.core.Keyword(null, "mode", "mode", 654403691)], null)));
+                  return om.core.build.call(null, job_streamer.console.components.job_detail.job_detail_view, cljs.core.select_keys.call(null, b.app, new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "job-name", "job-name", 607418212), new cljs.core.Keyword(null, "mode", "mode", 654403691)], null)));
                 case "new":
-                  return om.core.build.call(null, job_streamer.console.components.job_detail.job_new_view, cljs.core.select_keys.call(null, b.app, new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "job-id", "job-id", 651349542), new cljs.core.Keyword(null, "mode", "mode", 654403691)], null)));
+                  return om.core.build.call(null, job_streamer.console.components.job_detail.job_new_view, cljs.core.select_keys.call(null, b.app, new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "job-name", "job-name", 607418212), new cljs.core.Keyword(null, "mode", "mode", 654403691)], null)));
                 default:
                   return new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div", "div", 1057191632), new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div.ui.top.attached.tabular.menu", "div.ui.top.attached.tabular.menu", -2122345005), new cljs.core.PersistentVector(null, 4, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "a", "a", -2123407586), cljs.core.merge.call(null, 
                   new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "class", "class", -2030961996), "item", new cljs.core.Keyword(null, "href", "href", -793805698), "#/"], null), cljs.core._EQ_.call(null, c, new cljs.core.Keyword(null, "list", "list", 765357683)) ? new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "class", "class", -2030961996), "item active"], null) : null), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, 
@@ -81038,27 +80840,27 @@ job_streamer.console.components.jobs.jobs_view = function(a, b, c, d, e) {
               }
             }()));
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.jobs.t17446.prototype.om$core$IWillMount$ = !0, job_streamer.console.components.jobs.t17446.prototype.om$core$IWillMount$will_mount$arity$1 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.jobs.t83996.prototype.om$core$IWillMount$ = !0, job_streamer.console.components.jobs.t83996.prototype.om$core$IWillMount$will_mount$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
             return job_streamer.console.search.search_jobs.call(null, this.app, "");
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.jobs.t17446.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.jobs.t83996.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
-            return this.meta17447;
+            return this.meta83997;
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.jobs.t17446.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.jobs.t83996.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
           return function(a, b) {
-            return new job_streamer.console.components.jobs.t17446(this.owner, this.validate__11398__auto__, this.G__17437, this.output_checker17436, this.G__17438, this.input_schema17434, this.jobs_view, this.app, this.ufv__, this.input_checker17435, this.output_schema17433, b);
+            return new job_streamer.console.components.jobs.t83996(this.owner, this.validate__11398__auto__, this.G__83987, this.output_checker83986, this.input_checker83985, this.input_schema83984, this.output_schema83983, this.G__83988, this.jobs_view, this.app, this.ufv__, b);
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.jobs.t17446.cljs$lang$type = !0, job_streamer.console.components.jobs.t17446.cljs$lang$ctorStr = "job-streamer.console.components.jobs/t17446", job_streamer.console.components.jobs.t17446.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.jobs.t83996.cljs$lang$type = !0, job_streamer.console.components.jobs.t83996.cljs$lang$ctorStr = "job-streamer.console.components.jobs/t83996", job_streamer.console.components.jobs.t83996.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
           return function(a, b, c) {
-            return cljs.core._write.call(null, b, "job-streamer.console.components.jobs/t17446");
+            return cljs.core._write.call(null, b, "job-streamer.console.components.jobs/t83996");
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.jobs.__GT_t17446 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.jobs.__GT_t83996 = function(a, b, c, d, e, g) {
           return function(a, b, c, d, e, g, h, k, l, m, n, p) {
-            return new job_streamer.console.components.jobs.t17446(a, b, c, d, e, g, h, k, l, m, n, p);
+            return new job_streamer.console.components.jobs.t83996(a, b, c, d, e, g, h, k, l, m, n, p);
           };
-        }(l, a, b, c, d, e)), new job_streamer.console.components.jobs.t17446(k, l, h, e, k, c, g, h, a, d, b, null);
+        }(l, a, b, c, d, e)), new job_streamer.console.components.jobs.t83996(k, l, h, e, d, c, b, k, g, h, a, null);
       }
     }();
     if (cljs.core.truth_(l) && (n = e.call(null, m), cljs.core.truth_(n))) {
@@ -81067,8 +80869,8 @@ job_streamer.console.components.jobs.jobs_view = function(a, b, c, d, e) {
     }
     return m;
   };
-}(ufv___17453, output_schema17433_17454, input_schema17434_17455, input_checker17435_17456, output_checker17436_17457);
-schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.jobs.jobs_view), schema.core.make_fn_schema.call(null, output_schema17433_17454, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema17434_17455], null)));
+}(ufv___84003, output_schema83983_84004, input_schema83984_84005, input_checker83985_84006, output_checker83986_84007);
+schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.jobs.jobs_view), schema.core.make_fn_schema.call(null, output_schema83983_84004, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema83984_84005], null)));
 job_streamer.console.components.jobs.__GT_jobs_view = function() {
   var a = null, b = function(a) {
     return om.core.build.call(null, job_streamer.console.components.jobs.jobs_view, a);
@@ -81684,25 +81486,13 @@ secretary.core.render_route.string = function(a, b) {
   return cljs.core.truth_(d) ? [cljs.core.str(c), cljs.core.str("?"), cljs.core.str(d)].join("") : c;
 };
 job_streamer.console.routing = {};
+cljs.core.enable_console_print_BANG_.call(null);
 job_streamer.console.routing.control_bus_url = document.querySelector("meta[name\x3dcontrol-bus-url]").getAttribute("content");
 job_streamer.console.routing.setup_routing = function(a) {
   secretary.core.set_config_BANG_.call(null, new cljs.core.Keyword(null, "prefix", "prefix", -265908465), "#");
   secretary.core.add_route_BANG_.call(null, "/", function(b) {
-    if (cljs.core.map_QMARK_.call(null, b)) {
-      var d = cljs.core.seq_QMARK_.call(null, b) ? cljs.core.apply.call(null, cljs.core.hash_map, b) : b, e = clojure.browser.net.xhr_connection.call(null);
-      goog.events.listen(e, goog.net.EventType.SUCCESS, function(b, c, d) {
-        return function(c) {
-          return om.core.update_BANG_.call(null, a, new cljs.core.Keyword(null, "agents", "agents", -1112413700), cljs.reader.read_string.call(null, b.getResponseText()));
-        };
-      }(e, b, d));
-      e.send([cljs.core.str(job_streamer.console.routing.control_bus_url), cljs.core.str("/agents")].join(""), "get");
-      return om.core.update_BANG_.call(null, a, new cljs.core.Keyword(null, "mode", "mode", 654403691), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "jobs", "jobs", -313607120), new cljs.core.Keyword(null, "list", "list", 765357683)], null));
-    }
-    return cljs.core.vector_QMARK_.call(null, b) ? (d = clojure.browser.net.xhr_connection.call(null), goog.events.listen(d, goog.net.EventType.SUCCESS, function(b, c) {
-      return function(c) {
-        return om.core.update_BANG_.call(null, a, new cljs.core.Keyword(null, "agents", "agents", -1112413700), cljs.reader.read_string.call(null, b.getResponseText()));
-      };
-    }(d, b)), d.send([cljs.core.str(job_streamer.console.routing.control_bus_url), cljs.core.str("/agents")].join(""), "get"), om.core.update_BANG_.call(null, a, new cljs.core.Keyword(null, "mode", "mode", 654403691), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "jobs", "jobs", -313607120), new cljs.core.Keyword(null, "list", "list", 765357683)], null))) : null;
+    return cljs.core.map_QMARK_.call(null, b) ? (cljs.core.seq_QMARK_.call(null, b) && cljs.core.apply.call(null, cljs.core.hash_map, b), om.core.update_BANG_.call(null, a, new cljs.core.Keyword(null, "mode", "mode", 654403691), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "jobs", "jobs", -313607120), new cljs.core.Keyword(null, "list", "list", 765357683)], null))) : cljs.core.vector_QMARK_.call(null, b) ? om.core.update_BANG_.call(null, 
+    a, new cljs.core.Keyword(null, "mode", "mode", 654403691), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "jobs", "jobs", -313607120), new cljs.core.Keyword(null, "list", "list", 765357683)], null)) : null;
   });
   secretary.core.add_route_BANG_.call(null, /\/jobs\/new/, function(b) {
     if (cljs.core.map_QMARK_.call(null, b)) {
@@ -81783,15 +81573,31 @@ job_streamer.console.routing.setup_routing = function(a) {
     return cljs.core.map_QMARK_.call(null, b) ? (cljs.core.seq_QMARK_.call(null, b) && cljs.core.apply.call(null, cljs.core.hash_map, b), om.core.update_BANG_.call(null, a, new cljs.core.Keyword(null, "mode", "mode", 654403691), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "jobs", "jobs", -313607120), new cljs.core.Keyword(null, "timeline", "timeline", 192903161)], null))) : cljs.core.vector_QMARK_.call(null, b) ? om.core.update_BANG_.call(null, 
     a, new cljs.core.Keyword(null, "mode", "mode", 654403691), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "jobs", "jobs", -313607120), new cljs.core.Keyword(null, "timeline", "timeline", 192903161)], null)) : null;
   });
-  var b = function(b) {
+  secretary.core.add_route_BANG_.call(null, "/agents", function(b) {
     return cljs.core.map_QMARK_.call(null, b) ? (cljs.core.seq_QMARK_.call(null, b) && cljs.core.apply.call(null, cljs.core.hash_map, b), om.core.update_BANG_.call(null, a, new cljs.core.Keyword(null, "mode", "mode", 654403691), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "agents", "agents", -1112413700)], null))) : cljs.core.vector_QMARK_.call(null, b) ? om.core.update_BANG_.call(null, a, new cljs.core.Keyword(null, "mode", "mode", 
     654403691), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "agents", "agents", -1112413700)], null)) : null;
+  });
+  var b = function(b) {
+    if (cljs.core.map_QMARK_.call(null, b)) {
+      var d = cljs.core.seq_QMARK_.call(null, b) ? cljs.core.apply.call(null, cljs.core.hash_map, b) : b, e = cljs.core.get.call(null, d, new cljs.core.Keyword(null, "instance-id", "instance-id", 951361263));
+      cljs.core.println.call(null, "agents detail");
+      return om.core.transact_BANG_.call(null, a, function(a, b, c) {
+        return function(a) {
+          return cljs.core.assoc.call(null, a, new cljs.core.Keyword(null, "mode", "mode", 654403691), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "agents", "agents", -1112413700), new cljs.core.Keyword(null, "detail", "detail", -1545345025)], null), new cljs.core.Keyword("agent", "instance-id", "agent/instance-id", 52290540), c);
+        };
+      }(b, d, e));
+    }
+    return cljs.core.vector_QMARK_.call(null, b) ? (e = cljs.core.nth.call(null, b, 0, null), cljs.core.println.call(null, "agents detail"), om.core.transact_BANG_.call(null, a, function(a, b) {
+      return function(a) {
+        return cljs.core.assoc.call(null, a, new cljs.core.Keyword(null, "mode", "mode", 654403691), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "agents", "agents", -1112413700), new cljs.core.Keyword(null, "detail", "detail", -1545345025)], null), new cljs.core.Keyword("agent", "instance-id", "agent/instance-id", 52290540), b);
+      };
+    }(b, e))) : null;
   };
-  secretary.core.add_route_BANG_.call(null, "/agents", b);
+  secretary.core.add_route_BANG_.call(null, /\/agent\/([a-z0-9\\-]+)/, b);
   return function(a) {
     return function() {
       var a = function(a) {
-        return cljs.core.apply.call(null, secretary.core.render_route_STAR_, "/agents", a);
+        return cljs.core.apply.call(null, secretary.core.render_route_STAR_, /\/agent\/([a-z0-9\\-]+)/, a);
       }, b = function(b) {
         var c = null;
         if (0 < arguments.length) {
@@ -81826,9 +81632,428 @@ job_streamer.console.routing.init = function(a, b) {
   job_streamer.console.routing.setup_routing.call(null, a);
   return job_streamer.console.routing.setup_history.call(null, b);
 };
+job_streamer.console.components.agents = {};
+var ufv___85286 = schema.utils.use_fn_validation, output_schema85274_85287 = schema.core.Any, input_schema85275_85288 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "agt", "agt", -1182199119, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker85276_85289 = schema.core.checker.call(null, input_schema85275_85288), 
+output_checker85277_85290 = schema.core.checker.call(null, output_schema85274_85287);
+job_streamer.console.components.agents.agent_detail_view = function(a, b, c, d, e) {
+  return function g(h, k) {
+    var l = a.get_cell();
+    if (cljs.core.truth_(l)) {
+      var m = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [h, k], null), n = d.call(null, m);
+      if (cljs.core.truth_(n)) {
+        throw cljs.core.ex_info.call(null, schema.utils.format_STAR_.call(null, "Input to %s does not match schema: %s", new cljs.core.Symbol(null, "agent-detail-view", "agent-detail-view", 614133417, null), cljs.core.pr_str.call(null, n)), new cljs.core.PersistentArrayMap(null, 4, [new cljs.core.Keyword(null, "error", "error", -978969032), n, new cljs.core.Keyword(null, "value", "value", 305978217), m, new cljs.core.Keyword(null, "schema", "schema", -1582001791), c, new cljs.core.Keyword(null, "type", 
+        "type", 1174270348), new cljs.core.Keyword("schema.core", "error", "schema.core/error", 1991454308)], null));
+      }
+    }
+    m = function() {
+      for (;;) {
+        return "undefined" === typeof job_streamer.console.components.agents.t85283 && (job_streamer.console.components.agents.t85283 = function(a, b, c, d, e, g, h, k, l, m, n, E) {
+          this.output_schema85274 = a;
+          this.G__85279 = b;
+          this.owner = c;
+          this.validate__11398__auto__ = d;
+          this.input_schema85275 = e;
+          this.agent_detail_view = g;
+          this.output_checker85277 = h;
+          this.input_checker85276 = k;
+          this.agt = l;
+          this.G__85278 = m;
+          this.ufv__ = n;
+          this.meta85284 = E;
+          this.cljs$lang$protocol_mask$partition1$ = 0;
+          this.cljs$lang$protocol_mask$partition0$ = 393216;
+        }, job_streamer.console.components.agents.t85283.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.agents.t85283.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
+          return function(a) {
+            return "agent-detail-view";
+          };
+        }(l, a, b, c, d, e), job_streamer.console.components.agents.t85283.prototype.om$core$IRender$ = !0, job_streamer.console.components.agents.t85283.prototype.om$core$IRender$render$arity$1 = function(a, b, c, d, e, g) {
+          return function(a) {
+            return null;
+          };
+        }(l, a, b, c, d, e), job_streamer.console.components.agents.t85283.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
+          return function(a) {
+            return this.meta85284;
+          };
+        }(l, a, b, c, d, e), job_streamer.console.components.agents.t85283.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
+          return function(a, b) {
+            return new job_streamer.console.components.agents.t85283(this.output_schema85274, this.G__85279, this.owner, this.validate__11398__auto__, this.input_schema85275, this.agent_detail_view, this.output_checker85277, this.input_checker85276, this.agt, this.G__85278, this.ufv__, b);
+          };
+        }(l, a, b, c, d, e), job_streamer.console.components.agents.t85283.cljs$lang$type = !0, job_streamer.console.components.agents.t85283.cljs$lang$ctorStr = "job-streamer.console.components.agents/t85283", job_streamer.console.components.agents.t85283.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
+          return function(a, b, c) {
+            return cljs.core._write.call(null, b, "job-streamer.console.components.agents/t85283");
+          };
+        }(l, a, b, c, d, e), job_streamer.console.components.agents.__GT_t85283 = function(a, b, c, d, e, g) {
+          return function(a, b, c, d, e, g, h, k, l, m, n, p) {
+            return new job_streamer.console.components.agents.t85283(a, b, c, d, e, g, h, k, l, m, n, p);
+          };
+        }(l, a, b, c, d, e)), new job_streamer.console.components.agents.t85283(b, k, k, l, c, g, e, d, h, h, a, null);
+      }
+    }();
+    if (cljs.core.truth_(l) && (n = e.call(null, m), cljs.core.truth_(n))) {
+      throw cljs.core.ex_info.call(null, schema.utils.format_STAR_.call(null, "Output of %s does not match schema: %s", new cljs.core.Symbol(null, "agent-detail-view", "agent-detail-view", 614133417, null), cljs.core.pr_str.call(null, n)), new cljs.core.PersistentArrayMap(null, 4, [new cljs.core.Keyword(null, "error", "error", -978969032), n, new cljs.core.Keyword(null, "value", "value", 305978217), m, new cljs.core.Keyword(null, "schema", "schema", -1582001791), b, new cljs.core.Keyword(null, "type", 
+      "type", 1174270348), new cljs.core.Keyword("schema.core", "error", "schema.core/error", 1991454308)], null));
+    }
+    return m;
+  };
+}(ufv___85286, output_schema85274_85287, input_schema85275_85288, input_checker85276_85289, output_checker85277_85290);
+schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.agents.agent_detail_view), schema.core.make_fn_schema.call(null, output_schema85274_85287, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema85275_85288], null)));
+job_streamer.console.components.agents.__GT_agent_detail_view = function() {
+  var a = null, b = function(a) {
+    return om.core.build.call(null, job_streamer.console.components.agents.agent_detail_view, a);
+  }, c = function(a, b) {
+    return om.core.build.call(null, job_streamer.console.components.agents.agent_detail_view, a, b);
+  }, a = function(a, e) {
+    switch(arguments.length) {
+      case 1:
+        return b.call(this, a);
+      case 2:
+        return c.call(this, a, e);
+    }
+    throw Error("Invalid arity: " + arguments.length);
+  };
+  a.cljs$core$IFn$_invoke$arity$1 = b;
+  a.cljs$core$IFn$_invoke$arity$2 = c;
+  return a;
+}();
+var ufv___85313 = schema.utils.use_fn_validation, output_schema85297_85314 = schema.core.Any, input_schema85298_85315 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "app", "app", 1079569820, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker85299_85316 = schema.core.checker.call(null, input_schema85298_85315), 
+output_checker85300_85317 = schema.core.checker.call(null, output_schema85297_85314);
+job_streamer.console.components.agents.no_agents_view = function(a, b, c, d, e) {
+  return function g(h, k) {
+    var l = a.get_cell();
+    if (cljs.core.truth_(l)) {
+      var m = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [h, k], null), n = d.call(null, m);
+      if (cljs.core.truth_(n)) {
+        throw cljs.core.ex_info.call(null, schema.utils.format_STAR_.call(null, "Input to %s does not match schema: %s", new cljs.core.Symbol(null, "no-agents-view", "no-agents-view", 381181323, null), cljs.core.pr_str.call(null, n)), new cljs.core.PersistentArrayMap(null, 4, [new cljs.core.Keyword(null, "error", "error", -978969032), n, new cljs.core.Keyword(null, "value", "value", 305978217), m, new cljs.core.Keyword(null, "schema", "schema", -1582001791), c, new cljs.core.Keyword(null, "type", 
+        "type", 1174270348), new cljs.core.Keyword("schema.core", "error", "schema.core/error", 1991454308)], null));
+      }
+    }
+    m = function() {
+      for (;;) {
+        return "undefined" === typeof job_streamer.console.components.agents.t85308 && (job_streamer.console.components.agents.t85308 = function(a, b, c, d, e, g, h, k, l, m, n, E) {
+          this.owner = a;
+          this.validate__11398__auto__ = b;
+          this.output_checker85300 = c;
+          this.no_agents_view = d;
+          this.G__85302 = e;
+          this.input_checker85299 = g;
+          this.input_schema85298 = h;
+          this.output_schema85297 = k;
+          this.app = l;
+          this.ufv__ = m;
+          this.G__85301 = n;
+          this.meta85309 = E;
+          this.cljs$lang$protocol_mask$partition1$ = 0;
+          this.cljs$lang$protocol_mask$partition0$ = 393216;
+        }, job_streamer.console.components.agents.t85308.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.agents.t85308.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
+          return function(a) {
+            return "no-agents-view";
+          };
+        }(l, a, b, c, d, e), job_streamer.console.components.agents.t85308.prototype.om$core$IRender$ = !0, job_streamer.console.components.agents.t85308.prototype.om$core$IRender$render$arity$1 = function(a, b, c, d, e, g) {
+          return function(a) {
+            return React.DOM.div({className:"ui icon message"}, React.DOM.i({className:"child icon"}), React.DOM.div({className:"content"}, React.DOM.div({className:"header"}, "Let's setup agents!"), React.DOM.ol({className:"ui list"}, React.DOM.li(null, React.DOM.h4({className:"ui header"}, "Clone repository."), React.DOM.pre(null, React.DOM.code(null, "% git clone https://github.com/job-streamer/job-streamer-agent.git"))), React.DOM.li(null, React.DOM.h4({className:"ui header"}, "Build docker container."), 
+            React.DOM.pre(null, React.DOM.code(null, "% cd job-streamer-agent\n", "% docker build -t job-streamer/agent:0.1.0 ."))), React.DOM.li(null, React.DOM.h4({className:"ui header"}, "Run docker container."), React.DOM.pre(null, React.DOM.code(null, "% docker run job-streamer/agent:0.1.0"))))));
+          };
+        }(l, a, b, c, d, e), job_streamer.console.components.agents.t85308.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
+          return function(a) {
+            return this.meta85309;
+          };
+        }(l, a, b, c, d, e), job_streamer.console.components.agents.t85308.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
+          return function(a, b) {
+            return new job_streamer.console.components.agents.t85308(this.owner, this.validate__11398__auto__, this.output_checker85300, this.no_agents_view, this.G__85302, this.input_checker85299, this.input_schema85298, this.output_schema85297, this.app, this.ufv__, this.G__85301, b);
+          };
+        }(l, a, b, c, d, e), job_streamer.console.components.agents.t85308.cljs$lang$type = !0, job_streamer.console.components.agents.t85308.cljs$lang$ctorStr = "job-streamer.console.components.agents/t85308", job_streamer.console.components.agents.t85308.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
+          return function(a, b, c) {
+            return cljs.core._write.call(null, b, "job-streamer.console.components.agents/t85308");
+          };
+        }(l, a, b, c, d, e), job_streamer.console.components.agents.__GT_t85308 = function(a, b, c, d, e, g) {
+          return function(a, b, c, d, e, g, h, k, l, m, n, p) {
+            return new job_streamer.console.components.agents.t85308(a, b, c, d, e, g, h, k, l, m, n, p);
+          };
+        }(l, a, b, c, d, e)), new job_streamer.console.components.agents.t85308(k, l, e, g, k, d, c, b, h, a, h, null);
+      }
+    }();
+    if (cljs.core.truth_(l) && (n = e.call(null, m), cljs.core.truth_(n))) {
+      throw cljs.core.ex_info.call(null, schema.utils.format_STAR_.call(null, "Output of %s does not match schema: %s", new cljs.core.Symbol(null, "no-agents-view", "no-agents-view", 381181323, null), cljs.core.pr_str.call(null, n)), new cljs.core.PersistentArrayMap(null, 4, [new cljs.core.Keyword(null, "error", "error", -978969032), n, new cljs.core.Keyword(null, "value", "value", 305978217), m, new cljs.core.Keyword(null, "schema", "schema", -1582001791), b, new cljs.core.Keyword(null, "type", 
+      "type", 1174270348), new cljs.core.Keyword("schema.core", "error", "schema.core/error", 1991454308)], null));
+    }
+    return m;
+  };
+}(ufv___85313, output_schema85297_85314, input_schema85298_85315, input_checker85299_85316, output_checker85300_85317);
+schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.agents.no_agents_view), schema.core.make_fn_schema.call(null, output_schema85297_85314, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema85298_85315], null)));
+job_streamer.console.components.agents.__GT_no_agents_view = function() {
+  var a = null, b = function(a) {
+    return om.core.build.call(null, job_streamer.console.components.agents.no_agents_view, a);
+  }, c = function(a, b) {
+    return om.core.build.call(null, job_streamer.console.components.agents.no_agents_view, a, b);
+  }, a = function(a, e) {
+    switch(arguments.length) {
+      case 1:
+        return b.call(this, a);
+      case 2:
+        return c.call(this, a, e);
+    }
+    throw Error("Invalid arity: " + arguments.length);
+  };
+  a.cljs$core$IFn$_invoke$arity$1 = b;
+  a.cljs$core$IFn$_invoke$arity$2 = c;
+  return a;
+}();
+var ufv___85360 = schema.utils.use_fn_validation, output_schema85324_85361 = schema.core.Any, input_schema85325_85362 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "agents", "agents", 528117827, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker85326_85363 = schema.core.checker.call(null, input_schema85325_85362), 
+output_checker85327_85364 = schema.core.checker.call(null, output_schema85324_85361);
+job_streamer.console.components.agents.agent_list_view = function(a, b, c, d, e) {
+  return function g(h, k) {
+    var l = a.get_cell();
+    if (cljs.core.truth_(l)) {
+      var m = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [h, k], null), n = d.call(null, m);
+      if (cljs.core.truth_(n)) {
+        throw cljs.core.ex_info.call(null, schema.utils.format_STAR_.call(null, "Input to %s does not match schema: %s", new cljs.core.Symbol(null, "agent-list-view", "agent-list-view", -2062787037, null), cljs.core.pr_str.call(null, n)), new cljs.core.PersistentArrayMap(null, 4, [new cljs.core.Keyword(null, "error", "error", -978969032), n, new cljs.core.Keyword(null, "value", "value", 305978217), m, new cljs.core.Keyword(null, "schema", "schema", -1582001791), c, new cljs.core.Keyword(null, "type", 
+        "type", 1174270348), new cljs.core.Keyword("schema.core", "error", "schema.core/error", 1991454308)], null));
+      }
+    }
+    m = function() {
+      for (;;) {
+        return "undefined" === typeof job_streamer.console.components.agents.t85345 && (job_streamer.console.components.agents.t85345 = function(a, b, c, d, e, g, h, k, l, m, n, E) {
+          this.output_schema85324 = a;
+          this.agents = b;
+          this.agent_list_view = c;
+          this.owner = d;
+          this.G__85329 = e;
+          this.validate__11398__auto__ = g;
+          this.output_checker85327 = h;
+          this.input_checker85326 = k;
+          this.input_schema85325 = l;
+          this.ufv__ = m;
+          this.G__85328 = n;
+          this.meta85346 = E;
+          this.cljs$lang$protocol_mask$partition1$ = 0;
+          this.cljs$lang$protocol_mask$partition0$ = 393216;
+        }, job_streamer.console.components.agents.t85345.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.agents.t85345.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
+          return function(a) {
+            return "agent-list-view";
+          };
+        }(l, a, b, c, d, e), job_streamer.console.components.agents.t85345.prototype.om$core$IRender$ = !0, job_streamer.console.components.agents.t85345.prototype.om$core$IRender$render$arity$1 = function(a, b, c, d, e, g) {
+          return function(h) {
+            var k = this, l = this;
+            return React.DOM.table({className:"ui celled striped table"}, React.DOM.thead(null, React.DOM.tr(null, React.DOM.th(null, "Name"), React.DOM.th(null, "CPU"))), React.DOM.tbody(null, cljs.core.into_array.call(null, function() {
+              return function(a, b, c, d, e, g, h) {
+                return function C(k) {
+                  return new cljs.core.LazySeq(null, function(a, b, c, d, e, g, h) {
+                    return function() {
+                      for (;;) {
+                        var a = cljs.core.seq.call(null, k);
+                        if (a) {
+                          if (cljs.core.chunked_seq_QMARK_.call(null, a)) {
+                            var b = cljs.core.chunk_first.call(null, a), c = cljs.core.count.call(null, b), d = cljs.core.chunk_buffer.call(null, c);
+                            return function() {
+                              for (var a = 0;;) {
+                                if (a < c) {
+                                  var e = cljs.core._nth.call(null, b, a);
+                                  cljs.core.chunk_append.call(null, d, React.DOM.tr(null, React.DOM.td(null, function() {
+                                    var a;
+                                    a: {
+                                      switch((new cljs.core.Keyword(null, "os-name", "os-name", -2109973734)).cljs$core$IFn$_invoke$arity$1(e)) {
+                                        case "Linux":
+                                          a = new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "class", "class", -2030961996), "linux"], null);
+                                          break a;
+                                        default:
+                                          a = new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "class", "class", -2030961996), "help"], null);
+                                      }
+                                    }
+                                    return cljs.core.apply.call(null, React.DOM.i, cljs.core.map_QMARK_.call(null, a) ? sablono.interpreter.attributes.call(null, sablono.util.merge_with_class.call(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "class", "class", -2030961996), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, ["icon"], null)], null), a)) : {className:"icon"}, cljs.core.remove.call(null, cljs.core.nil_QMARK_, cljs.core.map_QMARK_.call(null, 
+                                    a) ? cljs.core.PersistentVector.EMPTY : new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [sablono.interpreter.interpret.call(null, a)], null)));
+                                  }(), React.DOM.a({href:[cljs.core.str("#/agent/"), cljs.core.str((new cljs.core.Keyword(null, "instance-id", "instance-id", 951361263)).cljs$core$IFn$_invoke$arity$1(e))].join("")}, sablono.interpreter.interpret.call(null, (new cljs.core.Keyword(null, "name", "name", 1843675177)).cljs$core$IFn$_invoke$arity$1(e)))), function() {
+                                    var a = [cljs.core.str((new cljs.core.Keyword(null, "cpu-core", "cpu-core", 1871618329)).cljs$core$IFn$_invoke$arity$1(e)), cljs.core.str("core")].join("");
+                                    return cljs.core.apply.call(null, React.DOM.td, cljs.core.map_QMARK_.call(null, a) ? sablono.interpreter.attributes.call(null, a) : null, cljs.core.remove.call(null, cljs.core.nil_QMARK_, cljs.core.map_QMARK_.call(null, a) ? cljs.core.PersistentVector.EMPTY : new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [sablono.interpreter.interpret.call(null, a)], null)));
+                                  }()));
+                                  a += 1;
+                                } else {
+                                  return!0;
+                                }
+                              }
+                            }() ? cljs.core.chunk_cons.call(null, cljs.core.chunk.call(null, d), C.call(null, cljs.core.chunk_rest.call(null, a))) : cljs.core.chunk_cons.call(null, cljs.core.chunk.call(null, d), null);
+                          }
+                          var e = cljs.core.first.call(null, a);
+                          return cljs.core.cons.call(null, React.DOM.tr(null, React.DOM.td(null, function() {
+                            var a;
+                            a: {
+                              switch((new cljs.core.Keyword(null, "os-name", "os-name", -2109973734)).cljs$core$IFn$_invoke$arity$1(e)) {
+                                case "Linux":
+                                  a = new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "class", "class", -2030961996), "linux"], null);
+                                  break a;
+                                default:
+                                  a = new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "class", "class", -2030961996), "help"], null);
+                              }
+                            }
+                            return cljs.core.apply.call(null, React.DOM.i, cljs.core.map_QMARK_.call(null, a) ? sablono.interpreter.attributes.call(null, sablono.util.merge_with_class.call(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "class", "class", -2030961996), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, ["icon"], null)], null), a)) : {className:"icon"}, cljs.core.remove.call(null, cljs.core.nil_QMARK_, cljs.core.map_QMARK_.call(null, 
+                            a) ? cljs.core.PersistentVector.EMPTY : new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [sablono.interpreter.interpret.call(null, a)], null)));
+                          }(), React.DOM.a({href:[cljs.core.str("#/agent/"), cljs.core.str((new cljs.core.Keyword(null, "instance-id", "instance-id", 951361263)).cljs$core$IFn$_invoke$arity$1(e))].join("")}, sablono.interpreter.interpret.call(null, (new cljs.core.Keyword(null, "name", "name", 1843675177)).cljs$core$IFn$_invoke$arity$1(e)))), function() {
+                            var a = [cljs.core.str((new cljs.core.Keyword(null, "cpu-core", "cpu-core", 1871618329)).cljs$core$IFn$_invoke$arity$1(e)), cljs.core.str("core")].join("");
+                            return cljs.core.apply.call(null, React.DOM.td, cljs.core.map_QMARK_.call(null, a) ? sablono.interpreter.attributes.call(null, a) : null, cljs.core.remove.call(null, cljs.core.nil_QMARK_, cljs.core.map_QMARK_.call(null, a) ? cljs.core.PersistentVector.EMPTY : new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [sablono.interpreter.interpret.call(null, a)], null)));
+                          }()), C.call(null, cljs.core.rest.call(null, a)));
+                        }
+                        return null;
+                      }
+                    };
+                  }(a, b, c, d, e, g, h), null, null);
+                };
+              }(l, a, b, c, d, e, g).call(null, k.agents);
+            }())));
+          };
+        }(l, a, b, c, d, e), job_streamer.console.components.agents.t85345.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
+          return function(a) {
+            return this.meta85346;
+          };
+        }(l, a, b, c, d, e), job_streamer.console.components.agents.t85345.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
+          return function(a, b) {
+            return new job_streamer.console.components.agents.t85345(this.output_schema85324, this.agents, this.agent_list_view, this.owner, this.G__85329, this.validate__11398__auto__, this.output_checker85327, this.input_checker85326, this.input_schema85325, this.ufv__, this.G__85328, b);
+          };
+        }(l, a, b, c, d, e), job_streamer.console.components.agents.t85345.cljs$lang$type = !0, job_streamer.console.components.agents.t85345.cljs$lang$ctorStr = "job-streamer.console.components.agents/t85345", job_streamer.console.components.agents.t85345.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
+          return function(a, b, c) {
+            return cljs.core._write.call(null, b, "job-streamer.console.components.agents/t85345");
+          };
+        }(l, a, b, c, d, e), job_streamer.console.components.agents.__GT_t85345 = function(a, b, c, d, e, g) {
+          return function(a, b, c, d, e, g, h, k, l, m, n, p) {
+            return new job_streamer.console.components.agents.t85345(a, b, c, d, e, g, h, k, l, m, n, p);
+          };
+        }(l, a, b, c, d, e)), new job_streamer.console.components.agents.t85345(b, h, g, k, k, l, e, d, c, a, h, null);
+      }
+    }();
+    if (cljs.core.truth_(l) && (n = e.call(null, m), cljs.core.truth_(n))) {
+      throw cljs.core.ex_info.call(null, schema.utils.format_STAR_.call(null, "Output of %s does not match schema: %s", new cljs.core.Symbol(null, "agent-list-view", "agent-list-view", -2062787037, null), cljs.core.pr_str.call(null, n)), new cljs.core.PersistentArrayMap(null, 4, [new cljs.core.Keyword(null, "error", "error", -978969032), n, new cljs.core.Keyword(null, "value", "value", 305978217), m, new cljs.core.Keyword(null, "schema", "schema", -1582001791), b, new cljs.core.Keyword(null, "type", 
+      "type", 1174270348), new cljs.core.Keyword("schema.core", "error", "schema.core/error", 1991454308)], null));
+    }
+    return m;
+  };
+}(ufv___85360, output_schema85324_85361, input_schema85325_85362, input_checker85326_85363, output_checker85327_85364);
+schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.agents.agent_list_view), schema.core.make_fn_schema.call(null, output_schema85324_85361, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema85325_85362], null)));
+job_streamer.console.components.agents.__GT_agent_list_view = function() {
+  var a = null, b = function(a) {
+    return om.core.build.call(null, job_streamer.console.components.agents.agent_list_view, a);
+  }, c = function(a, b) {
+    return om.core.build.call(null, job_streamer.console.components.agents.agent_list_view, a, b);
+  }, a = function(a, e) {
+    switch(arguments.length) {
+      case 1:
+        return b.call(this, a);
+      case 2:
+        return c.call(this, a, e);
+    }
+    throw Error("Invalid arity: " + arguments.length);
+  };
+  a.cljs$core$IFn$_invoke$arity$1 = b;
+  a.cljs$core$IFn$_invoke$arity$2 = c;
+  return a;
+}();
+var ufv___85394 = schema.utils.use_fn_validation, output_schema85374_85395 = schema.core.Any, input_schema85375_85396 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "app", "app", 1079569820, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker85376_85397 = schema.core.checker.call(null, input_schema85375_85396), 
+output_checker85377_85398 = schema.core.checker.call(null, output_schema85374_85395);
+job_streamer.console.components.agents.agents_view = function(a, b, c, d, e) {
+  return function g(h, k) {
+    var l = a.get_cell();
+    if (cljs.core.truth_(l)) {
+      var m = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [h, k], null), n = d.call(null, m);
+      if (cljs.core.truth_(n)) {
+        throw cljs.core.ex_info.call(null, schema.utils.format_STAR_.call(null, "Input to %s does not match schema: %s", new cljs.core.Symbol(null, "agents-view", "agents-view", 1226063548, null), cljs.core.pr_str.call(null, n)), new cljs.core.PersistentArrayMap(null, 4, [new cljs.core.Keyword(null, "error", "error", -978969032), n, new cljs.core.Keyword(null, "value", "value", 305978217), m, new cljs.core.Keyword(null, "schema", "schema", -1582001791), c, new cljs.core.Keyword(null, "type", "type", 
+        1174270348), new cljs.core.Keyword("schema.core", "error", "schema.core/error", 1991454308)], null));
+      }
+    }
+    m = function() {
+      for (;;) {
+        return "undefined" === typeof job_streamer.console.components.agents.t85387 && (job_streamer.console.components.agents.t85387 = function(a, b, c, d, e, g, h, k, l, m, n, E) {
+          this.owner = a;
+          this.validate__11398__auto__ = b;
+          this.input_schema85375 = c;
+          this.output_checker85377 = d;
+          this.input_checker85376 = e;
+          this.output_schema85374 = g;
+          this.G__85378 = h;
+          this.app = k;
+          this.agents_view = l;
+          this.ufv__ = m;
+          this.G__85379 = n;
+          this.meta85388 = E;
+          this.cljs$lang$protocol_mask$partition1$ = 0;
+          this.cljs$lang$protocol_mask$partition0$ = 393216;
+        }, job_streamer.console.components.agents.t85387.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.agents.t85387.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
+          return function(a) {
+            return "agents-view";
+          };
+        }(l, a, b, c, d, e), job_streamer.console.components.agents.t85387.prototype.om$core$IRender$ = !0, job_streamer.console.components.agents.t85387.prototype.om$core$IRender$render$arity$1 = function(a, b, c, d, e, g) {
+          return function(a) {
+            var b = this;
+            return React.DOM.div({className:"ui grid"}, React.DOM.div({className:"ui row"}, React.DOM.div({className:"ui column"}, React.DOM.h2({className:"ui purple header"}, React.DOM.i({className:"laptop icon"}), React.DOM.div({className:"content"}, "Agent", React.DOM.div({className:"sub header"}, "Agents for executing jobs."))))), React.DOM.div({className:"ui row"}, function() {
+              var a;
+              a: {
+                switch(a = cljs.core.second.call(null, (new cljs.core.Keyword(null, "mode", "mode", 654403691)).cljs$core$IFn$_invoke$arity$1(b.app)), a instanceof cljs.core.Keyword ? a.fqn : null) {
+                  case "detail":
+                    a = om.core.build.call(null, job_streamer.console.components.agents.agent_detail_view, (new cljs.core.Keyword("agent", "instance-id", "agent/instance-id", 52290540)).cljs$core$IFn$_invoke$arity$1(b.app));
+                    break a;
+                  default:
+                    a = null == (new cljs.core.Keyword(null, "agents", "agents", -1112413700)).cljs$core$IFn$_invoke$arity$1(b.app) ? new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "img", "img", 1442687358), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "src", "src", -1651076051), "/img/loader.gif"], null)], null) : cljs.core.empty_QMARK_.call(null, (new cljs.core.Keyword(null, "agents", "agents", -1112413700)).cljs$core$IFn$_invoke$arity$1(b.app)) ? 
+                    om.core.build.call(null, job_streamer.console.components.agents.no_agents_view, b.app) : om.core.build.call(null, job_streamer.console.components.agents.agent_list_view, (new cljs.core.Keyword(null, "agents", "agents", -1112413700)).cljs$core$IFn$_invoke$arity$1(b.app));
+                }
+              }
+              return cljs.core.apply.call(null, React.DOM.div, cljs.core.map_QMARK_.call(null, a) ? sablono.interpreter.attributes.call(null, sablono.util.merge_with_class.call(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "class", "class", -2030961996), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, ["ui", "column"], null)], null), a)) : {className:"ui column"}, cljs.core.remove.call(null, cljs.core.nil_QMARK_, cljs.core.map_QMARK_.call(null, 
+              a) ? cljs.core.PersistentVector.EMPTY : new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [sablono.interpreter.interpret.call(null, a)], null)));
+            }()));
+          };
+        }(l, a, b, c, d, e), job_streamer.console.components.agents.t85387.prototype.om$core$IWillMount$ = !0, job_streamer.console.components.agents.t85387.prototype.om$core$IWillMount$will_mount$arity$1 = function(a, b, c, d, e, g) {
+          return function(h) {
+            var k = this;
+            return job_streamer.console.api.request.call(null, "/agents", new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "handler", "handler", -195596612), function(a, b, c, d, e, g, h) {
+              return function(a) {
+                return om.core.update_BANG_.call(null, k.app, new cljs.core.Keyword(null, "agents", "agents", -1112413700), a);
+              };
+            }(this, a, b, c, d, e, g)], null));
+          };
+        }(l, a, b, c, d, e), job_streamer.console.components.agents.t85387.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
+          return function(a) {
+            return this.meta85388;
+          };
+        }(l, a, b, c, d, e), job_streamer.console.components.agents.t85387.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
+          return function(a, b) {
+            return new job_streamer.console.components.agents.t85387(this.owner, this.validate__11398__auto__, this.input_schema85375, this.output_checker85377, this.input_checker85376, this.output_schema85374, this.G__85378, this.app, this.agents_view, this.ufv__, this.G__85379, b);
+          };
+        }(l, a, b, c, d, e), job_streamer.console.components.agents.t85387.cljs$lang$type = !0, job_streamer.console.components.agents.t85387.cljs$lang$ctorStr = "job-streamer.console.components.agents/t85387", job_streamer.console.components.agents.t85387.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
+          return function(a, b, c) {
+            return cljs.core._write.call(null, b, "job-streamer.console.components.agents/t85387");
+          };
+        }(l, a, b, c, d, e), job_streamer.console.components.agents.__GT_t85387 = function(a, b, c, d, e, g) {
+          return function(a, b, c, d, e, g, h, k, l, m, n, p) {
+            return new job_streamer.console.components.agents.t85387(a, b, c, d, e, g, h, k, l, m, n, p);
+          };
+        }(l, a, b, c, d, e)), new job_streamer.console.components.agents.t85387(k, l, c, e, d, b, h, h, g, a, k, null);
+      }
+    }();
+    if (cljs.core.truth_(l) && (n = e.call(null, m), cljs.core.truth_(n))) {
+      throw cljs.core.ex_info.call(null, schema.utils.format_STAR_.call(null, "Output of %s does not match schema: %s", new cljs.core.Symbol(null, "agents-view", "agents-view", 1226063548, null), cljs.core.pr_str.call(null, n)), new cljs.core.PersistentArrayMap(null, 4, [new cljs.core.Keyword(null, "error", "error", -978969032), n, new cljs.core.Keyword(null, "value", "value", 305978217), m, new cljs.core.Keyword(null, "schema", "schema", -1582001791), b, new cljs.core.Keyword(null, "type", "type", 
+      1174270348), new cljs.core.Keyword("schema.core", "error", "schema.core/error", 1991454308)], null));
+    }
+    return m;
+  };
+}(ufv___85394, output_schema85374_85395, input_schema85375_85396, input_checker85376_85397, output_checker85377_85398);
+schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.agents.agents_view), schema.core.make_fn_schema.call(null, output_schema85374_85395, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema85375_85396], null)));
+job_streamer.console.components.agents.__GT_agents_view = function() {
+  var a = null, b = function(a) {
+    return om.core.build.call(null, job_streamer.console.components.agents.agents_view, a);
+  }, c = function(a, b) {
+    return om.core.build.call(null, job_streamer.console.components.agents.agents_view, a, b);
+  }, a = function(a, e) {
+    switch(arguments.length) {
+      case 1:
+        return b.call(this, a);
+      case 2:
+        return c.call(this, a, e);
+    }
+    throw Error("Invalid arity: " + arguments.length);
+  };
+  a.cljs$core$IFn$_invoke$arity$1 = b;
+  a.cljs$core$IFn$_invoke$arity$2 = c;
+  return a;
+}();
 job_streamer.console.components.root = {};
-var ufv___16655 = schema.utils.use_fn_validation, output_schema16619_16656 = schema.core.Any, input_schema16620_16657 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "app", "app", 1079569820, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker16621_16658 = schema.core.checker.call(null, input_schema16620_16657), 
-output_checker16622_16659 = schema.core.checker.call(null, output_schema16619_16656);
+job_streamer.console.components.root.app_name = "default";
+var ufv___85449 = schema.utils.use_fn_validation, output_schema85409_85450 = schema.core.Any, input_schema85410_85451 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "app", "app", 1079569820, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker85411_85452 = schema.core.checker.call(null, input_schema85410_85451), 
+output_checker85412_85453 = schema.core.checker.call(null, output_schema85409_85450);
 job_streamer.console.components.root.right_menu_view = function(a, b, c, d, e) {
   return function g(h, k) {
     var l = a.get_cell();
@@ -81841,92 +82066,93 @@ job_streamer.console.components.root.right_menu_view = function(a, b, c, d, e) {
     }
     m = function() {
       for (;;) {
-        return "undefined" === typeof job_streamer.console.components.root.t16640 && (job_streamer.console.components.root.t16640 = function(a, b, c, d, e, g, h, k, l, m, n, J) {
-          this.output_schema16619 = a;
-          this.owner = b;
-          this.validate__11398__auto__ = c;
-          this.output_checker16622 = d;
-          this.input_checker16621 = e;
-          this.right_menu_view = g;
-          this.input_schema16620 = h;
-          this.G__16623 = k;
-          this.app = l;
+        return "undefined" === typeof job_streamer.console.components.root.t85432 && (job_streamer.console.components.root.t85432 = function(a, b, c, d, e, g, h, k, l, m, n, E) {
+          this.owner = a;
+          this.validate__11398__auto__ = b;
+          this.input_checker85411 = c;
+          this.output_checker85412 = d;
+          this.right_menu_view = e;
+          this.input_schema85410 = g;
+          this.G__85414 = h;
+          this.app = k;
+          this.output_schema85409 = l;
           this.ufv__ = m;
-          this.G__16624 = n;
-          this.meta16641 = J;
+          this.G__85413 = n;
+          this.meta85433 = E;
           this.cljs$lang$protocol_mask$partition1$ = 0;
           this.cljs$lang$protocol_mask$partition0$ = 393216;
-        }, job_streamer.console.components.root.t16640.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.root.t16640.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
+        }, job_streamer.console.components.root.t85432.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.root.t85432.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
             return "right-menu-view";
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.root.t16640.prototype.om$core$IRender$ = !0, job_streamer.console.components.root.t16640.prototype.om$core$IRender$render$arity$1 = function(a, b, c, d, e, g) {
-          return function(h) {
-            var k = this;
+        }(l, a, b, c, d, e), job_streamer.console.components.root.t85432.prototype.om$core$IRenderState$ = !0, job_streamer.console.components.root.t85432.prototype.om$core$IRenderState$render_state$arity$2 = function(a, b, c, d, e, g) {
+          return function(h, k) {
+            var l = this, m = cljs.core.seq_QMARK_.call(null, k) ? cljs.core.apply.call(null, cljs.core.hash_map, k) : k, n = cljs.core.get.call(null, m, new cljs.core.Keyword(null, "jobs-count", "jobs-count", 444020358)), E = cljs.core.get.call(null, m, new cljs.core.Keyword(null, "agents-count", "agents-count", -134723530));
             return React.DOM.div({className:"right menu"}, function() {
-              var a = cljs.core._EQ_.call(null, cljs.core.first.call(null, (new cljs.core.Keyword(null, "mode", "mode", 654403691)).cljs$core$IFn$_invoke$arity$1(k.app)), new cljs.core.Keyword(null, "agents", "agents", -1112413700)) ? new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "class", "class", -2030961996), "active"], null) : null;
+              var a = cljs.core._EQ_.call(null, cljs.core.first.call(null, (new cljs.core.Keyword(null, "mode", "mode", 654403691)).cljs$core$IFn$_invoke$arity$1(l.app)), new cljs.core.Keyword(null, "agents", "agents", -1112413700)) ? new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "class", "class", -2030961996), "active"], null) : null;
               return cljs.core.apply.call(null, React.DOM.div, cljs.core.map_QMARK_.call(null, a) ? sablono.interpreter.attributes.call(null, sablono.util.merge_with_class.call(null, new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "id", "id", -1388402092), "agent-stats", new cljs.core.Keyword(null, "class", "class", -2030961996), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, ["item"], null)], null), a)) : {className:"item", id:"agent-stats"}, 
-              cljs.core.remove.call(null, cljs.core.nil_QMARK_, cljs.core.map_QMARK_.call(null, a) ? new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [React.DOM.a({className:"ui tiny horizontal statistics", href:"#/agents"}, React.DOM.div({className:"ui inverted statistic"}, function() {
-                var a = cljs.core.count.call(null, (new cljs.core.Keyword(null, "agents", "agents", -1112413700)).cljs$core$IFn$_invoke$arity$1(k.app));
-                return cljs.core.apply.call(null, React.DOM.div, cljs.core.map_QMARK_.call(null, a) ? sablono.interpreter.attributes.call(null, sablono.util.merge_with_class.call(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "class", "class", -2030961996), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, ["value"], null)], null), a)) : {className:"value"}, cljs.core.remove.call(null, cljs.core.nil_QMARK_, cljs.core.map_QMARK_.call(null, 
-                a) ? cljs.core.PersistentVector.EMPTY : new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [sablono.interpreter.interpret.call(null, a)], null)));
-              }(), function() {
-                var a = [cljs.core.str("agent"), cljs.core.str(1 < cljs.core.count.call(null, (new cljs.core.Keyword(null, "agents", "agents", -1112413700)).cljs$core$IFn$_invoke$arity$1(k.app)) ? "s" : null)].join("");
+              cljs.core.remove.call(null, cljs.core.nil_QMARK_, cljs.core.map_QMARK_.call(null, a) ? new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [React.DOM.a({className:"ui tiny horizontal statistics", href:"#/agents"}, React.DOM.div({className:"ui inverted statistic"}, cljs.core.apply.call(null, React.DOM.div, cljs.core.map_QMARK_.call(null, E) ? sablono.interpreter.attributes.call(null, sablono.util.merge_with_class.call(null, new cljs.core.PersistentArrayMap(null, 
+              1, [new cljs.core.Keyword(null, "class", "class", -2030961996), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, ["value"], null)], null), E)) : {className:"value"}, cljs.core.remove.call(null, cljs.core.nil_QMARK_, cljs.core.map_QMARK_.call(null, E) ? cljs.core.PersistentVector.EMPTY : new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [sablono.interpreter.interpret.call(null, E)], null))), function() {
+                var a = [cljs.core.str("agent"), cljs.core.str(1 < E ? "s" : null)].join("");
                 return cljs.core.apply.call(null, React.DOM.div, cljs.core.map_QMARK_.call(null, a) ? sablono.interpreter.attributes.call(null, sablono.util.merge_with_class.call(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "class", "class", -2030961996), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, ["label"], null)], null), a)) : {className:"label"}, cljs.core.remove.call(null, cljs.core.nil_QMARK_, cljs.core.map_QMARK_.call(null, 
                 a) ? cljs.core.PersistentVector.EMPTY : new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [sablono.interpreter.interpret.call(null, a)], null)));
-              }()))], null) : new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [sablono.interpreter.interpret.call(null, a), React.DOM.a({className:"ui tiny horizontal statistics", href:"#/agents"}, React.DOM.div({className:"ui inverted statistic"}, function() {
-                var a = cljs.core.count.call(null, (new cljs.core.Keyword(null, "agents", "agents", -1112413700)).cljs$core$IFn$_invoke$arity$1(k.app));
-                return cljs.core.apply.call(null, React.DOM.div, cljs.core.map_QMARK_.call(null, a) ? sablono.interpreter.attributes.call(null, sablono.util.merge_with_class.call(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "class", "class", -2030961996), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, ["value"], null)], null), a)) : {className:"value"}, cljs.core.remove.call(null, cljs.core.nil_QMARK_, cljs.core.map_QMARK_.call(null, 
-                a) ? cljs.core.PersistentVector.EMPTY : new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [sablono.interpreter.interpret.call(null, a)], null)));
-              }(), function() {
-                var a = [cljs.core.str("agent"), cljs.core.str(1 < cljs.core.count.call(null, (new cljs.core.Keyword(null, "agents", "agents", -1112413700)).cljs$core$IFn$_invoke$arity$1(k.app)) ? "s" : null)].join("");
+              }()))], null) : new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [sablono.interpreter.interpret.call(null, a), React.DOM.a({className:"ui tiny horizontal statistics", href:"#/agents"}, React.DOM.div({className:"ui inverted statistic"}, cljs.core.apply.call(null, React.DOM.div, cljs.core.map_QMARK_.call(null, E) ? sablono.interpreter.attributes.call(null, sablono.util.merge_with_class.call(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, 
+              "class", "class", -2030961996), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, ["value"], null)], null), E)) : {className:"value"}, cljs.core.remove.call(null, cljs.core.nil_QMARK_, cljs.core.map_QMARK_.call(null, E) ? cljs.core.PersistentVector.EMPTY : new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [sablono.interpreter.interpret.call(null, E)], null))), function() {
+                var a = [cljs.core.str("agent"), cljs.core.str(1 < E ? "s" : null)].join("");
                 return cljs.core.apply.call(null, React.DOM.div, cljs.core.map_QMARK_.call(null, a) ? sablono.interpreter.attributes.call(null, sablono.util.merge_with_class.call(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "class", "class", -2030961996), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, ["label"], null)], null), a)) : {className:"label"}, cljs.core.remove.call(null, cljs.core.nil_QMARK_, cljs.core.map_QMARK_.call(null, 
                 a) ? cljs.core.PersistentVector.EMPTY : new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [sablono.interpreter.interpret.call(null, a)], null)));
               }()))], null)));
             }(), function() {
-              var a = cljs.core._EQ_.call(null, cljs.core.first.call(null, (new cljs.core.Keyword(null, "mode", "mode", 654403691)).cljs$core$IFn$_invoke$arity$1(k.app)), new cljs.core.Keyword(null, "jobs", "jobs", -313607120)) ? new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "class", "class", -2030961996), "active"], null) : null;
+              var a = cljs.core._EQ_.call(null, cljs.core.first.call(null, (new cljs.core.Keyword(null, "mode", "mode", 654403691)).cljs$core$IFn$_invoke$arity$1(l.app)), new cljs.core.Keyword(null, "jobs", "jobs", -313607120)) ? new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "class", "class", -2030961996), "active"], null) : null;
               return cljs.core.apply.call(null, React.DOM.div, cljs.core.map_QMARK_.call(null, a) ? sablono.interpreter.attributes.call(null, sablono.util.merge_with_class.call(null, new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "id", "id", -1388402092), "job-stats", new cljs.core.Keyword(null, "class", "class", -2030961996), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, ["item"], null)], null), a)) : {className:"item", id:"job-stats"}, 
-              cljs.core.remove.call(null, cljs.core.nil_QMARK_, cljs.core.map_QMARK_.call(null, a) ? new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [React.DOM.a({className:"ui tiny horizontal statistics", href:"#/"}, React.DOM.div({className:"ui inverted statistic"}, function() {
-                var a = cljs.core.count.call(null, (new cljs.core.Keyword(null, "jobs", "jobs", -313607120)).cljs$core$IFn$_invoke$arity$1(k.app));
-                return cljs.core.apply.call(null, React.DOM.div, cljs.core.map_QMARK_.call(null, a) ? sablono.interpreter.attributes.call(null, sablono.util.merge_with_class.call(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "class", "class", -2030961996), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, ["value"], null)], null), a)) : {className:"value"}, cljs.core.remove.call(null, cljs.core.nil_QMARK_, cljs.core.map_QMARK_.call(null, 
-                a) ? cljs.core.PersistentVector.EMPTY : new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [sablono.interpreter.interpret.call(null, a)], null)));
-              }(), function() {
-                var a = [cljs.core.str("job"), cljs.core.str(1 < cljs.core.count.call(null, (new cljs.core.Keyword(null, "jobs", "jobs", -313607120)).cljs$core$IFn$_invoke$arity$1(k.app)) ? "s" : null)].join("");
+              cljs.core.remove.call(null, cljs.core.nil_QMARK_, cljs.core.map_QMARK_.call(null, a) ? new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [React.DOM.a({className:"ui tiny horizontal statistics", href:"#/"}, React.DOM.div({className:"ui inverted statistic"}, cljs.core.apply.call(null, React.DOM.div, cljs.core.map_QMARK_.call(null, n) ? sablono.interpreter.attributes.call(null, sablono.util.merge_with_class.call(null, new cljs.core.PersistentArrayMap(null, 
+              1, [new cljs.core.Keyword(null, "class", "class", -2030961996), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, ["value"], null)], null), n)) : {className:"value"}, cljs.core.remove.call(null, cljs.core.nil_QMARK_, cljs.core.map_QMARK_.call(null, n) ? cljs.core.PersistentVector.EMPTY : new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [sablono.interpreter.interpret.call(null, n)], null))), function() {
+                var a = [cljs.core.str("job"), cljs.core.str(1 < n ? "s" : null)].join("");
                 return cljs.core.apply.call(null, React.DOM.div, cljs.core.map_QMARK_.call(null, a) ? sablono.interpreter.attributes.call(null, sablono.util.merge_with_class.call(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "class", "class", -2030961996), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, ["label"], null)], null), a)) : {className:"label"}, cljs.core.remove.call(null, cljs.core.nil_QMARK_, cljs.core.map_QMARK_.call(null, 
                 a) ? cljs.core.PersistentVector.EMPTY : new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [sablono.interpreter.interpret.call(null, a)], null)));
-              }()))], null) : new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [sablono.interpreter.interpret.call(null, a), React.DOM.a({className:"ui tiny horizontal statistics", href:"#/"}, React.DOM.div({className:"ui inverted statistic"}, function() {
-                var a = cljs.core.count.call(null, (new cljs.core.Keyword(null, "jobs", "jobs", -313607120)).cljs$core$IFn$_invoke$arity$1(k.app));
-                return cljs.core.apply.call(null, React.DOM.div, cljs.core.map_QMARK_.call(null, a) ? sablono.interpreter.attributes.call(null, sablono.util.merge_with_class.call(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "class", "class", -2030961996), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, ["value"], null)], null), a)) : {className:"value"}, cljs.core.remove.call(null, cljs.core.nil_QMARK_, cljs.core.map_QMARK_.call(null, 
-                a) ? cljs.core.PersistentVector.EMPTY : new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [sablono.interpreter.interpret.call(null, a)], null)));
-              }(), function() {
-                var a = [cljs.core.str("job"), cljs.core.str(1 < cljs.core.count.call(null, (new cljs.core.Keyword(null, "jobs", "jobs", -313607120)).cljs$core$IFn$_invoke$arity$1(k.app)) ? "s" : null)].join("");
+              }()))], null) : new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [sablono.interpreter.interpret.call(null, a), React.DOM.a({className:"ui tiny horizontal statistics", href:"#/"}, React.DOM.div({className:"ui inverted statistic"}, cljs.core.apply.call(null, React.DOM.div, cljs.core.map_QMARK_.call(null, n) ? sablono.interpreter.attributes.call(null, sablono.util.merge_with_class.call(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, 
+              "class", "class", -2030961996), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, ["value"], null)], null), n)) : {className:"value"}, cljs.core.remove.call(null, cljs.core.nil_QMARK_, cljs.core.map_QMARK_.call(null, n) ? cljs.core.PersistentVector.EMPTY : new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [sablono.interpreter.interpret.call(null, n)], null))), function() {
+                var a = [cljs.core.str("job"), cljs.core.str(1 < n ? "s" : null)].join("");
                 return cljs.core.apply.call(null, React.DOM.div, cljs.core.map_QMARK_.call(null, a) ? sablono.interpreter.attributes.call(null, sablono.util.merge_with_class.call(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "class", "class", -2030961996), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, ["label"], null)], null), a)) : {className:"label"}, cljs.core.remove.call(null, cljs.core.nil_QMARK_, cljs.core.map_QMARK_.call(null, 
                 a) ? cljs.core.PersistentVector.EMPTY : new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [sablono.interpreter.interpret.call(null, a)], null)));
               }()))], null)));
-            }(), React.DOM.div({className:"item", id:"job-search"}, React.DOM.form({onSubmit:function(a, b, c, d, e, g, h) {
+            }(), React.DOM.div({className:"item", id:"job-search"}, React.DOM.form({onSubmit:function(a, b, c, d, e, g, h, k, m, n, p) {
               return function(a) {
-                job_streamer.console.search.search_jobs.call(null, k.app, document.getElementById("job-query").value);
+                job_streamer.console.search.search_jobs.call(null, l.app, document.getElementById("job-query").value);
                 return!1;
               };
-            }(this, a, b, c, d, e, g)}, React.DOM.div({className:"ui icon transparent inverted input"}, sablono.interpreter.input.call(null, {id:"job-query", type:"text"}), React.DOM.i({className:"search icon"})))));
+            }(this, k, m, n, E, a, b, c, d, e, g)}, React.DOM.div({className:"ui icon transparent inverted input"}, sablono.interpreter.input.call(null, {id:"job-query", type:"text"}), React.DOM.i({className:"search icon"})))));
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.root.t16640.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.root.t85432.prototype.om$core$IWillMount$ = !0, job_streamer.console.components.root.t85432.prototype.om$core$IWillMount$will_mount$arity$1 = function(a, b, c, d, e, g) {
+          return function(h) {
+            var k = this;
+            return job_streamer.console.api.request.call(null, [cljs.core.str("/"), cljs.core.str(job_streamer.console.components.root.app_name), cljs.core.str("/stats")].join(""), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "handler", "handler", -195596612), function(a, b, c, d, e, g, h) {
+              return function(l) {
+                return om.core.update_state_BANG_.call(null, k.owner, function(a, b, c, d, e, g, h) {
+                  return function(a) {
+                    return cljs.core.assoc.call(null, a, new cljs.core.Keyword(null, "agents-count", "agents-count", -134723530), (new cljs.core.Keyword(null, "agents", "agents", -1112413700)).cljs$core$IFn$_invoke$arity$1(l), new cljs.core.Keyword(null, "jobs-count", "jobs-count", 444020358), (new cljs.core.Keyword(null, "jobs", "jobs", -313607120)).cljs$core$IFn$_invoke$arity$1(l));
+                  };
+                }(a, b, c, d, e, g, h));
+              };
+            }(this, a, b, c, d, e, g)], null));
+          };
+        }(l, a, b, c, d, e), job_streamer.console.components.root.t85432.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
-            return this.meta16641;
+            return this.meta85433;
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.root.t16640.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.root.t85432.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
           return function(a, b) {
-            return new job_streamer.console.components.root.t16640(this.output_schema16619, this.owner, this.validate__11398__auto__, this.output_checker16622, this.input_checker16621, this.right_menu_view, this.input_schema16620, this.G__16623, this.app, this.ufv__, this.G__16624, b);
+            return new job_streamer.console.components.root.t85432(this.owner, this.validate__11398__auto__, this.input_checker85411, this.output_checker85412, this.right_menu_view, this.input_schema85410, this.G__85414, this.app, this.output_schema85409, this.ufv__, this.G__85413, b);
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.root.t16640.cljs$lang$type = !0, job_streamer.console.components.root.t16640.cljs$lang$ctorStr = "job-streamer.console.components.root/t16640", job_streamer.console.components.root.t16640.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.root.t85432.cljs$lang$type = !0, job_streamer.console.components.root.t85432.cljs$lang$ctorStr = "job-streamer.console.components.root/t85432", job_streamer.console.components.root.t85432.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
           return function(a, b, c) {
-            return cljs.core._write.call(null, b, "job-streamer.console.components.root/t16640");
+            return cljs.core._write.call(null, b, "job-streamer.console.components.root/t85432");
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.root.__GT_t16640 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.root.__GT_t85432 = function(a, b, c, d, e, g) {
           return function(a, b, c, d, e, g, h, k, l, m, n, p) {
-            return new job_streamer.console.components.root.t16640(a, b, c, d, e, g, h, k, l, m, n, p);
+            return new job_streamer.console.components.root.t85432(a, b, c, d, e, g, h, k, l, m, n, p);
           };
-        }(l, a, b, c, d, e)), new job_streamer.console.components.root.t16640(b, k, l, e, d, g, c, h, h, a, k, null);
+        }(l, a, b, c, d, e)), new job_streamer.console.components.root.t85432(k, l, d, e, g, c, k, h, b, a, h, null);
       }
     }();
     if (cljs.core.truth_(l) && (n = e.call(null, m), cljs.core.truth_(n))) {
@@ -81935,8 +82161,8 @@ job_streamer.console.components.root.right_menu_view = function(a, b, c, d, e) {
     }
     return m;
   };
-}(ufv___16655, output_schema16619_16656, input_schema16620_16657, input_checker16621_16658, output_checker16622_16659);
-schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.root.right_menu_view), schema.core.make_fn_schema.call(null, output_schema16619_16656, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema16620_16657], null)));
+}(ufv___85449, output_schema85409_85450, input_schema85410_85451, input_checker85411_85452, output_checker85412_85453);
+schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.root.right_menu_view), schema.core.make_fn_schema.call(null, output_schema85409_85450, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema85410_85451], null)));
 job_streamer.console.components.root.__GT_right_menu_view = function() {
   var a = null, b = function(a) {
     return om.core.build.call(null, job_streamer.console.components.root.right_menu_view, a);
@@ -81955,8 +82181,8 @@ job_streamer.console.components.root.__GT_right_menu_view = function() {
   a.cljs$core$IFn$_invoke$arity$2 = c;
   return a;
 }();
-var ufv___16686 = schema.utils.use_fn_validation, output_schema16666_16687 = schema.core.Any, input_schema16667_16688 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "app", "app", 1079569820, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker16668_16689 = schema.core.checker.call(null, input_schema16667_16688), 
-output_checker16669_16690 = schema.core.checker.call(null, output_schema16666_16687);
+var ufv___85480 = schema.utils.use_fn_validation, output_schema85460_85481 = schema.core.Any, input_schema85461_85482 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "app", "app", 1079569820, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker85462_85483 = schema.core.checker.call(null, input_schema85461_85482), 
+output_checker85463_85484 = schema.core.checker.call(null, output_schema85460_85481);
 job_streamer.console.components.root.root_view = function(a, b, c, d, e) {
   return function g(h, k) {
     var l = a.get_cell();
@@ -81969,26 +82195,26 @@ job_streamer.console.components.root.root_view = function(a, b, c, d, e) {
     }
     m = function() {
       for (;;) {
-        return "undefined" === typeof job_streamer.console.components.root.t16679 && (job_streamer.console.components.root.t16679 = function(a, b, c, d, e, g, h, k, l, m, n, J) {
-          this.input_checker16668 = a;
-          this.owner = b;
-          this.G__16671 = c;
-          this.validate__11398__auto__ = d;
-          this.input_schema16667 = e;
-          this.output_checker16669 = g;
-          this.G__16670 = h;
+        return "undefined" === typeof job_streamer.console.components.root.t85473 && (job_streamer.console.components.root.t85473 = function(a, b, c, d, e, g, h, k, l, m, n, E) {
+          this.owner = a;
+          this.validate__11398__auto__ = b;
+          this.G__85465 = c;
+          this.input_checker85462 = d;
+          this.output_checker85463 = e;
+          this.input_schema85461 = g;
+          this.output_schema85460 = h;
           this.root_view = k;
-          this.output_schema16666 = l;
-          this.app = m;
+          this.app = l;
+          this.G__85464 = m;
           this.ufv__ = n;
-          this.meta16680 = J;
+          this.meta85474 = E;
           this.cljs$lang$protocol_mask$partition1$ = 0;
           this.cljs$lang$protocol_mask$partition0$ = 393216;
-        }, job_streamer.console.components.root.t16679.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.root.t16679.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
+        }, job_streamer.console.components.root.t85473.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.root.t85473.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
             return "root-view";
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.root.t16679.prototype.om$core$IRender$ = !0, job_streamer.console.components.root.t16679.prototype.om$core$IRender$render$arity$1 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.root.t85473.prototype.om$core$IRender$ = !0, job_streamer.console.components.root.t85473.prototype.om$core$IRender$render$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
             var b = this;
             return React.DOM.div(null, React.DOM.div({className:"ui fixed inverted teal menu"}, React.DOM.div({className:"title item"}, React.DOM.b(null, "Job Streamer")), sablono.interpreter.interpret.call(null, om.core.build.call(null, job_streamer.console.components.root.right_menu_view, b.app))), function() {
@@ -82009,27 +82235,27 @@ job_streamer.console.components.root.root_view = function(a, b, c, d, e) {
               cljs.core.nil_QMARK_, cljs.core.map_QMARK_.call(null, a) ? cljs.core.PersistentVector.EMPTY : new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [sablono.interpreter.interpret.call(null, a)], null)));
             }());
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.root.t16679.prototype.om$core$IWillMount$ = !0, job_streamer.console.components.root.t16679.prototype.om$core$IWillMount$will_mount$arity$1 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.root.t85473.prototype.om$core$IWillMount$ = !0, job_streamer.console.components.root.t85473.prototype.om$core$IWillMount$will_mount$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
             return job_streamer.console.routing.init.call(null, this.app, this.owner);
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.root.t16679.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.root.t85473.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
-            return this.meta16680;
+            return this.meta85474;
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.root.t16679.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.root.t85473.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
           return function(a, b) {
-            return new job_streamer.console.components.root.t16679(this.input_checker16668, this.owner, this.G__16671, this.validate__11398__auto__, this.input_schema16667, this.output_checker16669, this.G__16670, this.root_view, this.output_schema16666, this.app, this.ufv__, b);
+            return new job_streamer.console.components.root.t85473(this.owner, this.validate__11398__auto__, this.G__85465, this.input_checker85462, this.output_checker85463, this.input_schema85461, this.output_schema85460, this.root_view, this.app, this.G__85464, this.ufv__, b);
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.root.t16679.cljs$lang$type = !0, job_streamer.console.components.root.t16679.cljs$lang$ctorStr = "job-streamer.console.components.root/t16679", job_streamer.console.components.root.t16679.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.root.t85473.cljs$lang$type = !0, job_streamer.console.components.root.t85473.cljs$lang$ctorStr = "job-streamer.console.components.root/t85473", job_streamer.console.components.root.t85473.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
           return function(a, b, c) {
-            return cljs.core._write.call(null, b, "job-streamer.console.components.root/t16679");
+            return cljs.core._write.call(null, b, "job-streamer.console.components.root/t85473");
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.root.__GT_t16679 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.root.__GT_t85473 = function(a, b, c, d, e, g) {
           return function(a, b, c, d, e, g, h, k, l, m, n, p) {
-            return new job_streamer.console.components.root.t16679(a, b, c, d, e, g, h, k, l, m, n, p);
+            return new job_streamer.console.components.root.t85473(a, b, c, d, e, g, h, k, l, m, n, p);
           };
-        }(l, a, b, c, d, e)), new job_streamer.console.components.root.t16679(d, k, k, l, c, e, h, g, b, h, a, null);
+        }(l, a, b, c, d, e)), new job_streamer.console.components.root.t85473(k, l, k, d, e, c, b, g, h, h, a, null);
       }
     }();
     if (cljs.core.truth_(l) && (n = e.call(null, m), cljs.core.truth_(n))) {
@@ -82038,8 +82264,8 @@ job_streamer.console.components.root.root_view = function(a, b, c, d, e) {
     }
     return m;
   };
-}(ufv___16686, output_schema16666_16687, input_schema16667_16688, input_checker16668_16689, output_checker16669_16690);
-schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.root.root_view), schema.core.make_fn_schema.call(null, output_schema16666_16687, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema16667_16688], null)));
+}(ufv___85480, output_schema85460_85481, input_schema85461_85482, input_checker85462_85483, output_checker85463_85484);
+schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.root.root_view), schema.core.make_fn_schema.call(null, output_schema85460_85481, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema85461_85482], null)));
 job_streamer.console.components.root.__GT_root_view = function() {
   var a = null, b = function(a) {
     return om.core.build.call(null, job_streamer.console.components.root.root_view, a);
@@ -82059,6 +82285,6 @@ job_streamer.console.components.root.__GT_root_view = function() {
   return a;
 }();
 job_streamer.console.core = {};
-job_streamer.console.core.app_state = cljs.core.atom.call(null, new cljs.core.PersistentArrayMap(null, 4, [new cljs.core.Keyword(null, "query", "query", -1288509510), null, new cljs.core.Keyword(null, "jobs", "jobs", -313607120), null, new cljs.core.Keyword(null, "agents", "agents", -1112413700), cljs.core.PersistentVector.EMPTY, new cljs.core.Keyword(null, "mode", "mode", 654403691), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "jobs", 
-"jobs", -313607120)], null)], null));
+job_streamer.console.core.app_state = cljs.core.atom.call(null, new cljs.core.PersistentArrayMap(null, 4, [new cljs.core.Keyword(null, "query", "query", -1288509510), null, new cljs.core.Keyword(null, "jobs", "jobs", -313607120), null, new cljs.core.Keyword(null, "agents", "agents", -1112413700), null, new cljs.core.Keyword(null, "mode", "mode", 654403691), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "jobs", "jobs", -313607120)], 
+null)], null));
 om.core.root.call(null, job_streamer.console.components.root.root_view, job_streamer.console.core.app_state, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "target", "target", 253001721), document.getElementById("app")], null));

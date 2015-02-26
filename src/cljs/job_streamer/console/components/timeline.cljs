@@ -39,12 +39,12 @@
                    (DataSet.
                     (clj->js (->> (:jobs app)
                                   (map (fn [job]
-                                         (map #(assoc % :job/id (:job/id job)) (:job/executions job))))
+                                         (map #(assoc % :job/name (:job/name job)) (:job/executions job))))
                                   (apply concat)
                                   (map (fn [exe]
                                          {:id (:db/id exe)
-                                          :content (:job/id exe)
-                                          :title (:job/id exe)
+                                          :content (:job/name exe)
+                                          :title (:job/name exe)
                                           :start (:job-execution/start-time exe)
                                           :end (:job-execution/end-time exe)
                                           :className (name (get-in exe [:job-execution/batch-status :db/ident]))}))

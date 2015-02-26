@@ -32,7 +32,7 @@
 
 (defn xml->step [step]
   (merge
-   {:step/id (field-value step "id")
+   {:step/name (field-value step "name")
     :step/properties (some->> (.select step "> value[name^=ADD]")
                                   (map (fn [prop] (xml->property prop)))
                                   (reduce merge))}
@@ -57,7 +57,7 @@
         job-els (. doc select "xml > block[type=job]")]
     (if (= (count job-els) 1)
       (let [job (first job-els)]
-        {:job/id (field-value job "id")
+        {:job/name (field-value job "name")
          :job/steps (some->> (.select job "> statement[name=steps] block[type=step]")
                          (map (fn [step] (xml->step step)))
                          vec)

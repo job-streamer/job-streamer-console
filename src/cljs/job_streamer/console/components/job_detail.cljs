@@ -23,10 +23,11 @@
   (:import [goog.ui.tree TreeControl]))
 
 (enable-console-print!)
+(def app-name "default")
 
 (defn save-job-control-bus [job owner job-id]
   (if-let [messages (first (b/validate job
-                                       :job/id [v/required [v/matches #"^[\w\-]+$"]]
+                                       :job/name [v/required [v/matches #"^[\w\-]+$"]]
                                        :job/steps [cv/more-than-one]))]
     (om/set-state! owner :message {:class "error"
                                    :header "Invalid job format"
@@ -35,7 +36,8 @@
                                                          (postwalk #(if (map? %) (vals %) %))
                                                          flatten)]
                                             [:li msg])]})
-    (api/request (if job-id (str "/job/" job-id) "/jobs") (if job-id :PUT :POST)
+    (api/request (str "/" app-name (if job-id (str "/job/" job-id) "/jobs")) 
+                 (if job-id :PUT :POST)
                  job
                  {:handler (fn [response]
                              (om/set-state! owner :message {:class "success"
@@ -57,36 +59,36 @@
                   :format :xml})))
 
 
-(defn search-execution [owner job-id execution-id idx]
-  (api/request (str "/job/" job-id "/execution/" execution-id)
+(defn search-execution [owner job-name execution-id idx]
+  (api/request (str "/" app-name "/job/" job-name "/execution/" execution-id)
                {:handler (fn [response]
                            (let [steps (:job-execution/step-executions response)]
                              (om/update-state! owner [:executions idx] 
                                                #(assoc % :job-execution/step-executions steps))))}))
 
 (defn schedule-job [job cron-notation refresh-job-ch scheduling-ch error-ch]
-  (api/request (str "/job/" (:job/id job) "/schedule") :POST
-                {:job/id (:job/id job) :schedule/cron-notation cron-notation}
+  (api/request (str "/" app-name "/job/" (:job/name job) "/schedule") :POST
+                {:job/name (:job/name job) :schedule/cron-notation cron-notation}
                 {:handler (fn [response]
-                            (put! refresh-job-ch (:job/id job))
+                            (put! refresh-job-ch (:job/name job))
                             (put! scheduling-ch false))
                  :error-handler (fn [response]
                                   (put! error-ch response))}))
 
 (defn pause-schedule [job owner success-ch]
-  (api/request (str "/job/" (:job/id job) "/schedule/pause") :PUT
+  (api/request (str "/" app-name "/job/" (:job/name job) "/schedule/pause") :PUT
                {:handler (fn [response]
-                           (put! success-ch (:job/id job)))}))
+                           (put! success-ch (:job/name job)))}))
 
 (defn resume-schedule [job owner success-ch]
-  (api/request (str "/job/" (:job/id job) "/schedule/resume") :PUT
+  (api/request (str "/" app-name "/job/" (:job/name job) "/schedule/resume") :PUT
                {:handler (fn [response]
-                           (put! success-ch (:job/id job)))}))
+                           (put! success-ch (:job/name job)))}))
 
 (defn drop-schedule [job owner success-ch]
-  (api/request (str "/job/" (:job/id job) "/schedule") :DELETE
+  (api/request (str "/" app-name "/job/" (:job/name job) "/schedule") :DELETE
                {:handler (fn [response]
-                           (put! success-ch (:job/id job)))}))
+                           (put! success-ch (:job/name job)))}))
 
 (defn render-job-structure [job-id owner]
   (let [xhrio (net/xhr-connection)
@@ -103,13 +105,18 @@
         (blockly-xml/domToWorkspace Blockly/mainWorkspace
                                     (blockly-xml/textToDom (str "<xml>" xml "</xml>")))))
 
-    (api/request (str "/job/" job-id)
+    (api/request (str "/" app-name "/job/" job-id)
                  {:handler (fn [response]
                              (put! fetch-job-ch response))})
     (Blockly/inject
              (.getElementById js/document "job-blocks-inner")
              (clj->js {:toolbox "<xml></xml>"
                        :readOnly true}))))
+
+(defn status-color [status]
+  (case status
+    :batch-status/completed "green"
+    :batch-status/failed "red"))
 
 ;;;
 ;;; Om view components
@@ -159,7 +166,7 @@
                {:on-click (fn [e]
                             (let [xml (blockly-xml/workspaceToDom Blockly/mainWorkspace)]
                               (save-job (blockly-xml/domToText xml)
-                                        owner (:job/id job))))} [:i.save.icon]]]]]
+                                        owner (:job/name job))))} [:i.save.icon]]]]]
            [:div#job-blocks-inner]]))
   (did-mount [_]
     (Blockly/inject
@@ -175,11 +182,11 @@
   (render-state [_ {:keys [message]}]
     (html [:div
            (om/build breadcrumb-view (:mode app))
-           (om/build job-edit-view (:job-id app))])))
+           (om/build job-edit-view (:job-name app))])))
 
-(defcomponent job-history-view [{:keys [job-id]} owner]
+(defcomponent job-history-view [{:keys [job-name]} owner]
   (will-mount [_]
-    (api/request (str "/job/" job-id "/executions")
+    (api/request (str "/" app-name "/job/" job-name "/executions")
                  {:handler (fn [response]
                              (om/set-state! owner :executions response))}))
   (render-state [_ {:keys [executions]}]
@@ -198,7 +205,7 @@
           (list
            [:tr
             [:td [:a {:on-click
-                      (fn [e] (search-execution owner job-id (:db/id execution) idx))}
+                      (fn [e] (search-execution owner job-name (:db/id execution) idx))}
                   (:db/id execution)]]
             [:td (get-in execution [:job-execution/agent :agent/name])]
             [:td (fmt/date-medium (:job-execution/start-time execution))]
@@ -298,13 +305,13 @@
                          (om/set-state! owner :scheduling? true))}
             "Schedule this job"]]))])))
 
-(defcomponent current-job-view [{:keys [job-id] :as app} owner]
+(defcomponent current-job-view [{:keys [job-name] :as app} owner]
   (init-state [_]
     {:refresh-job-ch (chan)})
   (will-mount [_]
     (go-loop []
       (let [_ (<! (om/get-state owner :refresh-job-ch))]
-        (api/request (str  "/job/" job-id)
+        (api/request (str "/" app-name "/job/" job-name)
                      {:handler (fn [response]
                                  (om/set-state! owner :job response))})
         (recur))))
@@ -335,7 +342,7 @@
                   "Edit"]]]]
               [:div#job-blocks-inner.ui.big.image]]
              [:div.content
-              [:div.header (:job/id job)]
+              [:div.header (:job/name job)]
               [:div.description
                [:div.ui.tiny.statistics
                 [:div.statistic
@@ -358,8 +365,9 @@
             (when-let [exe (:job/latest-execution job)]
               [:div.ui.list
                [:div.item
-                [:div.ui.huge.label
-                 [:i.check.circle.icon] (name (get-in exe [:job-execution/batch-status :db/ident]))]]
+                (let [status (get-in exe [:job-execution/batch-status :db/ident])]
+                  [:div.ui.huge.label {:class (status-color status)}
+                   [:i.check.circle.icon] (name status)])]
                [:div.item
                 [:i.calendar.outline.icon]
                 [:div.content
@@ -379,27 +387,27 @@
 
   (did-update [_ _ _]
     (when-not (.-firstChild (.getElementById js/document "job-blocks-inner"))
-      (render-job-structure job-id owner)))
+      (render-job-structure job-name owner)))
   (did-mount [_]
-    (render-job-structure job-id owner)))
+    (render-job-structure job-name owner)))
 
-(defcomponent job-detail-view [{:keys [job-id] :as app} owner]
+(defcomponent job-detail-view [{:keys [job-name] :as app} owner]
   (render-state [_ {:keys [message breadcrumbs]}]
     (let [mode (->> app :mode (drop 2) first)]
       (html 
        [:div
-        (om/build breadcrumb-view (:mode app) {:init-state {:job-id job-id}})
+        (om/build breadcrumb-view (:mode app) {:init-state {:job-name job-name}})
         [:div.ui.top.attached.tabular.menu
          [:a (merge {:class "item"
-                     :href (str "#/job/" job-id)}
+                     :href (str "#/job/" job-name)}
                     (when (= mode :current) {:class "item active"}))
           [:i.tag.icon] "Current"]
          [:a (merge {:class "item"
-                     :href (str "#/job/" job-id "/history")}
+                     :href (str "#/job/" job-name "/history")}
                     (when (= mode :history) {:class "item active"}))
           [:i.wait.icon] "History"]
          [:a (merge {:class "item"
-                     :href (str "#/job/" job-id "/settings")}
+                     :href (str "#/job/" job-name "/settings")}
                     (when (= mode :settings) {:class "item active"}))
           [:i.setting.icon] "Settings"]]
         [:div.ui.bottom.attached.active.tab.segment
