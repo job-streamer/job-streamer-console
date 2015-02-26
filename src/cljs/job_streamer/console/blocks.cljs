@@ -5,21 +5,14 @@
             [om-tools.core :refer-macros [defcomponent]]
             [sablono.core :as html :refer-macros [html]]
             [cljs.core.async :refer [put! <! chan pub sub unsub-all]]
-            [clojure.browser.net :as net]
             [clojure.string :as string]
             [goog.events :as events]
             [goog.ui.Component]
-            [goog.string :as gstring]
-            [bouncer.core :as b]
-            [bouncer.validators :as v]
             [Blockly :as Blockly]
             [Blockly.Block :as Block]
             [job-streamer.console.format :as fmt])
   (:use [cljs.reader :only [read-string]])
-  (:import [goog.net EventType]
-           [goog.events KeyCodes]
-           [goog.ui.tree TreeControl]
-           [Blockly Blocks Mutator FieldTextInput FieldCheckbox]))
+  (:import [Blockly Blocks Mutator FieldTextInput FieldCheckbox]))
 
 (enable-console-print!)
 
@@ -245,8 +238,8 @@
              (when-let [props (:step/properties step)]
                 [{:tag :mutation
                   :attrs {:items (count props)}}])
-             (when-let [id (:step/id step)]
-               [{:tag :field, :attrs {:name "id"}, :content [id]}])
+             (when-let [step-name (:step/name step)]
+               [{:tag :field, :attrs {:name "name"}, :content [step-name]}])
              (when-let [batchlet (:step/batchlet step)]
                [{:tag :value
                  :attrs {:name "step-component"}
@@ -286,9 +279,9 @@
               (when-let [props (:job/properties job)]
                 [{:tag :mutation
                   :attrs {:items (count props)}}])
-              (when-let [id (:job/id job)]
-                [{:tag :field :attrs {:name "id"} :content [id]}])
-              (when-let [restartable? (:job/restartable job)]
+              (when-let [job-name (:job/name job)]
+                [{:tag :field :attrs {:name "name"} :content [job-name]}])
+              (when-let [restartable? (:job/restartable? job)]
                 [{:tag :field :attrs {:name "restartable?"} :content [restartable?]}])
               (when-let [steps (not-empty (:job/steps job))]
                 [{:tag :statement

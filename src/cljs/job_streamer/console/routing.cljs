@@ -29,25 +29,25 @@
     (om/transact! app-state
                   #(assoc %
                           :mode [:jobs :detail :current]
-                          :job-id job-name)))
+                          :job-name job-name)))
 
   (sec/defroute #"/job/(\w+)/edit" [job-name]
     (om/transact! app-state
                   #(assoc %
                           :mode [:jobs :detail :current :edit]
-                          :job-id job-name)))
+                          :job-name job-name)))
 
   (sec/defroute #"/job/(\w+)/history" [job-name]
     (om/transact! app-state
                   #(assoc %
                           :mode [:jobs :detail :history]
-                          :job-id job-name)))
+                          :job-name job-name)))
 
   (sec/defroute #"/job/(\w+)/settings" [job-name]
     (om/transact! app-state
                   #(assoc %
                           :mode [:jobs :detail :settings]
-                          :job-id job-name)))
+                          :job-name job-name)))
 
   (sec/defroute "/jobs/timeline" []
     (om/update! app-state :mode [:jobs :timeline]))

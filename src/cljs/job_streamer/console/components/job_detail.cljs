@@ -25,7 +25,7 @@
 (enable-console-print!)
 (def app-name "default")
 
-(defn save-job-control-bus [job owner job-id]
+(defn save-job-control-bus [job owner job-name]
   (if-let [messages (first (b/validate job
                                        :job/name [v/required [v/matches #"^[\w\-]+$"]]
                                        :job/steps [cv/more-than-one]))]
@@ -36,8 +36,8 @@
                                                          (postwalk #(if (map? %) (vals %) %))
                                                          flatten)]
                                             [:li msg])]})
-    (api/request (str "/" app-name (if job-id (str "/job/" job-id) "/jobs")) 
-                 (if job-id :PUT :POST)
+    (api/request (str "/" app-name (if job-name (str "/job/" job-name) "/jobs")) 
+                 (if job-name:PUT :POST)
                  job
                  {:handler (fn [response]
                              (om/set-state! owner :message {:class "success"
@@ -48,14 +48,14 @@
                                                                   :header "Save failed"
                                                                   :body [:p "Somethig is wrong."]}))})))
 
-(defn save-job [xml owner job-id]
+(defn save-job [xml owner job-name]
   (let [uri (goog.Uri. (.-href js/location))
         port (.getPort uri)]
     (api/request (str (.getScheme uri) "://" (.getDomain uri) (when port (str ":" port)) "/job/from-xml")
                  :POST
                  xml
                  {:handler (fn [response]
-                             (save-job-control-bus response owner job-id))
+                             (save-job-control-bus response owner job-name))
                   :format :xml})))
 
 
@@ -90,7 +90,7 @@
                {:handler (fn [response]
                            (put! success-ch (:job/name job)))}))
 
-(defn render-job-structure [job-id owner]
+(defn render-job-structure [job-name owner]
   (let [xhrio (net/xhr-connection)
         fetch-job-ch (chan)]
     (loop [node (.getElementById js/document "job-blocks-inner")]
@@ -105,7 +105,7 @@
         (blockly-xml/domToWorkspace Blockly/mainWorkspace
                                     (blockly-xml/textToDom (str "<xml>" xml "</xml>")))))
 
-    (api/request (str "/" app-name "/job/" job-id)
+    (api/request (str "/" app-name "/job/" job-name)
                  {:handler (fn [response]
                              (put! fetch-job-ch response))})
     (Blockly/inject
@@ -131,7 +131,7 @@
    :jobs.detail.settings {:name "Settings" :href "#/job/%s/settings"}})
 
 (defcomponent breadcrumb-view [mode owner]
-  (render-state [_ {:keys [job-id]}]
+  (render-state [_ {:keys [job-name]}]
     (html
      [:div.ui.breadcrumb
       (drop-last
@@ -145,8 +145,8 @@
                                                        (map name)
                                                        (string/join ".")
                                                        keyword))]
-                                 [:a.section {:href (gstring/format (:href item) job-id)}
-                                  (gstring/format (:name item) job-id)])))
+                                 [:a.section {:href (gstring/format (:href item) job-name)}
+                                  (gstring/format (:name item) job-name)])))
             (let [res (keep identity items)]
               (conj (vec (drop-last res))
                     (into [:div.section.active] (rest (last res)))))))
@@ -338,7 +338,7 @@
                  [:button.ui.primary.button
                   {:type "button"
                    :on-click (fn [e]
-                               (set! (.-href js/location) (str "#/job/" job-id "/edit")))}
+                               (set! (.-href js/location) (str "#/job/" job-name "/edit")))}
                   "Edit"]]]]
               [:div#job-blocks-inner.ui.big.image]]
              [:div.content
