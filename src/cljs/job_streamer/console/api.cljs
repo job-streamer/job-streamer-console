@@ -4,19 +4,29 @@
             [clojure.browser.net :as net]
             [goog.events :as events]
             [goog.string :as gstring]
-            [goog.ui.Component])
+            [goog.ui.Component]
+            [goog.net.ErrorCode]
+            [goog.net.EventType])
   (:use [cljs.reader :only [read-string]])
-  (:import [goog.net EventType]
-           [goog.events KeyCodes]))
+  (:import [goog.events KeyCodes]
+           [goog.net EventType]))
 
 (def control-bus-url (.. js/document
                          (querySelector "meta[name=control-bus-url]")
                          (getAttribute "content")))
 
-(defn- build-uri [path]
+(defn url-for [path]
   (if (gstring/startsWith path "/")
     (str control-bus-url path)
     path))
+
+(defn handle-each-type [handler response xhrio]
+  (if (fn? handler) 
+    (handler response)
+    (.error js/console
+            (str (goog.net.ErrorCode/getDebugMessage (.getLastErrorCode xhrio))
+                 " from "
+                 (.getLastUri xhrio)))))
 
 (defn request
   ([path]
@@ -27,6 +37,7 @@
    (request path method nil options))
   ([path method body {:keys [handler error-handler format]}]
    (let [xhrio (net/xhr-connection)]
+
      (when handler
        (events/listen xhrio EventType.SUCCESS
                       (fn [e]
@@ -36,8 +47,21 @@
        (events/listen xhrio EventType.ERROR
                       (fn [e]
                         (let [res (read-string (.getResponseText xhrio))]
-                          (error-handler res)))))
-     (.send xhrio (build-uri path) (.toLowerCase (name method))
+                          (cond
+                            (fn? error-handler)
+                            (error-handler res (.getLastErrorCode xhrio))
+
+                            (map? error-handler)
+                            (condp = (.getLastErrorCode xhrio)
+                              goog.net.ErrorCode/ACCESS_DENIED  (handle-each-type (:access-denied error-handler) res xhrio)
+                              goog.net.ErrorCode/FILE_NOT_FOUND (handle-each-type (:file-not-found error-handler) res xhrio)
+                              goog.net.ErrorCode/CUSTOM_ERROR   (handle-each-type (:custom-error error-handler) res xhrio)
+                              goog.net.ErrorCode/EXCEPTION      (handle-each-type (:exception error-handler) res xhrio)
+                              goog.net.ErrorCode/HTTP_ERROR     (handle-each-type (:http-error error-handler) res xhrio)
+                              goog.net.ErrorCode/ABORT          (handle-each-type (:abort error-handler) res xhrio)
+                              goog.net.ErrorCode/TIMEOUT        (handle-each-type (:timeout error-handler) res xhrio)
+                              goog.net.ErrorCode/OFFLINE        (handle-each-type (:offline error-handler) res xhrio)))))))
+     (.send xhrio (url-for path) (.toLowerCase (name method))
             body
             (case format
               :xml (clj->js {:content-type "application/xml"})

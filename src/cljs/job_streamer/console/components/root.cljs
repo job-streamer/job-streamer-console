@@ -17,8 +17,11 @@
                              (om/update-state! owner
                                                #(assoc %
                                                        :agents-count (:agents response)
-                                                       :jobs-count (:jobs response))))}))
-  (render-state [_ {:keys [agents-count jobs-count]}]
+                                                       :jobs-count (:jobs response))))
+                  :error-handler
+                  {:http-error (fn [res]
+                                 (om/update! app :system-error "error"))}}))
+  (render-state [_ {:keys [agents-count jobs-count control-bus-not-found?]}]
     (html 
      [:div.right.menu
       [:div#agent-stats.item
@@ -41,16 +44,29 @@
          [:input#job-query {:type "text"}]
          [:i.search.icon]]]]])))
 
+(defcomponent system-error-view [app owner]
+  (render [_]
+    (html
+     [:div.ui.dimmer.modals.transition.visible.active
+      [:div.ui.basic.modal.transition.visible.active {:style {:margin-top "-142.5px;"}}
+       [:div.header "A Control bus is NOT found."]
+       [:div.content
+        [:div.image [:i.announcement.icon]]
+        [:div.description [:p "Run a control bus first and reload this page."]]]]])))
+
 (defcomponent root-view [app owner]
   (will-mount [_]
     (routing/init app owner))
   (render [_]
     (html
-     [:div
-      [:div.ui.fixed.inverted.teal.menu
-       [:div.title.item [:b "Job Streamer"]]
-       (om/build right-menu-view app)]
-      [:div.main.grid.content.full.height
-       (case (first (:mode app))
-        :jobs (om/build jobs-view app {:init-state {:mode (second (:mode app))}})
-        :agents (om/build agents-view app))]])))
+     [:div.ui.page
+      (if-let [system-error (:system-error app)]
+        (om/build system-error-view app)
+        (list
+         [:div.ui.fixed.inverted.teal.menu
+          [:div.title.item [:b "Job Streamer"]]
+          (om/build right-menu-view app)]
+         [:div.main.grid.content.full.height
+          (case (first (:mode app))
+            :jobs (om/build jobs-view app {:init-state {:mode (second (:mode app))}})
+            :agents (om/build agents-view app))]))])))

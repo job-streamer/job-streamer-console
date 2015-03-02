@@ -56,7 +56,6 @@
     (om/update! app-state :mode [:agents]))
 
   (sec/defroute #"/agent/([a-z0-9\\-]+)" [instance-id]
-    (println "agents detail")
     (om/transact! app-state
                   #(assoc %
                           :mode [:agents :detail]

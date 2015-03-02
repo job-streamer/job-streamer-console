@@ -37,7 +37,7 @@
                                                          flatten)]
                                             [:li msg])]})
     (api/request (str "/" app-name (if job-name (str "/job/" job-name) "/jobs")) 
-                 (if job-name:PUT :POST)
+                 (if job-name :PUT :POST)
                  job
                  {:handler (fn [response]
                              (om/set-state! owner :message {:class "success"

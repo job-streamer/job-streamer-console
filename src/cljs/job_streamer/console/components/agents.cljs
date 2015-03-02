@@ -13,9 +13,22 @@
            [goog.events EventType]
            [goog.i18n DateTimeFormat]))
 
-(defcomponent agent-detail-view [agt owner]
-  (render [_]
-    ))
+(defcomponent agent-detail-view [instance-id owner]
+  (will-mount [_]
+    (api/request (str "/agent/" instance-id) 
+                 {:handler (fn [response]
+                             (om/set-state! owner :agent response))}))
+  (render-state [_ {:keys [agent]}]
+    (html
+     (if agent
+       [:div.ui.stackable.two.column.grid
+        [:div.column
+         [:h3.ui.header (:agent/name agent)
+          [:div.sub.header (:agent/instance-id agent)]]
+         [:div.image
+          [:img.ui.image {:src (api/url-for (str "/agent/" instance-id "/monitor/cpu/daily"))}]]]
+        [:div.column]]
+       [:img {:src "/img/loader.gif"}]))))
 
 (defcomponent no-agents-view [app owner]
   (render [_]
@@ -51,12 +64,12 @@
        (for [agt agents]
          [:tr
           [:td
-           [:i.icon (case (:os-name agt)
+           [:i.icon (case (:agent/os-name agt)
                       "Linux" {:class "linux"}
                       {:class "help"})]
-           [:a {:href (str "#/agent/" (:instance-id agt))}
-            (:name agt)]]
-          [:td (str (:cpu-core agt) "core")]])]])))
+           [:a {:href (str "#/agent/" (:agent/instance-id agt))}
+            (:agent/name agt)]]
+          [:td (str (:agent/cpu-core agt) "core")]])]])))
 
 (defcomponent agents-view [app owner]
   (will-mount [_]
