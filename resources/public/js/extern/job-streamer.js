@@ -63455,6 +63455,3847 @@ Blockly.FieldTextInput.nonnegativeIntegerValidator = function(a) {
   (a = Blockly.FieldTextInput.numberValidator(a)) && (a = String(Math.max(0, Math.floor(a))));
   return a;
 };
+goog.net = {};
+goog.net.EventType = {COMPLETE:"complete", SUCCESS:"success", ERROR:"error", ABORT:"abort", READY:"ready", READY_STATE_CHANGE:"readystatechange", TIMEOUT:"timeout", INCREMENTAL_DATA:"incrementaldata", PROGRESS:"progress"};
+goog.structs.Collection = function() {
+};
+goog.structs.Set = function(a) {
+  this.map_ = new goog.structs.Map;
+  a && this.addAll(a);
+};
+goog.structs.Set.getKey_ = function(a) {
+  var b = typeof a;
+  return "object" == b && a || "function" == b ? "o" + goog.getUid(a) : b.substr(0, 1) + a;
+};
+goog.structs.Set.prototype.getCount = function() {
+  return this.map_.getCount();
+};
+goog.structs.Set.prototype.add = function(a) {
+  this.map_.set(goog.structs.Set.getKey_(a), a);
+};
+goog.structs.Set.prototype.addAll = function(a) {
+  a = goog.structs.getValues(a);
+  for (var b = a.length, c = 0;c < b;c++) {
+    this.add(a[c]);
+  }
+};
+goog.structs.Set.prototype.removeAll = function(a) {
+  a = goog.structs.getValues(a);
+  for (var b = a.length, c = 0;c < b;c++) {
+    this.remove(a[c]);
+  }
+};
+goog.structs.Set.prototype.remove = function(a) {
+  return this.map_.remove(goog.structs.Set.getKey_(a));
+};
+goog.structs.Set.prototype.clear = function() {
+  this.map_.clear();
+};
+goog.structs.Set.prototype.isEmpty = function() {
+  return this.map_.isEmpty();
+};
+goog.structs.Set.prototype.contains = function(a) {
+  return this.map_.containsKey(goog.structs.Set.getKey_(a));
+};
+goog.structs.Set.prototype.containsAll = function(a) {
+  return goog.structs.every(a, this.contains, this);
+};
+goog.structs.Set.prototype.intersection = function(a) {
+  var b = new goog.structs.Set;
+  a = goog.structs.getValues(a);
+  for (var c = 0;c < a.length;c++) {
+    var d = a[c];
+    this.contains(d) && b.add(d);
+  }
+  return b;
+};
+goog.structs.Set.prototype.difference = function(a) {
+  var b = this.clone();
+  b.removeAll(a);
+  return b;
+};
+goog.structs.Set.prototype.getValues = function() {
+  return this.map_.getValues();
+};
+goog.structs.Set.prototype.clone = function() {
+  return new goog.structs.Set(this);
+};
+goog.structs.Set.prototype.equals = function(a) {
+  return this.getCount() == goog.structs.getCount(a) && this.isSubsetOf(a);
+};
+goog.structs.Set.prototype.isSubsetOf = function(a) {
+  var b = goog.structs.getCount(a);
+  if (this.getCount() > b) {
+    return!1;
+  }
+  !(a instanceof goog.structs.Set) && 5 < b && (a = new goog.structs.Set(a));
+  return goog.structs.every(this, function(b) {
+    return goog.structs.contains(a, b);
+  });
+};
+goog.structs.Set.prototype.__iterator__ = function(a) {
+  return this.map_.__iterator__(!1);
+};
+goog.debug.LOGGING_ENABLED = goog.DEBUG;
+goog.debug.catchErrors = function(a, b, c) {
+  c = c || goog.global;
+  var d = c.onerror, e = !!b;
+  goog.userAgent.WEBKIT && !goog.userAgent.isVersionOrHigher("535.3") && (e = !e);
+  c.onerror = function(b, c, h, k, l) {
+    d && d(b, c, h, k, l);
+    a({message:b, fileName:c, line:h, col:k, error:l});
+    return e;
+  };
+};
+goog.debug.expose = function(a, b) {
+  if ("undefined" == typeof a) {
+    return "undefined";
+  }
+  if (null == a) {
+    return "NULL";
+  }
+  var c = [], d;
+  for (d in a) {
+    if (b || !goog.isFunction(a[d])) {
+      var e = d + " \x3d ";
+      try {
+        e += a[d];
+      } catch (f) {
+        e += "*** " + f + " ***";
+      }
+      c.push(e);
+    }
+  }
+  return c.join("\n");
+};
+goog.debug.deepExpose = function(a, b) {
+  var c = [], d = function(a, f, g) {
+    var h = f + "  ";
+    g = new goog.structs.Set(g);
+    try {
+      if (goog.isDef(a)) {
+        if (goog.isNull(a)) {
+          c.push("NULL");
+        } else {
+          if (goog.isString(a)) {
+            c.push('"' + a.replace(/\n/g, "\n" + f) + '"');
+          } else {
+            if (goog.isFunction(a)) {
+              c.push(String(a).replace(/\n/g, "\n" + f));
+            } else {
+              if (goog.isObject(a)) {
+                if (g.contains(a)) {
+                  c.push("*** reference loop detected ***");
+                } else {
+                  g.add(a);
+                  c.push("{");
+                  for (var k in a) {
+                    if (b || !goog.isFunction(a[k])) {
+                      c.push("\n"), c.push(h), c.push(k + " \x3d "), d(a[k], h, g);
+                    }
+                  }
+                  c.push("\n" + f + "}");
+                }
+              } else {
+                c.push(a);
+              }
+            }
+          }
+        }
+      } else {
+        c.push("undefined");
+      }
+    } catch (l) {
+      c.push("*** " + l + " ***");
+    }
+  };
+  d(a, "", new goog.structs.Set);
+  return c.join("");
+};
+goog.debug.exposeArray = function(a) {
+  for (var b = [], c = 0;c < a.length;c++) {
+    goog.isArray(a[c]) ? b.push(goog.debug.exposeArray(a[c])) : b.push(a[c]);
+  }
+  return "[ " + b.join(", ") + " ]";
+};
+goog.debug.exposeException = function(a, b) {
+  try {
+    var c = goog.debug.normalizeErrorObject(a);
+    return "Message: " + goog.string.htmlEscape(c.message) + '\nUrl: \x3ca href\x3d"view-source:' + c.fileName + '" target\x3d"_new"\x3e' + c.fileName + "\x3c/a\x3e\nLine: " + c.lineNumber + "\n\nBrowser stack:\n" + goog.string.htmlEscape(c.stack + "-\x3e ") + "[end]\n\nJS stack traversal:\n" + goog.string.htmlEscape(goog.debug.getStacktrace(b) + "-\x3e ");
+  } catch (d) {
+    return "Exception trying to expose exception! You win, we lose. " + d;
+  }
+};
+goog.debug.normalizeErrorObject = function(a) {
+  var b = goog.getObjectByName("window.location.href");
+  if (goog.isString(a)) {
+    return{message:a, name:"Unknown error", lineNumber:"Not available", fileName:b, stack:"Not available"};
+  }
+  var c, d, e = !1;
+  try {
+    c = a.lineNumber || a.line || "Not available";
+  } catch (f) {
+    c = "Not available", e = !0;
+  }
+  try {
+    d = a.fileName || a.filename || a.sourceURL || goog.global.$googDebugFname || b;
+  } catch (g) {
+    d = "Not available", e = !0;
+  }
+  return!e && a.lineNumber && a.fileName && a.stack && a.message && a.name ? a : {message:a.message || "Not available", name:a.name || "UnknownError", lineNumber:c, fileName:d, stack:a.stack || "Not available"};
+};
+goog.debug.enhanceError = function(a, b) {
+  var c;
+  "string" == typeof a ? (c = Error(a), Error.captureStackTrace && Error.captureStackTrace(c, goog.debug.enhanceError)) : c = a;
+  c.stack || (c.stack = goog.debug.getStacktrace(goog.debug.enhanceError));
+  if (b) {
+    for (var d = 0;c["message" + d];) {
+      ++d;
+    }
+    c["message" + d] = String(b);
+  }
+  return c;
+};
+goog.debug.getStacktraceSimple = function(a) {
+  if (goog.STRICT_MODE_COMPATIBLE) {
+    var b = goog.debug.getNativeStackTrace_(goog.debug.getStacktraceSimple);
+    if (b) {
+      return b;
+    }
+  }
+  for (var b = [], c = arguments.callee.caller, d = 0;c && (!a || d < a);) {
+    b.push(goog.debug.getFunctionName(c));
+    b.push("()\n");
+    try {
+      c = c.caller;
+    } catch (e) {
+      b.push("[exception trying to get caller]\n");
+      break;
+    }
+    d++;
+    if (d >= goog.debug.MAX_STACK_DEPTH) {
+      b.push("[...long stack...]");
+      break;
+    }
+  }
+  a && d >= a ? b.push("[...reached max depth limit...]") : b.push("[end]");
+  return b.join("");
+};
+goog.debug.MAX_STACK_DEPTH = 50;
+goog.debug.getNativeStackTrace_ = function(a) {
+  var b = Error();
+  if (Error.captureStackTrace) {
+    return Error.captureStackTrace(b, a), String(b.stack);
+  }
+  try {
+    throw b;
+  } catch (c) {
+    b = c;
+  }
+  return(a = b.stack) ? String(a) : null;
+};
+goog.debug.getStacktrace = function(a) {
+  var b;
+  goog.STRICT_MODE_COMPATIBLE && (b = goog.debug.getNativeStackTrace_(a || goog.debug.getStacktrace));
+  b || (b = goog.debug.getStacktraceHelper_(a || arguments.callee.caller, []));
+  return b;
+};
+goog.debug.getStacktraceHelper_ = function(a, b) {
+  var c = [];
+  if (goog.array.contains(b, a)) {
+    c.push("[...circular reference...]");
+  } else {
+    if (a && b.length < goog.debug.MAX_STACK_DEPTH) {
+      c.push(goog.debug.getFunctionName(a) + "(");
+      for (var d = a.arguments, e = 0;d && e < d.length;e++) {
+        0 < e && c.push(", ");
+        var f;
+        f = d[e];
+        switch(typeof f) {
+          case "object":
+            f = f ? "object" : "null";
+            break;
+          case "string":
+            break;
+          case "number":
+            f = String(f);
+            break;
+          case "boolean":
+            f = f ? "true" : "false";
+            break;
+          case "function":
+            f = (f = goog.debug.getFunctionName(f)) ? f : "[fn]";
+            break;
+          default:
+            f = typeof f;
+        }
+        40 < f.length && (f = f.substr(0, 40) + "...");
+        c.push(f);
+      }
+      b.push(a);
+      c.push(")\n");
+      try {
+        c.push(goog.debug.getStacktraceHelper_(a.caller, b));
+      } catch (g) {
+        c.push("[exception trying to get caller]\n");
+      }
+    } else {
+      a ? c.push("[...long stack...]") : c.push("[end]");
+    }
+  }
+  return c.join("");
+};
+goog.debug.setFunctionResolver = function(a) {
+  goog.debug.fnNameResolver_ = a;
+};
+goog.debug.getFunctionName = function(a) {
+  if (goog.debug.fnNameCache_[a]) {
+    return goog.debug.fnNameCache_[a];
+  }
+  if (goog.debug.fnNameResolver_) {
+    var b = goog.debug.fnNameResolver_(a);
+    if (b) {
+      return goog.debug.fnNameCache_[a] = b;
+    }
+  }
+  a = String(a);
+  goog.debug.fnNameCache_[a] || (b = /function ([^\(]+)/.exec(a), goog.debug.fnNameCache_[a] = b ? b[1] : "[Anonymous]");
+  return goog.debug.fnNameCache_[a];
+};
+goog.debug.makeWhitespaceVisible = function(a) {
+  return a.replace(/ /g, "[_]").replace(/\f/g, "[f]").replace(/\n/g, "[n]\n").replace(/\r/g, "[r]").replace(/\t/g, "[t]");
+};
+goog.debug.fnNameCache_ = {};
+goog.debug.LogRecord = function(a, b, c, d, e) {
+  this.reset(a, b, c, d, e);
+};
+goog.debug.LogRecord.prototype.sequenceNumber_ = 0;
+goog.debug.LogRecord.prototype.exception_ = null;
+goog.debug.LogRecord.prototype.exceptionText_ = null;
+goog.debug.LogRecord.ENABLE_SEQUENCE_NUMBERS = !0;
+goog.debug.LogRecord.nextSequenceNumber_ = 0;
+goog.debug.LogRecord.prototype.reset = function(a, b, c, d, e) {
+  goog.debug.LogRecord.ENABLE_SEQUENCE_NUMBERS && (this.sequenceNumber_ = "number" == typeof e ? e : goog.debug.LogRecord.nextSequenceNumber_++);
+  this.time_ = d || goog.now();
+  this.level_ = a;
+  this.msg_ = b;
+  this.loggerName_ = c;
+  delete this.exception_;
+  delete this.exceptionText_;
+};
+goog.debug.LogRecord.prototype.getLoggerName = function() {
+  return this.loggerName_;
+};
+goog.debug.LogRecord.prototype.getException = function() {
+  return this.exception_;
+};
+goog.debug.LogRecord.prototype.setException = function(a) {
+  this.exception_ = a;
+};
+goog.debug.LogRecord.prototype.getExceptionText = function() {
+  return this.exceptionText_;
+};
+goog.debug.LogRecord.prototype.setExceptionText = function(a) {
+  this.exceptionText_ = a;
+};
+goog.debug.LogRecord.prototype.setLoggerName = function(a) {
+  this.loggerName_ = a;
+};
+goog.debug.LogRecord.prototype.getLevel = function() {
+  return this.level_;
+};
+goog.debug.LogRecord.prototype.setLevel = function(a) {
+  this.level_ = a;
+};
+goog.debug.LogRecord.prototype.getMessage = function() {
+  return this.msg_;
+};
+goog.debug.LogRecord.prototype.setMessage = function(a) {
+  this.msg_ = a;
+};
+goog.debug.LogRecord.prototype.getMillis = function() {
+  return this.time_;
+};
+goog.debug.LogRecord.prototype.setMillis = function(a) {
+  this.time_ = a;
+};
+goog.debug.LogRecord.prototype.getSequenceNumber = function() {
+  return this.sequenceNumber_;
+};
+goog.debug.LogBuffer = function() {
+  goog.asserts.assert(goog.debug.LogBuffer.isBufferingEnabled(), "Cannot use goog.debug.LogBuffer without defining goog.debug.LogBuffer.CAPACITY.");
+  this.clear();
+};
+goog.debug.LogBuffer.getInstance = function() {
+  goog.debug.LogBuffer.instance_ || (goog.debug.LogBuffer.instance_ = new goog.debug.LogBuffer);
+  return goog.debug.LogBuffer.instance_;
+};
+goog.debug.LogBuffer.CAPACITY = 0;
+goog.debug.LogBuffer.prototype.addRecord = function(a, b, c) {
+  var d = (this.curIndex_ + 1) % goog.debug.LogBuffer.CAPACITY;
+  this.curIndex_ = d;
+  if (this.isFull_) {
+    return d = this.buffer_[d], d.reset(a, b, c), d;
+  }
+  this.isFull_ = d == goog.debug.LogBuffer.CAPACITY - 1;
+  return this.buffer_[d] = new goog.debug.LogRecord(a, b, c);
+};
+goog.debug.LogBuffer.isBufferingEnabled = function() {
+  return 0 < goog.debug.LogBuffer.CAPACITY;
+};
+goog.debug.LogBuffer.prototype.clear = function() {
+  this.buffer_ = Array(goog.debug.LogBuffer.CAPACITY);
+  this.curIndex_ = -1;
+  this.isFull_ = !1;
+};
+goog.debug.LogBuffer.prototype.forEachRecord = function(a) {
+  var b = this.buffer_;
+  if (b[0]) {
+    var c = this.curIndex_, d = this.isFull_ ? c : -1;
+    do {
+      d = (d + 1) % goog.debug.LogBuffer.CAPACITY, a(b[d]);
+    } while (d != c);
+  }
+};
+goog.debug.Logger = function(a) {
+  this.name_ = a;
+  this.handlers_ = this.children_ = this.level_ = this.parent_ = null;
+};
+goog.debug.Logger.ROOT_LOGGER_NAME = "";
+goog.debug.Logger.ENABLE_HIERARCHY = !0;
+goog.debug.Logger.ENABLE_HIERARCHY || (goog.debug.Logger.rootHandlers_ = []);
+goog.debug.Logger.Level = function(a, b) {
+  this.name = a;
+  this.value = b;
+};
+goog.debug.Logger.Level.prototype.toString = function() {
+  return this.name;
+};
+goog.debug.Logger.Level.OFF = new goog.debug.Logger.Level("OFF", Infinity);
+goog.debug.Logger.Level.SHOUT = new goog.debug.Logger.Level("SHOUT", 1200);
+goog.debug.Logger.Level.SEVERE = new goog.debug.Logger.Level("SEVERE", 1E3);
+goog.debug.Logger.Level.WARNING = new goog.debug.Logger.Level("WARNING", 900);
+goog.debug.Logger.Level.INFO = new goog.debug.Logger.Level("INFO", 800);
+goog.debug.Logger.Level.CONFIG = new goog.debug.Logger.Level("CONFIG", 700);
+goog.debug.Logger.Level.FINE = new goog.debug.Logger.Level("FINE", 500);
+goog.debug.Logger.Level.FINER = new goog.debug.Logger.Level("FINER", 400);
+goog.debug.Logger.Level.FINEST = new goog.debug.Logger.Level("FINEST", 300);
+goog.debug.Logger.Level.ALL = new goog.debug.Logger.Level("ALL", 0);
+goog.debug.Logger.Level.PREDEFINED_LEVELS = [goog.debug.Logger.Level.OFF, goog.debug.Logger.Level.SHOUT, goog.debug.Logger.Level.SEVERE, goog.debug.Logger.Level.WARNING, goog.debug.Logger.Level.INFO, goog.debug.Logger.Level.CONFIG, goog.debug.Logger.Level.FINE, goog.debug.Logger.Level.FINER, goog.debug.Logger.Level.FINEST, goog.debug.Logger.Level.ALL];
+goog.debug.Logger.Level.predefinedLevelsCache_ = null;
+goog.debug.Logger.Level.createPredefinedLevelsCache_ = function() {
+  goog.debug.Logger.Level.predefinedLevelsCache_ = {};
+  for (var a = 0, b;b = goog.debug.Logger.Level.PREDEFINED_LEVELS[a];a++) {
+    goog.debug.Logger.Level.predefinedLevelsCache_[b.value] = b, goog.debug.Logger.Level.predefinedLevelsCache_[b.name] = b;
+  }
+};
+goog.debug.Logger.Level.getPredefinedLevel = function(a) {
+  goog.debug.Logger.Level.predefinedLevelsCache_ || goog.debug.Logger.Level.createPredefinedLevelsCache_();
+  return goog.debug.Logger.Level.predefinedLevelsCache_[a] || null;
+};
+goog.debug.Logger.Level.getPredefinedLevelByValue = function(a) {
+  goog.debug.Logger.Level.predefinedLevelsCache_ || goog.debug.Logger.Level.createPredefinedLevelsCache_();
+  if (a in goog.debug.Logger.Level.predefinedLevelsCache_) {
+    return goog.debug.Logger.Level.predefinedLevelsCache_[a];
+  }
+  for (var b = 0;b < goog.debug.Logger.Level.PREDEFINED_LEVELS.length;++b) {
+    var c = goog.debug.Logger.Level.PREDEFINED_LEVELS[b];
+    if (c.value <= a) {
+      return c;
+    }
+  }
+  return null;
+};
+goog.debug.Logger.getLogger = function(a) {
+  return goog.debug.LogManager.getLogger(a);
+};
+goog.debug.Logger.logToProfilers = function(a) {
+  goog.global.console && (goog.global.console.timeStamp ? goog.global.console.timeStamp(a) : goog.global.console.markTimeline && goog.global.console.markTimeline(a));
+  goog.global.msWriteProfilerMark && goog.global.msWriteProfilerMark(a);
+};
+goog.debug.Logger.prototype.getName = function() {
+  return this.name_;
+};
+goog.debug.Logger.prototype.addHandler = function(a) {
+  goog.debug.LOGGING_ENABLED && (goog.debug.Logger.ENABLE_HIERARCHY ? (this.handlers_ || (this.handlers_ = []), this.handlers_.push(a)) : (goog.asserts.assert(!this.name_, "Cannot call addHandler on a non-root logger when goog.debug.Logger.ENABLE_HIERARCHY is false."), goog.debug.Logger.rootHandlers_.push(a)));
+};
+goog.debug.Logger.prototype.removeHandler = function(a) {
+  if (goog.debug.LOGGING_ENABLED) {
+    var b = goog.debug.Logger.ENABLE_HIERARCHY ? this.handlers_ : goog.debug.Logger.rootHandlers_;
+    return!!b && goog.array.remove(b, a);
+  }
+  return!1;
+};
+goog.debug.Logger.prototype.getParent = function() {
+  return this.parent_;
+};
+goog.debug.Logger.prototype.getChildren = function() {
+  this.children_ || (this.children_ = {});
+  return this.children_;
+};
+goog.debug.Logger.prototype.setLevel = function(a) {
+  goog.debug.LOGGING_ENABLED && (goog.debug.Logger.ENABLE_HIERARCHY ? this.level_ = a : (goog.asserts.assert(!this.name_, "Cannot call setLevel() on a non-root logger when goog.debug.Logger.ENABLE_HIERARCHY is false."), goog.debug.Logger.rootLevel_ = a));
+};
+goog.debug.Logger.prototype.getLevel = function() {
+  return goog.debug.LOGGING_ENABLED ? this.level_ : goog.debug.Logger.Level.OFF;
+};
+goog.debug.Logger.prototype.getEffectiveLevel = function() {
+  if (!goog.debug.LOGGING_ENABLED) {
+    return goog.debug.Logger.Level.OFF;
+  }
+  if (!goog.debug.Logger.ENABLE_HIERARCHY) {
+    return goog.debug.Logger.rootLevel_;
+  }
+  if (this.level_) {
+    return this.level_;
+  }
+  if (this.parent_) {
+    return this.parent_.getEffectiveLevel();
+  }
+  goog.asserts.fail("Root logger has no level set.");
+  return null;
+};
+goog.debug.Logger.prototype.isLoggable = function(a) {
+  return goog.debug.LOGGING_ENABLED && a.value >= this.getEffectiveLevel().value;
+};
+goog.debug.Logger.prototype.log = function(a, b, c) {
+  goog.debug.LOGGING_ENABLED && this.isLoggable(a) && (goog.isFunction(b) && (b = b()), this.doLogRecord_(this.getLogRecord(a, b, c, goog.debug.Logger.prototype.log)));
+};
+goog.debug.Logger.prototype.getLogRecord = function(a, b, c, d) {
+  a = goog.debug.LogBuffer.isBufferingEnabled() ? goog.debug.LogBuffer.getInstance().addRecord(a, b, this.name_) : new goog.debug.LogRecord(a, String(b), this.name_);
+  c && (a.setException(c), a.setExceptionText(goog.debug.exposeException(c, d || goog.debug.Logger.prototype.getLogRecord)));
+  return a;
+};
+goog.debug.Logger.prototype.shout = function(a, b) {
+  goog.debug.LOGGING_ENABLED && this.log(goog.debug.Logger.Level.SHOUT, a, b);
+};
+goog.debug.Logger.prototype.severe = function(a, b) {
+  goog.debug.LOGGING_ENABLED && this.log(goog.debug.Logger.Level.SEVERE, a, b);
+};
+goog.debug.Logger.prototype.warning = function(a, b) {
+  goog.debug.LOGGING_ENABLED && this.log(goog.debug.Logger.Level.WARNING, a, b);
+};
+goog.debug.Logger.prototype.info = function(a, b) {
+  goog.debug.LOGGING_ENABLED && this.log(goog.debug.Logger.Level.INFO, a, b);
+};
+goog.debug.Logger.prototype.config = function(a, b) {
+  goog.debug.LOGGING_ENABLED && this.log(goog.debug.Logger.Level.CONFIG, a, b);
+};
+goog.debug.Logger.prototype.fine = function(a, b) {
+  goog.debug.LOGGING_ENABLED && this.log(goog.debug.Logger.Level.FINE, a, b);
+};
+goog.debug.Logger.prototype.finer = function(a, b) {
+  goog.debug.LOGGING_ENABLED && this.log(goog.debug.Logger.Level.FINER, a, b);
+};
+goog.debug.Logger.prototype.finest = function(a, b) {
+  goog.debug.LOGGING_ENABLED && this.log(goog.debug.Logger.Level.FINEST, a, b);
+};
+goog.debug.Logger.prototype.logRecord = function(a) {
+  goog.debug.LOGGING_ENABLED && this.isLoggable(a.getLevel()) && this.doLogRecord_(a);
+};
+goog.debug.Logger.prototype.doLogRecord_ = function(a) {
+  goog.debug.Logger.logToProfilers("log:" + a.getMessage());
+  if (goog.debug.Logger.ENABLE_HIERARCHY) {
+    for (var b = this;b;) {
+      b.callPublish_(a), b = b.getParent();
+    }
+  } else {
+    for (var b = 0, c;c = goog.debug.Logger.rootHandlers_[b++];) {
+      c(a);
+    }
+  }
+};
+goog.debug.Logger.prototype.callPublish_ = function(a) {
+  if (this.handlers_) {
+    for (var b = 0, c;c = this.handlers_[b];b++) {
+      c(a);
+    }
+  }
+};
+goog.debug.Logger.prototype.setParent_ = function(a) {
+  this.parent_ = a;
+};
+goog.debug.Logger.prototype.addChild_ = function(a, b) {
+  this.getChildren()[a] = b;
+};
+goog.debug.LogManager = {};
+goog.debug.LogManager.loggers_ = {};
+goog.debug.LogManager.rootLogger_ = null;
+goog.debug.LogManager.initialize = function() {
+  goog.debug.LogManager.rootLogger_ || (goog.debug.LogManager.rootLogger_ = new goog.debug.Logger(goog.debug.Logger.ROOT_LOGGER_NAME), goog.debug.LogManager.loggers_[goog.debug.Logger.ROOT_LOGGER_NAME] = goog.debug.LogManager.rootLogger_, goog.debug.LogManager.rootLogger_.setLevel(goog.debug.Logger.Level.CONFIG));
+};
+goog.debug.LogManager.getLoggers = function() {
+  return goog.debug.LogManager.loggers_;
+};
+goog.debug.LogManager.getRoot = function() {
+  goog.debug.LogManager.initialize();
+  return goog.debug.LogManager.rootLogger_;
+};
+goog.debug.LogManager.getLogger = function(a) {
+  goog.debug.LogManager.initialize();
+  return goog.debug.LogManager.loggers_[a] || goog.debug.LogManager.createLogger_(a);
+};
+goog.debug.LogManager.createFunctionForCatchErrors = function(a) {
+  return function(b) {
+    (a || goog.debug.LogManager.getRoot()).severe("Error: " + b.message + " (" + b.fileName + " @ Line: " + b.line + ")");
+  };
+};
+goog.debug.LogManager.createLogger_ = function(a) {
+  var b = new goog.debug.Logger(a);
+  if (goog.debug.Logger.ENABLE_HIERARCHY) {
+    var c = a.lastIndexOf("."), d = a.substr(0, c), c = a.substr(c + 1), d = goog.debug.LogManager.getLogger(d);
+    d.addChild_(c, b);
+    b.setParent_(d);
+  }
+  return goog.debug.LogManager.loggers_[a] = b;
+};
+goog.log = {};
+goog.log.ENABLED = goog.debug.LOGGING_ENABLED;
+goog.log.ROOT_LOGGER_NAME = goog.debug.Logger.ROOT_LOGGER_NAME;
+goog.log.Logger = goog.debug.Logger;
+goog.log.Level = goog.debug.Logger.Level;
+goog.log.LogRecord = goog.debug.LogRecord;
+goog.log.getLogger = function(a, b) {
+  if (goog.log.ENABLED) {
+    var c = goog.debug.LogManager.getLogger(a);
+    b && c && c.setLevel(b);
+    return c;
+  }
+  return null;
+};
+goog.log.addHandler = function(a, b) {
+  goog.log.ENABLED && a && a.addHandler(b);
+};
+goog.log.removeHandler = function(a, b) {
+  return goog.log.ENABLED && a ? a.removeHandler(b) : !1;
+};
+goog.log.log = function(a, b, c, d) {
+  goog.log.ENABLED && a && a.log(b, c, d);
+};
+goog.log.error = function(a, b, c) {
+  goog.log.ENABLED && a && a.severe(b, c);
+};
+goog.log.warning = function(a, b, c) {
+  goog.log.ENABLED && a && a.warning(b, c);
+};
+goog.log.info = function(a, b, c) {
+  goog.log.ENABLED && a && a.info(b, c);
+};
+goog.log.fine = function(a, b, c) {
+  goog.log.ENABLED && a && a.fine(b, c);
+};
+goog.net.xpc = {};
+goog.net.xpc.TransportTypes = {NATIVE_MESSAGING:1, FRAME_ELEMENT_METHOD:2, IFRAME_RELAY:3, IFRAME_POLLING:4, FLASH:5, NIX:6, DIRECT:7};
+goog.net.xpc.TransportNames = {1:"NativeMessagingTransport", 2:"FrameElementMethodTransport", 3:"IframeRelayTransport", 4:"IframePollingTransport", 5:"FlashTransport", 6:"NixTransport", 7:"DirectTransport"};
+goog.net.xpc.CfgFields = {CHANNEL_NAME:"cn", AUTH_TOKEN:"at", REMOTE_AUTH_TOKEN:"rat", PEER_URI:"pu", IFRAME_ID:"ifrid", TRANSPORT:"tp", LOCAL_RELAY_URI:"lru", PEER_RELAY_URI:"pru", LOCAL_POLL_URI:"lpu", PEER_POLL_URI:"ppu", PEER_HOSTNAME:"ph", ONE_SIDED_HANDSHAKE:"osh", ROLE:"role", NATIVE_TRANSPORT_PROTOCOL_VERSION:"nativeProtocolVersion", DIRECT_TRANSPORT_SYNC_MODE:"directSyncMode"};
+goog.net.xpc.UriCfgFields = [goog.net.xpc.CfgFields.PEER_URI, goog.net.xpc.CfgFields.LOCAL_RELAY_URI, goog.net.xpc.CfgFields.PEER_RELAY_URI, goog.net.xpc.CfgFields.LOCAL_POLL_URI, goog.net.xpc.CfgFields.PEER_POLL_URI];
+goog.net.xpc.ChannelStates = {NOT_CONNECTED:1, CONNECTED:2, CLOSED:3};
+goog.net.xpc.TRANSPORT_SERVICE_ = "tp";
+goog.net.xpc.SETUP = "SETUP";
+goog.net.xpc.SETUP_NTPV2 = "SETUP_NTPV2";
+goog.net.xpc.SETUP_ACK_ = "SETUP_ACK";
+goog.net.xpc.SETUP_ACK_NTPV2 = "SETUP_ACK_NTPV2";
+goog.net.xpc.channels = {};
+goog.net.xpc.getRandomString = function(a, b) {
+  for (var c = b || goog.net.xpc.randomStringCharacters_, d = c.length, e = "";0 < a--;) {
+    e += c.charAt(Math.floor(Math.random() * d));
+  }
+  return e;
+};
+goog.net.xpc.randomStringCharacters_ = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+goog.net.xpc.logger = goog.log.getLogger("goog.net.xpc");
+goog.json = {};
+goog.json.USE_NATIVE_JSON = !1;
+goog.json.isValid = function(a) {
+  return/^\s*$/.test(a) ? !1 : /^[\],:{}\s\u2028\u2029]*$/.test(a.replace(/\\["\\\/bfnrtu]/g, "@").replace(/"[^"\\\n\r\u2028\u2029\x00-\x08\x0a-\x1f]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, "]").replace(/(?:^|:|,)(?:[\s\u2028\u2029]*\[)+/g, ""));
+};
+goog.json.parse = goog.json.USE_NATIVE_JSON ? goog.global.JSON.parse : function(a) {
+  a = String(a);
+  if (goog.json.isValid(a)) {
+    try {
+      return eval("(" + a + ")");
+    } catch (b) {
+    }
+  }
+  throw Error("Invalid JSON string: " + a);
+};
+goog.json.unsafeParse = goog.json.USE_NATIVE_JSON ? goog.global.JSON.parse : function(a) {
+  return eval("(" + a + ")");
+};
+goog.json.serialize = goog.json.USE_NATIVE_JSON ? goog.global.JSON.stringify : function(a, b) {
+  return(new goog.json.Serializer(b)).serialize(a);
+};
+goog.json.Serializer = function(a) {
+  this.replacer_ = a;
+};
+goog.json.Serializer.prototype.serialize = function(a) {
+  var b = [];
+  this.serializeInternal(a, b);
+  return b.join("");
+};
+goog.json.Serializer.prototype.serializeInternal = function(a, b) {
+  switch(typeof a) {
+    case "string":
+      this.serializeString_(a, b);
+      break;
+    case "number":
+      this.serializeNumber_(a, b);
+      break;
+    case "boolean":
+      b.push(a);
+      break;
+    case "undefined":
+      b.push("null");
+      break;
+    case "object":
+      if (null == a) {
+        b.push("null");
+        break;
+      }
+      if (goog.isArray(a)) {
+        this.serializeArray(a, b);
+        break;
+      }
+      this.serializeObject_(a, b);
+      break;
+    case "function":
+      break;
+    default:
+      throw Error("Unknown type: " + typeof a);;
+  }
+};
+goog.json.Serializer.charToJsonCharCache_ = {'"':'\\"', "\\":"\\\\", "/":"\\/", "\b":"\\b", "\f":"\\f", "\n":"\\n", "\r":"\\r", "\t":"\\t", "\x0B":"\\u000b"};
+goog.json.Serializer.charsToReplace_ = /\uffff/.test("\uffff") ? /[\\\"\x00-\x1f\x7f-\uffff]/g : /[\\\"\x00-\x1f\x7f-\xff]/g;
+goog.json.Serializer.prototype.serializeString_ = function(a, b) {
+  b.push('"', a.replace(goog.json.Serializer.charsToReplace_, function(a) {
+    if (a in goog.json.Serializer.charToJsonCharCache_) {
+      return goog.json.Serializer.charToJsonCharCache_[a];
+    }
+    var b = a.charCodeAt(0), e = "\\u";
+    16 > b ? e += "000" : 256 > b ? e += "00" : 4096 > b && (e += "0");
+    return goog.json.Serializer.charToJsonCharCache_[a] = e + b.toString(16);
+  }), '"');
+};
+goog.json.Serializer.prototype.serializeNumber_ = function(a, b) {
+  b.push(isFinite(a) && !isNaN(a) ? a : "null");
+};
+goog.json.Serializer.prototype.serializeArray = function(a, b) {
+  var c = a.length;
+  b.push("[");
+  for (var d = "", e = 0;e < c;e++) {
+    b.push(d), d = a[e], this.serializeInternal(this.replacer_ ? this.replacer_.call(a, String(e), d) : d, b), d = ",";
+  }
+  b.push("]");
+};
+goog.json.Serializer.prototype.serializeObject_ = function(a, b) {
+  b.push("{");
+  var c = "", d;
+  for (d in a) {
+    if (Object.prototype.hasOwnProperty.call(a, d)) {
+      var e = a[d];
+      "function" != typeof e && (b.push(c), this.serializeString_(d, b), b.push(":"), this.serializeInternal(this.replacer_ ? this.replacer_.call(a, d, e) : e, b), c = ",");
+    }
+  }
+  b.push("}");
+};
+goog.net.ErrorCode = {NO_ERROR:0, ACCESS_DENIED:1, FILE_NOT_FOUND:2, FF_SILENT_ERROR:3, CUSTOM_ERROR:4, EXCEPTION:5, HTTP_ERROR:6, ABORT:7, TIMEOUT:8, OFFLINE:9};
+goog.net.ErrorCode.getDebugMessage = function(a) {
+  switch(a) {
+    case goog.net.ErrorCode.NO_ERROR:
+      return "No Error";
+    case goog.net.ErrorCode.ACCESS_DENIED:
+      return "Access denied to content document";
+    case goog.net.ErrorCode.FILE_NOT_FOUND:
+      return "File not found";
+    case goog.net.ErrorCode.FF_SILENT_ERROR:
+      return "Firefox silently errored";
+    case goog.net.ErrorCode.CUSTOM_ERROR:
+      return "Application custom error";
+    case goog.net.ErrorCode.EXCEPTION:
+      return "An exception occurred";
+    case goog.net.ErrorCode.HTTP_ERROR:
+      return "Http response at 400 or 500 level";
+    case goog.net.ErrorCode.ABORT:
+      return "Request was aborted";
+    case goog.net.ErrorCode.TIMEOUT:
+      return "Request timed out";
+    case goog.net.ErrorCode.OFFLINE:
+      return "The resource is not available offline";
+    default:
+      return "Unrecognized error code";
+  }
+};
+goog.net.HttpStatus = {CONTINUE:100, SWITCHING_PROTOCOLS:101, OK:200, CREATED:201, ACCEPTED:202, NON_AUTHORITATIVE_INFORMATION:203, NO_CONTENT:204, RESET_CONTENT:205, PARTIAL_CONTENT:206, MULTIPLE_CHOICES:300, MOVED_PERMANENTLY:301, FOUND:302, SEE_OTHER:303, NOT_MODIFIED:304, USE_PROXY:305, TEMPORARY_REDIRECT:307, BAD_REQUEST:400, UNAUTHORIZED:401, PAYMENT_REQUIRED:402, FORBIDDEN:403, NOT_FOUND:404, METHOD_NOT_ALLOWED:405, NOT_ACCEPTABLE:406, PROXY_AUTHENTICATION_REQUIRED:407, REQUEST_TIMEOUT:408, 
+CONFLICT:409, GONE:410, LENGTH_REQUIRED:411, PRECONDITION_FAILED:412, REQUEST_ENTITY_TOO_LARGE:413, REQUEST_URI_TOO_LONG:414, UNSUPPORTED_MEDIA_TYPE:415, REQUEST_RANGE_NOT_SATISFIABLE:416, EXPECTATION_FAILED:417, INTERNAL_SERVER_ERROR:500, NOT_IMPLEMENTED:501, BAD_GATEWAY:502, SERVICE_UNAVAILABLE:503, GATEWAY_TIMEOUT:504, HTTP_VERSION_NOT_SUPPORTED:505, QUIRK_IE_NO_CONTENT:1223};
+goog.net.HttpStatus.isSuccess = function(a) {
+  switch(a) {
+    case goog.net.HttpStatus.OK:
+    ;
+    case goog.net.HttpStatus.CREATED:
+    ;
+    case goog.net.HttpStatus.ACCEPTED:
+    ;
+    case goog.net.HttpStatus.NO_CONTENT:
+    ;
+    case goog.net.HttpStatus.PARTIAL_CONTENT:
+    ;
+    case goog.net.HttpStatus.NOT_MODIFIED:
+    ;
+    case goog.net.HttpStatus.QUIRK_IE_NO_CONTENT:
+      return!0;
+    default:
+      return!1;
+  }
+};
+goog.net.XhrLike = function() {
+};
+goog.net.XhrLike.prototype.open = function(a, b, c, d, e) {
+};
+goog.net.XhrLike.prototype.send = function(a) {
+};
+goog.net.XhrLike.prototype.abort = function() {
+};
+goog.net.XhrLike.prototype.setRequestHeader = function(a, b) {
+};
+goog.net.XhrLike.prototype.getResponseHeader = function(a) {
+};
+goog.net.XhrLike.prototype.getAllResponseHeaders = function() {
+};
+goog.net.XmlHttpFactory = function() {
+};
+goog.net.XmlHttpFactory.prototype.cachedOptions_ = null;
+goog.net.XmlHttpFactory.prototype.getOptions = function() {
+  return this.cachedOptions_ || (this.cachedOptions_ = this.internalGetOptions());
+};
+goog.net.WrapperXmlHttpFactory = function(a, b) {
+  goog.net.XmlHttpFactory.call(this);
+  this.xhrFactory_ = a;
+  this.optionsFactory_ = b;
+};
+goog.inherits(goog.net.WrapperXmlHttpFactory, goog.net.XmlHttpFactory);
+goog.net.WrapperXmlHttpFactory.prototype.createInstance = function() {
+  return this.xhrFactory_();
+};
+goog.net.WrapperXmlHttpFactory.prototype.getOptions = function() {
+  return this.optionsFactory_();
+};
+goog.net.XmlHttp = function() {
+  return goog.net.XmlHttp.factory_.createInstance();
+};
+goog.net.XmlHttp.ASSUME_NATIVE_XHR = !1;
+goog.net.XmlHttpDefines = {};
+goog.net.XmlHttpDefines.ASSUME_NATIVE_XHR = !1;
+goog.net.XmlHttp.getOptions = function() {
+  return goog.net.XmlHttp.factory_.getOptions();
+};
+goog.net.XmlHttp.OptionType = {USE_NULL_FUNCTION:0, LOCAL_REQUEST_ERROR:1};
+goog.net.XmlHttp.ReadyState = {UNINITIALIZED:0, LOADING:1, LOADED:2, INTERACTIVE:3, COMPLETE:4};
+goog.net.XmlHttp.setFactory = function(a, b) {
+  goog.net.XmlHttp.setGlobalFactory(new goog.net.WrapperXmlHttpFactory(goog.asserts.assert(a), goog.asserts.assert(b)));
+};
+goog.net.XmlHttp.setGlobalFactory = function(a) {
+  goog.net.XmlHttp.factory_ = a;
+};
+goog.net.DefaultXmlHttpFactory = function() {
+  goog.net.XmlHttpFactory.call(this);
+};
+goog.inherits(goog.net.DefaultXmlHttpFactory, goog.net.XmlHttpFactory);
+goog.net.DefaultXmlHttpFactory.prototype.createInstance = function() {
+  var a = this.getProgId_();
+  return a ? new ActiveXObject(a) : new XMLHttpRequest;
+};
+goog.net.DefaultXmlHttpFactory.prototype.internalGetOptions = function() {
+  var a = {};
+  this.getProgId_() && (a[goog.net.XmlHttp.OptionType.USE_NULL_FUNCTION] = !0, a[goog.net.XmlHttp.OptionType.LOCAL_REQUEST_ERROR] = !0);
+  return a;
+};
+goog.net.DefaultXmlHttpFactory.prototype.getProgId_ = function() {
+  if (goog.net.XmlHttp.ASSUME_NATIVE_XHR || goog.net.XmlHttpDefines.ASSUME_NATIVE_XHR) {
+    return "";
+  }
+  if (!this.ieProgId_ && "undefined" == typeof XMLHttpRequest && "undefined" != typeof ActiveXObject) {
+    for (var a = ["MSXML2.XMLHTTP.6.0", "MSXML2.XMLHTTP.3.0", "MSXML2.XMLHTTP", "Microsoft.XMLHTTP"], b = 0;b < a.length;b++) {
+      var c = a[b];
+      try {
+        return new ActiveXObject(c), this.ieProgId_ = c;
+      } catch (d) {
+      }
+    }
+    throw Error("Could not create ActiveXObject. ActiveX might be disabled, or MSXML might not be installed");
+  }
+  return this.ieProgId_;
+};
+goog.net.XmlHttp.setGlobalFactory(new goog.net.DefaultXmlHttpFactory);
+goog.net.XhrIo = function(a) {
+  goog.events.EventTarget.call(this);
+  this.headers = new goog.structs.Map;
+  this.xmlHttpFactory_ = a || null;
+  this.active_ = !1;
+  this.xhrOptions_ = this.xhr_ = null;
+  this.lastMethod_ = this.lastUri_ = "";
+  this.lastErrorCode_ = goog.net.ErrorCode.NO_ERROR;
+  this.lastError_ = "";
+  this.inAbort_ = this.inOpen_ = this.inSend_ = this.errorDispatched_ = !1;
+  this.timeoutInterval_ = 0;
+  this.timeoutId_ = null;
+  this.responseType_ = goog.net.XhrIo.ResponseType.DEFAULT;
+  this.useXhr2Timeout_ = this.withCredentials_ = !1;
+};
+goog.inherits(goog.net.XhrIo, goog.events.EventTarget);
+goog.net.XhrIo.ResponseType = {DEFAULT:"", TEXT:"text", DOCUMENT:"document", BLOB:"blob", ARRAY_BUFFER:"arraybuffer"};
+goog.net.XhrIo.prototype.logger_ = goog.log.getLogger("goog.net.XhrIo");
+goog.net.XhrIo.CONTENT_TYPE_HEADER = "Content-Type";
+goog.net.XhrIo.HTTP_SCHEME_PATTERN = /^https?$/i;
+goog.net.XhrIo.METHODS_WITH_FORM_DATA = ["POST", "PUT"];
+goog.net.XhrIo.FORM_CONTENT_TYPE = "application/x-www-form-urlencoded;charset\x3dutf-8";
+goog.net.XhrIo.XHR2_TIMEOUT_ = "timeout";
+goog.net.XhrIo.XHR2_ON_TIMEOUT_ = "ontimeout";
+goog.net.XhrIo.sendInstances_ = [];
+goog.net.XhrIo.send = function(a, b, c, d, e, f, g) {
+  var h = new goog.net.XhrIo;
+  goog.net.XhrIo.sendInstances_.push(h);
+  b && h.listen(goog.net.EventType.COMPLETE, b);
+  h.listenOnce(goog.net.EventType.READY, h.cleanupSend_);
+  f && h.setTimeoutInterval(f);
+  g && h.setWithCredentials(g);
+  h.send(a, c, d, e);
+  return h;
+};
+goog.net.XhrIo.cleanup = function() {
+  for (var a = goog.net.XhrIo.sendInstances_;a.length;) {
+    a.pop().dispose();
+  }
+};
+goog.net.XhrIo.protectEntryPoints = function(a) {
+  goog.net.XhrIo.prototype.onReadyStateChangeEntryPoint_ = a.protectEntryPoint(goog.net.XhrIo.prototype.onReadyStateChangeEntryPoint_);
+};
+goog.net.XhrIo.prototype.cleanupSend_ = function() {
+  this.dispose();
+  goog.array.remove(goog.net.XhrIo.sendInstances_, this);
+};
+goog.net.XhrIo.prototype.getTimeoutInterval = function() {
+  return this.timeoutInterval_;
+};
+goog.net.XhrIo.prototype.setTimeoutInterval = function(a) {
+  this.timeoutInterval_ = Math.max(0, a);
+};
+goog.net.XhrIo.prototype.setResponseType = function(a) {
+  this.responseType_ = a;
+};
+goog.net.XhrIo.prototype.getResponseType = function() {
+  return this.responseType_;
+};
+goog.net.XhrIo.prototype.setWithCredentials = function(a) {
+  this.withCredentials_ = a;
+};
+goog.net.XhrIo.prototype.getWithCredentials = function() {
+  return this.withCredentials_;
+};
+goog.net.XhrIo.prototype.send = function(a, b, c, d) {
+  if (this.xhr_) {
+    throw Error("[goog.net.XhrIo] Object is active with another request\x3d" + this.lastUri_ + "; newUri\x3d" + a);
+  }
+  b = b ? b.toUpperCase() : "GET";
+  this.lastUri_ = a;
+  this.lastError_ = "";
+  this.lastErrorCode_ = goog.net.ErrorCode.NO_ERROR;
+  this.lastMethod_ = b;
+  this.errorDispatched_ = !1;
+  this.active_ = !0;
+  this.xhr_ = this.createXhr();
+  this.xhrOptions_ = this.xmlHttpFactory_ ? this.xmlHttpFactory_.getOptions() : goog.net.XmlHttp.getOptions();
+  this.xhr_.onreadystatechange = goog.bind(this.onReadyStateChange_, this);
+  try {
+    goog.log.fine(this.logger_, this.formatMsg_("Opening Xhr")), this.inOpen_ = !0, this.xhr_.open(b, String(a), !0), this.inOpen_ = !1;
+  } catch (e) {
+    goog.log.fine(this.logger_, this.formatMsg_("Error opening Xhr: " + e.message));
+    this.error_(goog.net.ErrorCode.EXCEPTION, e);
+    return;
+  }
+  a = c || "";
+  var f = this.headers.clone();
+  d && goog.structs.forEach(d, function(a, b) {
+    f.set(b, a);
+  });
+  d = goog.array.find(f.getKeys(), goog.net.XhrIo.isContentTypeHeader_);
+  c = goog.global.FormData && a instanceof goog.global.FormData;
+  !goog.array.contains(goog.net.XhrIo.METHODS_WITH_FORM_DATA, b) || d || c || f.set(goog.net.XhrIo.CONTENT_TYPE_HEADER, goog.net.XhrIo.FORM_CONTENT_TYPE);
+  f.forEach(function(a, b) {
+    this.xhr_.setRequestHeader(b, a);
+  }, this);
+  this.responseType_ && (this.xhr_.responseType = this.responseType_);
+  goog.object.containsKey(this.xhr_, "withCredentials") && (this.xhr_.withCredentials = this.withCredentials_);
+  try {
+    this.cleanUpTimeoutTimer_(), 0 < this.timeoutInterval_ && (this.useXhr2Timeout_ = goog.net.XhrIo.shouldUseXhr2Timeout_(this.xhr_), goog.log.fine(this.logger_, this.formatMsg_("Will abort after " + this.timeoutInterval_ + "ms if incomplete, xhr2 " + this.useXhr2Timeout_)), this.useXhr2Timeout_ ? (this.xhr_[goog.net.XhrIo.XHR2_TIMEOUT_] = this.timeoutInterval_, this.xhr_[goog.net.XhrIo.XHR2_ON_TIMEOUT_] = goog.bind(this.timeout_, this)) : this.timeoutId_ = goog.Timer.callOnce(this.timeout_, this.timeoutInterval_, 
+    this)), goog.log.fine(this.logger_, this.formatMsg_("Sending request")), this.inSend_ = !0, this.xhr_.send(a), this.inSend_ = !1;
+  } catch (g) {
+    goog.log.fine(this.logger_, this.formatMsg_("Send error: " + g.message)), this.error_(goog.net.ErrorCode.EXCEPTION, g);
+  }
+};
+goog.net.XhrIo.shouldUseXhr2Timeout_ = function(a) {
+  return goog.userAgent.IE && goog.userAgent.isVersionOrHigher(9) && goog.isNumber(a[goog.net.XhrIo.XHR2_TIMEOUT_]) && goog.isDef(a[goog.net.XhrIo.XHR2_ON_TIMEOUT_]);
+};
+goog.net.XhrIo.isContentTypeHeader_ = function(a) {
+  return goog.string.caseInsensitiveEquals(goog.net.XhrIo.CONTENT_TYPE_HEADER, a);
+};
+goog.net.XhrIo.prototype.createXhr = function() {
+  return this.xmlHttpFactory_ ? this.xmlHttpFactory_.createInstance() : goog.net.XmlHttp();
+};
+goog.net.XhrIo.prototype.timeout_ = function() {
+  "undefined" != typeof goog && this.xhr_ && (this.lastError_ = "Timed out after " + this.timeoutInterval_ + "ms, aborting", this.lastErrorCode_ = goog.net.ErrorCode.TIMEOUT, goog.log.fine(this.logger_, this.formatMsg_(this.lastError_)), this.dispatchEvent(goog.net.EventType.TIMEOUT), this.abort(goog.net.ErrorCode.TIMEOUT));
+};
+goog.net.XhrIo.prototype.error_ = function(a, b) {
+  this.active_ = !1;
+  this.xhr_ && (this.inAbort_ = !0, this.xhr_.abort(), this.inAbort_ = !1);
+  this.lastError_ = b;
+  this.lastErrorCode_ = a;
+  this.dispatchErrors_();
+  this.cleanUpXhr_();
+};
+goog.net.XhrIo.prototype.dispatchErrors_ = function() {
+  this.errorDispatched_ || (this.errorDispatched_ = !0, this.dispatchEvent(goog.net.EventType.COMPLETE), this.dispatchEvent(goog.net.EventType.ERROR));
+};
+goog.net.XhrIo.prototype.abort = function(a) {
+  this.xhr_ && this.active_ && (goog.log.fine(this.logger_, this.formatMsg_("Aborting")), this.active_ = !1, this.inAbort_ = !0, this.xhr_.abort(), this.inAbort_ = !1, this.lastErrorCode_ = a || goog.net.ErrorCode.ABORT, this.dispatchEvent(goog.net.EventType.COMPLETE), this.dispatchEvent(goog.net.EventType.ABORT), this.cleanUpXhr_());
+};
+goog.net.XhrIo.prototype.disposeInternal = function() {
+  this.xhr_ && (this.active_ && (this.active_ = !1, this.inAbort_ = !0, this.xhr_.abort(), this.inAbort_ = !1), this.cleanUpXhr_(!0));
+  goog.net.XhrIo.superClass_.disposeInternal.call(this);
+};
+goog.net.XhrIo.prototype.onReadyStateChange_ = function() {
+  if (!this.isDisposed()) {
+    if (this.inOpen_ || this.inSend_ || this.inAbort_) {
+      this.onReadyStateChangeHelper_();
+    } else {
+      this.onReadyStateChangeEntryPoint_();
+    }
+  }
+};
+goog.net.XhrIo.prototype.onReadyStateChangeEntryPoint_ = function() {
+  this.onReadyStateChangeHelper_();
+};
+goog.net.XhrIo.prototype.onReadyStateChangeHelper_ = function() {
+  if (this.active_ && "undefined" != typeof goog) {
+    if (this.xhrOptions_[goog.net.XmlHttp.OptionType.LOCAL_REQUEST_ERROR] && this.getReadyState() == goog.net.XmlHttp.ReadyState.COMPLETE && 2 == this.getStatus()) {
+      goog.log.fine(this.logger_, this.formatMsg_("Local request error detected and ignored"));
+    } else {
+      if (this.inSend_ && this.getReadyState() == goog.net.XmlHttp.ReadyState.COMPLETE) {
+        goog.Timer.callOnce(this.onReadyStateChange_, 0, this);
+      } else {
+        if (this.dispatchEvent(goog.net.EventType.READY_STATE_CHANGE), this.isComplete()) {
+          goog.log.fine(this.logger_, this.formatMsg_("Request complete"));
+          this.active_ = !1;
+          try {
+            this.isSuccess() ? (this.dispatchEvent(goog.net.EventType.COMPLETE), this.dispatchEvent(goog.net.EventType.SUCCESS)) : (this.lastErrorCode_ = goog.net.ErrorCode.HTTP_ERROR, this.lastError_ = this.getStatusText() + " [" + this.getStatus() + "]", this.dispatchErrors_());
+          } finally {
+            this.cleanUpXhr_();
+          }
+        }
+      }
+    }
+  }
+};
+goog.net.XhrIo.prototype.cleanUpXhr_ = function(a) {
+  if (this.xhr_) {
+    this.cleanUpTimeoutTimer_();
+    var b = this.xhr_, c = this.xhrOptions_[goog.net.XmlHttp.OptionType.USE_NULL_FUNCTION] ? goog.nullFunction : null;
+    this.xhrOptions_ = this.xhr_ = null;
+    a || this.dispatchEvent(goog.net.EventType.READY);
+    try {
+      b.onreadystatechange = c;
+    } catch (d) {
+      goog.log.error(this.logger_, "Problem encountered resetting onreadystatechange: " + d.message);
+    }
+  }
+};
+goog.net.XhrIo.prototype.cleanUpTimeoutTimer_ = function() {
+  this.xhr_ && this.useXhr2Timeout_ && (this.xhr_[goog.net.XhrIo.XHR2_ON_TIMEOUT_] = null);
+  goog.isNumber(this.timeoutId_) && (goog.Timer.clear(this.timeoutId_), this.timeoutId_ = null);
+};
+goog.net.XhrIo.prototype.isActive = function() {
+  return!!this.xhr_;
+};
+goog.net.XhrIo.prototype.isComplete = function() {
+  return this.getReadyState() == goog.net.XmlHttp.ReadyState.COMPLETE;
+};
+goog.net.XhrIo.prototype.isSuccess = function() {
+  var a = this.getStatus();
+  return goog.net.HttpStatus.isSuccess(a) || 0 === a && !this.isLastUriEffectiveSchemeHttp_();
+};
+goog.net.XhrIo.prototype.isLastUriEffectiveSchemeHttp_ = function() {
+  var a = goog.uri.utils.getEffectiveScheme(String(this.lastUri_));
+  return goog.net.XhrIo.HTTP_SCHEME_PATTERN.test(a);
+};
+goog.net.XhrIo.prototype.getReadyState = function() {
+  return this.xhr_ ? this.xhr_.readyState : goog.net.XmlHttp.ReadyState.UNINITIALIZED;
+};
+goog.net.XhrIo.prototype.getStatus = function() {
+  try {
+    return this.getReadyState() > goog.net.XmlHttp.ReadyState.LOADED ? this.xhr_.status : -1;
+  } catch (a) {
+    return-1;
+  }
+};
+goog.net.XhrIo.prototype.getStatusText = function() {
+  try {
+    return this.getReadyState() > goog.net.XmlHttp.ReadyState.LOADED ? this.xhr_.statusText : "";
+  } catch (a) {
+    return goog.log.fine(this.logger_, "Can not get status: " + a.message), "";
+  }
+};
+goog.net.XhrIo.prototype.getLastUri = function() {
+  return String(this.lastUri_);
+};
+goog.net.XhrIo.prototype.getResponseText = function() {
+  try {
+    return this.xhr_ ? this.xhr_.responseText : "";
+  } catch (a) {
+    return goog.log.fine(this.logger_, "Can not get responseText: " + a.message), "";
+  }
+};
+goog.net.XhrIo.prototype.getResponseBody = function() {
+  try {
+    if (this.xhr_ && "responseBody" in this.xhr_) {
+      return this.xhr_.responseBody;
+    }
+  } catch (a) {
+    goog.log.fine(this.logger_, "Can not get responseBody: " + a.message);
+  }
+  return null;
+};
+goog.net.XhrIo.prototype.getResponseXml = function() {
+  try {
+    return this.xhr_ ? this.xhr_.responseXML : null;
+  } catch (a) {
+    return goog.log.fine(this.logger_, "Can not get responseXML: " + a.message), null;
+  }
+};
+goog.net.XhrIo.prototype.getResponseJson = function(a) {
+  if (this.xhr_) {
+    var b = this.xhr_.responseText;
+    a && 0 == b.indexOf(a) && (b = b.substring(a.length));
+    return goog.json.parse(b);
+  }
+};
+goog.net.XhrIo.prototype.getResponse = function() {
+  try {
+    if (!this.xhr_) {
+      return null;
+    }
+    if ("response" in this.xhr_) {
+      return this.xhr_.response;
+    }
+    switch(this.responseType_) {
+      case goog.net.XhrIo.ResponseType.DEFAULT:
+      ;
+      case goog.net.XhrIo.ResponseType.TEXT:
+        return this.xhr_.responseText;
+      case goog.net.XhrIo.ResponseType.ARRAY_BUFFER:
+        if ("mozResponseArrayBuffer" in this.xhr_) {
+          return this.xhr_.mozResponseArrayBuffer;
+        }
+      ;
+    }
+    goog.log.error(this.logger_, "Response type " + this.responseType_ + " is not supported on this browser");
+    return null;
+  } catch (a) {
+    return goog.log.fine(this.logger_, "Can not get response: " + a.message), null;
+  }
+};
+goog.net.XhrIo.prototype.getResponseHeader = function(a) {
+  return this.xhr_ && this.isComplete() ? this.xhr_.getResponseHeader(a) : void 0;
+};
+goog.net.XhrIo.prototype.getAllResponseHeaders = function() {
+  return this.xhr_ && this.isComplete() ? this.xhr_.getAllResponseHeaders() : "";
+};
+goog.net.XhrIo.prototype.getResponseHeaders = function() {
+  for (var a = {}, b = this.getAllResponseHeaders().split("\r\n"), c = 0;c < b.length;c++) {
+    if (!goog.string.isEmpty(b[c])) {
+      var d = goog.string.splitLimit(b[c], ": ", 2);
+      a[d[0]] = a[d[0]] ? a[d[0]] + (", " + d[1]) : d[1];
+    }
+  }
+  return a;
+};
+goog.net.XhrIo.prototype.getLastErrorCode = function() {
+  return this.lastErrorCode_;
+};
+goog.net.XhrIo.prototype.getLastError = function() {
+  return goog.isString(this.lastError_) ? this.lastError_ : String(this.lastError_);
+};
+goog.net.XhrIo.prototype.formatMsg_ = function(a) {
+  return a + " [" + this.lastMethod_ + " " + this.lastUri_ + " " + this.getStatus() + "]";
+};
+goog.debug.entryPointRegistry.register(function(a) {
+  goog.net.XhrIo.prototype.onReadyStateChangeEntryPoint_ = a(goog.net.XhrIo.prototype.onReadyStateChangeEntryPoint_);
+});
+goog.Thenable = function() {
+};
+goog.Thenable.prototype.then = function(a, b, c) {
+};
+goog.Thenable.IMPLEMENTED_BY_PROP = "$goog_Thenable";
+goog.Thenable.addImplementation = function(a) {
+  goog.exportProperty(a.prototype, "then", a.prototype.then);
+  COMPILED ? a.prototype[goog.Thenable.IMPLEMENTED_BY_PROP] = !0 : a.prototype.$goog_Thenable = !0;
+};
+goog.Thenable.isImplementedBy = function(a) {
+  if (!a) {
+    return!1;
+  }
+  try {
+    return COMPILED ? !!a[goog.Thenable.IMPLEMENTED_BY_PROP] : !!a.$goog_Thenable;
+  } catch (b) {
+    return!1;
+  }
+};
+goog.testing = {};
+goog.testing.watchers = {};
+goog.testing.watchers.resetWatchers_ = [];
+goog.testing.watchers.signalClockReset = function() {
+  for (var a = goog.testing.watchers.resetWatchers_, b = 0;b < a.length;b++) {
+    goog.testing.watchers.resetWatchers_[b]();
+  }
+};
+goog.testing.watchers.watchClockReset = function(a) {
+  goog.testing.watchers.resetWatchers_.push(a);
+};
+goog.async.run = function(a, b) {
+  goog.async.run.schedule_ || goog.async.run.initializeRunner_();
+  goog.async.run.workQueueScheduled_ || (goog.async.run.schedule_(), goog.async.run.workQueueScheduled_ = !0);
+  goog.async.run.workQueue_.push(new goog.async.run.WorkItem_(a, b));
+};
+goog.async.run.initializeRunner_ = function() {
+  if (goog.global.Promise && goog.global.Promise.resolve) {
+    var a = goog.global.Promise.resolve();
+    goog.async.run.schedule_ = function() {
+      a.then(goog.async.run.processWorkQueue);
+    };
+  } else {
+    goog.async.run.schedule_ = function() {
+      goog.async.nextTick(goog.async.run.processWorkQueue);
+    };
+  }
+};
+goog.async.run.forceNextTick = function() {
+  goog.async.run.schedule_ = function() {
+    goog.async.nextTick(goog.async.run.processWorkQueue);
+  };
+};
+goog.async.run.workQueueScheduled_ = !1;
+goog.async.run.workQueue_ = [];
+goog.DEBUG && (goog.async.run.resetQueue_ = function() {
+  goog.async.run.workQueueScheduled_ = !1;
+  goog.async.run.workQueue_ = [];
+}, goog.testing.watchers.watchClockReset(goog.async.run.resetQueue_));
+goog.async.run.processWorkQueue = function() {
+  for (;goog.async.run.workQueue_.length;) {
+    var a = goog.async.run.workQueue_;
+    goog.async.run.workQueue_ = [];
+    for (var b = 0;b < a.length;b++) {
+      var c = a[b];
+      try {
+        c.fn.call(c.scope);
+      } catch (d) {
+        goog.async.throwException(d);
+      }
+    }
+  }
+  goog.async.run.workQueueScheduled_ = !1;
+};
+goog.async.run.WorkItem_ = function(a, b) {
+  this.fn = a;
+  this.scope = b;
+};
+goog.promise = {};
+goog.promise.Resolver = function() {
+};
+goog.Promise = function(a, b) {
+  this.state_ = goog.Promise.State_.PENDING;
+  this.result_ = void 0;
+  this.callbackEntries_ = this.parent_ = null;
+  this.executing_ = !1;
+  0 < goog.Promise.UNHANDLED_REJECTION_DELAY ? this.unhandledRejectionId_ = 0 : 0 == goog.Promise.UNHANDLED_REJECTION_DELAY && (this.hadUnhandledRejection_ = !1);
+  goog.Promise.LONG_STACK_TRACES && (this.stack_ = [], this.addStackTrace_(Error("created")), this.currentStep_ = 0);
+  try {
+    var c = this;
+    a.call(b, function(a) {
+      c.resolve_(goog.Promise.State_.FULFILLED, a);
+    }, function(a) {
+      c.resolve_(goog.Promise.State_.REJECTED, a);
+    });
+  } catch (d) {
+    this.resolve_(goog.Promise.State_.REJECTED, d);
+  }
+};
+goog.Promise.LONG_STACK_TRACES = !1;
+goog.Promise.UNHANDLED_REJECTION_DELAY = 0;
+goog.Promise.State_ = {PENDING:0, BLOCKED:1, FULFILLED:2, REJECTED:3};
+goog.Promise.resolve = function(a) {
+  return new goog.Promise(function(b, c) {
+    b(a);
+  });
+};
+goog.Promise.reject = function(a) {
+  return new goog.Promise(function(b, c) {
+    c(a);
+  });
+};
+goog.Promise.race = function(a) {
+  return new goog.Promise(function(b, c) {
+    a.length || b(void 0);
+    for (var d = 0, e;e = a[d];d++) {
+      e.then(b, c);
+    }
+  });
+};
+goog.Promise.all = function(a) {
+  return new goog.Promise(function(b, c) {
+    var d = a.length, e = [];
+    if (d) {
+      for (var f = function(a, c) {
+        d--;
+        e[a] = c;
+        0 == d && b(e);
+      }, g = function(a) {
+        c(a);
+      }, h = 0, k;k = a[h];h++) {
+        k.then(goog.partial(f, h), g);
+      }
+    } else {
+      b(e);
+    }
+  });
+};
+goog.Promise.firstFulfilled = function(a) {
+  return new goog.Promise(function(b, c) {
+    var d = a.length, e = [];
+    if (d) {
+      for (var f = function(a) {
+        b(a);
+      }, g = function(a, b) {
+        d--;
+        e[a] = b;
+        0 == d && c(e);
+      }, h = 0, k;k = a[h];h++) {
+        k.then(f, goog.partial(g, h));
+      }
+    } else {
+      b(void 0);
+    }
+  });
+};
+goog.Promise.withResolver = function() {
+  var a, b, c = new goog.Promise(function(c, e) {
+    a = c;
+    b = e;
+  });
+  return new goog.Promise.Resolver_(c, a, b);
+};
+goog.Promise.prototype.then = function(a, b, c) {
+  null != a && goog.asserts.assertFunction(a, "opt_onFulfilled should be a function.");
+  null != b && goog.asserts.assertFunction(b, "opt_onRejected should be a function. Did you pass opt_context as the second argument instead of the third?");
+  goog.Promise.LONG_STACK_TRACES && this.addStackTrace_(Error("then"));
+  return this.addChildPromise_(goog.isFunction(a) ? a : null, goog.isFunction(b) ? b : null, c);
+};
+goog.Thenable.addImplementation(goog.Promise);
+goog.Promise.prototype.thenAlways = function(a, b) {
+  goog.Promise.LONG_STACK_TRACES && this.addStackTrace_(Error("thenAlways"));
+  var c = function() {
+    try {
+      a.call(b);
+    } catch (c) {
+      goog.Promise.handleRejection_.call(null, c);
+    }
+  };
+  this.addCallbackEntry_({child:null, onRejected:c, onFulfilled:c});
+  return this;
+};
+goog.Promise.prototype.thenCatch = function(a, b) {
+  goog.Promise.LONG_STACK_TRACES && this.addStackTrace_(Error("thenCatch"));
+  return this.addChildPromise_(null, a, b);
+};
+goog.Promise.prototype.cancel = function(a) {
+  this.state_ == goog.Promise.State_.PENDING && goog.async.run(function() {
+    var b = new goog.Promise.CancellationError(a);
+    this.cancelInternal_(b);
+  }, this);
+};
+goog.Promise.prototype.cancelInternal_ = function(a) {
+  this.state_ == goog.Promise.State_.PENDING && (this.parent_ ? this.parent_.cancelChild_(this, a) : this.resolve_(goog.Promise.State_.REJECTED, a));
+};
+goog.Promise.prototype.cancelChild_ = function(a, b) {
+  if (this.callbackEntries_) {
+    for (var c = 0, d = -1, e = 0, f;f = this.callbackEntries_[e];e++) {
+      if (f = f.child) {
+        if (c++, f == a && (d = e), 0 <= d && 1 < c) {
+          break;
+        }
+      }
+    }
+    0 <= d && (this.state_ == goog.Promise.State_.PENDING && 1 == c ? this.cancelInternal_(b) : (c = this.callbackEntries_.splice(d, 1)[0], this.executeCallback_(c, goog.Promise.State_.REJECTED, b)));
+  }
+};
+goog.Promise.prototype.addCallbackEntry_ = function(a) {
+  this.callbackEntries_ && this.callbackEntries_.length || this.state_ != goog.Promise.State_.FULFILLED && this.state_ != goog.Promise.State_.REJECTED || this.scheduleCallbacks_();
+  this.callbackEntries_ || (this.callbackEntries_ = []);
+  this.callbackEntries_.push(a);
+};
+goog.Promise.prototype.addChildPromise_ = function(a, b, c) {
+  var d = {child:null, onFulfilled:null, onRejected:null};
+  d.child = new goog.Promise(function(e, f) {
+    d.onFulfilled = a ? function(b) {
+      try {
+        var d = a.call(c, b);
+        e(d);
+      } catch (k) {
+        f(k);
+      }
+    } : e;
+    d.onRejected = b ? function(a) {
+      try {
+        var d = b.call(c, a);
+        !goog.isDef(d) && a instanceof goog.Promise.CancellationError ? f(a) : e(d);
+      } catch (k) {
+        f(k);
+      }
+    } : f;
+  });
+  d.child.parent_ = this;
+  this.addCallbackEntry_(d);
+  return d.child;
+};
+goog.Promise.prototype.unblockAndFulfill_ = function(a) {
+  goog.asserts.assert(this.state_ == goog.Promise.State_.BLOCKED);
+  this.state_ = goog.Promise.State_.PENDING;
+  this.resolve_(goog.Promise.State_.FULFILLED, a);
+};
+goog.Promise.prototype.unblockAndReject_ = function(a) {
+  goog.asserts.assert(this.state_ == goog.Promise.State_.BLOCKED);
+  this.state_ = goog.Promise.State_.PENDING;
+  this.resolve_(goog.Promise.State_.REJECTED, a);
+};
+goog.Promise.prototype.resolve_ = function(a, b) {
+  if (this.state_ == goog.Promise.State_.PENDING) {
+    if (this == b) {
+      a = goog.Promise.State_.REJECTED, b = new TypeError("Promise cannot resolve to itself");
+    } else {
+      if (goog.Thenable.isImplementedBy(b)) {
+        this.state_ = goog.Promise.State_.BLOCKED;
+        b.then(this.unblockAndFulfill_, this.unblockAndReject_, this);
+        return;
+      }
+      if (goog.isObject(b)) {
+        try {
+          var c = b.then;
+          if (goog.isFunction(c)) {
+            this.tryThen_(b, c);
+            return;
+          }
+        } catch (d) {
+          a = goog.Promise.State_.REJECTED, b = d;
+        }
+      }
+    }
+    this.result_ = b;
+    this.state_ = a;
+    this.scheduleCallbacks_();
+    a != goog.Promise.State_.REJECTED || b instanceof goog.Promise.CancellationError || goog.Promise.addUnhandledRejection_(this, b);
+  }
+};
+goog.Promise.prototype.tryThen_ = function(a, b) {
+  this.state_ = goog.Promise.State_.BLOCKED;
+  var c = this, d = !1, e = function(a) {
+    d || (d = !0, c.unblockAndFulfill_(a));
+  }, f = function(a) {
+    d || (d = !0, c.unblockAndReject_(a));
+  };
+  try {
+    b.call(a, e, f);
+  } catch (g) {
+    f(g);
+  }
+};
+goog.Promise.prototype.scheduleCallbacks_ = function() {
+  this.executing_ || (this.executing_ = !0, goog.async.run(this.executeCallbacks_, this));
+};
+goog.Promise.prototype.executeCallbacks_ = function() {
+  for (;this.callbackEntries_ && this.callbackEntries_.length;) {
+    var a = this.callbackEntries_;
+    this.callbackEntries_ = [];
+    for (var b = 0;b < a.length;b++) {
+      goog.Promise.LONG_STACK_TRACES && this.currentStep_++, this.executeCallback_(a[b], this.state_, this.result_);
+    }
+  }
+  this.executing_ = !1;
+};
+goog.Promise.prototype.executeCallback_ = function(a, b, c) {
+  if (b == goog.Promise.State_.FULFILLED) {
+    a.onFulfilled(c);
+  } else {
+    this.removeUnhandledRejection_(), a.onRejected(c);
+  }
+};
+goog.Promise.prototype.addStackTrace_ = function(a) {
+  if (goog.Promise.LONG_STACK_TRACES && goog.isString(a.stack)) {
+    var b = a.stack.split("\n", 4)[3];
+    a = a.message;
+    a += Array(11 - a.length).join(" ");
+    this.stack_.push(a + b);
+  }
+};
+goog.Promise.prototype.appendLongStack_ = function(a) {
+  if (goog.Promise.LONG_STACK_TRACES && a && goog.isString(a.stack) && this.stack_.length) {
+    for (var b = ["Promise trace:"], c = this;c;c = c.parent_) {
+      for (var d = this.currentStep_;0 <= d;d--) {
+        b.push(c.stack_[d]);
+      }
+      b.push("Value: [" + (c.state_ == goog.Promise.State_.REJECTED ? "REJECTED" : "FULFILLED") + "] \x3c" + String(c.result_) + "\x3e");
+    }
+    a.stack += "\n\n" + b.join("\n");
+  }
+};
+goog.Promise.prototype.removeUnhandledRejection_ = function() {
+  if (0 < goog.Promise.UNHANDLED_REJECTION_DELAY) {
+    for (var a = this;a && a.unhandledRejectionId_;a = a.parent_) {
+      goog.global.clearTimeout(a.unhandledRejectionId_), a.unhandledRejectionId_ = 0;
+    }
+  } else {
+    if (0 == goog.Promise.UNHANDLED_REJECTION_DELAY) {
+      for (a = this;a && a.hadUnhandledRejection_;a = a.parent_) {
+        a.hadUnhandledRejection_ = !1;
+      }
+    }
+  }
+};
+goog.Promise.addUnhandledRejection_ = function(a, b) {
+  0 < goog.Promise.UNHANDLED_REJECTION_DELAY ? a.unhandledRejectionId_ = goog.global.setTimeout(function() {
+    a.appendLongStack_(b);
+    goog.Promise.handleRejection_.call(null, b);
+  }, goog.Promise.UNHANDLED_REJECTION_DELAY) : 0 == goog.Promise.UNHANDLED_REJECTION_DELAY && (a.hadUnhandledRejection_ = !0, goog.async.run(function() {
+    a.hadUnhandledRejection_ && (a.appendLongStack_(b), goog.Promise.handleRejection_.call(null, b));
+  }));
+};
+goog.Promise.handleRejection_ = goog.async.throwException;
+goog.Promise.setUnhandledRejectionHandler = function(a) {
+  goog.Promise.handleRejection_ = a;
+};
+goog.Promise.CancellationError = function(a) {
+  goog.debug.Error.call(this, a);
+};
+goog.inherits(goog.Promise.CancellationError, goog.debug.Error);
+goog.Promise.CancellationError.prototype.name = "cancel";
+goog.Promise.Resolver_ = function(a, b, c) {
+  this.promise = a;
+  this.resolve = b;
+  this.reject = c;
+};
+/*
+ Portions of this code are from MochiKit, received by
+ The Closure Authors under the MIT license. All other code is Copyright
+ 2005-2009 The Closure Authors. All Rights Reserved.
+*/
+goog.async.Deferred = function(a, b) {
+  this.sequence_ = [];
+  this.onCancelFunction_ = a;
+  this.defaultScope_ = b || null;
+  this.hadError_ = this.fired_ = !1;
+  this.result_ = void 0;
+  this.silentlyCanceled_ = this.blocking_ = this.blocked_ = !1;
+  this.unhandledErrorId_ = 0;
+  this.parent_ = null;
+  this.branches_ = 0;
+  if (goog.async.Deferred.LONG_STACK_TRACES && (this.constructorStack_ = null, Error.captureStackTrace)) {
+    var c = {stack:""};
+    Error.captureStackTrace(c, goog.async.Deferred);
+    "string" == typeof c.stack && (this.constructorStack_ = c.stack.replace(/^[^\n]*\n/, ""));
+  }
+};
+goog.async.Deferred.STRICT_ERRORS = !1;
+goog.async.Deferred.LONG_STACK_TRACES = !1;
+goog.async.Deferred.prototype.cancel = function(a) {
+  if (this.hasFired()) {
+    this.result_ instanceof goog.async.Deferred && this.result_.cancel();
+  } else {
+    if (this.parent_) {
+      var b = this.parent_;
+      delete this.parent_;
+      a ? b.cancel(a) : b.branchCancel_();
+    }
+    this.onCancelFunction_ ? this.onCancelFunction_.call(this.defaultScope_, this) : this.silentlyCanceled_ = !0;
+    this.hasFired() || this.errback(new goog.async.Deferred.CanceledError(this));
+  }
+};
+goog.async.Deferred.prototype.branchCancel_ = function() {
+  this.branches_--;
+  0 >= this.branches_ && this.cancel();
+};
+goog.async.Deferred.prototype.continue_ = function(a, b) {
+  this.blocked_ = !1;
+  this.updateResult_(a, b);
+};
+goog.async.Deferred.prototype.updateResult_ = function(a, b) {
+  this.fired_ = !0;
+  this.result_ = b;
+  this.hadError_ = !a;
+  this.fire_();
+};
+goog.async.Deferred.prototype.check_ = function() {
+  if (this.hasFired()) {
+    if (!this.silentlyCanceled_) {
+      throw new goog.async.Deferred.AlreadyCalledError(this);
+    }
+    this.silentlyCanceled_ = !1;
+  }
+};
+goog.async.Deferred.prototype.callback = function(a) {
+  this.check_();
+  this.assertNotDeferred_(a);
+  this.updateResult_(!0, a);
+};
+goog.async.Deferred.prototype.errback = function(a) {
+  this.check_();
+  this.assertNotDeferred_(a);
+  this.makeStackTraceLong_(a);
+  this.updateResult_(!1, a);
+};
+goog.async.Deferred.prototype.makeStackTraceLong_ = function(a) {
+  goog.async.Deferred.LONG_STACK_TRACES && this.constructorStack_ && goog.isObject(a) && a.stack && /^[^\n]+(\n   [^\n]+)+/.test(a.stack) && (a.stack = a.stack + "\nDEFERRED OPERATION:\n" + this.constructorStack_);
+};
+goog.async.Deferred.prototype.assertNotDeferred_ = function(a) {
+  goog.asserts.assert(!(a instanceof goog.async.Deferred), "An execution sequence may not be initiated with a blocking Deferred.");
+};
+goog.async.Deferred.prototype.addCallback = function(a, b) {
+  return this.addCallbacks(a, null, b);
+};
+goog.async.Deferred.prototype.addErrback = function(a, b) {
+  return this.addCallbacks(null, a, b);
+};
+goog.async.Deferred.prototype.addBoth = function(a, b) {
+  return this.addCallbacks(a, a, b);
+};
+goog.async.Deferred.prototype.addCallbacks = function(a, b, c) {
+  goog.asserts.assert(!this.blocking_, "Blocking Deferreds can not be re-used");
+  this.sequence_.push([a, b, c]);
+  this.hasFired() && this.fire_();
+  return this;
+};
+goog.async.Deferred.prototype.then = function(a, b, c) {
+  var d, e, f = new goog.Promise(function(a, b) {
+    d = a;
+    e = b;
+  });
+  this.addCallbacks(d, function(a) {
+    a instanceof goog.async.Deferred.CanceledError ? f.cancel() : e(a);
+  });
+  return f.then(a, b, c);
+};
+goog.Thenable.addImplementation(goog.async.Deferred);
+goog.async.Deferred.prototype.chainDeferred = function(a) {
+  this.addCallbacks(a.callback, a.errback, a);
+  return this;
+};
+goog.async.Deferred.prototype.awaitDeferred = function(a) {
+  return a instanceof goog.async.Deferred ? this.addCallback(goog.bind(a.branch, a)) : this.addCallback(function() {
+    return a;
+  });
+};
+goog.async.Deferred.prototype.branch = function(a) {
+  var b = new goog.async.Deferred;
+  this.chainDeferred(b);
+  a && (b.parent_ = this, this.branches_++);
+  return b;
+};
+goog.async.Deferred.prototype.hasFired = function() {
+  return this.fired_;
+};
+goog.async.Deferred.prototype.isError = function(a) {
+  return a instanceof Error;
+};
+goog.async.Deferred.prototype.hasErrback_ = function() {
+  return goog.array.some(this.sequence_, function(a) {
+    return goog.isFunction(a[1]);
+  });
+};
+goog.async.Deferred.prototype.fire_ = function() {
+  this.unhandledErrorId_ && this.hasFired() && this.hasErrback_() && (goog.async.Deferred.unscheduleError_(this.unhandledErrorId_), this.unhandledErrorId_ = 0);
+  this.parent_ && (this.parent_.branches_--, delete this.parent_);
+  for (var a = this.result_, b = !1, c = !1;this.sequence_.length && !this.blocked_;) {
+    var d = this.sequence_.shift(), e = d[0], f = d[1], d = d[2];
+    if (e = this.hadError_ ? f : e) {
+      try {
+        var g = e.call(d || this.defaultScope_, a);
+        goog.isDef(g) && (this.hadError_ = this.hadError_ && (g == a || this.isError(g)), this.result_ = a = g);
+        goog.Thenable.isImplementedBy(a) && (this.blocked_ = c = !0);
+      } catch (h) {
+        a = h, this.hadError_ = !0, this.makeStackTraceLong_(a), this.hasErrback_() || (b = !0);
+      }
+    }
+  }
+  this.result_ = a;
+  c ? (c = goog.bind(this.continue_, this, !0), g = goog.bind(this.continue_, this, !1), a instanceof goog.async.Deferred ? (a.addCallbacks(c, g), a.blocking_ = !0) : a.then(c, g)) : !goog.async.Deferred.STRICT_ERRORS || !this.isError(a) || a instanceof goog.async.Deferred.CanceledError || (b = this.hadError_ = !0);
+  b && (this.unhandledErrorId_ = goog.async.Deferred.scheduleError_(a));
+};
+goog.async.Deferred.succeed = function(a) {
+  var b = new goog.async.Deferred;
+  b.callback(a);
+  return b;
+};
+goog.async.Deferred.fromPromise = function(a) {
+  var b = new goog.async.Deferred;
+  b.callback();
+  b.addCallback(function() {
+    return a;
+  });
+  return b;
+};
+goog.async.Deferred.fail = function(a) {
+  var b = new goog.async.Deferred;
+  b.errback(a);
+  return b;
+};
+goog.async.Deferred.canceled = function() {
+  var a = new goog.async.Deferred;
+  a.cancel();
+  return a;
+};
+goog.async.Deferred.when = function(a, b, c) {
+  return a instanceof goog.async.Deferred ? a.branch(!0).addCallback(b, c) : goog.async.Deferred.succeed(a).addCallback(b, c);
+};
+goog.async.Deferred.AlreadyCalledError = function(a) {
+  goog.debug.Error.call(this);
+  this.deferred = a;
+};
+goog.inherits(goog.async.Deferred.AlreadyCalledError, goog.debug.Error);
+goog.async.Deferred.AlreadyCalledError.prototype.message = "Deferred has already fired";
+goog.async.Deferred.AlreadyCalledError.prototype.name = "AlreadyCalledError";
+goog.async.Deferred.CanceledError = function(a) {
+  goog.debug.Error.call(this);
+  this.deferred = a;
+};
+goog.inherits(goog.async.Deferred.CanceledError, goog.debug.Error);
+goog.async.Deferred.CanceledError.prototype.message = "Deferred was canceled";
+goog.async.Deferred.CanceledError.prototype.name = "CanceledError";
+goog.async.Deferred.Error_ = function(a) {
+  this.id_ = goog.global.setTimeout(goog.bind(this.throwError, this), 0);
+  this.error_ = a;
+};
+goog.async.Deferred.Error_.prototype.throwError = function() {
+  goog.asserts.assert(goog.async.Deferred.errorMap_[this.id_], "Cannot throw an error that is not scheduled.");
+  delete goog.async.Deferred.errorMap_[this.id_];
+  throw this.error_;
+};
+goog.async.Deferred.Error_.prototype.resetTimer = function() {
+  goog.global.clearTimeout(this.id_);
+};
+goog.async.Deferred.errorMap_ = {};
+goog.async.Deferred.scheduleError_ = function(a) {
+  a = new goog.async.Deferred.Error_(a);
+  goog.async.Deferred.errorMap_[a.id_] = a;
+  return a.id_;
+};
+goog.async.Deferred.unscheduleError_ = function(a) {
+  var b = goog.async.Deferred.errorMap_[a];
+  b && (b.resetTimer(), delete goog.async.Deferred.errorMap_[a]);
+};
+goog.async.Deferred.assertNoErrors = function() {
+  var a = goog.async.Deferred.errorMap_, b;
+  for (b in a) {
+    var c = a[b];
+    c.resetTimer();
+    c.throwError();
+  }
+};
+goog.async.Delay = function(a, b, c) {
+  goog.Disposable.call(this);
+  this.listener_ = a;
+  this.interval_ = b || 0;
+  this.handler_ = c;
+  this.callback_ = goog.bind(this.doAction_, this);
+};
+goog.inherits(goog.async.Delay, goog.Disposable);
+goog.Delay = goog.async.Delay;
+goog.async.Delay.prototype.id_ = 0;
+goog.async.Delay.prototype.disposeInternal = function() {
+  goog.async.Delay.superClass_.disposeInternal.call(this);
+  this.stop();
+  delete this.listener_;
+  delete this.handler_;
+};
+goog.async.Delay.prototype.start = function(a) {
+  this.stop();
+  this.id_ = goog.Timer.callOnce(this.callback_, goog.isDef(a) ? a : this.interval_);
+};
+goog.async.Delay.prototype.stop = function() {
+  this.isActive() && goog.Timer.clear(this.id_);
+  this.id_ = 0;
+};
+goog.async.Delay.prototype.fire = function() {
+  this.stop();
+  this.doAction_();
+};
+goog.async.Delay.prototype.fireIfActive = function() {
+  this.isActive() && this.fire();
+};
+goog.async.Delay.prototype.isActive = function() {
+  return 0 != this.id_;
+};
+goog.async.Delay.prototype.doAction_ = function() {
+  this.id_ = 0;
+  this.listener_ && this.listener_.call(this.handler_);
+};
+goog.messaging = {};
+goog.messaging.MessageChannel = function() {
+};
+goog.messaging.MessageChannel.prototype.connect = function(a) {
+};
+goog.messaging.MessageChannel.prototype.isConnected = function() {
+};
+goog.messaging.MessageChannel.prototype.registerService = function(a, b, c) {
+};
+goog.messaging.MessageChannel.prototype.registerDefaultService = function(a) {
+};
+goog.messaging.MessageChannel.prototype.send = function(a, b) {
+};
+goog.messaging.AbstractChannel = function() {
+  goog.Disposable.call(this);
+  this.services_ = {};
+};
+goog.inherits(goog.messaging.AbstractChannel, goog.Disposable);
+goog.messaging.AbstractChannel.prototype.logger = goog.log.getLogger("goog.messaging.AbstractChannel");
+goog.messaging.AbstractChannel.prototype.connect = function(a) {
+  a && a();
+};
+goog.messaging.AbstractChannel.prototype.isConnected = function() {
+  return!0;
+};
+goog.messaging.AbstractChannel.prototype.registerService = function(a, b, c) {
+  this.services_[a] = {callback:b, objectPayload:!!c};
+};
+goog.messaging.AbstractChannel.prototype.registerDefaultService = function(a) {
+  this.defaultService_ = a;
+};
+goog.messaging.AbstractChannel.prototype.deliver = function(a, b) {
+  var c = this.getService(a, b);
+  if (c) {
+    var d = this.decodePayload(a, b, c.objectPayload);
+    goog.isDefAndNotNull(d) && c.callback(d);
+  }
+};
+goog.messaging.AbstractChannel.prototype.getService = function(a, b) {
+  var c = this.services_[a];
+  if (c) {
+    return c;
+  }
+  if (this.defaultService_) {
+    var c = goog.partial(this.defaultService_, a), d = goog.isObject(b);
+    return{callback:c, objectPayload:d};
+  }
+  goog.log.warning(this.logger, 'Unknown service name "' + a + '"');
+  return null;
+};
+goog.messaging.AbstractChannel.prototype.decodePayload = function(a, b, c) {
+  if (c && goog.isString(b)) {
+    try {
+      return goog.json.parse(b);
+    } catch (d) {
+      return goog.log.warning(this.logger, "Expected JSON payload for " + a + ', was "' + b + '"'), null;
+    }
+  } else {
+    if (!c && !goog.isString(b)) {
+      return goog.json.serialize(b);
+    }
+  }
+  return b;
+};
+goog.messaging.AbstractChannel.prototype.disposeInternal = function() {
+  goog.messaging.AbstractChannel.superClass_.disposeInternal.call(this);
+  delete this.logger;
+  delete this.services_;
+  delete this.defaultService_;
+};
+goog.net.xpc.CrossPageChannelRole = {OUTER:0, INNER:1};
+goog.net.xpc.Transport = function(a) {
+  goog.Disposable.call(this);
+  this.domHelper_ = a || goog.dom.getDomHelper();
+};
+goog.inherits(goog.net.xpc.Transport, goog.Disposable);
+goog.net.xpc.Transport.prototype.transportType = 0;
+goog.net.xpc.Transport.prototype.getType = function() {
+  return this.transportType;
+};
+goog.net.xpc.Transport.prototype.getWindow = function() {
+  return this.domHelper_.getWindow();
+};
+goog.net.xpc.Transport.prototype.getName = function() {
+  return goog.net.xpc.TransportNames[this.transportType] || "";
+};
+goog.net.xpc.DirectTransport = function(a, b) {
+  goog.net.xpc.Transport.call(this, b);
+  this.channel_ = a;
+  this.eventHandler_ = new goog.events.EventHandler(this);
+  this.registerDisposable(this.eventHandler_);
+  this.maybeAttemptToConnectTimer_ = new goog.Timer(goog.net.xpc.DirectTransport.CONNECTION_ATTEMPT_INTERVAL_MS_, this.getWindow());
+  this.registerDisposable(this.maybeAttemptToConnectTimer_);
+  this.setupAckReceived_ = new goog.async.Deferred;
+  this.setupAckSent_ = new goog.async.Deferred;
+  this.connected_ = new goog.async.Deferred;
+  this.endpointId_ = goog.net.xpc.getRandomString(10);
+  this.peerEndpointId_ = null;
+  this.asyncSendsMap_ = {};
+  this.originalChannelName_ = this.channel_.name;
+  this.channel_.updateChannelNameAndCatalog(goog.net.xpc.DirectTransport.getRoledChannelName_(this.channel_.name, this.channel_.getRole()));
+  this.initialized_ = !1;
+  this.connected_.awaitDeferred(this.setupAckReceived_);
+  this.connected_.awaitDeferred(this.setupAckSent_);
+  this.connected_.addCallback(this.notifyConnected_, this);
+  this.connected_.callback(!0);
+  this.eventHandler_.listen(this.maybeAttemptToConnectTimer_, goog.Timer.TICK, this.maybeAttemptToConnect_);
+  goog.log.info(goog.net.xpc.logger, "DirectTransport created. role\x3d" + this.channel_.getRole());
+};
+goog.inherits(goog.net.xpc.DirectTransport, goog.net.xpc.Transport);
+goog.net.xpc.DirectTransport.CONNECTION_ATTEMPT_INTERVAL_MS_ = 100;
+goog.net.xpc.DirectTransport.CONNECTION_DELAY_INTERVAL_MS_ = 0;
+goog.net.xpc.DirectTransport.isSupported = function(a) {
+  try {
+    return window.document.domain == a.document.domain;
+  } catch (b) {
+    return!1;
+  }
+};
+goog.net.xpc.DirectTransport.activeCount_ = {};
+goog.net.xpc.DirectTransport.GLOBAL_TRANPORT_PATH_ = "crosswindowmessaging.channel";
+goog.net.xpc.DirectTransport.MESSAGE_DELIMITER_ = ",";
+goog.net.xpc.DirectTransport.initialize_ = function(a) {
+  var b = goog.getUid(a);
+  0 == (goog.net.xpc.DirectTransport.activeCount_[b] || 0) && null == goog.getObjectByName(goog.net.xpc.DirectTransport.GLOBAL_TRANPORT_PATH_, a) && goog.exportSymbol(goog.net.xpc.DirectTransport.GLOBAL_TRANPORT_PATH_, goog.net.xpc.DirectTransport.messageReceivedHandler_, a);
+  goog.net.xpc.DirectTransport.activeCount_[b]++;
+};
+goog.net.xpc.DirectTransport.getRoledChannelName_ = function(a, b) {
+  return a + "_" + b;
+};
+goog.net.xpc.DirectTransport.messageReceivedHandler_ = function(a) {
+  var b = goog.net.xpc.DirectTransport.Message_.fromLiteral(a);
+  a = b.channelName;
+  var c = b.service, b = b.payload;
+  goog.log.fine(goog.net.xpc.logger, "messageReceived: channel\x3d" + a + ", service\x3d" + c + ", payload\x3d" + b);
+  var d = goog.net.xpc.channels[a];
+  if (d) {
+    return d.xpcDeliver(c, b), !0;
+  }
+  var d = goog.net.xpc.DirectTransport.parseTransportPayload_(b)[0], e;
+  for (e in goog.net.xpc.channels) {
+    var f = goog.net.xpc.channels[e];
+    if (f.getRole() == goog.net.xpc.CrossPageChannelRole.INNER && !f.isConnected() && c == goog.net.xpc.TRANSPORT_SERVICE_ && d == goog.net.xpc.SETUP) {
+      return f.updateChannelNameAndCatalog(a), f.xpcDeliver(c, b), !0;
+    }
+  }
+  goog.log.info(goog.net.xpc.logger, "channel name mismatch; message ignored.");
+  return!1;
+};
+goog.net.xpc.DirectTransport.prototype.transportType = goog.net.xpc.TransportTypes.DIRECT;
+goog.net.xpc.DirectTransport.prototype.transportServiceHandler = function(a) {
+  a = goog.net.xpc.DirectTransport.parseTransportPayload_(a);
+  var b = a[1];
+  switch(a[0]) {
+    case goog.net.xpc.SETUP_ACK_:
+      this.setupAckReceived_.hasFired() || this.setupAckReceived_.callback(!0);
+      break;
+    case goog.net.xpc.SETUP:
+      this.sendSetupAckMessage_(), null != this.peerEndpointId_ && this.peerEndpointId_ != b && (goog.log.info(goog.net.xpc.logger, "Sending SETUP and changing peer ID to: " + b), this.sendSetupMessage_()), this.peerEndpointId_ = b;
+  }
+};
+goog.net.xpc.DirectTransport.prototype.sendSetupMessage_ = function() {
+  var a = goog.net.xpc.SETUP, a = a + goog.net.xpc.DirectTransport.MESSAGE_DELIMITER_, a = a + this.endpointId_;
+  this.send(goog.net.xpc.TRANSPORT_SERVICE_, a);
+};
+goog.net.xpc.DirectTransport.prototype.sendSetupAckMessage_ = function() {
+  this.send(goog.net.xpc.TRANSPORT_SERVICE_, goog.net.xpc.SETUP_ACK_);
+  this.setupAckSent_.hasFired() || this.setupAckSent_.callback(!0);
+};
+goog.net.xpc.DirectTransport.prototype.connect = function() {
+  var a = this.getWindow();
+  a ? (goog.net.xpc.DirectTransport.initialize_(a), this.initialized_ = !0, this.maybeAttemptToConnect_()) : goog.log.fine(goog.net.xpc.logger, "connect(): no window to initialize.");
+};
+goog.net.xpc.DirectTransport.prototype.maybeAttemptToConnect_ = function() {
+  this.channel_.getRole();
+  this.channel_.isConnected() ? this.maybeAttemptToConnectTimer_.stop() : (this.maybeAttemptToConnectTimer_.start(), this.sendSetupMessage_());
+};
+goog.net.xpc.DirectTransport.prototype.send = function(a, b) {
+  if (this.channel_.getPeerWindowObject()) {
+    var c = goog.net.xpc.DirectTransport.getRoledChannelName_(this.originalChannelName_, this.getPeerRole_()), c = new goog.net.xpc.DirectTransport.Message_(c, a, b);
+    this.channel_.getConfig()[goog.net.xpc.CfgFields.DIRECT_TRANSPORT_SYNC_MODE] ? this.executeScheduledSend_(c) : this.asyncSendsMap_[goog.getUid(c)] = goog.Timer.callOnce(goog.bind(this.executeScheduledSend_, this, c), 0);
+  } else {
+    goog.log.fine(goog.net.xpc.logger, "send(): window not ready");
+  }
+};
+goog.net.xpc.DirectTransport.prototype.executeScheduledSend_ = function(a) {
+  var b = goog.getUid(a);
+  this.asyncSendsMap_[b] && delete this.asyncSendsMap_[b];
+  try {
+    var c = goog.getObjectByName(goog.net.xpc.DirectTransport.GLOBAL_TRANPORT_PATH_, this.channel_.getPeerWindowObject());
+  } catch (d) {
+    goog.log.warning(goog.net.xpc.logger, "Can't access other window, ignoring.", d);
+    return;
+  }
+  if (goog.isNull(c)) {
+    goog.log.warning(goog.net.xpc.logger, "Peer window had no global function.");
+  } else {
+    try {
+      c(a.toLiteral()), goog.log.info(goog.net.xpc.logger, "send(): channelName\x3d" + a.channelName + " service\x3d" + a.service + " payload\x3d" + a.payload);
+    } catch (e) {
+      goog.log.warning(goog.net.xpc.logger, "Error performing call, ignoring.", e);
+    }
+  }
+};
+goog.net.xpc.DirectTransport.prototype.getPeerRole_ = function() {
+  return this.channel_.getRole() == goog.net.xpc.CrossPageChannelRole.OUTER ? goog.net.xpc.CrossPageChannelRole.INNER : goog.net.xpc.CrossPageChannelRole.OUTER;
+};
+goog.net.xpc.DirectTransport.prototype.notifyConnected_ = function() {
+  this.channel_.notifyConnected(this.channel_.getConfig()[goog.net.xpc.CfgFields.DIRECT_TRANSPORT_SYNC_MODE] ? goog.net.xpc.DirectTransport.CONNECTION_DELAY_INTERVAL_MS_ : 0);
+};
+goog.net.xpc.DirectTransport.prototype.disposeInternal = function() {
+  if (this.initialized_) {
+    var a = this.getWindow(), b = goog.getUid(a);
+    1 == --goog.net.xpc.DirectTransport.activeCount_[b] && goog.exportSymbol(goog.net.xpc.DirectTransport.GLOBAL_TRANPORT_PATH_, null, a);
+  }
+  this.asyncSendsMap_ && (goog.object.forEach(this.asyncSendsMap_, function(a) {
+    goog.Timer.clear(a);
+  }), this.asyncSendsMap_ = null);
+  this.setupAckReceived_ && (this.setupAckReceived_.cancel(), delete this.setupAckReceived_);
+  this.setupAckSent_ && (this.setupAckSent_.cancel(), delete this.setupAckSent_);
+  this.connected_ && (this.connected_.cancel(), delete this.connected_);
+  goog.net.xpc.DirectTransport.superClass_.disposeInternal.call(this);
+};
+goog.net.xpc.DirectTransport.parseTransportPayload_ = function(a) {
+  a = a.split(goog.net.xpc.DirectTransport.MESSAGE_DELIMITER_);
+  a[1] = a[1] || null;
+  return a;
+};
+goog.net.xpc.DirectTransport.Message_ = function(a, b, c) {
+  this.channelName = a;
+  this.service = b;
+  this.payload = c;
+};
+goog.net.xpc.DirectTransport.Message_.prototype.toLiteral = function() {
+  return{channelName:this.channelName, service:this.service, payload:this.payload};
+};
+goog.net.xpc.DirectTransport.Message_.fromLiteral = function(a) {
+  return new goog.net.xpc.DirectTransport.Message_(a.channelName, a.service, a.payload);
+};
+goog.net.xpc.FrameElementMethodTransport = function(a, b) {
+  goog.net.xpc.Transport.call(this, b);
+  this.channel_ = a;
+  this.queue_ = [];
+  this.deliverQueuedCb_ = goog.bind(this.deliverQueued_, this);
+};
+goog.inherits(goog.net.xpc.FrameElementMethodTransport, goog.net.xpc.Transport);
+goog.net.xpc.FrameElementMethodTransport.prototype.transportType = goog.net.xpc.TransportTypes.FRAME_ELEMENT_METHOD;
+goog.net.xpc.FrameElementMethodTransport.prototype.recursive_ = !1;
+goog.net.xpc.FrameElementMethodTransport.prototype.timer_ = 0;
+goog.net.xpc.FrameElementMethodTransport.outgoing_ = null;
+goog.net.xpc.FrameElementMethodTransport.prototype.connect = function() {
+  this.channel_.getRole() == goog.net.xpc.CrossPageChannelRole.OUTER ? (this.iframeElm_ = this.channel_.getIframeElement(), this.iframeElm_.XPC_toOuter = goog.bind(this.incoming_, this)) : this.attemptSetup_();
+};
+goog.net.xpc.FrameElementMethodTransport.prototype.attemptSetup_ = function() {
+  var a = !0;
+  try {
+    this.iframeElm_ || (this.iframeElm_ = this.getWindow().frameElement), this.iframeElm_ && this.iframeElm_.XPC_toOuter && (this.outgoing_ = this.iframeElm_.XPC_toOuter, this.iframeElm_.XPC_toOuter.XPC_toInner = goog.bind(this.incoming_, this), a = !1, this.send(goog.net.xpc.TRANSPORT_SERVICE_, goog.net.xpc.SETUP_ACK_), this.channel_.notifyConnected());
+  } catch (b) {
+    goog.log.error(goog.net.xpc.logger, "exception caught while attempting setup: " + b);
+  }
+  a && (this.attemptSetupCb_ || (this.attemptSetupCb_ = goog.bind(this.attemptSetup_, this)), this.getWindow().setTimeout(this.attemptSetupCb_, 100));
+};
+goog.net.xpc.FrameElementMethodTransport.prototype.transportServiceHandler = function(a) {
+  if (this.channel_.getRole() != goog.net.xpc.CrossPageChannelRole.OUTER || this.channel_.isConnected() || a != goog.net.xpc.SETUP_ACK_) {
+    throw Error("Got unexpected transport message.");
+  }
+  this.outgoing_ = this.iframeElm_.XPC_toOuter.XPC_toInner;
+  this.channel_.notifyConnected();
+};
+goog.net.xpc.FrameElementMethodTransport.prototype.incoming_ = function(a, b) {
+  this.recursive_ || 0 != this.queue_.length ? (this.queue_.push({serviceName:a, payload:b}), 1 == this.queue_.length && (this.timer_ = this.getWindow().setTimeout(this.deliverQueuedCb_, 1))) : this.channel_.xpcDeliver(a, b);
+};
+goog.net.xpc.FrameElementMethodTransport.prototype.deliverQueued_ = function() {
+  for (;this.queue_.length;) {
+    var a = this.queue_.shift();
+    this.channel_.xpcDeliver(a.serviceName, a.payload);
+  }
+};
+goog.net.xpc.FrameElementMethodTransport.prototype.send = function(a, b) {
+  this.recursive_ = !0;
+  this.outgoing_(a, b);
+  this.recursive_ = !1;
+};
+goog.net.xpc.FrameElementMethodTransport.prototype.disposeInternal = function() {
+  goog.net.xpc.FrameElementMethodTransport.superClass_.disposeInternal.call(this);
+  this.iframeElm_ = this.outgoing_ = null;
+};
+goog.net.xpc.IframePollingTransport = function(a, b) {
+  goog.net.xpc.Transport.call(this, b);
+  this.channel_ = a;
+  this.sendUri_ = this.channel_.getConfig()[goog.net.xpc.CfgFields.PEER_POLL_URI];
+  this.rcvUri_ = this.channel_.getConfig()[goog.net.xpc.CfgFields.LOCAL_POLL_URI];
+  this.sendQueue_ = [];
+};
+goog.inherits(goog.net.xpc.IframePollingTransport, goog.net.xpc.Transport);
+goog.net.xpc.IframePollingTransport.prototype.pollsBeforeReconnect_ = 5;
+goog.net.xpc.IframePollingTransport.prototype.transportType = goog.net.xpc.TransportTypes.IFRAME_POLLING;
+goog.net.xpc.IframePollingTransport.prototype.sequence_ = 0;
+goog.net.xpc.IframePollingTransport.prototype.waitForAck_ = !1;
+goog.net.xpc.IframePollingTransport.prototype.initialized_ = !1;
+goog.net.xpc.IframePollingTransport.prototype.reconnectFrame_ = null;
+goog.net.xpc.IframePollingTransport.IFRAME_PREFIX = "googlexpc";
+goog.net.xpc.IframePollingTransport.prototype.getMsgFrameName_ = function() {
+  return goog.net.xpc.IframePollingTransport.IFRAME_PREFIX + "_" + this.channel_.name + "_msg";
+};
+goog.net.xpc.IframePollingTransport.prototype.getAckFrameName_ = function() {
+  return goog.net.xpc.IframePollingTransport.IFRAME_PREFIX + "_" + this.channel_.name + "_ack";
+};
+goog.net.xpc.IframePollingTransport.prototype.isChannelAvailable = function() {
+  return!this.isDisposed() && this.channel_.isPeerAvailable();
+};
+goog.net.xpc.IframePollingTransport.prototype.getPeerFrames_ = function() {
+  try {
+    if (this.isChannelAvailable()) {
+      return this.channel_.getPeerWindowObject().frames || {};
+    }
+  } catch (a) {
+    goog.log.fine(goog.net.xpc.logger, "error retrieving peer frames");
+  }
+  return{};
+};
+goog.net.xpc.IframePollingTransport.prototype.getPeerFrame_ = function(a) {
+  return this.getPeerFrames_()[a];
+};
+goog.net.xpc.IframePollingTransport.prototype.connect = function() {
+  this.isChannelAvailable() && (goog.log.fine(goog.net.xpc.logger, "transport connect called"), this.initialized_ || (goog.log.fine(goog.net.xpc.logger, "initializing..."), this.constructSenderFrames_(), this.initialized_ = !0), this.checkForeignFramesReady_());
+};
+goog.net.xpc.IframePollingTransport.prototype.constructSenderFrames_ = function() {
+  var a = this.getMsgFrameName_();
+  this.msgIframeElm_ = this.constructSenderFrame_(a);
+  this.msgWinObj_ = this.getWindow().frames[a];
+  a = this.getAckFrameName_();
+  this.ackIframeElm_ = this.constructSenderFrame_(a);
+  this.ackWinObj_ = this.getWindow().frames[a];
+};
+goog.net.xpc.IframePollingTransport.prototype.constructSenderFrame_ = function(a) {
+  goog.log.log(goog.net.xpc.logger, goog.log.Level.FINEST, "constructing sender frame: " + a);
+  var b = goog.dom.createElement("iframe"), c = b.style;
+  c.position = "absolute";
+  c.top = "-10px";
+  c.left = "10px";
+  c.width = "1px";
+  c.height = "1px";
+  b.id = b.name = a;
+  b.src = this.sendUri_ + "#INITIAL";
+  this.getWindow().document.body.appendChild(b);
+  return b;
+};
+goog.net.xpc.IframePollingTransport.prototype.maybeInnerPeerReconnect_ = function() {
+  this.reconnectFrame_ || 0 < this.pollsBeforeReconnect_-- || (goog.log.log(goog.net.xpc.logger, goog.log.Level.FINEST, "Inner peer reconnect triggered."), this.channel_.updateChannelNameAndCatalog(goog.net.xpc.getRandomString(10)), goog.log.log(goog.net.xpc.logger, goog.log.Level.FINEST, "switching channels: " + this.channel_.name), this.deconstructSenderFrames_(), this.initialized_ = !1, this.reconnectFrame_ = this.constructSenderFrame_(goog.net.xpc.IframePollingTransport.IFRAME_PREFIX + "_reconnect_" + 
+  this.channel_.name));
+};
+goog.net.xpc.IframePollingTransport.prototype.outerPeerReconnect_ = function() {
+  goog.log.log(goog.net.xpc.logger, goog.log.Level.FINEST, "outerPeerReconnect called");
+  for (var a = this.getPeerFrames_(), b = a.length, c = 0;c < b;c++) {
+    var d;
+    try {
+      a[c] && a[c].name && (d = a[c].name);
+    } catch (e) {
+    }
+    if (d) {
+      var f = d.split("_");
+      if (3 == f.length && f[0] == goog.net.xpc.IframePollingTransport.IFRAME_PREFIX && "reconnect" == f[1]) {
+        this.channel_.name = f[2];
+        this.deconstructSenderFrames_();
+        this.initialized_ = !1;
+        break;
+      }
+    }
+  }
+};
+goog.net.xpc.IframePollingTransport.prototype.deconstructSenderFrames_ = function() {
+  goog.log.log(goog.net.xpc.logger, goog.log.Level.FINEST, "deconstructSenderFrames called");
+  this.msgIframeElm_ && (this.msgIframeElm_.parentNode.removeChild(this.msgIframeElm_), this.msgWinObj_ = this.msgIframeElm_ = null);
+  this.ackIframeElm_ && (this.ackIframeElm_.parentNode.removeChild(this.ackIframeElm_), this.ackWinObj_ = this.ackIframeElm_ = null);
+};
+goog.net.xpc.IframePollingTransport.prototype.checkForeignFramesReady_ = function() {
+  this.isRcvFrameReady_(this.getMsgFrameName_()) && this.isRcvFrameReady_(this.getAckFrameName_()) ? (goog.log.fine(goog.net.xpc.logger, "foreign frames present"), this.msgReceiver_ = new goog.net.xpc.IframePollingTransport.Receiver(this, this.getPeerFrame_(this.getMsgFrameName_()), goog.bind(this.processIncomingMsg, this)), this.ackReceiver_ = new goog.net.xpc.IframePollingTransport.Receiver(this, this.getPeerFrame_(this.getAckFrameName_()), goog.bind(this.processIncomingAck, this)), this.checkLocalFramesPresent_()) : 
+  (goog.log.log(goog.net.xpc.logger, goog.log.Level.FINEST, "foreign frames not (yet) present"), this.channel_.getRole() == goog.net.xpc.CrossPageChannelRole.INNER ? this.maybeInnerPeerReconnect_() : this.channel_.getRole() == goog.net.xpc.CrossPageChannelRole.OUTER && this.outerPeerReconnect_(), this.getWindow().setTimeout(goog.bind(this.connect, this), 100));
+};
+goog.net.xpc.IframePollingTransport.prototype.isRcvFrameReady_ = function(a) {
+  goog.log.log(goog.net.xpc.logger, goog.log.Level.FINEST, "checking for receive frame: " + a);
+  try {
+    var b = this.getPeerFrame_(a);
+    if (!b || 0 != b.location.href.indexOf(this.rcvUri_)) {
+      return!1;
+    }
+  } catch (c) {
+    return!1;
+  }
+  return!0;
+};
+goog.net.xpc.IframePollingTransport.prototype.checkLocalFramesPresent_ = function() {
+  var a = this.getPeerFrames_();
+  a[this.getAckFrameName_()] && a[this.getMsgFrameName_()] ? (this.msgSender_ = new goog.net.xpc.IframePollingTransport.Sender(this.sendUri_, this.msgWinObj_), this.ackSender_ = new goog.net.xpc.IframePollingTransport.Sender(this.sendUri_, this.ackWinObj_), goog.log.fine(goog.net.xpc.logger, "local frames ready"), this.getWindow().setTimeout(goog.bind(function() {
+    this.msgSender_.send(goog.net.xpc.SETUP);
+    this.waitForAck_ = this.sentConnectionSetup_ = !0;
+    goog.log.fine(goog.net.xpc.logger, "SETUP sent");
+  }, this), 100)) : (this.checkLocalFramesPresentCb_ || (this.checkLocalFramesPresentCb_ = goog.bind(this.checkLocalFramesPresent_, this)), this.getWindow().setTimeout(this.checkLocalFramesPresentCb_, 100), goog.log.fine(goog.net.xpc.logger, "local frames not (yet) present"));
+};
+goog.net.xpc.IframePollingTransport.prototype.checkIfConnected_ = function() {
+  if (this.sentConnectionSetupAck_ && this.rcvdConnectionSetupAck_) {
+    if (this.channel_.notifyConnected(), this.deliveryQueue_) {
+      goog.log.fine(goog.net.xpc.logger, "delivering queued messages (" + this.deliveryQueue_.length + ")");
+      for (var a = 0, b;a < this.deliveryQueue_.length;a++) {
+        b = this.deliveryQueue_[a], this.channel_.xpcDeliver(b.service, b.payload);
+      }
+      delete this.deliveryQueue_;
+    }
+  } else {
+    goog.log.log(goog.net.xpc.logger, goog.log.Level.FINEST, "checking if connected: ack sent:" + this.sentConnectionSetupAck_ + ", ack rcvd: " + this.rcvdConnectionSetupAck_);
+  }
+};
+goog.net.xpc.IframePollingTransport.prototype.processIncomingMsg = function(a) {
+  goog.log.log(goog.net.xpc.logger, goog.log.Level.FINEST, "msg received: " + a);
+  if (a == goog.net.xpc.SETUP) {
+    this.ackSender_ && (this.ackSender_.send(goog.net.xpc.SETUP_ACK_), goog.log.log(goog.net.xpc.logger, goog.log.Level.FINEST, "SETUP_ACK sent"), this.sentConnectionSetupAck_ = !0, this.checkIfConnected_());
+  } else {
+    if (this.channel_.isConnected() || this.sentConnectionSetupAck_) {
+      var b = a.indexOf("|"), c = a.substring(0, b);
+      a = a.substring(b + 1);
+      b = c.indexOf(",");
+      if (-1 == b) {
+        var d;
+        this.ackSender_.send("ACK:" + c);
+        this.deliverPayload_(a);
+      } else {
+        d = c.substring(0, b), this.ackSender_.send("ACK:" + d), c = c.substring(b + 1).split("/"), b = parseInt(c[0], 10), c = parseInt(c[1], 10), 1 == b && (this.parts_ = []), this.parts_.push(a), b == c && (this.deliverPayload_(this.parts_.join("")), delete this.parts_);
+      }
+    } else {
+      goog.log.warning(goog.net.xpc.logger, "received msg, but channel is not connected");
+    }
+  }
+};
+goog.net.xpc.IframePollingTransport.prototype.processIncomingAck = function(a) {
+  goog.log.log(goog.net.xpc.logger, goog.log.Level.FINEST, "ack received: " + a);
+  a == goog.net.xpc.SETUP_ACK_ ? (this.waitForAck_ = !1, this.rcvdConnectionSetupAck_ = !0, this.checkIfConnected_()) : this.channel_.isConnected() ? this.waitForAck_ ? parseInt(a.split(":")[1], 10) == this.sequence_ ? (this.waitForAck_ = !1, this.sendNextFrame_()) : goog.log.warning(goog.net.xpc.logger, "got ack with wrong sequence") : goog.log.warning(goog.net.xpc.logger, "got unexpected ack") : goog.log.warning(goog.net.xpc.logger, "received ack, but channel not connected");
+};
+goog.net.xpc.IframePollingTransport.prototype.sendNextFrame_ = function() {
+  if (!this.waitForAck_ && this.sendQueue_.length) {
+    var a = this.sendQueue_.shift();
+    ++this.sequence_;
+    this.msgSender_.send(this.sequence_ + a);
+    goog.log.log(goog.net.xpc.logger, goog.log.Level.FINEST, "msg sent: " + this.sequence_ + a);
+    this.waitForAck_ = !0;
+  }
+};
+goog.net.xpc.IframePollingTransport.prototype.deliverPayload_ = function(a) {
+  var b = a.indexOf(":"), c = a.substr(0, b);
+  a = a.substring(b + 1);
+  this.channel_.isConnected() ? this.channel_.xpcDeliver(c, a) : ((this.deliveryQueue_ || (this.deliveryQueue_ = [])).push({service:c, payload:a}), goog.log.log(goog.net.xpc.logger, goog.log.Level.FINEST, "queued delivery"));
+};
+goog.net.xpc.IframePollingTransport.prototype.MAX_FRAME_LENGTH_ = 3800;
+goog.net.xpc.IframePollingTransport.prototype.send = function(a, b) {
+  var c = a + ":" + b;
+  if (!goog.userAgent.IE || b.length <= this.MAX_FRAME_LENGTH_) {
+    this.sendQueue_.push("|" + c);
+  } else {
+    for (var d = b.length, e = Math.ceil(d / this.MAX_FRAME_LENGTH_), f = 0, g = 1;f < d;) {
+      this.sendQueue_.push("," + g + "/" + e + "|" + c.substr(f, this.MAX_FRAME_LENGTH_)), g++, f += this.MAX_FRAME_LENGTH_;
+    }
+  }
+  this.sendNextFrame_();
+};
+goog.net.xpc.IframePollingTransport.prototype.disposeInternal = function() {
+  goog.net.xpc.IframePollingTransport.superClass_.disposeInternal.call(this);
+  var a = goog.net.xpc.IframePollingTransport.receivers_;
+  goog.array.remove(a, this.msgReceiver_);
+  goog.array.remove(a, this.ackReceiver_);
+  this.msgReceiver_ = this.ackReceiver_ = null;
+  goog.dom.removeNode(this.msgIframeElm_);
+  goog.dom.removeNode(this.ackIframeElm_);
+  this.msgWinObj_ = this.ackWinObj_ = this.msgIframeElm_ = this.ackIframeElm_ = null;
+};
+goog.net.xpc.IframePollingTransport.receivers_ = [];
+goog.net.xpc.IframePollingTransport.TIME_POLL_SHORT_ = 10;
+goog.net.xpc.IframePollingTransport.TIME_POLL_LONG_ = 100;
+goog.net.xpc.IframePollingTransport.TIME_SHORT_POLL_AFTER_ACTIVITY_ = 1E3;
+goog.net.xpc.IframePollingTransport.receive_ = function() {
+  var a = goog.net.xpc.IframePollingTransport.receivers_, b, c = !1;
+  try {
+    for (var d = 0;b = a[d];d++) {
+      c = c || b.receive();
+    }
+  } catch (e) {
+    if (goog.log.info(goog.net.xpc.logger, "receive_() failed: " + e), b.transport_.channel_.notifyTransportError(), !a.length) {
+      return;
+    }
+  }
+  a = goog.now();
+  c && (goog.net.xpc.IframePollingTransport.lastActivity_ = a);
+  goog.net.xpc.IframePollingTransport.rcvTimer_ = window.setTimeout(goog.net.xpc.IframePollingTransport.receiveCb_, a - goog.net.xpc.IframePollingTransport.lastActivity_ < goog.net.xpc.IframePollingTransport.TIME_SHORT_POLL_AFTER_ACTIVITY_ ? goog.net.xpc.IframePollingTransport.TIME_POLL_SHORT_ : goog.net.xpc.IframePollingTransport.TIME_POLL_LONG_);
+};
+goog.net.xpc.IframePollingTransport.receiveCb_ = goog.bind(goog.net.xpc.IframePollingTransport.receive_, goog.net.xpc.IframePollingTransport);
+goog.net.xpc.IframePollingTransport.startRcvTimer_ = function() {
+  goog.log.fine(goog.net.xpc.logger, "starting receive-timer");
+  goog.net.xpc.IframePollingTransport.lastActivity_ = goog.now();
+  goog.net.xpc.IframePollingTransport.rcvTimer_ && window.clearTimeout(goog.net.xpc.IframePollingTransport.rcvTimer_);
+  goog.net.xpc.IframePollingTransport.rcvTimer_ = window.setTimeout(goog.net.xpc.IframePollingTransport.receiveCb_, goog.net.xpc.IframePollingTransport.TIME_POLL_SHORT_);
+};
+goog.net.xpc.IframePollingTransport.Sender = function(a, b) {
+  this.sendUri_ = a;
+  this.sendFrame_ = b;
+  this.cycle_ = 0;
+};
+goog.net.xpc.IframePollingTransport.Sender.prototype.send = function(a) {
+  this.cycle_ = ++this.cycle_ % 2;
+  a = this.sendUri_ + "#" + this.cycle_ + encodeURIComponent(a);
+  try {
+    goog.userAgent.WEBKIT ? this.sendFrame_.location.href = a : this.sendFrame_.location.replace(a);
+  } catch (b) {
+    goog.log.error(goog.net.xpc.logger, "sending failed", b);
+  }
+  goog.net.xpc.IframePollingTransport.startRcvTimer_();
+};
+goog.net.xpc.IframePollingTransport.Receiver = function(a, b, c) {
+  this.transport_ = a;
+  this.rcvFrame_ = b;
+  this.cb_ = c;
+  this.currentLoc_ = this.rcvFrame_.location.href.split("#")[0] + "#INITIAL";
+  goog.net.xpc.IframePollingTransport.receivers_.push(this);
+  goog.net.xpc.IframePollingTransport.startRcvTimer_();
+};
+goog.net.xpc.IframePollingTransport.Receiver.prototype.receive = function() {
+  var a = this.rcvFrame_.location.href;
+  if (a != this.currentLoc_) {
+    this.currentLoc_ = a;
+    if (a = a.split("#")[1]) {
+      a = a.substr(1), this.cb_(decodeURIComponent(a));
+    }
+    return!0;
+  }
+  return!1;
+};
+goog.dom.tags = {};
+goog.dom.tags.VOID_TAGS_ = goog.object.createSet("area base br col command embed hr img input keygen link meta param source track wbr".split(" "));
+goog.dom.tags.isVoidTag = function(a) {
+  return!0 === goog.dom.tags.VOID_TAGS_[a];
+};
+goog.string.TypedString = function() {
+};
+goog.string.Const = function() {
+  this.stringConstValueWithSecurityContract__googStringSecurityPrivate_ = "";
+  this.STRING_CONST_TYPE_MARKER__GOOG_STRING_SECURITY_PRIVATE_ = goog.string.Const.TYPE_MARKER_;
+};
+goog.string.Const.prototype.implementsGoogStringTypedString = !0;
+goog.string.Const.prototype.getTypedStringValue = function() {
+  return this.stringConstValueWithSecurityContract__googStringSecurityPrivate_;
+};
+goog.string.Const.prototype.toString = function() {
+  return "Const{" + this.stringConstValueWithSecurityContract__googStringSecurityPrivate_ + "}";
+};
+goog.string.Const.unwrap = function(a) {
+  if (a instanceof goog.string.Const && a.constructor === goog.string.Const && a.STRING_CONST_TYPE_MARKER__GOOG_STRING_SECURITY_PRIVATE_ === goog.string.Const.TYPE_MARKER_) {
+    return a.stringConstValueWithSecurityContract__googStringSecurityPrivate_;
+  }
+  goog.asserts.fail("expected object of type Const, got '" + a + "'");
+  return "type_error:Const";
+};
+goog.string.Const.from = function(a) {
+  return goog.string.Const.create__googStringSecurityPrivate_(a);
+};
+goog.string.Const.TYPE_MARKER_ = {};
+goog.string.Const.create__googStringSecurityPrivate_ = function(a) {
+  var b = new goog.string.Const;
+  b.stringConstValueWithSecurityContract__googStringSecurityPrivate_ = a;
+  return b;
+};
+goog.html = {};
+goog.html.SafeStyle = function() {
+  this.privateDoNotAccessOrElseSafeStyleWrappedValue_ = "";
+  this.SAFE_STYLE_TYPE_MARKER_GOOG_HTML_SECURITY_PRIVATE_ = goog.html.SafeStyle.TYPE_MARKER_GOOG_HTML_SECURITY_PRIVATE_;
+};
+goog.html.SafeStyle.prototype.implementsGoogStringTypedString = !0;
+goog.html.SafeStyle.TYPE_MARKER_GOOG_HTML_SECURITY_PRIVATE_ = {};
+goog.html.SafeStyle.fromConstant = function(a) {
+  a = goog.string.Const.unwrap(a);
+  if (0 === a.length) {
+    return goog.html.SafeStyle.EMPTY;
+  }
+  goog.html.SafeStyle.checkStyle_(a);
+  goog.asserts.assert(goog.string.endsWith(a, ";"), "Last character of style string is not ';': " + a);
+  goog.asserts.assert(goog.string.contains(a, ":"), "Style string must contain at least one ':', to specify a \"name: value\" pair: " + a);
+  return goog.html.SafeStyle.createSafeStyleSecurityPrivateDoNotAccessOrElse(a);
+};
+goog.html.SafeStyle.checkStyle_ = function(a) {
+  goog.asserts.assert(!/[<>]/.test(a), "Forbidden characters in style string: " + a);
+};
+goog.html.SafeStyle.prototype.getTypedStringValue = function() {
+  return this.privateDoNotAccessOrElseSafeStyleWrappedValue_;
+};
+goog.DEBUG && (goog.html.SafeStyle.prototype.toString = function() {
+  return "SafeStyle{" + this.privateDoNotAccessOrElseSafeStyleWrappedValue_ + "}";
+});
+goog.html.SafeStyle.unwrap = function(a) {
+  if (a instanceof goog.html.SafeStyle && a.constructor === goog.html.SafeStyle && a.SAFE_STYLE_TYPE_MARKER_GOOG_HTML_SECURITY_PRIVATE_ === goog.html.SafeStyle.TYPE_MARKER_GOOG_HTML_SECURITY_PRIVATE_) {
+    return a.privateDoNotAccessOrElseSafeStyleWrappedValue_;
+  }
+  goog.asserts.fail("expected object of type SafeStyle, got '" + a + "'");
+  return "type_error:SafeStyle";
+};
+goog.html.SafeStyle.createSafeStyleSecurityPrivateDoNotAccessOrElse = function(a) {
+  var b = new goog.html.SafeStyle;
+  b.privateDoNotAccessOrElseSafeStyleWrappedValue_ = a;
+  return b;
+};
+goog.html.SafeStyle.EMPTY = goog.html.SafeStyle.createSafeStyleSecurityPrivateDoNotAccessOrElse("");
+goog.html.SafeStyle.INNOCUOUS_STRING = "zClosurez";
+goog.html.SafeStyle.create = function(a) {
+  var b = "", c;
+  for (c in a) {
+    if (!/^[-_a-zA-Z0-9]+$/.test(c)) {
+      throw Error("Name allows only [-_a-zA-Z0-9], got: " + c);
+    }
+    var d = a[c];
+    null != d && (d instanceof goog.string.Const ? (d = goog.string.Const.unwrap(d), goog.asserts.assert(!/[{;}]/.test(d), "Value does not allow [{;}].")) : goog.html.SafeStyle.VALUE_RE_.test(d) || (goog.asserts.fail("String value allows only [-.%_!# a-zA-Z0-9], got: " + d), d = goog.html.SafeStyle.INNOCUOUS_STRING), b += c + ":" + d + ";");
+  }
+  if (!b) {
+    return goog.html.SafeStyle.EMPTY;
+  }
+  goog.html.SafeStyle.checkStyle_(b);
+  return goog.html.SafeStyle.createSafeStyleSecurityPrivateDoNotAccessOrElse(b);
+};
+goog.html.SafeStyle.VALUE_RE_ = /^[-.%_!# a-zA-Z0-9]+$/;
+goog.html.SafeStyle.concat = function(a) {
+  var b = "", c = function(a) {
+    goog.isArray(a) ? goog.array.forEach(a, c) : b += goog.html.SafeStyle.unwrap(a);
+  };
+  goog.array.forEach(arguments, c);
+  return b ? goog.html.SafeStyle.createSafeStyleSecurityPrivateDoNotAccessOrElse(b) : goog.html.SafeStyle.EMPTY;
+};
+goog.i18n.bidi = {};
+goog.i18n.bidi.FORCE_RTL = !1;
+goog.i18n.bidi.IS_RTL = goog.i18n.bidi.FORCE_RTL || ("ar" == goog.LOCALE.substring(0, 2).toLowerCase() || "fa" == goog.LOCALE.substring(0, 2).toLowerCase() || "he" == goog.LOCALE.substring(0, 2).toLowerCase() || "iw" == goog.LOCALE.substring(0, 2).toLowerCase() || "ps" == goog.LOCALE.substring(0, 2).toLowerCase() || "sd" == goog.LOCALE.substring(0, 2).toLowerCase() || "ug" == goog.LOCALE.substring(0, 2).toLowerCase() || "ur" == goog.LOCALE.substring(0, 2).toLowerCase() || "yi" == goog.LOCALE.substring(0, 
+2).toLowerCase()) && (2 == goog.LOCALE.length || "-" == goog.LOCALE.substring(2, 3) || "_" == goog.LOCALE.substring(2, 3)) || 3 <= goog.LOCALE.length && "ckb" == goog.LOCALE.substring(0, 3).toLowerCase() && (3 == goog.LOCALE.length || "-" == goog.LOCALE.substring(3, 4) || "_" == goog.LOCALE.substring(3, 4));
+goog.i18n.bidi.Format = {LRE:"\u202a", RLE:"\u202b", PDF:"\u202c", LRM:"\u200e", RLM:"\u200f"};
+goog.i18n.bidi.Dir = {LTR:1, RTL:-1, NEUTRAL:0, UNKNOWN:0};
+goog.i18n.bidi.RIGHT = "right";
+goog.i18n.bidi.LEFT = "left";
+goog.i18n.bidi.I18N_RIGHT = goog.i18n.bidi.IS_RTL ? goog.i18n.bidi.LEFT : goog.i18n.bidi.RIGHT;
+goog.i18n.bidi.I18N_LEFT = goog.i18n.bidi.IS_RTL ? goog.i18n.bidi.RIGHT : goog.i18n.bidi.LEFT;
+goog.i18n.bidi.toDir = function(a, b) {
+  return "number" == typeof a ? 0 < a ? goog.i18n.bidi.Dir.LTR : 0 > a ? goog.i18n.bidi.Dir.RTL : b ? null : goog.i18n.bidi.Dir.NEUTRAL : null == a ? null : a ? goog.i18n.bidi.Dir.RTL : goog.i18n.bidi.Dir.LTR;
+};
+goog.i18n.bidi.ltrChars_ = "A-Za-z\u00c0-\u00d6\u00d8-\u00f6\u00f8-\u02b8\u0300-\u0590\u0800-\u1fff\u200e\u2c00-\ufb1c\ufe00-\ufe6f\ufefd-\uffff";
+goog.i18n.bidi.rtlChars_ = "\u0591-\u07ff\u200f\ufb1d-\ufdff\ufe70-\ufefc";
+goog.i18n.bidi.htmlSkipReg_ = /<[^>]*>|&[^;]+;/g;
+goog.i18n.bidi.stripHtmlIfNeeded_ = function(a, b) {
+  return b ? a.replace(goog.i18n.bidi.htmlSkipReg_, "") : a;
+};
+goog.i18n.bidi.rtlCharReg_ = new RegExp("[" + goog.i18n.bidi.rtlChars_ + "]");
+goog.i18n.bidi.ltrCharReg_ = new RegExp("[" + goog.i18n.bidi.ltrChars_ + "]");
+goog.i18n.bidi.hasAnyRtl = function(a, b) {
+  return goog.i18n.bidi.rtlCharReg_.test(goog.i18n.bidi.stripHtmlIfNeeded_(a, b));
+};
+goog.i18n.bidi.hasRtlChar = goog.i18n.bidi.hasAnyRtl;
+goog.i18n.bidi.hasAnyLtr = function(a, b) {
+  return goog.i18n.bidi.ltrCharReg_.test(goog.i18n.bidi.stripHtmlIfNeeded_(a, b));
+};
+goog.i18n.bidi.ltrRe_ = new RegExp("^[" + goog.i18n.bidi.ltrChars_ + "]");
+goog.i18n.bidi.rtlRe_ = new RegExp("^[" + goog.i18n.bidi.rtlChars_ + "]");
+goog.i18n.bidi.isRtlChar = function(a) {
+  return goog.i18n.bidi.rtlRe_.test(a);
+};
+goog.i18n.bidi.isLtrChar = function(a) {
+  return goog.i18n.bidi.ltrRe_.test(a);
+};
+goog.i18n.bidi.isNeutralChar = function(a) {
+  return!goog.i18n.bidi.isLtrChar(a) && !goog.i18n.bidi.isRtlChar(a);
+};
+goog.i18n.bidi.ltrDirCheckRe_ = new RegExp("^[^" + goog.i18n.bidi.rtlChars_ + "]*[" + goog.i18n.bidi.ltrChars_ + "]");
+goog.i18n.bidi.rtlDirCheckRe_ = new RegExp("^[^" + goog.i18n.bidi.ltrChars_ + "]*[" + goog.i18n.bidi.rtlChars_ + "]");
+goog.i18n.bidi.startsWithRtl = function(a, b) {
+  return goog.i18n.bidi.rtlDirCheckRe_.test(goog.i18n.bidi.stripHtmlIfNeeded_(a, b));
+};
+goog.i18n.bidi.isRtlText = goog.i18n.bidi.startsWithRtl;
+goog.i18n.bidi.startsWithLtr = function(a, b) {
+  return goog.i18n.bidi.ltrDirCheckRe_.test(goog.i18n.bidi.stripHtmlIfNeeded_(a, b));
+};
+goog.i18n.bidi.isLtrText = goog.i18n.bidi.startsWithLtr;
+goog.i18n.bidi.isRequiredLtrRe_ = /^http:\/\/.*/;
+goog.i18n.bidi.isNeutralText = function(a, b) {
+  a = goog.i18n.bidi.stripHtmlIfNeeded_(a, b);
+  return goog.i18n.bidi.isRequiredLtrRe_.test(a) || !goog.i18n.bidi.hasAnyLtr(a) && !goog.i18n.bidi.hasAnyRtl(a);
+};
+goog.i18n.bidi.ltrExitDirCheckRe_ = new RegExp("[" + goog.i18n.bidi.ltrChars_ + "][^" + goog.i18n.bidi.rtlChars_ + "]*$");
+goog.i18n.bidi.rtlExitDirCheckRe_ = new RegExp("[" + goog.i18n.bidi.rtlChars_ + "][^" + goog.i18n.bidi.ltrChars_ + "]*$");
+goog.i18n.bidi.endsWithLtr = function(a, b) {
+  return goog.i18n.bidi.ltrExitDirCheckRe_.test(goog.i18n.bidi.stripHtmlIfNeeded_(a, b));
+};
+goog.i18n.bidi.isLtrExitText = goog.i18n.bidi.endsWithLtr;
+goog.i18n.bidi.endsWithRtl = function(a, b) {
+  return goog.i18n.bidi.rtlExitDirCheckRe_.test(goog.i18n.bidi.stripHtmlIfNeeded_(a, b));
+};
+goog.i18n.bidi.isRtlExitText = goog.i18n.bidi.endsWithRtl;
+goog.i18n.bidi.rtlLocalesRe_ = /^(ar|ckb|dv|he|iw|fa|nqo|ps|sd|ug|ur|yi|.*[-_](Arab|Hebr|Thaa|Nkoo|Tfng))(?!.*[-_](Latn|Cyrl)($|-|_))($|-|_)/i;
+goog.i18n.bidi.isRtlLanguage = function(a) {
+  return goog.i18n.bidi.rtlLocalesRe_.test(a);
+};
+goog.i18n.bidi.bracketGuardHtmlRe_ = /(\(.*?\)+)|(\[.*?\]+)|(\{.*?\}+)|(&lt;.*?(&gt;)+)/g;
+goog.i18n.bidi.bracketGuardTextRe_ = /(\(.*?\)+)|(\[.*?\]+)|(\{.*?\}+)|(<.*?>+)/g;
+goog.i18n.bidi.guardBracketInHtml = function(a, b) {
+  return(void 0 === b ? goog.i18n.bidi.hasAnyRtl(a) : b) ? a.replace(goog.i18n.bidi.bracketGuardHtmlRe_, "\x3cspan dir\x3drtl\x3e$\x26\x3c/span\x3e") : a.replace(goog.i18n.bidi.bracketGuardHtmlRe_, "\x3cspan dir\x3dltr\x3e$\x26\x3c/span\x3e");
+};
+goog.i18n.bidi.guardBracketInText = function(a, b) {
+  var c = (void 0 === b ? goog.i18n.bidi.hasAnyRtl(a) : b) ? goog.i18n.bidi.Format.RLM : goog.i18n.bidi.Format.LRM;
+  return a.replace(goog.i18n.bidi.bracketGuardTextRe_, c + "$\x26" + c);
+};
+goog.i18n.bidi.enforceRtlInHtml = function(a) {
+  return "\x3c" == a.charAt(0) ? a.replace(/<\w+/, "$\x26 dir\x3drtl") : "\n\x3cspan dir\x3drtl\x3e" + a + "\x3c/span\x3e";
+};
+goog.i18n.bidi.enforceRtlInText = function(a) {
+  return goog.i18n.bidi.Format.RLE + a + goog.i18n.bidi.Format.PDF;
+};
+goog.i18n.bidi.enforceLtrInHtml = function(a) {
+  return "\x3c" == a.charAt(0) ? a.replace(/<\w+/, "$\x26 dir\x3dltr") : "\n\x3cspan dir\x3dltr\x3e" + a + "\x3c/span\x3e";
+};
+goog.i18n.bidi.enforceLtrInText = function(a) {
+  return goog.i18n.bidi.Format.LRE + a + goog.i18n.bidi.Format.PDF;
+};
+goog.i18n.bidi.dimensionsRe_ = /:\s*([.\d][.\w]*)\s+([.\d][.\w]*)\s+([.\d][.\w]*)\s+([.\d][.\w]*)/g;
+goog.i18n.bidi.leftRe_ = /left/gi;
+goog.i18n.bidi.rightRe_ = /right/gi;
+goog.i18n.bidi.tempRe_ = /%%%%/g;
+goog.i18n.bidi.mirrorCSS = function(a) {
+  return a.replace(goog.i18n.bidi.dimensionsRe_, ":$1 $4 $3 $2").replace(goog.i18n.bidi.leftRe_, "%%%%").replace(goog.i18n.bidi.rightRe_, goog.i18n.bidi.LEFT).replace(goog.i18n.bidi.tempRe_, goog.i18n.bidi.RIGHT);
+};
+goog.i18n.bidi.doubleQuoteSubstituteRe_ = /([\u0591-\u05f2])"/g;
+goog.i18n.bidi.singleQuoteSubstituteRe_ = /([\u0591-\u05f2])'/g;
+goog.i18n.bidi.normalizeHebrewQuote = function(a) {
+  return a.replace(goog.i18n.bidi.doubleQuoteSubstituteRe_, "$1\u05f4").replace(goog.i18n.bidi.singleQuoteSubstituteRe_, "$1\u05f3");
+};
+goog.i18n.bidi.wordSeparatorRe_ = /\s+/;
+goog.i18n.bidi.hasNumeralsRe_ = /\d/;
+goog.i18n.bidi.rtlDetectionThreshold_ = .4;
+goog.i18n.bidi.estimateDirection = function(a, b) {
+  for (var c = 0, d = 0, e = !1, f = goog.i18n.bidi.stripHtmlIfNeeded_(a, b).split(goog.i18n.bidi.wordSeparatorRe_), g = 0;g < f.length;g++) {
+    var h = f[g];
+    goog.i18n.bidi.startsWithRtl(h) ? (c++, d++) : goog.i18n.bidi.isRequiredLtrRe_.test(h) ? e = !0 : goog.i18n.bidi.hasAnyLtr(h) ? d++ : goog.i18n.bidi.hasNumeralsRe_.test(h) && (e = !0);
+  }
+  return 0 == d ? e ? goog.i18n.bidi.Dir.LTR : goog.i18n.bidi.Dir.NEUTRAL : c / d > goog.i18n.bidi.rtlDetectionThreshold_ ? goog.i18n.bidi.Dir.RTL : goog.i18n.bidi.Dir.LTR;
+};
+goog.i18n.bidi.detectRtlDirectionality = function(a, b) {
+  return goog.i18n.bidi.estimateDirection(a, b) == goog.i18n.bidi.Dir.RTL;
+};
+goog.i18n.bidi.setElementDirAndAlign = function(a, b) {
+  a && (b = goog.i18n.bidi.toDir(b)) && (a.style.textAlign = b == goog.i18n.bidi.Dir.RTL ? goog.i18n.bidi.RIGHT : goog.i18n.bidi.LEFT, a.dir = b == goog.i18n.bidi.Dir.RTL ? "rtl" : "ltr");
+};
+goog.i18n.bidi.DirectionalString = function() {
+};
+goog.html.SafeUrl = function() {
+  this.privateDoNotAccessOrElseSafeHtmlWrappedValue_ = "";
+  this.SAFE_URL_TYPE_MARKER_GOOG_HTML_SECURITY_PRIVATE_ = goog.html.SafeUrl.TYPE_MARKER_GOOG_HTML_SECURITY_PRIVATE_;
+};
+goog.html.SafeUrl.INNOCUOUS_STRING = "about:invalid#zClosurez";
+goog.html.SafeUrl.prototype.implementsGoogStringTypedString = !0;
+goog.html.SafeUrl.prototype.getTypedStringValue = function() {
+  return this.privateDoNotAccessOrElseSafeHtmlWrappedValue_;
+};
+goog.html.SafeUrl.prototype.implementsGoogI18nBidiDirectionalString = !0;
+goog.html.SafeUrl.prototype.getDirection = function() {
+  return goog.i18n.bidi.Dir.LTR;
+};
+goog.DEBUG && (goog.html.SafeUrl.prototype.toString = function() {
+  return "SafeUrl{" + this.privateDoNotAccessOrElseSafeHtmlWrappedValue_ + "}";
+});
+goog.html.SafeUrl.unwrap = function(a) {
+  if (a instanceof goog.html.SafeUrl && a.constructor === goog.html.SafeUrl && a.SAFE_URL_TYPE_MARKER_GOOG_HTML_SECURITY_PRIVATE_ === goog.html.SafeUrl.TYPE_MARKER_GOOG_HTML_SECURITY_PRIVATE_) {
+    return a.privateDoNotAccessOrElseSafeHtmlWrappedValue_;
+  }
+  goog.asserts.fail("expected object of type SafeUrl, got '" + a + "'");
+  return "type_error:SafeUrl";
+};
+goog.html.SafeUrl.fromConstant = function(a) {
+  return goog.html.SafeUrl.createSafeUrlSecurityPrivateDoNotAccessOrElse(goog.string.Const.unwrap(a));
+};
+goog.html.SAFE_URL_PATTERN_ = /^(?:(?:https?|mailto):|[^&:/?#]*(?:[/?#]|$))/i;
+goog.html.SafeUrl.sanitize = function(a) {
+  if (a instanceof goog.html.SafeUrl) {
+    return a;
+  }
+  a = a.implementsGoogStringTypedString ? a.getTypedStringValue() : String(a);
+  a = goog.html.SAFE_URL_PATTERN_.test(a) ? goog.html.SafeUrl.normalize_(a) : goog.html.SafeUrl.INNOCUOUS_STRING;
+  return goog.html.SafeUrl.createSafeUrlSecurityPrivateDoNotAccessOrElse(a);
+};
+goog.html.SafeUrl.normalize_ = function(a) {
+  try {
+    var b = encodeURI(a);
+  } catch (c) {
+    return goog.html.SafeUrl.INNOCUOUS_STRING;
+  }
+  return b.replace(goog.html.SafeUrl.NORMALIZE_MATCHER_, function(a) {
+    return goog.html.SafeUrl.NORMALIZE_REPLACER_MAP_[a];
+  });
+};
+goog.html.SafeUrl.NORMALIZE_MATCHER_ = /[()']|%5B|%5D|%25/g;
+goog.html.SafeUrl.NORMALIZE_REPLACER_MAP_ = {"'":"%27", "(":"%28", ")":"%29", "%5B":"[", "%5D":"]", "%25":"%"};
+goog.html.SafeUrl.TYPE_MARKER_GOOG_HTML_SECURITY_PRIVATE_ = {};
+goog.html.SafeUrl.createSafeUrlSecurityPrivateDoNotAccessOrElse = function(a) {
+  var b = new goog.html.SafeUrl;
+  b.privateDoNotAccessOrElseSafeHtmlWrappedValue_ = a;
+  return b;
+};
+goog.html.SafeHtml = function() {
+  this.privateDoNotAccessOrElseSafeHtmlWrappedValue_ = "";
+  this.SAFE_HTML_TYPE_MARKER_GOOG_HTML_SECURITY_PRIVATE_ = goog.html.SafeHtml.TYPE_MARKER_GOOG_HTML_SECURITY_PRIVATE_;
+  this.dir_ = null;
+};
+goog.html.SafeHtml.prototype.implementsGoogI18nBidiDirectionalString = !0;
+goog.html.SafeHtml.prototype.getDirection = function() {
+  return this.dir_;
+};
+goog.html.SafeHtml.prototype.implementsGoogStringTypedString = !0;
+goog.html.SafeHtml.prototype.getTypedStringValue = function() {
+  return this.privateDoNotAccessOrElseSafeHtmlWrappedValue_;
+};
+goog.DEBUG && (goog.html.SafeHtml.prototype.toString = function() {
+  return "SafeHtml{" + this.privateDoNotAccessOrElseSafeHtmlWrappedValue_ + "}";
+});
+goog.html.SafeHtml.unwrap = function(a) {
+  if (a instanceof goog.html.SafeHtml && a.constructor === goog.html.SafeHtml && a.SAFE_HTML_TYPE_MARKER_GOOG_HTML_SECURITY_PRIVATE_ === goog.html.SafeHtml.TYPE_MARKER_GOOG_HTML_SECURITY_PRIVATE_) {
+    return a.privateDoNotAccessOrElseSafeHtmlWrappedValue_;
+  }
+  goog.asserts.fail("expected object of type SafeHtml, got '" + a + "'");
+  return "type_error:SafeHtml";
+};
+goog.html.SafeHtml.htmlEscape = function(a) {
+  if (a instanceof goog.html.SafeHtml) {
+    return a;
+  }
+  var b = null;
+  a.implementsGoogI18nBidiDirectionalString && (b = a.getDirection());
+  a = a.implementsGoogStringTypedString ? a.getTypedStringValue() : String(a);
+  return goog.html.SafeHtml.createSafeHtmlSecurityPrivateDoNotAccessOrElse(goog.string.htmlEscape(a), b);
+};
+goog.html.SafeHtml.htmlEscapePreservingNewlines = function(a) {
+  if (a instanceof goog.html.SafeHtml) {
+    return a;
+  }
+  a = goog.html.SafeHtml.htmlEscape(a);
+  return goog.html.SafeHtml.createSafeHtmlSecurityPrivateDoNotAccessOrElse(goog.string.newLineToBr(goog.html.SafeHtml.unwrap(a)), a.getDirection());
+};
+goog.html.SafeHtml.from = goog.html.SafeHtml.htmlEscape;
+goog.html.SafeHtml.VALID_NAMES_IN_TAG_ = /^[a-zA-Z0-9-]+$/;
+goog.html.SafeHtml.URL_ATTRIBUTES_ = goog.object.createSet("action", "cite", "data", "formaction", "href", "manifest", "poster", "src");
+goog.html.SafeHtml.NOT_ALLOWED_TAG_NAMES_ = goog.object.createSet("link", "script", "style");
+goog.html.SafeHtml.create = function(a, b, c) {
+  if (!goog.html.SafeHtml.VALID_NAMES_IN_TAG_.test(a)) {
+    throw Error("Invalid tag name \x3c" + a + "\x3e.");
+  }
+  if (a.toLowerCase() in goog.html.SafeHtml.NOT_ALLOWED_TAG_NAMES_) {
+    throw Error("Tag name \x3c" + a + "\x3e is not allowed for SafeHtml.");
+  }
+  var d = null, e = "\x3c" + a;
+  if (b) {
+    for (var f in b) {
+      if (!goog.html.SafeHtml.VALID_NAMES_IN_TAG_.test(f)) {
+        throw Error('Invalid attribute name "' + f + '".');
+      }
+      var g = b[f];
+      if (null != g) {
+        if (g instanceof goog.string.Const) {
+          g = goog.string.Const.unwrap(g);
+        } else {
+          if ("style" == f.toLowerCase()) {
+            g = goog.html.SafeHtml.getStyleValue_(g);
+          } else {
+            if (/^on/i.test(f)) {
+              throw Error('Attribute "' + f + '" requires goog.string.Const value, "' + g + '" given.');
+            }
+            if (g instanceof goog.html.SafeUrl) {
+              g = goog.html.SafeUrl.unwrap(g);
+            } else {
+              if (f.toLowerCase() in goog.html.SafeHtml.URL_ATTRIBUTES_) {
+                throw Error('Attribute "' + f + '" requires goog.string.Const or goog.html.SafeUrl value, "' + g + '" given.');
+              }
+            }
+          }
+        }
+        goog.asserts.assert(goog.isString(g) || goog.isNumber(g), "String or number value expected, got " + typeof g + " with value: " + g);
+        e += " " + f + '\x3d"' + goog.string.htmlEscape(String(g)) + '"';
+      }
+    }
+  }
+  goog.isDef(c) ? goog.isArray(c) || (c = [c]) : c = [];
+  goog.dom.tags.isVoidTag(a.toLowerCase()) ? (goog.asserts.assert(!c.length, "Void tag \x3c" + a + "\x3e does not allow content."), e += "\x3e") : (d = goog.html.SafeHtml.concat(c), e += "\x3e" + goog.html.SafeHtml.unwrap(d) + "\x3c/" + a + "\x3e", d = d.getDirection());
+  (a = b && b.dir) && (d = /^(ltr|rtl|auto)$/i.test(a) ? goog.i18n.bidi.Dir.NEUTRAL : null);
+  return goog.html.SafeHtml.createSafeHtmlSecurityPrivateDoNotAccessOrElse(e, d);
+};
+goog.html.SafeHtml.getStyleValue_ = function(a) {
+  if (!goog.isObject(a)) {
+    throw Error('The "style" attribute requires goog.html.SafeStyle or map of style properties, ' + typeof a + " given: " + a);
+  }
+  a instanceof goog.html.SafeStyle || (a = goog.html.SafeStyle.create(a));
+  return goog.html.SafeStyle.unwrap(a);
+};
+goog.html.SafeHtml.createWithDir = function(a, b, c, d) {
+  b = goog.html.SafeHtml.create(b, c, d);
+  b.dir_ = a;
+  return b;
+};
+goog.html.SafeHtml.concat = function(a) {
+  var b = goog.i18n.bidi.Dir.NEUTRAL, c = "", d = function(a) {
+    goog.isArray(a) ? goog.array.forEach(a, d) : (a = goog.html.SafeHtml.htmlEscape(a), c += goog.html.SafeHtml.unwrap(a), a = a.getDirection(), b == goog.i18n.bidi.Dir.NEUTRAL ? b = a : a != goog.i18n.bidi.Dir.NEUTRAL && b != a && (b = null));
+  };
+  goog.array.forEach(arguments, d);
+  return goog.html.SafeHtml.createSafeHtmlSecurityPrivateDoNotAccessOrElse(c, b);
+};
+goog.html.SafeHtml.concatWithDir = function(a, b) {
+  var c = goog.html.SafeHtml.concat(goog.array.slice(arguments, 1));
+  c.dir_ = a;
+  return c;
+};
+goog.html.SafeHtml.TYPE_MARKER_GOOG_HTML_SECURITY_PRIVATE_ = {};
+goog.html.SafeHtml.createSafeHtmlSecurityPrivateDoNotAccessOrElse = function(a, b) {
+  var c = new goog.html.SafeHtml;
+  c.privateDoNotAccessOrElseSafeHtmlWrappedValue_ = a;
+  c.dir_ = b;
+  return c;
+};
+goog.html.SafeHtml.EMPTY = goog.html.SafeHtml.createSafeHtmlSecurityPrivateDoNotAccessOrElse("", goog.i18n.bidi.Dir.NEUTRAL);
+goog.dom.safe = {};
+goog.dom.safe.setInnerHtml = function(a, b) {
+  a.innerHTML = goog.html.SafeHtml.unwrap(b);
+};
+goog.dom.safe.setOuterHtml = function(a, b) {
+  a.outerHTML = goog.html.SafeHtml.unwrap(b);
+};
+goog.dom.safe.documentWrite = function(a, b) {
+  a.write(goog.html.SafeHtml.unwrap(b));
+};
+goog.dom.safe.setAnchorHref = function(a, b) {
+  var c;
+  c = b instanceof goog.html.SafeUrl ? b : goog.html.SafeUrl.sanitize(b);
+  a.href = goog.html.SafeUrl.unwrap(c);
+};
+goog.dom.safe.setLocationHref = function(a, b) {
+  var c;
+  c = b instanceof goog.html.SafeUrl ? b : goog.html.SafeUrl.sanitize(b);
+  a.href = goog.html.SafeUrl.unwrap(c);
+};
+goog.net.xpc.IframeRelayTransport = function(a, b) {
+  goog.net.xpc.Transport.call(this, b);
+  this.channel_ = a;
+  this.peerRelayUri_ = this.channel_.getConfig()[goog.net.xpc.CfgFields.PEER_RELAY_URI];
+  this.peerIframeId_ = this.channel_.getConfig()[goog.net.xpc.CfgFields.IFRAME_ID];
+  goog.userAgent.WEBKIT && goog.net.xpc.IframeRelayTransport.startCleanupTimer_();
+};
+goog.inherits(goog.net.xpc.IframeRelayTransport, goog.net.xpc.Transport);
+goog.userAgent.WEBKIT && (goog.net.xpc.IframeRelayTransport.iframeRefs_ = [], goog.net.xpc.IframeRelayTransport.CLEANUP_INTERVAL_ = 1E3, goog.net.xpc.IframeRelayTransport.IFRAME_MAX_AGE_ = 3E3, goog.net.xpc.IframeRelayTransport.cleanupTimer_ = 0, goog.net.xpc.IframeRelayTransport.startCleanupTimer_ = function() {
+  goog.net.xpc.IframeRelayTransport.cleanupTimer_ || (goog.net.xpc.IframeRelayTransport.cleanupTimer_ = window.setTimeout(function() {
+    goog.net.xpc.IframeRelayTransport.cleanup_();
+  }, goog.net.xpc.IframeRelayTransport.CLEANUP_INTERVAL_));
+}, goog.net.xpc.IframeRelayTransport.cleanup_ = function(a) {
+  var b = goog.now();
+  for (a = a || goog.net.xpc.IframeRelayTransport.IFRAME_MAX_AGE_;goog.net.xpc.IframeRelayTransport.iframeRefs_.length && b - goog.net.xpc.IframeRelayTransport.iframeRefs_[0].timestamp >= a;) {
+    var c = goog.net.xpc.IframeRelayTransport.iframeRefs_.shift().iframeElement;
+    goog.dom.removeNode(c);
+    goog.log.log(goog.net.xpc.logger, goog.log.Level.FINEST, "iframe removed");
+  }
+  goog.net.xpc.IframeRelayTransport.cleanupTimer_ = window.setTimeout(goog.net.xpc.IframeRelayTransport.cleanupCb_, goog.net.xpc.IframeRelayTransport.CLEANUP_INTERVAL_);
+}, goog.net.xpc.IframeRelayTransport.cleanupCb_ = function() {
+  goog.net.xpc.IframeRelayTransport.cleanup_();
+});
+goog.net.xpc.IframeRelayTransport.IE_PAYLOAD_MAX_SIZE_ = 1800;
+goog.net.xpc.IframeRelayTransport.fragmentMap_ = {};
+goog.net.xpc.IframeRelayTransport.prototype.transportType = goog.net.xpc.TransportTypes.IFRAME_RELAY;
+goog.net.xpc.IframeRelayTransport.prototype.connect = function() {
+  this.getWindow().xpcRelay || (this.getWindow().xpcRelay = goog.net.xpc.IframeRelayTransport.receiveMessage_);
+  this.send(goog.net.xpc.TRANSPORT_SERVICE_, goog.net.xpc.SETUP);
+};
+goog.net.xpc.IframeRelayTransport.receiveMessage_ = function(a, b) {
+  var c = b.indexOf(":"), d = b.substr(0, c), e = b.substr(c + 1);
+  if (goog.userAgent.IE && -1 != (c = d.indexOf("|"))) {
+    var f = d.substr(0, c), d = d.substr(c + 1), c = d.indexOf("+"), g = d.substr(0, c), c = parseInt(d.substr(c + 1), 10), h = goog.net.xpc.IframeRelayTransport.fragmentMap_[g];
+    h || (h = goog.net.xpc.IframeRelayTransport.fragmentMap_[g] = {fragments:[], received:0, expected:0});
+    goog.string.contains(d, "++") && (h.expected = c + 1);
+    h.fragments[c] = e;
+    h.received++;
+    if (h.received != h.expected) {
+      return;
+    }
+    e = h.fragments.join("");
+    delete goog.net.xpc.IframeRelayTransport.fragmentMap_[g];
+  } else {
+    var f = d
+  }
+  goog.net.xpc.channels[a].xpcDeliver(f, decodeURIComponent(e));
+};
+goog.net.xpc.IframeRelayTransport.prototype.transportServiceHandler = function(a) {
+  a == goog.net.xpc.SETUP ? (this.send(goog.net.xpc.TRANSPORT_SERVICE_, goog.net.xpc.SETUP_ACK_), this.channel_.notifyConnected()) : a == goog.net.xpc.SETUP_ACK_ && this.channel_.notifyConnected();
+};
+goog.net.xpc.IframeRelayTransport.prototype.send = function(a, b) {
+  var c = encodeURIComponent(b), d = c.length, e = goog.net.xpc.IframeRelayTransport.IE_PAYLOAD_MAX_SIZE_;
+  if (goog.userAgent.IE && d > e) {
+    for (var f = goog.string.getRandomString(), g = 0, h = 0;g < d;h++) {
+      var k = c.substr(g, e), g = g + e;
+      this.send_(a, k, f + (g >= d ? "++" : "+") + h);
+    }
+  } else {
+    this.send_(a, c);
+  }
+};
+goog.net.xpc.IframeRelayTransport.prototype.send_ = function(a, b, c) {
+  if (goog.userAgent.IE) {
+    var d = this.getWindow().document.createElement("div");
+    goog.dom.safe.setInnerHtml(d, goog.html.SafeHtml.create("iframe", {onload:goog.string.Const.from("this.xpcOnload()")}));
+    d = d.childNodes[0];
+    d.xpcOnload = goog.net.xpc.IframeRelayTransport.iframeLoadHandler_;
+  } else {
+    d = this.getWindow().document.createElement("iframe"), goog.userAgent.WEBKIT ? goog.net.xpc.IframeRelayTransport.iframeRefs_.push({timestamp:goog.now(), iframeElement:d}) : goog.events.listen(d, "load", goog.net.xpc.IframeRelayTransport.iframeLoadHandler_);
+  }
+  var e = d.style;
+  e.visibility = "hidden";
+  e.width = d.style.height = "0px";
+  e.position = "absolute";
+  e = this.peerRelayUri_;
+  e += "#" + this.channel_.name;
+  this.peerIframeId_ && (e += "," + this.peerIframeId_);
+  e += "|" + a;
+  c && (e += "|" + c);
+  e += ":" + b;
+  d.src = e;
+  this.getWindow().document.body.appendChild(d);
+  goog.log.log(goog.net.xpc.logger, goog.log.Level.FINEST, "msg sent: " + e);
+};
+goog.net.xpc.IframeRelayTransport.iframeLoadHandler_ = function() {
+  goog.log.log(goog.net.xpc.logger, goog.log.Level.FINEST, "iframe-load");
+  goog.dom.removeNode(this);
+  this.xpcOnload = null;
+};
+goog.net.xpc.IframeRelayTransport.prototype.disposeInternal = function() {
+  goog.net.xpc.IframeRelayTransport.superClass_.disposeInternal.call(this);
+  goog.userAgent.WEBKIT && goog.net.xpc.IframeRelayTransport.cleanup_(0);
+};
+goog.net.xpc.NativeMessagingTransport = function(a, b, c, d, e) {
+  goog.net.xpc.Transport.call(this, c);
+  this.channel_ = a;
+  this.protocolVersion_ = e || 2;
+  goog.asserts.assert(1 <= this.protocolVersion_);
+  goog.asserts.assert(2 >= this.protocolVersion_);
+  this.peerHostname_ = b || "*";
+  this.eventHandler_ = new goog.events.EventHandler(this);
+  this.maybeAttemptToConnectTimer_ = new goog.Timer(100, this.getWindow());
+  this.oneSidedHandshake_ = !!d;
+  this.setupAckReceived_ = new goog.async.Deferred;
+  this.setupAckSent_ = new goog.async.Deferred;
+  this.connected_ = new goog.async.Deferred;
+  this.endpointId_ = goog.net.xpc.getRandomString(10);
+  this.peerEndpointId_ = null;
+  this.oneSidedHandshake_ ? this.channel_.getRole() == goog.net.xpc.CrossPageChannelRole.INNER ? this.connected_.awaitDeferred(this.setupAckReceived_) : this.connected_.awaitDeferred(this.setupAckSent_) : (this.connected_.awaitDeferred(this.setupAckReceived_), 2 == this.protocolVersion_ && this.connected_.awaitDeferred(this.setupAckSent_));
+  this.connected_.addCallback(this.notifyConnected_, this);
+  this.connected_.callback(!0);
+  this.eventHandler_.listen(this.maybeAttemptToConnectTimer_, goog.Timer.TICK, this.maybeAttemptToConnect_);
+  goog.log.info(goog.net.xpc.logger, "NativeMessagingTransport created.  protocolVersion\x3d" + this.protocolVersion_ + ", oneSidedHandshake\x3d" + this.oneSidedHandshake_ + ", role\x3d" + this.channel_.getRole());
+};
+goog.inherits(goog.net.xpc.NativeMessagingTransport, goog.net.xpc.Transport);
+goog.net.xpc.NativeMessagingTransport.CONNECTION_DELAY_MS_ = 200;
+goog.net.xpc.NativeMessagingTransport.prototype.peerProtocolVersion_ = null;
+goog.net.xpc.NativeMessagingTransport.prototype.initialized_ = !1;
+goog.net.xpc.NativeMessagingTransport.prototype.transportType = goog.net.xpc.TransportTypes.NATIVE_MESSAGING;
+goog.net.xpc.NativeMessagingTransport.MESSAGE_DELIMITER_ = ",";
+goog.net.xpc.NativeMessagingTransport.activeCount_ = {};
+goog.net.xpc.NativeMessagingTransport.sendTimerId_ = 0;
+goog.net.xpc.NativeMessagingTransport.prototype.couldPeerVersionBe_ = function(a) {
+  return null == this.peerProtocolVersion_ || this.peerProtocolVersion_ == a;
+};
+goog.net.xpc.NativeMessagingTransport.initialize_ = function(a) {
+  var b = goog.getUid(a), c = goog.net.xpc.NativeMessagingTransport.activeCount_[b];
+  goog.isNumber(c) || (c = 0);
+  0 == c && goog.events.listen(a.postMessage ? a : a.document, "message", goog.net.xpc.NativeMessagingTransport.messageReceived_, !1, goog.net.xpc.NativeMessagingTransport);
+  goog.net.xpc.NativeMessagingTransport.activeCount_[b] = c + 1;
+};
+goog.net.xpc.NativeMessagingTransport.messageReceived_ = function(a) {
+  var b = a.getBrowserEvent().data;
+  if (!goog.isString(b)) {
+    return!1;
+  }
+  var c = b.indexOf("|"), d = b.indexOf(":");
+  if (-1 == c || -1 == d) {
+    return!1;
+  }
+  var e = b.substring(0, c), c = b.substring(c + 1, d), b = b.substring(d + 1);
+  goog.log.fine(goog.net.xpc.logger, "messageReceived: channel\x3d" + e + ", service\x3d" + c + ", payload\x3d" + b);
+  if (d = goog.net.xpc.channels[e]) {
+    return d.xpcDeliver(c, b, a.getBrowserEvent().origin), !0;
+  }
+  a = goog.net.xpc.NativeMessagingTransport.parseTransportPayload_(b)[0];
+  for (var f in goog.net.xpc.channels) {
+    if (d = goog.net.xpc.channels[f], d.getRole() == goog.net.xpc.CrossPageChannelRole.INNER && !d.isConnected() && c == goog.net.xpc.TRANSPORT_SERVICE_ && (a == goog.net.xpc.SETUP || a == goog.net.xpc.SETUP_NTPV2)) {
+      return d.updateChannelNameAndCatalog(e), d.xpcDeliver(c, b), !0;
+    }
+  }
+  goog.log.info(goog.net.xpc.logger, 'channel name mismatch; message ignored"');
+  return!1;
+};
+goog.net.xpc.NativeMessagingTransport.prototype.transportServiceHandler = function(a) {
+  var b = goog.net.xpc.NativeMessagingTransport.parseTransportPayload_(a);
+  a = b[1];
+  switch(b[0]) {
+    case goog.net.xpc.SETUP_ACK_:
+      this.setPeerProtocolVersion_(1);
+      this.setupAckReceived_.hasFired() || this.setupAckReceived_.callback(!0);
+      break;
+    case goog.net.xpc.SETUP_ACK_NTPV2:
+      2 == this.protocolVersion_ && (this.setPeerProtocolVersion_(2), this.setupAckReceived_.hasFired() || this.setupAckReceived_.callback(!0));
+      break;
+    case goog.net.xpc.SETUP:
+      this.setPeerProtocolVersion_(1);
+      this.sendSetupAckMessage_(1);
+      break;
+    case goog.net.xpc.SETUP_NTPV2:
+      2 == this.protocolVersion_ && (b = this.peerProtocolVersion_, this.setPeerProtocolVersion_(2), this.sendSetupAckMessage_(2), 1 != b && null == this.peerEndpointId_ || this.peerEndpointId_ == a || (goog.log.info(goog.net.xpc.logger, "Sending SETUP and changing peer ID to: " + a), this.sendSetupMessage_()), this.peerEndpointId_ = a);
+  }
+};
+goog.net.xpc.NativeMessagingTransport.prototype.sendSetupMessage_ = function() {
+  goog.asserts.assert(!(1 == this.protocolVersion_ && 2 == this.peerProtocolVersion_));
+  if (2 == this.protocolVersion_ && this.couldPeerVersionBe_(2)) {
+    var a = goog.net.xpc.SETUP_NTPV2, a = a + goog.net.xpc.NativeMessagingTransport.MESSAGE_DELIMITER_, a = a + this.endpointId_;
+    this.send(goog.net.xpc.TRANSPORT_SERVICE_, a);
+  }
+  this.couldPeerVersionBe_(1) && this.send(goog.net.xpc.TRANSPORT_SERVICE_, goog.net.xpc.SETUP);
+};
+goog.net.xpc.NativeMessagingTransport.prototype.sendSetupAckMessage_ = function(a) {
+  goog.asserts.assert(1 != this.protocolVersion_ || 2 != a, "Shouldn't try to send a v2 setup ack in v1 mode.");
+  if (2 == this.protocolVersion_ && this.couldPeerVersionBe_(2) && 2 == a) {
+    this.send(goog.net.xpc.TRANSPORT_SERVICE_, goog.net.xpc.SETUP_ACK_NTPV2);
+  } else {
+    if (this.couldPeerVersionBe_(1) && 1 == a) {
+      this.send(goog.net.xpc.TRANSPORT_SERVICE_, goog.net.xpc.SETUP_ACK_);
+    } else {
+      return;
+    }
+  }
+  this.setupAckSent_.hasFired() || this.setupAckSent_.callback(!0);
+};
+goog.net.xpc.NativeMessagingTransport.prototype.setPeerProtocolVersion_ = function(a) {
+  a > this.peerProtocolVersion_ && (this.peerProtocolVersion_ = a);
+  1 == this.peerProtocolVersion_ && (this.setupAckSent_.hasFired() || this.oneSidedHandshake_ || this.setupAckSent_.callback(!0), this.peerEndpointId_ = null);
+};
+goog.net.xpc.NativeMessagingTransport.prototype.connect = function() {
+  goog.net.xpc.NativeMessagingTransport.initialize_(this.getWindow());
+  this.initialized_ = !0;
+  this.maybeAttemptToConnect_();
+};
+goog.net.xpc.NativeMessagingTransport.prototype.maybeAttemptToConnect_ = function() {
+  var a = this.channel_.getRole() == goog.net.xpc.CrossPageChannelRole.OUTER;
+  this.oneSidedHandshake_ && a || this.channel_.isConnected() || this.isDisposed() ? this.maybeAttemptToConnectTimer_.stop() : (this.maybeAttemptToConnectTimer_.start(), this.sendSetupMessage_());
+};
+goog.net.xpc.NativeMessagingTransport.prototype.send = function(a, b) {
+  var c = this.channel_.getPeerWindowObject();
+  c ? (this.send = function(a, b) {
+    var f = this, g = this.channel_.name;
+    this.sendTimerId_ = goog.Timer.callOnce(function() {
+      f.sendTimerId_ = 0;
+      try {
+        var h = c.postMessage ? c : c.document;
+        h.postMessage ? (h.postMessage(g + "|" + a + ":" + b, f.peerHostname_), goog.log.fine(goog.net.xpc.logger, "send(): service\x3d" + a + " payload\x3d" + b + " to hostname\x3d" + f.peerHostname_)) : goog.log.warning(goog.net.xpc.logger, "Peer window had no postMessage function.");
+      } catch (k) {
+        goog.log.warning(goog.net.xpc.logger, "Error performing postMessage, ignoring.", k);
+      }
+    }, 0);
+  }, this.send(a, b)) : goog.log.fine(goog.net.xpc.logger, "send(): window not ready");
+};
+goog.net.xpc.NativeMessagingTransport.prototype.notifyConnected_ = function() {
+  this.channel_.notifyConnected(1 == this.protocolVersion_ || 1 == this.peerProtocolVersion_ ? goog.net.xpc.NativeMessagingTransport.CONNECTION_DELAY_MS_ : void 0);
+};
+goog.net.xpc.NativeMessagingTransport.prototype.disposeInternal = function() {
+  if (this.initialized_) {
+    var a = this.getWindow(), b = goog.getUid(a), c = goog.net.xpc.NativeMessagingTransport.activeCount_[b];
+    goog.net.xpc.NativeMessagingTransport.activeCount_[b] = c - 1;
+    1 == c && goog.events.unlisten(a.postMessage ? a : a.document, "message", goog.net.xpc.NativeMessagingTransport.messageReceived_, !1, goog.net.xpc.NativeMessagingTransport);
+  }
+  this.sendTimerId_ && (goog.Timer.clear(this.sendTimerId_), this.sendTimerId_ = 0);
+  goog.dispose(this.eventHandler_);
+  delete this.eventHandler_;
+  goog.dispose(this.maybeAttemptToConnectTimer_);
+  delete this.maybeAttemptToConnectTimer_;
+  this.setupAckReceived_.cancel();
+  delete this.setupAckReceived_;
+  this.setupAckSent_.cancel();
+  delete this.setupAckSent_;
+  this.connected_.cancel();
+  delete this.connected_;
+  delete this.send;
+  goog.net.xpc.NativeMessagingTransport.superClass_.disposeInternal.call(this);
+};
+goog.net.xpc.NativeMessagingTransport.parseTransportPayload_ = function(a) {
+  a = a.split(goog.net.xpc.NativeMessagingTransport.MESSAGE_DELIMITER_);
+  a[1] = a[1] || null;
+  return a;
+};
+goog.net.xpc.NixTransport = function(a, b) {
+  goog.net.xpc.Transport.call(this, b);
+  this.channel_ = a;
+  this.authToken_ = a[goog.net.xpc.CfgFields.AUTH_TOKEN] || "";
+  this.remoteAuthToken_ = a[goog.net.xpc.CfgFields.REMOTE_AUTH_TOKEN] || "";
+  goog.net.xpc.NixTransport.conductGlobalSetup_(this.getWindow());
+  this[goog.net.xpc.NixTransport.NIX_HANDLE_MESSAGE] = this.handleMessage_;
+  this[goog.net.xpc.NixTransport.NIX_CREATE_CHANNEL] = this.createChannel_;
+};
+goog.inherits(goog.net.xpc.NixTransport, goog.net.xpc.Transport);
+goog.net.xpc.NixTransport.NIX_WRAPPER = "GCXPC____NIXVBS_wrapper";
+goog.net.xpc.NixTransport.NIX_GET_WRAPPER = "GCXPC____NIXVBS_get_wrapper";
+goog.net.xpc.NixTransport.NIX_HANDLE_MESSAGE = "GCXPC____NIXJS_handle_message";
+goog.net.xpc.NixTransport.NIX_CREATE_CHANNEL = "GCXPC____NIXJS_create_channel";
+goog.net.xpc.NixTransport.NIX_ID_FIELD = "GCXPC____NIXVBS_container";
+goog.net.xpc.NixTransport.isNixSupported = function() {
+  var a = !1;
+  try {
+    var b = window.opener;
+    window.opener = {};
+    a = goog.reflect.canAccessProperty(window, "opener");
+    window.opener = b;
+  } catch (c) {
+  }
+  return a;
+};
+goog.net.xpc.NixTransport.conductGlobalSetup_ = function(a) {
+  if (!a.nix_setup_complete) {
+    var b = "Class " + goog.net.xpc.NixTransport.NIX_WRAPPER + "\n Private m_Transport\nPrivate m_Auth\nPublic Sub SetTransport(transport)\nIf isEmpty(m_Transport) Then\nSet m_Transport \x3d transport\nEnd If\nEnd Sub\nPublic Sub SetAuth(auth)\nIf isEmpty(m_Auth) Then\nm_Auth \x3d auth\nEnd If\nEnd Sub\nPublic Function GetAuthToken()\n GetAuthToken \x3d m_Auth\nEnd Function\nPublic Sub SendMessage(service, payload)\n Call m_Transport." + goog.net.xpc.NixTransport.NIX_HANDLE_MESSAGE + "(service, payload)\nEnd Sub\nPublic Sub CreateChannel(channel)\n Call m_Transport." + 
+    goog.net.xpc.NixTransport.NIX_CREATE_CHANNEL + "(channel)\nEnd Sub\nPublic Sub " + goog.net.xpc.NixTransport.NIX_ID_FIELD + "()\n End Sub\nEnd Class\n Function " + goog.net.xpc.NixTransport.NIX_GET_WRAPPER + "(transport, auth)\nDim wrap\nSet wrap \x3d New " + goog.net.xpc.NixTransport.NIX_WRAPPER + "\nwrap.SetTransport transport\nwrap.SetAuth auth\nSet " + goog.net.xpc.NixTransport.NIX_GET_WRAPPER + " \x3d wrap\nEnd Function";
+    try {
+      a.execScript(b, "vbscript"), a.nix_setup_complete = !0;
+    } catch (c) {
+      goog.log.error(goog.net.xpc.logger, "exception caught while attempting global setup: " + c);
+    }
+  }
+};
+goog.net.xpc.NixTransport.prototype.transportType = goog.net.xpc.TransportTypes.NIX;
+goog.net.xpc.NixTransport.prototype.localSetupCompleted_ = !1;
+goog.net.xpc.NixTransport.prototype.nixChannel_ = null;
+goog.net.xpc.NixTransport.prototype.connect = function() {
+  this.channel_.getRole() == goog.net.xpc.CrossPageChannelRole.OUTER ? this.attemptOuterSetup_() : this.attemptInnerSetup_();
+};
+goog.net.xpc.NixTransport.prototype.attemptOuterSetup_ = function() {
+  if (!this.localSetupCompleted_) {
+    var a = this.channel_.getIframeElement();
+    try {
+      var b = this.getWindow()[goog.net.xpc.NixTransport.NIX_GET_WRAPPER];
+      a.contentWindow.opener = b(this, this.authToken_);
+      this.localSetupCompleted_ = !0;
+    } catch (c) {
+      goog.log.error(goog.net.xpc.logger, "exception caught while attempting setup: " + c);
+    }
+    this.localSetupCompleted_ || this.getWindow().setTimeout(goog.bind(this.attemptOuterSetup_, this), 100);
+  }
+};
+goog.net.xpc.NixTransport.prototype.attemptInnerSetup_ = function() {
+  if (!this.localSetupCompleted_) {
+    try {
+      var a = this.getWindow().opener;
+      if (a && goog.net.xpc.NixTransport.NIX_ID_FIELD in a) {
+        this.nixChannel_ = a;
+        if (this.nixChannel_.GetAuthToken() != this.remoteAuthToken_) {
+          goog.log.error(goog.net.xpc.logger, "Invalid auth token from other party");
+          return;
+        }
+        var b = this.getWindow()[goog.net.xpc.NixTransport.NIX_GET_WRAPPER];
+        this.nixChannel_.CreateChannel(b(this, this.authToken_));
+        this.localSetupCompleted_ = !0;
+        this.channel_.notifyConnected();
+      }
+    } catch (c) {
+      goog.log.error(goog.net.xpc.logger, "exception caught while attempting setup: " + c);
+      return;
+    }
+    this.localSetupCompleted_ || this.getWindow().setTimeout(goog.bind(this.attemptInnerSetup_, this), 100);
+  }
+};
+goog.net.xpc.NixTransport.prototype.createChannel_ = function(a) {
+  "unknown" == typeof a && goog.net.xpc.NixTransport.NIX_ID_FIELD in a || goog.log.error(goog.net.xpc.logger, "Invalid NIX channel given to createChannel_");
+  this.nixChannel_ = a;
+  this.nixChannel_.GetAuthToken() != this.remoteAuthToken_ ? goog.log.error(goog.net.xpc.logger, "Invalid auth token from other party") : this.channel_.notifyConnected();
+};
+goog.net.xpc.NixTransport.prototype.handleMessage_ = function(a, b) {
+  this.getWindow().setTimeout(goog.bind(function() {
+    this.channel_.xpcDeliver(a, b);
+  }, this), 1);
+};
+goog.net.xpc.NixTransport.prototype.send = function(a, b) {
+  "unknown" !== typeof this.nixChannel_ && goog.log.error(goog.net.xpc.logger, "NIX channel not connected");
+  this.nixChannel_.SendMessage(a, b);
+};
+goog.net.xpc.NixTransport.prototype.disposeInternal = function() {
+  goog.net.xpc.NixTransport.superClass_.disposeInternal.call(this);
+  this.nixChannel_ = null;
+};
+goog.net.xpc.CrossPageChannel = function(a, b) {
+  goog.messaging.AbstractChannel.call(this);
+  for (var c = 0, d;d = goog.net.xpc.UriCfgFields[c];c++) {
+    if (d in a && !/^https?:\/\//.test(a[d])) {
+      throw Error("URI " + a[d] + " is invalid for field " + d);
+    }
+  }
+  this.cfg_ = a;
+  this.name = this.cfg_[goog.net.xpc.CfgFields.CHANNEL_NAME] || goog.net.xpc.getRandomString(10);
+  this.domHelper_ = b || goog.dom.getDomHelper();
+  this.deferredDeliveries_ = [];
+  this.peerLoadHandler_ = new goog.events.EventHandler(this);
+  a[goog.net.xpc.CfgFields.LOCAL_POLL_URI] = a[goog.net.xpc.CfgFields.LOCAL_POLL_URI] || goog.uri.utils.getHost(this.domHelper_.getWindow().location.href) + "/robots.txt";
+  a[goog.net.xpc.CfgFields.PEER_POLL_URI] = a[goog.net.xpc.CfgFields.PEER_POLL_URI] || goog.uri.utils.getHost(a[goog.net.xpc.CfgFields.PEER_URI] || "") + "/robots.txt";
+  goog.net.xpc.channels[this.name] = this;
+  goog.events.getListener(window, goog.events.EventType.UNLOAD, goog.net.xpc.CrossPageChannel.disposeAll_) || goog.events.listenOnce(window, goog.events.EventType.UNLOAD, goog.net.xpc.CrossPageChannel.disposeAll_);
+  goog.log.info(goog.net.xpc.logger, "CrossPageChannel created: " + this.name);
+};
+goog.inherits(goog.net.xpc.CrossPageChannel, goog.messaging.AbstractChannel);
+goog.net.xpc.CrossPageChannel.TRANSPORT_SERVICE_ESCAPE_RE_ = new RegExp("^%*" + goog.net.xpc.TRANSPORT_SERVICE_ + "$");
+goog.net.xpc.CrossPageChannel.TRANSPORT_SERVICE_UNESCAPE_RE_ = new RegExp("^%+" + goog.net.xpc.TRANSPORT_SERVICE_ + "$");
+goog.net.xpc.CrossPageChannel.prototype.connectionDelay_ = null;
+goog.net.xpc.CrossPageChannel.prototype.peerWindowDeferred_ = null;
+goog.net.xpc.CrossPageChannel.prototype.transport_ = null;
+goog.net.xpc.CrossPageChannel.prototype.state_ = goog.net.xpc.ChannelStates.NOT_CONNECTED;
+goog.net.xpc.CrossPageChannel.prototype.isConnected = function() {
+  return this.state_ == goog.net.xpc.ChannelStates.CONNECTED;
+};
+goog.net.xpc.CrossPageChannel.prototype.peerWindowObject_ = null;
+goog.net.xpc.CrossPageChannel.prototype.iframeElement_ = null;
+goog.net.xpc.CrossPageChannel.prototype.getConfig = function() {
+  return this.cfg_;
+};
+goog.net.xpc.CrossPageChannel.prototype.getIframeElement = function() {
+  return this.iframeElement_;
+};
+goog.net.xpc.CrossPageChannel.prototype.setPeerWindowObject = function(a) {
+  this.peerWindowObject_ = a;
+};
+goog.net.xpc.CrossPageChannel.prototype.getPeerWindowObject = function() {
+  return this.peerWindowObject_;
+};
+goog.net.xpc.CrossPageChannel.prototype.isPeerAvailable = function() {
+  try {
+    return!!this.peerWindowObject_ && !Boolean(this.peerWindowObject_.closed);
+  } catch (a) {
+    return!1;
+  }
+};
+goog.net.xpc.CrossPageChannel.prototype.determineTransportType_ = function() {
+  return goog.isFunction(document.postMessage) || goog.isFunction(window.postMessage) || goog.userAgent.IE && window.postMessage ? goog.net.xpc.TransportTypes.NATIVE_MESSAGING : goog.userAgent.GECKO ? goog.net.xpc.TransportTypes.FRAME_ELEMENT_METHOD : goog.userAgent.IE && this.cfg_[goog.net.xpc.CfgFields.PEER_RELAY_URI] ? goog.net.xpc.TransportTypes.IFRAME_RELAY : goog.userAgent.IE && goog.net.xpc.NixTransport.isNixSupported() ? goog.net.xpc.TransportTypes.NIX : goog.net.xpc.TransportTypes.IFRAME_POLLING;
+};
+goog.net.xpc.CrossPageChannel.prototype.createTransport_ = function() {
+  if (!this.transport_) {
+    var a = goog.net.xpc.CfgFields;
+    this.cfg_[a.TRANSPORT] || (this.cfg_[a.TRANSPORT] = this.determineTransportType_());
+    switch(this.cfg_[a.TRANSPORT]) {
+      case goog.net.xpc.TransportTypes.NATIVE_MESSAGING:
+        this.transport_ = new goog.net.xpc.NativeMessagingTransport(this, this.cfg_[a.PEER_HOSTNAME], this.domHelper_, !!this.cfg_[a.ONE_SIDED_HANDSHAKE], this.cfg_[a.NATIVE_TRANSPORT_PROTOCOL_VERSION] || 2);
+        break;
+      case goog.net.xpc.TransportTypes.NIX:
+        this.transport_ = new goog.net.xpc.NixTransport(this, this.domHelper_);
+        break;
+      case goog.net.xpc.TransportTypes.FRAME_ELEMENT_METHOD:
+        this.transport_ = new goog.net.xpc.FrameElementMethodTransport(this, this.domHelper_);
+        break;
+      case goog.net.xpc.TransportTypes.IFRAME_RELAY:
+        this.transport_ = new goog.net.xpc.IframeRelayTransport(this, this.domHelper_);
+        break;
+      case goog.net.xpc.TransportTypes.IFRAME_POLLING:
+        this.transport_ = new goog.net.xpc.IframePollingTransport(this, this.domHelper_);
+        break;
+      case goog.net.xpc.TransportTypes.DIRECT:
+        this.peerWindowObject_ && goog.net.xpc.DirectTransport.isSupported(this.peerWindowObject_) ? this.transport_ = new goog.net.xpc.DirectTransport(this, this.domHelper_) : goog.log.info(goog.net.xpc.logger, "DirectTransport not supported for this window, peer window in different security context or not set yet.");
+    }
+    if (this.transport_) {
+      goog.log.info(goog.net.xpc.logger, "Transport created: " + this.transport_.getName());
+    } else {
+      throw Error("CrossPageChannel: No suitable transport found!");
+    }
+  }
+};
+goog.net.xpc.CrossPageChannel.prototype.getTransportType = function() {
+  return this.transport_.getType();
+};
+goog.net.xpc.CrossPageChannel.prototype.getTransportName = function() {
+  return this.transport_.getName();
+};
+goog.net.xpc.CrossPageChannel.prototype.getPeerConfiguration = function() {
+  var a = {};
+  a[goog.net.xpc.CfgFields.CHANNEL_NAME] = this.name;
+  a[goog.net.xpc.CfgFields.TRANSPORT] = this.cfg_[goog.net.xpc.CfgFields.TRANSPORT];
+  a[goog.net.xpc.CfgFields.ONE_SIDED_HANDSHAKE] = this.cfg_[goog.net.xpc.CfgFields.ONE_SIDED_HANDSHAKE];
+  this.cfg_[goog.net.xpc.CfgFields.LOCAL_RELAY_URI] && (a[goog.net.xpc.CfgFields.PEER_RELAY_URI] = this.cfg_[goog.net.xpc.CfgFields.LOCAL_RELAY_URI]);
+  this.cfg_[goog.net.xpc.CfgFields.LOCAL_POLL_URI] && (a[goog.net.xpc.CfgFields.PEER_POLL_URI] = this.cfg_[goog.net.xpc.CfgFields.LOCAL_POLL_URI]);
+  this.cfg_[goog.net.xpc.CfgFields.PEER_POLL_URI] && (a[goog.net.xpc.CfgFields.LOCAL_POLL_URI] = this.cfg_[goog.net.xpc.CfgFields.PEER_POLL_URI]);
+  var b = this.cfg_[goog.net.xpc.CfgFields.ROLE];
+  b && (a[goog.net.xpc.CfgFields.ROLE] = b == goog.net.xpc.CrossPageChannelRole.INNER ? goog.net.xpc.CrossPageChannelRole.OUTER : goog.net.xpc.CrossPageChannelRole.INNER);
+  return a;
+};
+goog.net.xpc.CrossPageChannel.prototype.createPeerIframe = function(a, b, c) {
+  goog.log.info(goog.net.xpc.logger, "createPeerIframe()");
+  var d = this.cfg_[goog.net.xpc.CfgFields.IFRAME_ID];
+  d || (d = this.cfg_[goog.net.xpc.CfgFields.IFRAME_ID] = "xpcpeer" + goog.net.xpc.getRandomString(4));
+  var e = goog.dom.getDomHelper(a).createElement("IFRAME");
+  e.id = e.name = d;
+  b ? b(e) : e.style.width = e.style.height = "100%";
+  this.cleanUpIncompleteConnection_();
+  this.peerWindowDeferred_ = new goog.async.Deferred(void 0, this);
+  var f = this.getPeerUri(c);
+  this.peerLoadHandler_.listenOnceWithScope(e, "load", this.peerWindowDeferred_.callback, !1, this.peerWindowDeferred_);
+  goog.userAgent.GECKO || goog.userAgent.WEBKIT ? window.setTimeout(goog.bind(function() {
+    a.appendChild(e);
+    e.src = f.toString();
+    goog.log.info(goog.net.xpc.logger, "peer iframe created (" + d + ")");
+  }, this), 1) : (e.src = f.toString(), a.appendChild(e), goog.log.info(goog.net.xpc.logger, "peer iframe created (" + d + ")"));
+  return e;
+};
+goog.net.xpc.CrossPageChannel.prototype.cleanUpIncompleteConnection_ = function() {
+  this.peerWindowDeferred_ && (this.peerWindowDeferred_.cancel(), this.peerWindowDeferred_ = null);
+  this.deferredDeliveries_.length = 0;
+  this.peerLoadHandler_.removeAll();
+};
+goog.net.xpc.CrossPageChannel.prototype.getPeerUri = function(a) {
+  var b = this.cfg_[goog.net.xpc.CfgFields.PEER_URI];
+  goog.isString(b) && (b = this.cfg_[goog.net.xpc.CfgFields.PEER_URI] = new goog.Uri(b));
+  !1 !== a && b.setParameterValue("xpc", goog.json.serialize(this.getPeerConfiguration()));
+  return b;
+};
+goog.net.xpc.CrossPageChannel.prototype.connect = function(a) {
+  this.connectCb_ = a || goog.nullFunction;
+  this.peerWindowDeferred_ ? this.peerWindowDeferred_.addCallback(this.continueConnection_) : this.continueConnection_();
+};
+goog.net.xpc.CrossPageChannel.prototype.continueConnection_ = function() {
+  goog.log.info(goog.net.xpc.logger, "continueConnection_()");
+  this.peerWindowDeferred_ = null;
+  this.cfg_[goog.net.xpc.CfgFields.IFRAME_ID] && (this.iframeElement_ = this.domHelper_.getElement(this.cfg_[goog.net.xpc.CfgFields.IFRAME_ID]));
+  if (this.iframeElement_) {
+    var a = this.iframeElement_.contentWindow;
+    a || (a = window.frames[this.cfg_[goog.net.xpc.CfgFields.IFRAME_ID]]);
+    this.setPeerWindowObject(a);
+  }
+  if (!this.peerWindowObject_) {
+    if (window == window.top) {
+      throw Error("CrossPageChannel: Can't connect, peer window-object not set.");
+    }
+    this.setPeerWindowObject(window.parent);
+  }
+  this.createTransport_();
+  for (this.transport_.connect();0 < this.deferredDeliveries_.length;) {
+    this.deferredDeliveries_.shift()();
+  }
+};
+goog.net.xpc.CrossPageChannel.prototype.close = function() {
+  this.cleanUpIncompleteConnection_();
+  this.state_ = goog.net.xpc.ChannelStates.CLOSED;
+  goog.dispose(this.transport_);
+  this.connectCb_ = this.transport_ = null;
+  goog.dispose(this.connectionDelay_);
+  this.connectionDelay_ = null;
+  goog.log.info(goog.net.xpc.logger, 'Channel "' + this.name + '" closed');
+};
+goog.net.xpc.CrossPageChannel.prototype.notifyConnected = function(a) {
+  this.isConnected() || this.connectionDelay_ && this.connectionDelay_.isActive() || (this.state_ = goog.net.xpc.ChannelStates.CONNECTED, goog.log.info(goog.net.xpc.logger, 'Channel "' + this.name + '" connected'), goog.dispose(this.connectionDelay_), goog.isDef(a) ? (this.connectionDelay_ = new goog.async.Delay(this.connectCb_, a), this.connectionDelay_.start()) : (this.connectionDelay_ = null, this.connectCb_()));
+};
+goog.net.xpc.CrossPageChannel.prototype.notifyConnected_ = goog.net.xpc.CrossPageChannel.prototype.notifyConnected;
+goog.net.xpc.CrossPageChannel.prototype.notifyTransportError = function() {
+  goog.log.info(goog.net.xpc.logger, "Transport Error");
+  this.close();
+};
+goog.net.xpc.CrossPageChannel.prototype.send = function(a, b) {
+  this.isConnected() ? this.isPeerAvailable() ? (goog.isObject(b) && (b = goog.json.serialize(b)), this.transport_.send(this.escapeServiceName_(a), b)) : (goog.log.error(goog.net.xpc.logger, "Peer has disappeared."), this.close()) : goog.log.error(goog.net.xpc.logger, "Can't send. Channel not connected.");
+};
+goog.net.xpc.CrossPageChannel.prototype.xpcDeliver = function(a, b, c) {
+  this.peerWindowDeferred_ ? this.deferredDeliveries_.push(goog.bind(this.xpcDeliver, this, a, b, c)) : this.isMessageOriginAcceptable_(c) ? this.isDisposed() ? goog.log.warning(goog.net.xpc.logger, "CrossPageChannel::xpcDeliver(): Disposed.") : a && a != goog.net.xpc.TRANSPORT_SERVICE_ ? this.isConnected() ? this.deliver(this.unescapeServiceName_(a), b) : goog.log.info(goog.net.xpc.logger, "CrossPageChannel::xpcDeliver(): Not connected.") : this.transport_.transportServiceHandler(b) : goog.log.warning(goog.net.xpc.logger, 
+  'Message received from unapproved origin "' + c + '" - rejected.');
+};
+goog.net.xpc.CrossPageChannel.prototype.escapeServiceName_ = function(a) {
+  goog.net.xpc.CrossPageChannel.TRANSPORT_SERVICE_ESCAPE_RE_.test(a) && (a = "%" + a);
+  return a.replace(/[%:|]/g, encodeURIComponent);
+};
+goog.net.xpc.CrossPageChannel.prototype.unescapeServiceName_ = function(a) {
+  a = a.replace(/%[0-9a-f]{2}/gi, decodeURIComponent);
+  return goog.net.xpc.CrossPageChannel.TRANSPORT_SERVICE_UNESCAPE_RE_.test(a) ? a.substring(1) : a;
+};
+goog.net.xpc.CrossPageChannel.prototype.getRole = function() {
+  var a = this.cfg_[goog.net.xpc.CfgFields.ROLE];
+  return goog.isNumber(a) ? a : window.parent == this.peerWindowObject_ ? goog.net.xpc.CrossPageChannelRole.INNER : goog.net.xpc.CrossPageChannelRole.OUTER;
+};
+goog.net.xpc.CrossPageChannel.prototype.updateChannelNameAndCatalog = function(a) {
+  goog.log.fine(goog.net.xpc.logger, "changing channel name to " + a);
+  delete goog.net.xpc.channels[this.name];
+  this.name = a;
+  goog.net.xpc.channels[a] = this;
+};
+goog.net.xpc.CrossPageChannel.prototype.isMessageOriginAcceptable_ = function(a) {
+  var b = this.cfg_[goog.net.xpc.CfgFields.PEER_HOSTNAME];
+  return goog.string.isEmptySafe(a) || goog.string.isEmptySafe(b) || a == this.cfg_[goog.net.xpc.CfgFields.PEER_HOSTNAME];
+};
+goog.net.xpc.CrossPageChannel.prototype.disposeInternal = function() {
+  this.close();
+  this.iframeElement_ = this.peerWindowObject_ = null;
+  delete goog.net.xpc.channels[this.name];
+  goog.dispose(this.peerLoadHandler_);
+  delete this.peerLoadHandler_;
+  goog.net.xpc.CrossPageChannel.superClass_.disposeInternal.call(this);
+};
+goog.net.xpc.CrossPageChannel.disposeAll_ = function() {
+  for (var a in goog.net.xpc.channels) {
+    goog.dispose(goog.net.xpc.channels[a]);
+  }
+};
+goog.net.WebSocket = function(a, b) {
+  goog.events.EventTarget.call(this);
+  this.autoReconnect_ = goog.isDef(a) ? a : !0;
+  this.getNextReconnect_ = b || goog.net.WebSocket.EXPONENTIAL_BACKOFF_;
+  this.nextReconnect_ = this.getNextReconnect_(this.reconnectAttempt_);
+};
+goog.inherits(goog.net.WebSocket, goog.events.EventTarget);
+goog.net.WebSocket.prototype.webSocket_ = null;
+goog.net.WebSocket.prototype.url_ = null;
+goog.net.WebSocket.prototype.protocol_ = void 0;
+goog.net.WebSocket.prototype.closeExpected_ = !1;
+goog.net.WebSocket.prototype.reconnectAttempt_ = 0;
+goog.net.WebSocket.prototype.logger_ = goog.log.getLogger("goog.net.WebSocket");
+goog.net.WebSocket.EventType = {CLOSED:goog.events.getUniqueId("closed"), ERROR:goog.events.getUniqueId("error"), MESSAGE:goog.events.getUniqueId("message"), OPENED:goog.events.getUniqueId("opened")};
+goog.net.WebSocket.ReadyState_ = {CONNECTING:0, OPEN:1, CLOSING:2, CLOSED:3};
+goog.net.WebSocket.EXPONENTIAL_BACKOFF_CEILING_ = 6E4;
+goog.net.WebSocket.EXPONENTIAL_BACKOFF_ = function(a) {
+  a = 1E3 * Math.pow(2, a);
+  return Math.min(a, goog.net.WebSocket.EXPONENTIAL_BACKOFF_CEILING_);
+};
+goog.net.WebSocket.protectEntryPoints = function(a) {
+  goog.net.WebSocket.prototype.onOpen_ = a.protectEntryPoint(goog.net.WebSocket.prototype.onOpen_);
+  goog.net.WebSocket.prototype.onClose_ = a.protectEntryPoint(goog.net.WebSocket.prototype.onClose_);
+  goog.net.WebSocket.prototype.onMessage_ = a.protectEntryPoint(goog.net.WebSocket.prototype.onMessage_);
+  goog.net.WebSocket.prototype.onError_ = a.protectEntryPoint(goog.net.WebSocket.prototype.onError_);
+};
+goog.net.WebSocket.prototype.open = function(a, b) {
+  goog.asserts.assert(goog.global.WebSocket, "This browser does not support WebSocket");
+  goog.asserts.assert(!this.isOpen(), "The WebSocket is already open");
+  this.clearReconnectTimer_();
+  this.url_ = a;
+  (this.protocol_ = b) ? (goog.log.info(this.logger_, "Opening the WebSocket on " + this.url_ + " with protocol " + this.protocol_), this.webSocket_ = new WebSocket(this.url_, this.protocol_)) : (goog.log.info(this.logger_, "Opening the WebSocket on " + this.url_), this.webSocket_ = new WebSocket(this.url_));
+  this.webSocket_.onopen = goog.bind(this.onOpen_, this);
+  this.webSocket_.onclose = goog.bind(this.onClose_, this);
+  this.webSocket_.onmessage = goog.bind(this.onMessage_, this);
+  this.webSocket_.onerror = goog.bind(this.onError_, this);
+};
+goog.net.WebSocket.prototype.close = function() {
+  this.clearReconnectTimer_();
+  this.webSocket_ && (goog.log.info(this.logger_, "Closing the WebSocket."), this.closeExpected_ = !0, this.webSocket_.close(), this.webSocket_ = null);
+};
+goog.net.WebSocket.prototype.send = function(a) {
+  goog.asserts.assert(this.isOpen(), "Cannot send without an open socket");
+  this.webSocket_.send(a);
+};
+goog.net.WebSocket.prototype.isOpen = function() {
+  return!!this.webSocket_ && this.webSocket_.readyState == goog.net.WebSocket.ReadyState_.OPEN;
+};
+goog.net.WebSocket.prototype.onOpen_ = function() {
+  goog.log.info(this.logger_, "WebSocket opened on " + this.url_);
+  this.dispatchEvent(goog.net.WebSocket.EventType.OPENED);
+  this.reconnectAttempt_ = 0;
+  this.nextReconnect_ = this.getNextReconnect_(this.reconnectAttempt_);
+};
+goog.net.WebSocket.prototype.onClose_ = function(a) {
+  goog.log.info(this.logger_, "The WebSocket on " + this.url_ + " closed.");
+  this.dispatchEvent(goog.net.WebSocket.EventType.CLOSED);
+  this.webSocket_ = null;
+  this.closeExpected_ ? (goog.log.info(this.logger_, "The WebSocket closed normally."), this.url_ = null, this.protocol_ = void 0) : (goog.log.error(this.logger_, "The WebSocket disconnected unexpectedly: " + a.data), this.autoReconnect_ && (goog.log.info(this.logger_, "Seconds until next reconnect attempt: " + Math.floor(this.nextReconnect_ / 1E3)), this.reconnectTimer_ = goog.Timer.callOnce(goog.bind(this.open, this, this.url_, this.protocol_), this.nextReconnect_, this), this.reconnectAttempt_++, 
+  this.nextReconnect_ = this.getNextReconnect_(this.reconnectAttempt_)));
+  this.closeExpected_ = !1;
+};
+goog.net.WebSocket.prototype.onMessage_ = function(a) {
+  this.dispatchEvent(new goog.net.WebSocket.MessageEvent(a.data));
+};
+goog.net.WebSocket.prototype.onError_ = function(a) {
+  a = a.data;
+  goog.log.error(this.logger_, "An error occurred: " + a);
+  this.dispatchEvent(new goog.net.WebSocket.ErrorEvent(a));
+};
+goog.net.WebSocket.prototype.clearReconnectTimer_ = function() {
+  goog.isDefAndNotNull(this.reconnectTimer_) && goog.Timer.clear(this.reconnectTimer_);
+  this.reconnectTimer_ = null;
+};
+goog.net.WebSocket.prototype.disposeInternal = function() {
+  goog.net.WebSocket.superClass_.disposeInternal.call(this);
+  this.close();
+};
+goog.net.WebSocket.MessageEvent = function(a) {
+  goog.events.Event.call(this, goog.net.WebSocket.EventType.MESSAGE);
+  this.message = a;
+};
+goog.inherits(goog.net.WebSocket.MessageEvent, goog.events.Event);
+goog.net.WebSocket.ErrorEvent = function(a) {
+  goog.events.Event.call(this, goog.net.WebSocket.EventType.ERROR);
+  this.data = a;
+};
+goog.inherits(goog.net.WebSocket.ErrorEvent, goog.events.Event);
+goog.debug.entryPointRegistry.register(function(a) {
+  goog.net.WebSocket.prototype.onOpen_ = a(goog.net.WebSocket.prototype.onOpen_);
+  goog.net.WebSocket.prototype.onClose_ = a(goog.net.WebSocket.prototype.onClose_);
+  goog.net.WebSocket.prototype.onMessage_ = a(goog.net.WebSocket.prototype.onMessage_);
+  goog.net.WebSocket.prototype.onError_ = a(goog.net.WebSocket.prototype.onError_);
+});
+clojure.browser = {};
+clojure.browser.event = {};
+clojure.browser.event.IEventType = function() {
+  return{};
+}();
+clojure.browser.event.event_types = function(a) {
+  if (a ? a.clojure$browser$event$IEventType$event_types$arity$1 : a) {
+    return a.clojure$browser$event$IEventType$event_types$arity$1(a);
+  }
+  var b;
+  b = clojure.browser.event.event_types[goog.typeOf(null == a ? null : a)];
+  if (!b && (b = clojure.browser.event.event_types._, !b)) {
+    throw cljs.core.missing_protocol.call(null, "IEventType.event-types", a);
+  }
+  return b.call(null, a);
+};
+goog.events.EventTarget.prototype.clojure$browser$event$IEventType$ = !0;
+goog.events.EventTarget.prototype.clojure$browser$event$IEventType$event_types$arity$1 = function(a) {
+  return cljs.core.into.call(null, cljs.core.PersistentArrayMap.EMPTY, cljs.core.map.call(null, function(a) {
+    return function(a) {
+      var b = cljs.core.nth.call(null, a, 0, null);
+      a = cljs.core.nth.call(null, a, 1, null);
+      return new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.keyword.call(null, b.toLowerCase()), a], null);
+    };
+  }(this), cljs.core.merge.call(null, cljs.core.js__GT_clj.call(null, goog.events.EventType))));
+};
+"undefined" !== typeof Element && (Element.prototype.clojure$browser$event$IEventType$ = !0, Element.prototype.clojure$browser$event$IEventType$event_types$arity$1 = function(a) {
+  return cljs.core.into.call(null, cljs.core.PersistentArrayMap.EMPTY, cljs.core.map.call(null, function(a) {
+    return function(a) {
+      var b = cljs.core.nth.call(null, a, 0, null);
+      a = cljs.core.nth.call(null, a, 1, null);
+      return new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.keyword.call(null, b.toLowerCase()), a], null);
+    };
+  }(this), cljs.core.merge.call(null, cljs.core.js__GT_clj.call(null, goog.events.EventType))));
+});
+clojure.browser.event.listen = function() {
+  var a = null, b = function(b, c, f) {
+    return a.call(null, b, c, f, !1);
+  }, c = function(a, b, c, g) {
+    return goog.events.listen(a, cljs.core.get.call(null, clojure.browser.event.event_types.call(null, a), b, b), c, g);
+  }, a = function(a, e, f, g) {
+    switch(arguments.length) {
+      case 3:
+        return b.call(this, a, e, f);
+      case 4:
+        return c.call(this, a, e, f, g);
+    }
+    throw Error("Invalid arity: " + arguments.length);
+  };
+  a.cljs$core$IFn$_invoke$arity$3 = b;
+  a.cljs$core$IFn$_invoke$arity$4 = c;
+  return a;
+}();
+clojure.browser.event.listen_once = function() {
+  var a = null, b = function(b, c, f) {
+    return a.call(null, b, c, f, !1);
+  }, c = function(a, b, c, g) {
+    return goog.events.listenOnce(a, cljs.core.get.call(null, clojure.browser.event.event_types.call(null, a), b, b), c, g);
+  }, a = function(a, e, f, g) {
+    switch(arguments.length) {
+      case 3:
+        return b.call(this, a, e, f);
+      case 4:
+        return c.call(this, a, e, f, g);
+    }
+    throw Error("Invalid arity: " + arguments.length);
+  };
+  a.cljs$core$IFn$_invoke$arity$3 = b;
+  a.cljs$core$IFn$_invoke$arity$4 = c;
+  return a;
+}();
+clojure.browser.event.unlisten = function() {
+  var a = null, b = function(b, c, f) {
+    return a.call(null, b, c, f, !1);
+  }, c = function(a, b, c, g) {
+    return goog.events.unlisten(a, cljs.core.get.call(null, clojure.browser.event.event_types.call(null, a), b, b), c, g);
+  }, a = function(a, e, f, g) {
+    switch(arguments.length) {
+      case 3:
+        return b.call(this, a, e, f);
+      case 4:
+        return c.call(this, a, e, f, g);
+    }
+    throw Error("Invalid arity: " + arguments.length);
+  };
+  a.cljs$core$IFn$_invoke$arity$3 = b;
+  a.cljs$core$IFn$_invoke$arity$4 = c;
+  return a;
+}();
+clojure.browser.event.unlisten_by_key = function(a) {
+  return goog.events.unlistenByKey(a);
+};
+clojure.browser.event.dispatch_event = function(a, b) {
+  return goog.events.dispatchEvent(a, b);
+};
+clojure.browser.event.expose = function(a) {
+  return goog.events.expose(a);
+};
+clojure.browser.event.fire_listeners = function(a, b, c, d) {
+  return null;
+};
+clojure.browser.event.total_listener_count = function() {
+  return goog.events.getTotalListenerCount();
+};
+clojure.browser.event.get_listener = function(a, b, c, d, e) {
+  return null;
+};
+clojure.browser.event.all_listeners = function(a, b, c) {
+  return null;
+};
+clojure.browser.event.unique_event_id = function(a) {
+  return null;
+};
+clojure.browser.event.has_listener = function(a, b, c) {
+  return null;
+};
+clojure.browser.event.remove_all = function(a, b, c) {
+  return null;
+};
+clojure.browser.net = {};
+clojure.browser.net._STAR_timeout_STAR_ = 1E4;
+clojure.browser.net.event_types = cljs.core.into.call(null, cljs.core.PersistentArrayMap.EMPTY, cljs.core.map.call(null, function(a) {
+  var b = cljs.core.nth.call(null, a, 0, null);
+  a = cljs.core.nth.call(null, a, 1, null);
+  return new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.keyword.call(null, b.toLowerCase()), a], null);
+}, cljs.core.merge.call(null, cljs.core.js__GT_clj.call(null, goog.net.EventType))));
+clojure.browser.net.IConnection = function() {
+  return{};
+}();
+clojure.browser.net.connect = function() {
+  var a = null, b = function(a) {
+    if (a ? a.clojure$browser$net$IConnection$connect$arity$1 : a) {
+      return a.clojure$browser$net$IConnection$connect$arity$1(a);
+    }
+    var b;
+    b = clojure.browser.net.connect[goog.typeOf(null == a ? null : a)];
+    if (!b && (b = clojure.browser.net.connect._, !b)) {
+      throw cljs.core.missing_protocol.call(null, "IConnection.connect", a);
+    }
+    return b.call(null, a);
+  }, c = function(a, b) {
+    if (a ? a.clojure$browser$net$IConnection$connect$arity$2 : a) {
+      return a.clojure$browser$net$IConnection$connect$arity$2(a, b);
+    }
+    var c;
+    c = clojure.browser.net.connect[goog.typeOf(null == a ? null : a)];
+    if (!c && (c = clojure.browser.net.connect._, !c)) {
+      throw cljs.core.missing_protocol.call(null, "IConnection.connect", a);
+    }
+    return c.call(null, a, b);
+  }, d = function(a, b, c) {
+    if (a ? a.clojure$browser$net$IConnection$connect$arity$3 : a) {
+      return a.clojure$browser$net$IConnection$connect$arity$3(a, b, c);
+    }
+    var d;
+    d = clojure.browser.net.connect[goog.typeOf(null == a ? null : a)];
+    if (!d && (d = clojure.browser.net.connect._, !d)) {
+      throw cljs.core.missing_protocol.call(null, "IConnection.connect", a);
+    }
+    return d.call(null, a, b, c);
+  }, e = function(a, b, c, d) {
+    if (a ? a.clojure$browser$net$IConnection$connect$arity$4 : a) {
+      return a.clojure$browser$net$IConnection$connect$arity$4(a, b, c, d);
+    }
+    var e;
+    e = clojure.browser.net.connect[goog.typeOf(null == a ? null : a)];
+    if (!e && (e = clojure.browser.net.connect._, !e)) {
+      throw cljs.core.missing_protocol.call(null, "IConnection.connect", a);
+    }
+    return e.call(null, a, b, c, d);
+  }, a = function(a, g, h, k) {
+    switch(arguments.length) {
+      case 1:
+        return b.call(this, a);
+      case 2:
+        return c.call(this, a, g);
+      case 3:
+        return d.call(this, a, g, h);
+      case 4:
+        return e.call(this, a, g, h, k);
+    }
+    throw Error("Invalid arity: " + arguments.length);
+  };
+  a.cljs$core$IFn$_invoke$arity$1 = b;
+  a.cljs$core$IFn$_invoke$arity$2 = c;
+  a.cljs$core$IFn$_invoke$arity$3 = d;
+  a.cljs$core$IFn$_invoke$arity$4 = e;
+  return a;
+}();
+clojure.browser.net.transmit = function() {
+  var a = null, b = function(a, b) {
+    if (a ? a.clojure$browser$net$IConnection$transmit$arity$2 : a) {
+      return a.clojure$browser$net$IConnection$transmit$arity$2(a, b);
+    }
+    var c;
+    c = clojure.browser.net.transmit[goog.typeOf(null == a ? null : a)];
+    if (!c && (c = clojure.browser.net.transmit._, !c)) {
+      throw cljs.core.missing_protocol.call(null, "IConnection.transmit", a);
+    }
+    return c.call(null, a, b);
+  }, c = function(a, b, c) {
+    if (a ? a.clojure$browser$net$IConnection$transmit$arity$3 : a) {
+      return a.clojure$browser$net$IConnection$transmit$arity$3(a, b, c);
+    }
+    var d;
+    d = clojure.browser.net.transmit[goog.typeOf(null == a ? null : a)];
+    if (!d && (d = clojure.browser.net.transmit._, !d)) {
+      throw cljs.core.missing_protocol.call(null, "IConnection.transmit", a);
+    }
+    return d.call(null, a, b, c);
+  }, d = function(a, b, c, d) {
+    if (a ? a.clojure$browser$net$IConnection$transmit$arity$4 : a) {
+      return a.clojure$browser$net$IConnection$transmit$arity$4(a, b, c, d);
+    }
+    var e;
+    e = clojure.browser.net.transmit[goog.typeOf(null == a ? null : a)];
+    if (!e && (e = clojure.browser.net.transmit._, !e)) {
+      throw cljs.core.missing_protocol.call(null, "IConnection.transmit", a);
+    }
+    return e.call(null, a, b, c, d);
+  }, e = function(a, b, c, d, e) {
+    if (a ? a.clojure$browser$net$IConnection$transmit$arity$5 : a) {
+      return a.clojure$browser$net$IConnection$transmit$arity$5(a, b, c, d, e);
+    }
+    var f;
+    f = clojure.browser.net.transmit[goog.typeOf(null == a ? null : a)];
+    if (!f && (f = clojure.browser.net.transmit._, !f)) {
+      throw cljs.core.missing_protocol.call(null, "IConnection.transmit", a);
+    }
+    return f.call(null, a, b, c, d, e);
+  }, f = function(a, b, c, d, e, f) {
+    if (a ? a.clojure$browser$net$IConnection$transmit$arity$6 : a) {
+      return a.clojure$browser$net$IConnection$transmit$arity$6(a, b, c, d, e, f);
+    }
+    var p;
+    p = clojure.browser.net.transmit[goog.typeOf(null == a ? null : a)];
+    if (!p && (p = clojure.browser.net.transmit._, !p)) {
+      throw cljs.core.missing_protocol.call(null, "IConnection.transmit", a);
+    }
+    return p.call(null, a, b, c, d, e, f);
+  }, a = function(a, h, k, l, m, n) {
+    switch(arguments.length) {
+      case 2:
+        return b.call(this, a, h);
+      case 3:
+        return c.call(this, a, h, k);
+      case 4:
+        return d.call(this, a, h, k, l);
+      case 5:
+        return e.call(this, a, h, k, l, m);
+      case 6:
+        return f.call(this, a, h, k, l, m, n);
+    }
+    throw Error("Invalid arity: " + arguments.length);
+  };
+  a.cljs$core$IFn$_invoke$arity$2 = b;
+  a.cljs$core$IFn$_invoke$arity$3 = c;
+  a.cljs$core$IFn$_invoke$arity$4 = d;
+  a.cljs$core$IFn$_invoke$arity$5 = e;
+  a.cljs$core$IFn$_invoke$arity$6 = f;
+  return a;
+}();
+clojure.browser.net.close = function(a) {
+  if (a ? a.clojure$browser$net$IConnection$close$arity$1 : a) {
+    return a.clojure$browser$net$IConnection$close$arity$1(a);
+  }
+  var b;
+  b = clojure.browser.net.close[goog.typeOf(null == a ? null : a)];
+  if (!b && (b = clojure.browser.net.close._, !b)) {
+    throw cljs.core.missing_protocol.call(null, "IConnection.close", a);
+  }
+  return b.call(null, a);
+};
+goog.net.XhrIo.prototype.clojure$browser$event$IEventType$ = !0;
+goog.net.XhrIo.prototype.clojure$browser$event$IEventType$event_types$arity$1 = function(a) {
+  return cljs.core.into.call(null, cljs.core.PersistentArrayMap.EMPTY, cljs.core.map.call(null, function(a) {
+    return function(a) {
+      var b = cljs.core.nth.call(null, a, 0, null);
+      a = cljs.core.nth.call(null, a, 1, null);
+      return new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.keyword.call(null, b.toLowerCase()), a], null);
+    };
+  }(this), cljs.core.merge.call(null, cljs.core.js__GT_clj.call(null, goog.net.EventType))));
+};
+goog.net.XhrIo.prototype.clojure$browser$net$IConnection$ = !0;
+goog.net.XhrIo.prototype.clojure$browser$net$IConnection$transmit$arity$2 = function(a, b) {
+  return clojure.browser.net.transmit.call(null, this, b, "GET", null, null, clojure.browser.net._STAR_timeout_STAR_);
+};
+goog.net.XhrIo.prototype.clojure$browser$net$IConnection$transmit$arity$3 = function(a, b, c) {
+  return clojure.browser.net.transmit.call(null, this, b, c, null, null, clojure.browser.net._STAR_timeout_STAR_);
+};
+goog.net.XhrIo.prototype.clojure$browser$net$IConnection$transmit$arity$4 = function(a, b, c, d) {
+  return clojure.browser.net.transmit.call(null, this, b, c, d, null, clojure.browser.net._STAR_timeout_STAR_);
+};
+goog.net.XhrIo.prototype.clojure$browser$net$IConnection$transmit$arity$5 = function(a, b, c, d, e) {
+  return clojure.browser.net.transmit.call(null, this, b, c, d, e, clojure.browser.net._STAR_timeout_STAR_);
+};
+goog.net.XhrIo.prototype.clojure$browser$net$IConnection$transmit$arity$6 = function(a, b, c, d, e, f) {
+  this.setTimeoutInterval(f);
+  return this.send(b, c, d, e);
+};
+clojure.browser.net.xpc_config_fields = cljs.core.into.call(null, cljs.core.PersistentArrayMap.EMPTY, cljs.core.map.call(null, function(a) {
+  var b = cljs.core.nth.call(null, a, 0, null);
+  a = cljs.core.nth.call(null, a, 1, null);
+  return new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.keyword.call(null, b.toLowerCase()), a], null);
+}, cljs.core.js__GT_clj.call(null, goog.net.xpc.CfgFields)));
+clojure.browser.net.xhr_connection = function() {
+  return new goog.net.XhrIo;
+};
+clojure.browser.net.ICrossPageChannel = function() {
+  return{};
+}();
+clojure.browser.net.register_service = function() {
+  var a = null, b = function(a, b, c) {
+    if (a ? a.clojure$browser$net$ICrossPageChannel$register_service$arity$3 : a) {
+      return a.clojure$browser$net$ICrossPageChannel$register_service$arity$3(a, b, c);
+    }
+    var g;
+    g = clojure.browser.net.register_service[goog.typeOf(null == a ? null : a)];
+    if (!g && (g = clojure.browser.net.register_service._, !g)) {
+      throw cljs.core.missing_protocol.call(null, "ICrossPageChannel.register-service", a);
+    }
+    return g.call(null, a, b, c);
+  }, c = function(a, b, c, g) {
+    if (a ? a.clojure$browser$net$ICrossPageChannel$register_service$arity$4 : a) {
+      return a.clojure$browser$net$ICrossPageChannel$register_service$arity$4(a, b, c, g);
+    }
+    var h;
+    h = clojure.browser.net.register_service[goog.typeOf(null == a ? null : a)];
+    if (!h && (h = clojure.browser.net.register_service._, !h)) {
+      throw cljs.core.missing_protocol.call(null, "ICrossPageChannel.register-service", a);
+    }
+    return h.call(null, a, b, c, g);
+  }, a = function(a, e, f, g) {
+    switch(arguments.length) {
+      case 3:
+        return b.call(this, a, e, f);
+      case 4:
+        return c.call(this, a, e, f, g);
+    }
+    throw Error("Invalid arity: " + arguments.length);
+  };
+  a.cljs$core$IFn$_invoke$arity$3 = b;
+  a.cljs$core$IFn$_invoke$arity$4 = c;
+  return a;
+}();
+goog.net.xpc.CrossPageChannel.prototype.clojure$browser$net$IConnection$ = !0;
+goog.net.xpc.CrossPageChannel.prototype.clojure$browser$net$IConnection$connect$arity$1 = function(a) {
+  return clojure.browser.net.connect.call(null, this, null);
+};
+goog.net.xpc.CrossPageChannel.prototype.clojure$browser$net$IConnection$connect$arity$2 = function(a, b) {
+  return this.connect(b);
+};
+goog.net.xpc.CrossPageChannel.prototype.clojure$browser$net$IConnection$connect$arity$3 = function(a, b, c) {
+  return clojure.browser.net.connect.call(null, this, b, c, document.body);
+};
+goog.net.xpc.CrossPageChannel.prototype.clojure$browser$net$IConnection$connect$arity$4 = function(a, b, c, d) {
+  this.createPeerIframe(d, c);
+  return this.connect(b);
+};
+goog.net.xpc.CrossPageChannel.prototype.clojure$browser$net$IConnection$transmit$arity$3 = function(a, b, c) {
+  return this.send(cljs.core.name.call(null, b), c);
+};
+goog.net.xpc.CrossPageChannel.prototype.clojure$browser$net$IConnection$close$arity$1 = function(a) {
+  return this.close();
+};
+goog.net.xpc.CrossPageChannel.prototype.clojure$browser$net$ICrossPageChannel$ = !0;
+goog.net.xpc.CrossPageChannel.prototype.clojure$browser$net$ICrossPageChannel$register_service$arity$3 = function(a, b, c) {
+  return clojure.browser.net.register_service.call(null, this, b, c, !1);
+};
+goog.net.xpc.CrossPageChannel.prototype.clojure$browser$net$ICrossPageChannel$register_service$arity$4 = function(a, b, c, d) {
+  return this.registerService(cljs.core.name.call(null, b), c, d);
+};
+clojure.browser.net.xpc_connection = function() {
+  var a = null, b = function() {
+    var a = (new goog.Uri(window.location.href)).getParameterValue("xpc");
+    return cljs.core.truth_(a) ? new goog.net.xpc.CrossPageChannel(goog.json.parse(a)) : null;
+  }, c = function(a) {
+    return new goog.net.xpc.CrossPageChannel(cljs.core.reduce.call(null, function(a, b) {
+      var c = cljs.core.nth.call(null, b, 0, null), d = cljs.core.nth.call(null, b, 1, null), c = cljs.core.get.call(null, clojure.browser.net.xpc_config_fields, c);
+      cljs.core.truth_(c) && (a[c] = d);
+      return a;
+    }, {}, a));
+  }, a = function(a) {
+    switch(arguments.length) {
+      case 0:
+        return b.call(this);
+      case 1:
+        return c.call(this, a);
+    }
+    throw Error("Invalid arity: " + arguments.length);
+  };
+  a.cljs$core$IFn$_invoke$arity$0 = b;
+  a.cljs$core$IFn$_invoke$arity$1 = c;
+  return a;
+}();
+clojure.browser.net.IWebSocket = function() {
+  return{};
+}();
+clojure.browser.net.open_QMARK_ = function(a) {
+  if (a ? a.clojure$browser$net$IWebSocket$open_QMARK_$arity$1 : a) {
+    return a.clojure$browser$net$IWebSocket$open_QMARK_$arity$1(a);
+  }
+  var b;
+  b = clojure.browser.net.open_QMARK_[goog.typeOf(null == a ? null : a)];
+  if (!b && (b = clojure.browser.net.open_QMARK_._, !b)) {
+    throw cljs.core.missing_protocol.call(null, "IWebSocket.open?", a);
+  }
+  return b.call(null, a);
+};
+goog.net.WebSocket.prototype.clojure$browser$event$IEventType$ = !0;
+goog.net.WebSocket.prototype.clojure$browser$event$IEventType$event_types$arity$1 = function(a) {
+  return cljs.core.into.call(null, cljs.core.PersistentArrayMap.EMPTY, cljs.core.map.call(null, function(a) {
+    return function(a) {
+      var b = cljs.core.nth.call(null, a, 0, null);
+      a = cljs.core.nth.call(null, a, 1, null);
+      return new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.keyword.call(null, b.toLowerCase()), a], null);
+    };
+  }(this), cljs.core.merge.call(null, cljs.core.js__GT_clj.call(null, goog.net.WebSocket.EventType))));
+};
+goog.net.WebSocket.prototype.clojure$browser$net$IConnection$ = !0;
+goog.net.WebSocket.prototype.clojure$browser$net$IConnection$connect$arity$2 = function(a, b) {
+  return clojure.browser.net.connect.call(null, this, b, null);
+};
+goog.net.WebSocket.prototype.clojure$browser$net$IConnection$connect$arity$3 = function(a, b, c) {
+  return this.open(b, c);
+};
+goog.net.WebSocket.prototype.clojure$browser$net$IConnection$transmit$arity$2 = function(a, b) {
+  return this.send(b);
+};
+goog.net.WebSocket.prototype.clojure$browser$net$IConnection$close$arity$1 = function(a) {
+  return this.close(cljs.core.List.EMPTY);
+};
+goog.net.WebSocket.prototype.clojure$browser$net$IWebSocket$ = !0;
+goog.net.WebSocket.prototype.clojure$browser$net$IWebSocket$open_QMARK_$arity$1 = function(a) {
+  return this.isOpen(cljs.core.List.EMPTY);
+};
+clojure.browser.net.websocket_connection = function() {
+  var a = null, b = function() {
+    return a.call(null, null, null);
+  }, c = function(b) {
+    return a.call(null, b, null);
+  }, d = function(a, b) {
+    return new goog.net.WebSocket(a, b);
+  }, a = function(a, f) {
+    switch(arguments.length) {
+      case 0:
+        return b.call(this);
+      case 1:
+        return c.call(this, a);
+      case 2:
+        return d.call(this, a, f);
+    }
+    throw Error("Invalid arity: " + arguments.length);
+  };
+  a.cljs$core$IFn$_invoke$arity$0 = b;
+  a.cljs$core$IFn$_invoke$arity$1 = c;
+  a.cljs$core$IFn$_invoke$arity$2 = d;
+  return a;
+}();
 cljs.reader = {};
 cljs.reader.PushbackReader = function() {
   return{};
@@ -63970,103 +67811,6 @@ cljs.reader.deregister_default_tag_parser_BANG_ = function() {
   }(a));
   return a;
 };
-goog.a11y = {};
-goog.a11y.aria = {};
-goog.a11y.aria.Role = {ALERT:"alert", ALERTDIALOG:"alertdialog", APPLICATION:"application", ARTICLE:"article", BANNER:"banner", BUTTON:"button", CHECKBOX:"checkbox", COLUMNHEADER:"columnheader", COMBOBOX:"combobox", COMPLEMENTARY:"complementary", CONTENTINFO:"contentinfo", DEFINITION:"definition", DIALOG:"dialog", DIRECTORY:"directory", DOCUMENT:"document", FORM:"form", GRID:"grid", GRIDCELL:"gridcell", GROUP:"group", HEADING:"heading", IMG:"img", LINK:"link", LIST:"list", LISTBOX:"listbox", LISTITEM:"listitem", 
-LOG:"log", MAIN:"main", MARQUEE:"marquee", MATH:"math", MENU:"menu", MENUBAR:"menubar", MENU_ITEM:"menuitem", MENU_ITEM_CHECKBOX:"menuitemcheckbox", MENU_ITEM_RADIO:"menuitemradio", NAVIGATION:"navigation", NOTE:"note", OPTION:"option", PRESENTATION:"presentation", PROGRESSBAR:"progressbar", RADIO:"radio", RADIOGROUP:"radiogroup", REGION:"region", ROW:"row", ROWGROUP:"rowgroup", ROWHEADER:"rowheader", SCROLLBAR:"scrollbar", SEARCH:"search", SEPARATOR:"separator", SLIDER:"slider", SPINBUTTON:"spinbutton", 
-STATUS:"status", TAB:"tab", TAB_LIST:"tablist", TAB_PANEL:"tabpanel", TEXTBOX:"textbox", TIMER:"timer", TOOLBAR:"toolbar", TOOLTIP:"tooltip", TREE:"tree", TREEGRID:"treegrid", TREEITEM:"treeitem"};
-goog.a11y.aria.State = {ACTIVEDESCENDANT:"activedescendant", ATOMIC:"atomic", AUTOCOMPLETE:"autocomplete", BUSY:"busy", CHECKED:"checked", CONTROLS:"controls", DESCRIBEDBY:"describedby", DISABLED:"disabled", DROPEFFECT:"dropeffect", EXPANDED:"expanded", FLOWTO:"flowto", GRABBED:"grabbed", HASPOPUP:"haspopup", HIDDEN:"hidden", INVALID:"invalid", LABEL:"label", LABELLEDBY:"labelledby", LEVEL:"level", LIVE:"live", MULTILINE:"multiline", MULTISELECTABLE:"multiselectable", ORIENTATION:"orientation", OWNS:"owns", 
-POSINSET:"posinset", PRESSED:"pressed", READONLY:"readonly", RELEVANT:"relevant", REQUIRED:"required", SELECTED:"selected", SETSIZE:"setsize", SORT:"sort", VALUEMAX:"valuemax", VALUEMIN:"valuemin", VALUENOW:"valuenow", VALUETEXT:"valuetext"};
-goog.a11y.aria.AutoCompleteValues = {INLINE:"inline", LIST:"list", BOTH:"both", NONE:"none"};
-goog.a11y.aria.DropEffectValues = {COPY:"copy", MOVE:"move", LINK:"link", EXECUTE:"execute", POPUP:"popup", NONE:"none"};
-goog.a11y.aria.LivePriority = {OFF:"off", POLITE:"polite", ASSERTIVE:"assertive"};
-goog.a11y.aria.OrientationValues = {VERTICAL:"vertical", HORIZONTAL:"horizontal"};
-goog.a11y.aria.RelevantValues = {ADDITIONS:"additions", REMOVALS:"removals", TEXT:"text", ALL:"all"};
-goog.a11y.aria.SortValues = {ASCENDING:"ascending", DESCENDING:"descending", NONE:"none", OTHER:"other"};
-goog.a11y.aria.CheckedValues = {TRUE:"true", FALSE:"false", MIXED:"mixed", UNDEFINED:"undefined"};
-goog.a11y.aria.ExpandedValues = {TRUE:"true", FALSE:"false", UNDEFINED:"undefined"};
-goog.a11y.aria.GrabbedValues = {TRUE:"true", FALSE:"false", UNDEFINED:"undefined"};
-goog.a11y.aria.InvalidValues = {FALSE:"false", TRUE:"true", GRAMMAR:"grammar", SPELLING:"spelling"};
-goog.a11y.aria.PressedValues = {TRUE:"true", FALSE:"false", MIXED:"mixed", UNDEFINED:"undefined"};
-goog.a11y.aria.SelectedValues = {TRUE:"true", FALSE:"false", UNDEFINED:"undefined"};
-goog.a11y.aria.datatables = {};
-goog.a11y.aria.datatables.getDefaultValuesMap = function() {
-  goog.a11y.aria.DefaultStateValueMap_ || (goog.a11y.aria.DefaultStateValueMap_ = goog.object.create(goog.a11y.aria.State.ATOMIC, !1, goog.a11y.aria.State.AUTOCOMPLETE, "none", goog.a11y.aria.State.DROPEFFECT, "none", goog.a11y.aria.State.HASPOPUP, !1, goog.a11y.aria.State.LIVE, "off", goog.a11y.aria.State.MULTILINE, !1, goog.a11y.aria.State.MULTISELECTABLE, !1, goog.a11y.aria.State.ORIENTATION, "vertical", goog.a11y.aria.State.READONLY, !1, goog.a11y.aria.State.RELEVANT, "additions text", goog.a11y.aria.State.REQUIRED, 
-  !1, goog.a11y.aria.State.SORT, "none", goog.a11y.aria.State.BUSY, !1, goog.a11y.aria.State.DISABLED, !1, goog.a11y.aria.State.HIDDEN, !1, goog.a11y.aria.State.INVALID, "false"));
-  return goog.a11y.aria.DefaultStateValueMap_;
-};
-goog.a11y.aria.ARIA_PREFIX_ = "aria-";
-goog.a11y.aria.ROLE_ATTRIBUTE_ = "role";
-goog.a11y.aria.TAGS_WITH_ASSUMED_ROLES_ = [goog.dom.TagName.A, goog.dom.TagName.AREA, goog.dom.TagName.BUTTON, goog.dom.TagName.HEAD, goog.dom.TagName.INPUT, goog.dom.TagName.LINK, goog.dom.TagName.MENU, goog.dom.TagName.META, goog.dom.TagName.OPTGROUP, goog.dom.TagName.OPTION, goog.dom.TagName.PROGRESS, goog.dom.TagName.STYLE, goog.dom.TagName.SELECT, goog.dom.TagName.SOURCE, goog.dom.TagName.TEXTAREA, goog.dom.TagName.TITLE, goog.dom.TagName.TRACK];
-goog.a11y.aria.setRole = function(a, b) {
-  b ? (goog.asserts.ENABLE_ASSERTS && goog.asserts.assert(goog.object.containsValue(goog.a11y.aria.Role, b), "No such ARIA role " + b), a.setAttribute(goog.a11y.aria.ROLE_ATTRIBUTE_, b)) : goog.a11y.aria.removeRole(a);
-};
-goog.a11y.aria.getRole = function(a) {
-  return a.getAttribute(goog.a11y.aria.ROLE_ATTRIBUTE_) || null;
-};
-goog.a11y.aria.removeRole = function(a) {
-  a.removeAttribute(goog.a11y.aria.ROLE_ATTRIBUTE_);
-};
-goog.a11y.aria.setState = function(a, b, c) {
-  goog.isArrayLike(c) && (c = c.join(" "));
-  var d = goog.a11y.aria.getAriaAttributeName_(b);
-  "" === c || void 0 == c ? (c = goog.a11y.aria.datatables.getDefaultValuesMap(), b in c ? a.setAttribute(d, c[b]) : a.removeAttribute(d)) : a.setAttribute(d, c);
-};
-goog.a11y.aria.removeState = function(a, b) {
-  a.removeAttribute(goog.a11y.aria.getAriaAttributeName_(b));
-};
-goog.a11y.aria.getState = function(a, b) {
-  var c = a.getAttribute(goog.a11y.aria.getAriaAttributeName_(b));
-  return null == c || void 0 == c ? "" : String(c);
-};
-goog.a11y.aria.getActiveDescendant = function(a) {
-  var b = goog.a11y.aria.getState(a, goog.a11y.aria.State.ACTIVEDESCENDANT);
-  return goog.dom.getOwnerDocument(a).getElementById(b);
-};
-goog.a11y.aria.setActiveDescendant = function(a, b) {
-  var c = "";
-  b && (c = b.id, goog.asserts.assert(c, "The active element should have an id."));
-  goog.a11y.aria.setState(a, goog.a11y.aria.State.ACTIVEDESCENDANT, c);
-};
-goog.a11y.aria.getLabel = function(a) {
-  return goog.a11y.aria.getState(a, goog.a11y.aria.State.LABEL);
-};
-goog.a11y.aria.setLabel = function(a, b) {
-  goog.a11y.aria.setState(a, goog.a11y.aria.State.LABEL, b);
-};
-goog.a11y.aria.assertRoleIsSetInternalUtil = function(a, b) {
-  if (!goog.array.contains(goog.a11y.aria.TAGS_WITH_ASSUMED_ROLES_, a.tagName)) {
-    var c = goog.a11y.aria.getRole(a);
-    goog.asserts.assert(null != c, "The element ARIA role cannot be null.");
-    goog.asserts.assert(goog.array.contains(b, c), 'Non existing or incorrect role set for element.The role set is "' + c + '". The role should be any of "' + b + '". Check the ARIA specification for more details http://www.w3.org/TR/wai-aria/roles.');
-  }
-};
-goog.a11y.aria.getStateBoolean = function(a, b) {
-  var c = a.getAttribute(goog.a11y.aria.getAriaAttributeName_(b));
-  goog.asserts.assert(goog.isBoolean(c) || null == c || "true" == c || "false" == c);
-  return null == c ? c : goog.isBoolean(c) ? c : "true" == c;
-};
-goog.a11y.aria.getStateNumber = function(a, b) {
-  var c = a.getAttribute(goog.a11y.aria.getAriaAttributeName_(b));
-  goog.asserts.assert((null == c || !isNaN(Number(c))) && !goog.isBoolean(c));
-  return null == c ? null : Number(c);
-};
-goog.a11y.aria.getStateString = function(a, b) {
-  var c = a.getAttribute(goog.a11y.aria.getAriaAttributeName_(b));
-  goog.asserts.assert((null == c || goog.isString(c)) && isNaN(Number(c)) && "true" != c && "false" != c);
-  return null == c ? null : c;
-};
-goog.a11y.aria.getStringArrayStateInternalUtil = function(a, b) {
-  var c = a.getAttribute(goog.a11y.aria.getAriaAttributeName_(b));
-  return goog.a11y.aria.splitStringOnWhitespace_(c);
-};
-goog.a11y.aria.splitStringOnWhitespace_ = function(a) {
-  return a ? a.split(/\s+/) : [];
-};
-goog.a11y.aria.getAriaAttributeName_ = function(a) {
-  goog.asserts.ENABLE_ASSERTS && (goog.asserts.assert(a, "ARIA attribute cannot be empty."), goog.asserts.assert(goog.object.containsValue(goog.a11y.aria.State, a), "No such ARIA attribute " + a));
-  return goog.a11y.aria.ARIA_PREFIX_ + a;
-};
 goog.events.KeyCodes = {WIN_KEY_FF_LINUX:0, MAC_ENTER:3, BACKSPACE:8, TAB:9, NUM_CENTER:12, ENTER:13, SHIFT:16, CTRL:17, ALT:18, PAUSE:19, CAPS_LOCK:20, ESC:27, SPACE:32, PAGE_UP:33, PAGE_DOWN:34, END:35, HOME:36, LEFT:37, UP:38, RIGHT:39, DOWN:40, PRINT_SCREEN:44, INSERT:45, DELETE:46, ZERO:48, ONE:49, TWO:50, THREE:51, FOUR:52, FIVE:53, SIX:54, SEVEN:55, EIGHT:56, NINE:57, FF_SEMICOLON:59, FF_EQUALS:61, FF_DASH:173, QUESTION_MARK:63, A:65, B:66, C:67, D:68, E:69, F:70, G:71, H:72, I:73, J:74, K:75, 
 L:76, M:77, N:78, O:79, P:80, Q:81, R:82, S:83, T:84, U:85, V:86, W:87, X:88, Y:89, Z:90, META:91, WIN_KEY_RIGHT:92, CONTEXT_MENU:93, NUM_ZERO:96, NUM_ONE:97, NUM_TWO:98, NUM_THREE:99, NUM_FOUR:100, NUM_FIVE:101, NUM_SIX:102, NUM_SEVEN:103, NUM_EIGHT:104, NUM_NINE:105, NUM_MULTIPLY:106, NUM_PLUS:107, NUM_MINUS:109, NUM_PERIOD:110, NUM_DIVISION:111, F1:112, F2:113, F3:114, F4:115, F5:116, F6:117, F7:118, F8:119, F9:120, F10:121, F11:122, F12:123, NUMLOCK:144, SCROLL_LOCK:145, FIRST_MEDIA_KEY:166, 
 LAST_MEDIA_KEY:183, SEMICOLON:186, DASH:189, EQUALS:187, COMMA:188, PERIOD:190, SLASH:191, APOSTROPHE:192, TILDE:192, SINGLE_QUOTE:222, OPEN_SQUARE_BRACKET:219, BACKSLASH:220, CLOSE_SQUARE_BRACKET:221, WIN_KEY:224, MAC_FF_META:224, MAC_WK_CMD_LEFT:91, MAC_WK_CMD_RIGHT:93, WIN_IME:229, PHANTOM:255};
@@ -64257,6 +68001,190 @@ goog.events.KeyCodes.normalizeMacWebKitKeyCode = function(a) {
     default:
       return a;
   }
+};
+job_streamer.console.api = {};
+job_streamer.console.api.control_bus_url = document.querySelector("meta[name\x3dcontrol-bus-url]").getAttribute("content");
+job_streamer.console.api.url_for = function(a) {
+  return cljs.core.truth_(goog.string.startsWith(a, "/")) ? [cljs.core.str(job_streamer.console.api.control_bus_url), cljs.core.str(a)].join("") : a;
+};
+job_streamer.console.api.handle_each_type = function(a, b, c) {
+  return cljs.core.fn_QMARK_.call(null, a) ? a.call(null, b) : console.error([cljs.core.str(goog.net.ErrorCode.getDebugMessage(c.getLastErrorCode())), cljs.core.str(" from "), cljs.core.str(c.getLastUri())].join(""));
+};
+job_streamer.console.api.request = function() {
+  var a = null, b = function(b) {
+    return a.call(null, b, new cljs.core.Keyword(null, "GET", "GET", 1736591026), null, cljs.core.PersistentArrayMap.EMPTY);
+  }, c = function(b, c) {
+    return a.call(null, b, new cljs.core.Keyword(null, "GET", "GET", 1736591026), null, c);
+  }, d = function(b, c, d) {
+    return a.call(null, b, c, null, d);
+  }, e = function(a, b, c, d) {
+    var e = cljs.core.seq_QMARK_.call(null, d) ? cljs.core.apply.call(null, cljs.core.hash_map, d) : d, m = cljs.core.get.call(null, e, new cljs.core.Keyword(null, "format", "format", -1306924766)), n = cljs.core.get.call(null, e, new cljs.core.Keyword(null, "error-handler", "error-handler", -484945776)), p = cljs.core.get.call(null, e, new cljs.core.Keyword(null, "handler", "handler", -195596612)), q = clojure.browser.net.xhr_connection.call(null);
+    cljs.core.truth_(p) && goog.events.listen(q, goog.net.EventType.SUCCESS, function(a, b, c, d, e, f) {
+      return function(b) {
+        b = cljs.reader.read_string.call(null, a.getResponseText());
+        return f.call(null, b);
+      };
+    }(q, d, e, m, n, p));
+    cljs.core.truth_(n) && goog.events.listen(q, goog.net.EventType.ERROR, function(a, b, c, d, e, f) {
+      return function(b) {
+        b = cljs.reader.read_string.call(null, a.getResponseText());
+        if (cljs.core.fn_QMARK_.call(null, e)) {
+          return e.call(null, b, a.getLastErrorCode());
+        }
+        if (cljs.core.map_QMARK_.call(null, e)) {
+          var c = cljs.core._EQ_, d = a.getLastErrorCode();
+          if (cljs.core.truth_(c.call(null, goog.net.ErrorCode.ACCESS_DENIED, d))) {
+            return job_streamer.console.api.handle_each_type.call(null, (new cljs.core.Keyword(null, "access-denied", "access-denied", 959449406)).cljs$core$IFn$_invoke$arity$1(e), b, a);
+          }
+          if (cljs.core.truth_(c.call(null, goog.net.ErrorCode.FILE_NOT_FOUND, d))) {
+            return job_streamer.console.api.handle_each_type.call(null, (new cljs.core.Keyword(null, "file-not-found", "file-not-found", -65398940)).cljs$core$IFn$_invoke$arity$1(e), b, a);
+          }
+          if (cljs.core.truth_(c.call(null, goog.net.ErrorCode.CUSTOM_ERROR, d))) {
+            return job_streamer.console.api.handle_each_type.call(null, (new cljs.core.Keyword(null, "custom-error", "custom-error", -1565161123)).cljs$core$IFn$_invoke$arity$1(e), b, a);
+          }
+          if (cljs.core.truth_(c.call(null, goog.net.ErrorCode.EXCEPTION, d))) {
+            return job_streamer.console.api.handle_each_type.call(null, (new cljs.core.Keyword(null, "exception", "exception", -335277064)).cljs$core$IFn$_invoke$arity$1(e), b, a);
+          }
+          if (cljs.core.truth_(c.call(null, goog.net.ErrorCode.HTTP_ERROR, d))) {
+            return job_streamer.console.api.handle_each_type.call(null, (new cljs.core.Keyword(null, "http-error", "http-error", -1040049553)).cljs$core$IFn$_invoke$arity$1(e), b, a);
+          }
+          if (cljs.core.truth_(c.call(null, goog.net.ErrorCode.ABORT, d))) {
+            return job_streamer.console.api.handle_each_type.call(null, (new cljs.core.Keyword(null, "abort", "abort", 521193198)).cljs$core$IFn$_invoke$arity$1(e), b, a);
+          }
+          if (cljs.core.truth_(c.call(null, goog.net.ErrorCode.TIMEOUT, d))) {
+            return job_streamer.console.api.handle_each_type.call(null, (new cljs.core.Keyword(null, "timeout", "timeout", -318625318)).cljs$core$IFn$_invoke$arity$1(e), b, a);
+          }
+          if (cljs.core.truth_(c.call(null, goog.net.ErrorCode.OFFLINE, d))) {
+            return job_streamer.console.api.handle_each_type.call(null, (new cljs.core.Keyword(null, "offline", "offline", -107631935)).cljs$core$IFn$_invoke$arity$1(e), b, a);
+          }
+          throw Error([cljs.core.str("No matching clause: "), cljs.core.str(d)].join(""));
+        }
+        return null;
+      };
+    }(q, d, e, m, n, p));
+    return q.send(job_streamer.console.api.url_for.call(null, a), cljs.core.name.call(null, b).toLowerCase(), c, function() {
+      switch(m instanceof cljs.core.Keyword ? m.fqn : null) {
+        case "xml":
+          return cljs.core.clj__GT_js.call(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "content-type", "content-type", -508222634), "application/xml"], null));
+        default:
+          return cljs.core.clj__GT_js.call(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "content-type", "content-type", -508222634), "application/edn"], null));
+      }
+    }());
+  }, a = function(a, g, h, k) {
+    switch(arguments.length) {
+      case 1:
+        return b.call(this, a);
+      case 2:
+        return c.call(this, a, g);
+      case 3:
+        return d.call(this, a, g, h);
+      case 4:
+        return e.call(this, a, g, h, k);
+    }
+    throw Error("Invalid arity: " + arguments.length);
+  };
+  a.cljs$core$IFn$_invoke$arity$1 = b;
+  a.cljs$core$IFn$_invoke$arity$2 = c;
+  a.cljs$core$IFn$_invoke$arity$3 = d;
+  a.cljs$core$IFn$_invoke$arity$4 = e;
+  return a;
+}();
+goog.a11y = {};
+goog.a11y.aria = {};
+goog.a11y.aria.Role = {ALERT:"alert", ALERTDIALOG:"alertdialog", APPLICATION:"application", ARTICLE:"article", BANNER:"banner", BUTTON:"button", CHECKBOX:"checkbox", COLUMNHEADER:"columnheader", COMBOBOX:"combobox", COMPLEMENTARY:"complementary", CONTENTINFO:"contentinfo", DEFINITION:"definition", DIALOG:"dialog", DIRECTORY:"directory", DOCUMENT:"document", FORM:"form", GRID:"grid", GRIDCELL:"gridcell", GROUP:"group", HEADING:"heading", IMG:"img", LINK:"link", LIST:"list", LISTBOX:"listbox", LISTITEM:"listitem", 
+LOG:"log", MAIN:"main", MARQUEE:"marquee", MATH:"math", MENU:"menu", MENUBAR:"menubar", MENU_ITEM:"menuitem", MENU_ITEM_CHECKBOX:"menuitemcheckbox", MENU_ITEM_RADIO:"menuitemradio", NAVIGATION:"navigation", NOTE:"note", OPTION:"option", PRESENTATION:"presentation", PROGRESSBAR:"progressbar", RADIO:"radio", RADIOGROUP:"radiogroup", REGION:"region", ROW:"row", ROWGROUP:"rowgroup", ROWHEADER:"rowheader", SCROLLBAR:"scrollbar", SEARCH:"search", SEPARATOR:"separator", SLIDER:"slider", SPINBUTTON:"spinbutton", 
+STATUS:"status", TAB:"tab", TAB_LIST:"tablist", TAB_PANEL:"tabpanel", TEXTBOX:"textbox", TIMER:"timer", TOOLBAR:"toolbar", TOOLTIP:"tooltip", TREE:"tree", TREEGRID:"treegrid", TREEITEM:"treeitem"};
+goog.a11y.aria.State = {ACTIVEDESCENDANT:"activedescendant", ATOMIC:"atomic", AUTOCOMPLETE:"autocomplete", BUSY:"busy", CHECKED:"checked", CONTROLS:"controls", DESCRIBEDBY:"describedby", DISABLED:"disabled", DROPEFFECT:"dropeffect", EXPANDED:"expanded", FLOWTO:"flowto", GRABBED:"grabbed", HASPOPUP:"haspopup", HIDDEN:"hidden", INVALID:"invalid", LABEL:"label", LABELLEDBY:"labelledby", LEVEL:"level", LIVE:"live", MULTILINE:"multiline", MULTISELECTABLE:"multiselectable", ORIENTATION:"orientation", OWNS:"owns", 
+POSINSET:"posinset", PRESSED:"pressed", READONLY:"readonly", RELEVANT:"relevant", REQUIRED:"required", SELECTED:"selected", SETSIZE:"setsize", SORT:"sort", VALUEMAX:"valuemax", VALUEMIN:"valuemin", VALUENOW:"valuenow", VALUETEXT:"valuetext"};
+goog.a11y.aria.AutoCompleteValues = {INLINE:"inline", LIST:"list", BOTH:"both", NONE:"none"};
+goog.a11y.aria.DropEffectValues = {COPY:"copy", MOVE:"move", LINK:"link", EXECUTE:"execute", POPUP:"popup", NONE:"none"};
+goog.a11y.aria.LivePriority = {OFF:"off", POLITE:"polite", ASSERTIVE:"assertive"};
+goog.a11y.aria.OrientationValues = {VERTICAL:"vertical", HORIZONTAL:"horizontal"};
+goog.a11y.aria.RelevantValues = {ADDITIONS:"additions", REMOVALS:"removals", TEXT:"text", ALL:"all"};
+goog.a11y.aria.SortValues = {ASCENDING:"ascending", DESCENDING:"descending", NONE:"none", OTHER:"other"};
+goog.a11y.aria.CheckedValues = {TRUE:"true", FALSE:"false", MIXED:"mixed", UNDEFINED:"undefined"};
+goog.a11y.aria.ExpandedValues = {TRUE:"true", FALSE:"false", UNDEFINED:"undefined"};
+goog.a11y.aria.GrabbedValues = {TRUE:"true", FALSE:"false", UNDEFINED:"undefined"};
+goog.a11y.aria.InvalidValues = {FALSE:"false", TRUE:"true", GRAMMAR:"grammar", SPELLING:"spelling"};
+goog.a11y.aria.PressedValues = {TRUE:"true", FALSE:"false", MIXED:"mixed", UNDEFINED:"undefined"};
+goog.a11y.aria.SelectedValues = {TRUE:"true", FALSE:"false", UNDEFINED:"undefined"};
+goog.a11y.aria.datatables = {};
+goog.a11y.aria.datatables.getDefaultValuesMap = function() {
+  goog.a11y.aria.DefaultStateValueMap_ || (goog.a11y.aria.DefaultStateValueMap_ = goog.object.create(goog.a11y.aria.State.ATOMIC, !1, goog.a11y.aria.State.AUTOCOMPLETE, "none", goog.a11y.aria.State.DROPEFFECT, "none", goog.a11y.aria.State.HASPOPUP, !1, goog.a11y.aria.State.LIVE, "off", goog.a11y.aria.State.MULTILINE, !1, goog.a11y.aria.State.MULTISELECTABLE, !1, goog.a11y.aria.State.ORIENTATION, "vertical", goog.a11y.aria.State.READONLY, !1, goog.a11y.aria.State.RELEVANT, "additions text", goog.a11y.aria.State.REQUIRED, 
+  !1, goog.a11y.aria.State.SORT, "none", goog.a11y.aria.State.BUSY, !1, goog.a11y.aria.State.DISABLED, !1, goog.a11y.aria.State.HIDDEN, !1, goog.a11y.aria.State.INVALID, "false"));
+  return goog.a11y.aria.DefaultStateValueMap_;
+};
+goog.a11y.aria.ARIA_PREFIX_ = "aria-";
+goog.a11y.aria.ROLE_ATTRIBUTE_ = "role";
+goog.a11y.aria.TAGS_WITH_ASSUMED_ROLES_ = [goog.dom.TagName.A, goog.dom.TagName.AREA, goog.dom.TagName.BUTTON, goog.dom.TagName.HEAD, goog.dom.TagName.INPUT, goog.dom.TagName.LINK, goog.dom.TagName.MENU, goog.dom.TagName.META, goog.dom.TagName.OPTGROUP, goog.dom.TagName.OPTION, goog.dom.TagName.PROGRESS, goog.dom.TagName.STYLE, goog.dom.TagName.SELECT, goog.dom.TagName.SOURCE, goog.dom.TagName.TEXTAREA, goog.dom.TagName.TITLE, goog.dom.TagName.TRACK];
+goog.a11y.aria.setRole = function(a, b) {
+  b ? (goog.asserts.ENABLE_ASSERTS && goog.asserts.assert(goog.object.containsValue(goog.a11y.aria.Role, b), "No such ARIA role " + b), a.setAttribute(goog.a11y.aria.ROLE_ATTRIBUTE_, b)) : goog.a11y.aria.removeRole(a);
+};
+goog.a11y.aria.getRole = function(a) {
+  return a.getAttribute(goog.a11y.aria.ROLE_ATTRIBUTE_) || null;
+};
+goog.a11y.aria.removeRole = function(a) {
+  a.removeAttribute(goog.a11y.aria.ROLE_ATTRIBUTE_);
+};
+goog.a11y.aria.setState = function(a, b, c) {
+  goog.isArrayLike(c) && (c = c.join(" "));
+  var d = goog.a11y.aria.getAriaAttributeName_(b);
+  "" === c || void 0 == c ? (c = goog.a11y.aria.datatables.getDefaultValuesMap(), b in c ? a.setAttribute(d, c[b]) : a.removeAttribute(d)) : a.setAttribute(d, c);
+};
+goog.a11y.aria.removeState = function(a, b) {
+  a.removeAttribute(goog.a11y.aria.getAriaAttributeName_(b));
+};
+goog.a11y.aria.getState = function(a, b) {
+  var c = a.getAttribute(goog.a11y.aria.getAriaAttributeName_(b));
+  return null == c || void 0 == c ? "" : String(c);
+};
+goog.a11y.aria.getActiveDescendant = function(a) {
+  var b = goog.a11y.aria.getState(a, goog.a11y.aria.State.ACTIVEDESCENDANT);
+  return goog.dom.getOwnerDocument(a).getElementById(b);
+};
+goog.a11y.aria.setActiveDescendant = function(a, b) {
+  var c = "";
+  b && (c = b.id, goog.asserts.assert(c, "The active element should have an id."));
+  goog.a11y.aria.setState(a, goog.a11y.aria.State.ACTIVEDESCENDANT, c);
+};
+goog.a11y.aria.getLabel = function(a) {
+  return goog.a11y.aria.getState(a, goog.a11y.aria.State.LABEL);
+};
+goog.a11y.aria.setLabel = function(a, b) {
+  goog.a11y.aria.setState(a, goog.a11y.aria.State.LABEL, b);
+};
+goog.a11y.aria.assertRoleIsSetInternalUtil = function(a, b) {
+  if (!goog.array.contains(goog.a11y.aria.TAGS_WITH_ASSUMED_ROLES_, a.tagName)) {
+    var c = goog.a11y.aria.getRole(a);
+    goog.asserts.assert(null != c, "The element ARIA role cannot be null.");
+    goog.asserts.assert(goog.array.contains(b, c), 'Non existing or incorrect role set for element.The role set is "' + c + '". The role should be any of "' + b + '". Check the ARIA specification for more details http://www.w3.org/TR/wai-aria/roles.');
+  }
+};
+goog.a11y.aria.getStateBoolean = function(a, b) {
+  var c = a.getAttribute(goog.a11y.aria.getAriaAttributeName_(b));
+  goog.asserts.assert(goog.isBoolean(c) || null == c || "true" == c || "false" == c);
+  return null == c ? c : goog.isBoolean(c) ? c : "true" == c;
+};
+goog.a11y.aria.getStateNumber = function(a, b) {
+  var c = a.getAttribute(goog.a11y.aria.getAriaAttributeName_(b));
+  goog.asserts.assert((null == c || !isNaN(Number(c))) && !goog.isBoolean(c));
+  return null == c ? null : Number(c);
+};
+goog.a11y.aria.getStateString = function(a, b) {
+  var c = a.getAttribute(goog.a11y.aria.getAriaAttributeName_(b));
+  goog.asserts.assert((null == c || goog.isString(c)) && isNaN(Number(c)) && "true" != c && "false" != c);
+  return null == c ? null : c;
+};
+goog.a11y.aria.getStringArrayStateInternalUtil = function(a, b) {
+  var c = a.getAttribute(goog.a11y.aria.getAriaAttributeName_(b));
+  return goog.a11y.aria.splitStringOnWhitespace_(c);
+};
+goog.a11y.aria.splitStringOnWhitespace_ = function(a) {
+  return a ? a.split(/\s+/) : [];
+};
+goog.a11y.aria.getAriaAttributeName_ = function(a) {
+  goog.asserts.ENABLE_ASSERTS && (goog.asserts.assert(a, "ARIA attribute cannot be empty."), goog.asserts.assert(goog.object.containsValue(goog.a11y.aria.State, a), "No such ARIA attribute " + a));
+  return goog.a11y.aria.ARIA_PREFIX_ + a;
 };
 goog.events.KeyHandler = function(a, b) {
   goog.events.EventTarget.call(this);
@@ -69776,393 +73704,6 @@ Blockly.Flyout.prototype.getRect = function() {
   Blockly.RTL || (a -= 1E7);
   return new goog.math.Rect(a, -1E7, 1E7 + this.width_, this.height_ + 2E7);
 };
-goog.dom.tags = {};
-goog.dom.tags.VOID_TAGS_ = goog.object.createSet("area base br col command embed hr img input keygen link meta param source track wbr".split(" "));
-goog.dom.tags.isVoidTag = function(a) {
-  return!0 === goog.dom.tags.VOID_TAGS_[a];
-};
-goog.string.TypedString = function() {
-};
-goog.string.Const = function() {
-  this.stringConstValueWithSecurityContract__googStringSecurityPrivate_ = "";
-  this.STRING_CONST_TYPE_MARKER__GOOG_STRING_SECURITY_PRIVATE_ = goog.string.Const.TYPE_MARKER_;
-};
-goog.string.Const.prototype.implementsGoogStringTypedString = !0;
-goog.string.Const.prototype.getTypedStringValue = function() {
-  return this.stringConstValueWithSecurityContract__googStringSecurityPrivate_;
-};
-goog.string.Const.prototype.toString = function() {
-  return "Const{" + this.stringConstValueWithSecurityContract__googStringSecurityPrivate_ + "}";
-};
-goog.string.Const.unwrap = function(a) {
-  if (a instanceof goog.string.Const && a.constructor === goog.string.Const && a.STRING_CONST_TYPE_MARKER__GOOG_STRING_SECURITY_PRIVATE_ === goog.string.Const.TYPE_MARKER_) {
-    return a.stringConstValueWithSecurityContract__googStringSecurityPrivate_;
-  }
-  goog.asserts.fail("expected object of type Const, got '" + a + "'");
-  return "type_error:Const";
-};
-goog.string.Const.from = function(a) {
-  return goog.string.Const.create__googStringSecurityPrivate_(a);
-};
-goog.string.Const.TYPE_MARKER_ = {};
-goog.string.Const.create__googStringSecurityPrivate_ = function(a) {
-  var b = new goog.string.Const;
-  b.stringConstValueWithSecurityContract__googStringSecurityPrivate_ = a;
-  return b;
-};
-goog.html = {};
-goog.html.SafeStyle = function() {
-  this.privateDoNotAccessOrElseSafeStyleWrappedValue_ = "";
-  this.SAFE_STYLE_TYPE_MARKER_GOOG_HTML_SECURITY_PRIVATE_ = goog.html.SafeStyle.TYPE_MARKER_GOOG_HTML_SECURITY_PRIVATE_;
-};
-goog.html.SafeStyle.prototype.implementsGoogStringTypedString = !0;
-goog.html.SafeStyle.TYPE_MARKER_GOOG_HTML_SECURITY_PRIVATE_ = {};
-goog.html.SafeStyle.fromConstant = function(a) {
-  a = goog.string.Const.unwrap(a);
-  if (0 === a.length) {
-    return goog.html.SafeStyle.EMPTY;
-  }
-  goog.html.SafeStyle.checkStyle_(a);
-  goog.asserts.assert(goog.string.endsWith(a, ";"), "Last character of style string is not ';': " + a);
-  goog.asserts.assert(goog.string.contains(a, ":"), "Style string must contain at least one ':', to specify a \"name: value\" pair: " + a);
-  return goog.html.SafeStyle.createSafeStyleSecurityPrivateDoNotAccessOrElse(a);
-};
-goog.html.SafeStyle.checkStyle_ = function(a) {
-  goog.asserts.assert(!/[<>]/.test(a), "Forbidden characters in style string: " + a);
-};
-goog.html.SafeStyle.prototype.getTypedStringValue = function() {
-  return this.privateDoNotAccessOrElseSafeStyleWrappedValue_;
-};
-goog.DEBUG && (goog.html.SafeStyle.prototype.toString = function() {
-  return "SafeStyle{" + this.privateDoNotAccessOrElseSafeStyleWrappedValue_ + "}";
-});
-goog.html.SafeStyle.unwrap = function(a) {
-  if (a instanceof goog.html.SafeStyle && a.constructor === goog.html.SafeStyle && a.SAFE_STYLE_TYPE_MARKER_GOOG_HTML_SECURITY_PRIVATE_ === goog.html.SafeStyle.TYPE_MARKER_GOOG_HTML_SECURITY_PRIVATE_) {
-    return a.privateDoNotAccessOrElseSafeStyleWrappedValue_;
-  }
-  goog.asserts.fail("expected object of type SafeStyle, got '" + a + "'");
-  return "type_error:SafeStyle";
-};
-goog.html.SafeStyle.createSafeStyleSecurityPrivateDoNotAccessOrElse = function(a) {
-  var b = new goog.html.SafeStyle;
-  b.privateDoNotAccessOrElseSafeStyleWrappedValue_ = a;
-  return b;
-};
-goog.html.SafeStyle.EMPTY = goog.html.SafeStyle.createSafeStyleSecurityPrivateDoNotAccessOrElse("");
-goog.html.SafeStyle.INNOCUOUS_STRING = "zClosurez";
-goog.html.SafeStyle.create = function(a) {
-  var b = "", c;
-  for (c in a) {
-    if (!/^[-_a-zA-Z0-9]+$/.test(c)) {
-      throw Error("Name allows only [-_a-zA-Z0-9], got: " + c);
-    }
-    var d = a[c];
-    null != d && (d instanceof goog.string.Const ? (d = goog.string.Const.unwrap(d), goog.asserts.assert(!/[{;}]/.test(d), "Value does not allow [{;}].")) : goog.html.SafeStyle.VALUE_RE_.test(d) || (goog.asserts.fail("String value allows only [-.%_!# a-zA-Z0-9], got: " + d), d = goog.html.SafeStyle.INNOCUOUS_STRING), b += c + ":" + d + ";");
-  }
-  if (!b) {
-    return goog.html.SafeStyle.EMPTY;
-  }
-  goog.html.SafeStyle.checkStyle_(b);
-  return goog.html.SafeStyle.createSafeStyleSecurityPrivateDoNotAccessOrElse(b);
-};
-goog.html.SafeStyle.VALUE_RE_ = /^[-.%_!# a-zA-Z0-9]+$/;
-goog.html.SafeStyle.concat = function(a) {
-  var b = "", c = function(a) {
-    goog.isArray(a) ? goog.array.forEach(a, c) : b += goog.html.SafeStyle.unwrap(a);
-  };
-  goog.array.forEach(arguments, c);
-  return b ? goog.html.SafeStyle.createSafeStyleSecurityPrivateDoNotAccessOrElse(b) : goog.html.SafeStyle.EMPTY;
-};
-goog.i18n.bidi = {};
-goog.i18n.bidi.FORCE_RTL = !1;
-goog.i18n.bidi.IS_RTL = goog.i18n.bidi.FORCE_RTL || ("ar" == goog.LOCALE.substring(0, 2).toLowerCase() || "fa" == goog.LOCALE.substring(0, 2).toLowerCase() || "he" == goog.LOCALE.substring(0, 2).toLowerCase() || "iw" == goog.LOCALE.substring(0, 2).toLowerCase() || "ps" == goog.LOCALE.substring(0, 2).toLowerCase() || "sd" == goog.LOCALE.substring(0, 2).toLowerCase() || "ug" == goog.LOCALE.substring(0, 2).toLowerCase() || "ur" == goog.LOCALE.substring(0, 2).toLowerCase() || "yi" == goog.LOCALE.substring(0, 
-2).toLowerCase()) && (2 == goog.LOCALE.length || "-" == goog.LOCALE.substring(2, 3) || "_" == goog.LOCALE.substring(2, 3)) || 3 <= goog.LOCALE.length && "ckb" == goog.LOCALE.substring(0, 3).toLowerCase() && (3 == goog.LOCALE.length || "-" == goog.LOCALE.substring(3, 4) || "_" == goog.LOCALE.substring(3, 4));
-goog.i18n.bidi.Format = {LRE:"\u202a", RLE:"\u202b", PDF:"\u202c", LRM:"\u200e", RLM:"\u200f"};
-goog.i18n.bidi.Dir = {LTR:1, RTL:-1, NEUTRAL:0, UNKNOWN:0};
-goog.i18n.bidi.RIGHT = "right";
-goog.i18n.bidi.LEFT = "left";
-goog.i18n.bidi.I18N_RIGHT = goog.i18n.bidi.IS_RTL ? goog.i18n.bidi.LEFT : goog.i18n.bidi.RIGHT;
-goog.i18n.bidi.I18N_LEFT = goog.i18n.bidi.IS_RTL ? goog.i18n.bidi.RIGHT : goog.i18n.bidi.LEFT;
-goog.i18n.bidi.toDir = function(a, b) {
-  return "number" == typeof a ? 0 < a ? goog.i18n.bidi.Dir.LTR : 0 > a ? goog.i18n.bidi.Dir.RTL : b ? null : goog.i18n.bidi.Dir.NEUTRAL : null == a ? null : a ? goog.i18n.bidi.Dir.RTL : goog.i18n.bidi.Dir.LTR;
-};
-goog.i18n.bidi.ltrChars_ = "A-Za-z\u00c0-\u00d6\u00d8-\u00f6\u00f8-\u02b8\u0300-\u0590\u0800-\u1fff\u200e\u2c00-\ufb1c\ufe00-\ufe6f\ufefd-\uffff";
-goog.i18n.bidi.rtlChars_ = "\u0591-\u07ff\u200f\ufb1d-\ufdff\ufe70-\ufefc";
-goog.i18n.bidi.htmlSkipReg_ = /<[^>]*>|&[^;]+;/g;
-goog.i18n.bidi.stripHtmlIfNeeded_ = function(a, b) {
-  return b ? a.replace(goog.i18n.bidi.htmlSkipReg_, "") : a;
-};
-goog.i18n.bidi.rtlCharReg_ = new RegExp("[" + goog.i18n.bidi.rtlChars_ + "]");
-goog.i18n.bidi.ltrCharReg_ = new RegExp("[" + goog.i18n.bidi.ltrChars_ + "]");
-goog.i18n.bidi.hasAnyRtl = function(a, b) {
-  return goog.i18n.bidi.rtlCharReg_.test(goog.i18n.bidi.stripHtmlIfNeeded_(a, b));
-};
-goog.i18n.bidi.hasRtlChar = goog.i18n.bidi.hasAnyRtl;
-goog.i18n.bidi.hasAnyLtr = function(a, b) {
-  return goog.i18n.bidi.ltrCharReg_.test(goog.i18n.bidi.stripHtmlIfNeeded_(a, b));
-};
-goog.i18n.bidi.ltrRe_ = new RegExp("^[" + goog.i18n.bidi.ltrChars_ + "]");
-goog.i18n.bidi.rtlRe_ = new RegExp("^[" + goog.i18n.bidi.rtlChars_ + "]");
-goog.i18n.bidi.isRtlChar = function(a) {
-  return goog.i18n.bidi.rtlRe_.test(a);
-};
-goog.i18n.bidi.isLtrChar = function(a) {
-  return goog.i18n.bidi.ltrRe_.test(a);
-};
-goog.i18n.bidi.isNeutralChar = function(a) {
-  return!goog.i18n.bidi.isLtrChar(a) && !goog.i18n.bidi.isRtlChar(a);
-};
-goog.i18n.bidi.ltrDirCheckRe_ = new RegExp("^[^" + goog.i18n.bidi.rtlChars_ + "]*[" + goog.i18n.bidi.ltrChars_ + "]");
-goog.i18n.bidi.rtlDirCheckRe_ = new RegExp("^[^" + goog.i18n.bidi.ltrChars_ + "]*[" + goog.i18n.bidi.rtlChars_ + "]");
-goog.i18n.bidi.startsWithRtl = function(a, b) {
-  return goog.i18n.bidi.rtlDirCheckRe_.test(goog.i18n.bidi.stripHtmlIfNeeded_(a, b));
-};
-goog.i18n.bidi.isRtlText = goog.i18n.bidi.startsWithRtl;
-goog.i18n.bidi.startsWithLtr = function(a, b) {
-  return goog.i18n.bidi.ltrDirCheckRe_.test(goog.i18n.bidi.stripHtmlIfNeeded_(a, b));
-};
-goog.i18n.bidi.isLtrText = goog.i18n.bidi.startsWithLtr;
-goog.i18n.bidi.isRequiredLtrRe_ = /^http:\/\/.*/;
-goog.i18n.bidi.isNeutralText = function(a, b) {
-  a = goog.i18n.bidi.stripHtmlIfNeeded_(a, b);
-  return goog.i18n.bidi.isRequiredLtrRe_.test(a) || !goog.i18n.bidi.hasAnyLtr(a) && !goog.i18n.bidi.hasAnyRtl(a);
-};
-goog.i18n.bidi.ltrExitDirCheckRe_ = new RegExp("[" + goog.i18n.bidi.ltrChars_ + "][^" + goog.i18n.bidi.rtlChars_ + "]*$");
-goog.i18n.bidi.rtlExitDirCheckRe_ = new RegExp("[" + goog.i18n.bidi.rtlChars_ + "][^" + goog.i18n.bidi.ltrChars_ + "]*$");
-goog.i18n.bidi.endsWithLtr = function(a, b) {
-  return goog.i18n.bidi.ltrExitDirCheckRe_.test(goog.i18n.bidi.stripHtmlIfNeeded_(a, b));
-};
-goog.i18n.bidi.isLtrExitText = goog.i18n.bidi.endsWithLtr;
-goog.i18n.bidi.endsWithRtl = function(a, b) {
-  return goog.i18n.bidi.rtlExitDirCheckRe_.test(goog.i18n.bidi.stripHtmlIfNeeded_(a, b));
-};
-goog.i18n.bidi.isRtlExitText = goog.i18n.bidi.endsWithRtl;
-goog.i18n.bidi.rtlLocalesRe_ = /^(ar|ckb|dv|he|iw|fa|nqo|ps|sd|ug|ur|yi|.*[-_](Arab|Hebr|Thaa|Nkoo|Tfng))(?!.*[-_](Latn|Cyrl)($|-|_))($|-|_)/i;
-goog.i18n.bidi.isRtlLanguage = function(a) {
-  return goog.i18n.bidi.rtlLocalesRe_.test(a);
-};
-goog.i18n.bidi.bracketGuardHtmlRe_ = /(\(.*?\)+)|(\[.*?\]+)|(\{.*?\}+)|(&lt;.*?(&gt;)+)/g;
-goog.i18n.bidi.bracketGuardTextRe_ = /(\(.*?\)+)|(\[.*?\]+)|(\{.*?\}+)|(<.*?>+)/g;
-goog.i18n.bidi.guardBracketInHtml = function(a, b) {
-  return(void 0 === b ? goog.i18n.bidi.hasAnyRtl(a) : b) ? a.replace(goog.i18n.bidi.bracketGuardHtmlRe_, "\x3cspan dir\x3drtl\x3e$\x26\x3c/span\x3e") : a.replace(goog.i18n.bidi.bracketGuardHtmlRe_, "\x3cspan dir\x3dltr\x3e$\x26\x3c/span\x3e");
-};
-goog.i18n.bidi.guardBracketInText = function(a, b) {
-  var c = (void 0 === b ? goog.i18n.bidi.hasAnyRtl(a) : b) ? goog.i18n.bidi.Format.RLM : goog.i18n.bidi.Format.LRM;
-  return a.replace(goog.i18n.bidi.bracketGuardTextRe_, c + "$\x26" + c);
-};
-goog.i18n.bidi.enforceRtlInHtml = function(a) {
-  return "\x3c" == a.charAt(0) ? a.replace(/<\w+/, "$\x26 dir\x3drtl") : "\n\x3cspan dir\x3drtl\x3e" + a + "\x3c/span\x3e";
-};
-goog.i18n.bidi.enforceRtlInText = function(a) {
-  return goog.i18n.bidi.Format.RLE + a + goog.i18n.bidi.Format.PDF;
-};
-goog.i18n.bidi.enforceLtrInHtml = function(a) {
-  return "\x3c" == a.charAt(0) ? a.replace(/<\w+/, "$\x26 dir\x3dltr") : "\n\x3cspan dir\x3dltr\x3e" + a + "\x3c/span\x3e";
-};
-goog.i18n.bidi.enforceLtrInText = function(a) {
-  return goog.i18n.bidi.Format.LRE + a + goog.i18n.bidi.Format.PDF;
-};
-goog.i18n.bidi.dimensionsRe_ = /:\s*([.\d][.\w]*)\s+([.\d][.\w]*)\s+([.\d][.\w]*)\s+([.\d][.\w]*)/g;
-goog.i18n.bidi.leftRe_ = /left/gi;
-goog.i18n.bidi.rightRe_ = /right/gi;
-goog.i18n.bidi.tempRe_ = /%%%%/g;
-goog.i18n.bidi.mirrorCSS = function(a) {
-  return a.replace(goog.i18n.bidi.dimensionsRe_, ":$1 $4 $3 $2").replace(goog.i18n.bidi.leftRe_, "%%%%").replace(goog.i18n.bidi.rightRe_, goog.i18n.bidi.LEFT).replace(goog.i18n.bidi.tempRe_, goog.i18n.bidi.RIGHT);
-};
-goog.i18n.bidi.doubleQuoteSubstituteRe_ = /([\u0591-\u05f2])"/g;
-goog.i18n.bidi.singleQuoteSubstituteRe_ = /([\u0591-\u05f2])'/g;
-goog.i18n.bidi.normalizeHebrewQuote = function(a) {
-  return a.replace(goog.i18n.bidi.doubleQuoteSubstituteRe_, "$1\u05f4").replace(goog.i18n.bidi.singleQuoteSubstituteRe_, "$1\u05f3");
-};
-goog.i18n.bidi.wordSeparatorRe_ = /\s+/;
-goog.i18n.bidi.hasNumeralsRe_ = /\d/;
-goog.i18n.bidi.rtlDetectionThreshold_ = .4;
-goog.i18n.bidi.estimateDirection = function(a, b) {
-  for (var c = 0, d = 0, e = !1, f = goog.i18n.bidi.stripHtmlIfNeeded_(a, b).split(goog.i18n.bidi.wordSeparatorRe_), g = 0;g < f.length;g++) {
-    var h = f[g];
-    goog.i18n.bidi.startsWithRtl(h) ? (c++, d++) : goog.i18n.bidi.isRequiredLtrRe_.test(h) ? e = !0 : goog.i18n.bidi.hasAnyLtr(h) ? d++ : goog.i18n.bidi.hasNumeralsRe_.test(h) && (e = !0);
-  }
-  return 0 == d ? e ? goog.i18n.bidi.Dir.LTR : goog.i18n.bidi.Dir.NEUTRAL : c / d > goog.i18n.bidi.rtlDetectionThreshold_ ? goog.i18n.bidi.Dir.RTL : goog.i18n.bidi.Dir.LTR;
-};
-goog.i18n.bidi.detectRtlDirectionality = function(a, b) {
-  return goog.i18n.bidi.estimateDirection(a, b) == goog.i18n.bidi.Dir.RTL;
-};
-goog.i18n.bidi.setElementDirAndAlign = function(a, b) {
-  a && (b = goog.i18n.bidi.toDir(b)) && (a.style.textAlign = b == goog.i18n.bidi.Dir.RTL ? goog.i18n.bidi.RIGHT : goog.i18n.bidi.LEFT, a.dir = b == goog.i18n.bidi.Dir.RTL ? "rtl" : "ltr");
-};
-goog.i18n.bidi.DirectionalString = function() {
-};
-goog.html.SafeUrl = function() {
-  this.privateDoNotAccessOrElseSafeHtmlWrappedValue_ = "";
-  this.SAFE_URL_TYPE_MARKER_GOOG_HTML_SECURITY_PRIVATE_ = goog.html.SafeUrl.TYPE_MARKER_GOOG_HTML_SECURITY_PRIVATE_;
-};
-goog.html.SafeUrl.INNOCUOUS_STRING = "about:invalid#zClosurez";
-goog.html.SafeUrl.prototype.implementsGoogStringTypedString = !0;
-goog.html.SafeUrl.prototype.getTypedStringValue = function() {
-  return this.privateDoNotAccessOrElseSafeHtmlWrappedValue_;
-};
-goog.html.SafeUrl.prototype.implementsGoogI18nBidiDirectionalString = !0;
-goog.html.SafeUrl.prototype.getDirection = function() {
-  return goog.i18n.bidi.Dir.LTR;
-};
-goog.DEBUG && (goog.html.SafeUrl.prototype.toString = function() {
-  return "SafeUrl{" + this.privateDoNotAccessOrElseSafeHtmlWrappedValue_ + "}";
-});
-goog.html.SafeUrl.unwrap = function(a) {
-  if (a instanceof goog.html.SafeUrl && a.constructor === goog.html.SafeUrl && a.SAFE_URL_TYPE_MARKER_GOOG_HTML_SECURITY_PRIVATE_ === goog.html.SafeUrl.TYPE_MARKER_GOOG_HTML_SECURITY_PRIVATE_) {
-    return a.privateDoNotAccessOrElseSafeHtmlWrappedValue_;
-  }
-  goog.asserts.fail("expected object of type SafeUrl, got '" + a + "'");
-  return "type_error:SafeUrl";
-};
-goog.html.SafeUrl.fromConstant = function(a) {
-  return goog.html.SafeUrl.createSafeUrlSecurityPrivateDoNotAccessOrElse(goog.string.Const.unwrap(a));
-};
-goog.html.SAFE_URL_PATTERN_ = /^(?:(?:https?|mailto):|[^&:/?#]*(?:[/?#]|$))/i;
-goog.html.SafeUrl.sanitize = function(a) {
-  if (a instanceof goog.html.SafeUrl) {
-    return a;
-  }
-  a = a.implementsGoogStringTypedString ? a.getTypedStringValue() : String(a);
-  a = goog.html.SAFE_URL_PATTERN_.test(a) ? goog.html.SafeUrl.normalize_(a) : goog.html.SafeUrl.INNOCUOUS_STRING;
-  return goog.html.SafeUrl.createSafeUrlSecurityPrivateDoNotAccessOrElse(a);
-};
-goog.html.SafeUrl.normalize_ = function(a) {
-  try {
-    var b = encodeURI(a);
-  } catch (c) {
-    return goog.html.SafeUrl.INNOCUOUS_STRING;
-  }
-  return b.replace(goog.html.SafeUrl.NORMALIZE_MATCHER_, function(a) {
-    return goog.html.SafeUrl.NORMALIZE_REPLACER_MAP_[a];
-  });
-};
-goog.html.SafeUrl.NORMALIZE_MATCHER_ = /[()']|%5B|%5D|%25/g;
-goog.html.SafeUrl.NORMALIZE_REPLACER_MAP_ = {"'":"%27", "(":"%28", ")":"%29", "%5B":"[", "%5D":"]", "%25":"%"};
-goog.html.SafeUrl.TYPE_MARKER_GOOG_HTML_SECURITY_PRIVATE_ = {};
-goog.html.SafeUrl.createSafeUrlSecurityPrivateDoNotAccessOrElse = function(a) {
-  var b = new goog.html.SafeUrl;
-  b.privateDoNotAccessOrElseSafeHtmlWrappedValue_ = a;
-  return b;
-};
-goog.html.SafeHtml = function() {
-  this.privateDoNotAccessOrElseSafeHtmlWrappedValue_ = "";
-  this.SAFE_HTML_TYPE_MARKER_GOOG_HTML_SECURITY_PRIVATE_ = goog.html.SafeHtml.TYPE_MARKER_GOOG_HTML_SECURITY_PRIVATE_;
-  this.dir_ = null;
-};
-goog.html.SafeHtml.prototype.implementsGoogI18nBidiDirectionalString = !0;
-goog.html.SafeHtml.prototype.getDirection = function() {
-  return this.dir_;
-};
-goog.html.SafeHtml.prototype.implementsGoogStringTypedString = !0;
-goog.html.SafeHtml.prototype.getTypedStringValue = function() {
-  return this.privateDoNotAccessOrElseSafeHtmlWrappedValue_;
-};
-goog.DEBUG && (goog.html.SafeHtml.prototype.toString = function() {
-  return "SafeHtml{" + this.privateDoNotAccessOrElseSafeHtmlWrappedValue_ + "}";
-});
-goog.html.SafeHtml.unwrap = function(a) {
-  if (a instanceof goog.html.SafeHtml && a.constructor === goog.html.SafeHtml && a.SAFE_HTML_TYPE_MARKER_GOOG_HTML_SECURITY_PRIVATE_ === goog.html.SafeHtml.TYPE_MARKER_GOOG_HTML_SECURITY_PRIVATE_) {
-    return a.privateDoNotAccessOrElseSafeHtmlWrappedValue_;
-  }
-  goog.asserts.fail("expected object of type SafeHtml, got '" + a + "'");
-  return "type_error:SafeHtml";
-};
-goog.html.SafeHtml.htmlEscape = function(a) {
-  if (a instanceof goog.html.SafeHtml) {
-    return a;
-  }
-  var b = null;
-  a.implementsGoogI18nBidiDirectionalString && (b = a.getDirection());
-  a = a.implementsGoogStringTypedString ? a.getTypedStringValue() : String(a);
-  return goog.html.SafeHtml.createSafeHtmlSecurityPrivateDoNotAccessOrElse(goog.string.htmlEscape(a), b);
-};
-goog.html.SafeHtml.htmlEscapePreservingNewlines = function(a) {
-  if (a instanceof goog.html.SafeHtml) {
-    return a;
-  }
-  a = goog.html.SafeHtml.htmlEscape(a);
-  return goog.html.SafeHtml.createSafeHtmlSecurityPrivateDoNotAccessOrElse(goog.string.newLineToBr(goog.html.SafeHtml.unwrap(a)), a.getDirection());
-};
-goog.html.SafeHtml.from = goog.html.SafeHtml.htmlEscape;
-goog.html.SafeHtml.VALID_NAMES_IN_TAG_ = /^[a-zA-Z0-9-]+$/;
-goog.html.SafeHtml.URL_ATTRIBUTES_ = goog.object.createSet("action", "cite", "data", "formaction", "href", "manifest", "poster", "src");
-goog.html.SafeHtml.NOT_ALLOWED_TAG_NAMES_ = goog.object.createSet("link", "script", "style");
-goog.html.SafeHtml.create = function(a, b, c) {
-  if (!goog.html.SafeHtml.VALID_NAMES_IN_TAG_.test(a)) {
-    throw Error("Invalid tag name \x3c" + a + "\x3e.");
-  }
-  if (a.toLowerCase() in goog.html.SafeHtml.NOT_ALLOWED_TAG_NAMES_) {
-    throw Error("Tag name \x3c" + a + "\x3e is not allowed for SafeHtml.");
-  }
-  var d = null, e = "\x3c" + a;
-  if (b) {
-    for (var f in b) {
-      if (!goog.html.SafeHtml.VALID_NAMES_IN_TAG_.test(f)) {
-        throw Error('Invalid attribute name "' + f + '".');
-      }
-      var g = b[f];
-      if (null != g) {
-        if (g instanceof goog.string.Const) {
-          g = goog.string.Const.unwrap(g);
-        } else {
-          if ("style" == f.toLowerCase()) {
-            g = goog.html.SafeHtml.getStyleValue_(g);
-          } else {
-            if (/^on/i.test(f)) {
-              throw Error('Attribute "' + f + '" requires goog.string.Const value, "' + g + '" given.');
-            }
-            if (g instanceof goog.html.SafeUrl) {
-              g = goog.html.SafeUrl.unwrap(g);
-            } else {
-              if (f.toLowerCase() in goog.html.SafeHtml.URL_ATTRIBUTES_) {
-                throw Error('Attribute "' + f + '" requires goog.string.Const or goog.html.SafeUrl value, "' + g + '" given.');
-              }
-            }
-          }
-        }
-        goog.asserts.assert(goog.isString(g) || goog.isNumber(g), "String or number value expected, got " + typeof g + " with value: " + g);
-        e += " " + f + '\x3d"' + goog.string.htmlEscape(String(g)) + '"';
-      }
-    }
-  }
-  goog.isDef(c) ? goog.isArray(c) || (c = [c]) : c = [];
-  goog.dom.tags.isVoidTag(a.toLowerCase()) ? (goog.asserts.assert(!c.length, "Void tag \x3c" + a + "\x3e does not allow content."), e += "\x3e") : (d = goog.html.SafeHtml.concat(c), e += "\x3e" + goog.html.SafeHtml.unwrap(d) + "\x3c/" + a + "\x3e", d = d.getDirection());
-  (a = b && b.dir) && (d = /^(ltr|rtl|auto)$/i.test(a) ? goog.i18n.bidi.Dir.NEUTRAL : null);
-  return goog.html.SafeHtml.createSafeHtmlSecurityPrivateDoNotAccessOrElse(e, d);
-};
-goog.html.SafeHtml.getStyleValue_ = function(a) {
-  if (!goog.isObject(a)) {
-    throw Error('The "style" attribute requires goog.html.SafeStyle or map of style properties, ' + typeof a + " given: " + a);
-  }
-  a instanceof goog.html.SafeStyle || (a = goog.html.SafeStyle.create(a));
-  return goog.html.SafeStyle.unwrap(a);
-};
-goog.html.SafeHtml.createWithDir = function(a, b, c, d) {
-  b = goog.html.SafeHtml.create(b, c, d);
-  b.dir_ = a;
-  return b;
-};
-goog.html.SafeHtml.concat = function(a) {
-  var b = goog.i18n.bidi.Dir.NEUTRAL, c = "", d = function(a) {
-    goog.isArray(a) ? goog.array.forEach(a, d) : (a = goog.html.SafeHtml.htmlEscape(a), c += goog.html.SafeHtml.unwrap(a), a = a.getDirection(), b == goog.i18n.bidi.Dir.NEUTRAL ? b = a : a != goog.i18n.bidi.Dir.NEUTRAL && b != a && (b = null));
-  };
-  goog.array.forEach(arguments, d);
-  return goog.html.SafeHtml.createSafeHtmlSecurityPrivateDoNotAccessOrElse(c, b);
-};
-goog.html.SafeHtml.concatWithDir = function(a, b) {
-  var c = goog.html.SafeHtml.concat(goog.array.slice(arguments, 1));
-  c.dir_ = a;
-  return c;
-};
-goog.html.SafeHtml.TYPE_MARKER_GOOG_HTML_SECURITY_PRIVATE_ = {};
-goog.html.SafeHtml.createSafeHtmlSecurityPrivateDoNotAccessOrElse = function(a, b) {
-  var c = new goog.html.SafeHtml;
-  c.privateDoNotAccessOrElseSafeHtmlWrappedValue_ = a;
-  c.dir_ = b;
-  return c;
-};
-goog.html.SafeHtml.EMPTY = goog.html.SafeHtml.createSafeHtmlSecurityPrivateDoNotAccessOrElse("", goog.i18n.bidi.Dir.NEUTRAL);
 goog.events.FocusHandler = function(a) {
   goog.events.EventTarget.call(this);
   this.element_ = a;
@@ -70182,653 +73723,6 @@ goog.events.FocusHandler.prototype.disposeInternal = function() {
   goog.events.unlistenByKey(this.listenKeyIn_);
   goog.events.unlistenByKey(this.listenKeyOut_);
   delete this.element_;
-};
-goog.structs.Collection = function() {
-};
-goog.structs.Set = function(a) {
-  this.map_ = new goog.structs.Map;
-  a && this.addAll(a);
-};
-goog.structs.Set.getKey_ = function(a) {
-  var b = typeof a;
-  return "object" == b && a || "function" == b ? "o" + goog.getUid(a) : b.substr(0, 1) + a;
-};
-goog.structs.Set.prototype.getCount = function() {
-  return this.map_.getCount();
-};
-goog.structs.Set.prototype.add = function(a) {
-  this.map_.set(goog.structs.Set.getKey_(a), a);
-};
-goog.structs.Set.prototype.addAll = function(a) {
-  a = goog.structs.getValues(a);
-  for (var b = a.length, c = 0;c < b;c++) {
-    this.add(a[c]);
-  }
-};
-goog.structs.Set.prototype.removeAll = function(a) {
-  a = goog.structs.getValues(a);
-  for (var b = a.length, c = 0;c < b;c++) {
-    this.remove(a[c]);
-  }
-};
-goog.structs.Set.prototype.remove = function(a) {
-  return this.map_.remove(goog.structs.Set.getKey_(a));
-};
-goog.structs.Set.prototype.clear = function() {
-  this.map_.clear();
-};
-goog.structs.Set.prototype.isEmpty = function() {
-  return this.map_.isEmpty();
-};
-goog.structs.Set.prototype.contains = function(a) {
-  return this.map_.containsKey(goog.structs.Set.getKey_(a));
-};
-goog.structs.Set.prototype.containsAll = function(a) {
-  return goog.structs.every(a, this.contains, this);
-};
-goog.structs.Set.prototype.intersection = function(a) {
-  var b = new goog.structs.Set;
-  a = goog.structs.getValues(a);
-  for (var c = 0;c < a.length;c++) {
-    var d = a[c];
-    this.contains(d) && b.add(d);
-  }
-  return b;
-};
-goog.structs.Set.prototype.difference = function(a) {
-  var b = this.clone();
-  b.removeAll(a);
-  return b;
-};
-goog.structs.Set.prototype.getValues = function() {
-  return this.map_.getValues();
-};
-goog.structs.Set.prototype.clone = function() {
-  return new goog.structs.Set(this);
-};
-goog.structs.Set.prototype.equals = function(a) {
-  return this.getCount() == goog.structs.getCount(a) && this.isSubsetOf(a);
-};
-goog.structs.Set.prototype.isSubsetOf = function(a) {
-  var b = goog.structs.getCount(a);
-  if (this.getCount() > b) {
-    return!1;
-  }
-  !(a instanceof goog.structs.Set) && 5 < b && (a = new goog.structs.Set(a));
-  return goog.structs.every(this, function(b) {
-    return goog.structs.contains(a, b);
-  });
-};
-goog.structs.Set.prototype.__iterator__ = function(a) {
-  return this.map_.__iterator__(!1);
-};
-goog.debug.LOGGING_ENABLED = goog.DEBUG;
-goog.debug.catchErrors = function(a, b, c) {
-  c = c || goog.global;
-  var d = c.onerror, e = !!b;
-  goog.userAgent.WEBKIT && !goog.userAgent.isVersionOrHigher("535.3") && (e = !e);
-  c.onerror = function(b, c, h, k, l) {
-    d && d(b, c, h, k, l);
-    a({message:b, fileName:c, line:h, col:k, error:l});
-    return e;
-  };
-};
-goog.debug.expose = function(a, b) {
-  if ("undefined" == typeof a) {
-    return "undefined";
-  }
-  if (null == a) {
-    return "NULL";
-  }
-  var c = [], d;
-  for (d in a) {
-    if (b || !goog.isFunction(a[d])) {
-      var e = d + " \x3d ";
-      try {
-        e += a[d];
-      } catch (f) {
-        e += "*** " + f + " ***";
-      }
-      c.push(e);
-    }
-  }
-  return c.join("\n");
-};
-goog.debug.deepExpose = function(a, b) {
-  var c = [], d = function(a, f, g) {
-    var h = f + "  ";
-    g = new goog.structs.Set(g);
-    try {
-      if (goog.isDef(a)) {
-        if (goog.isNull(a)) {
-          c.push("NULL");
-        } else {
-          if (goog.isString(a)) {
-            c.push('"' + a.replace(/\n/g, "\n" + f) + '"');
-          } else {
-            if (goog.isFunction(a)) {
-              c.push(String(a).replace(/\n/g, "\n" + f));
-            } else {
-              if (goog.isObject(a)) {
-                if (g.contains(a)) {
-                  c.push("*** reference loop detected ***");
-                } else {
-                  g.add(a);
-                  c.push("{");
-                  for (var k in a) {
-                    if (b || !goog.isFunction(a[k])) {
-                      c.push("\n"), c.push(h), c.push(k + " \x3d "), d(a[k], h, g);
-                    }
-                  }
-                  c.push("\n" + f + "}");
-                }
-              } else {
-                c.push(a);
-              }
-            }
-          }
-        }
-      } else {
-        c.push("undefined");
-      }
-    } catch (l) {
-      c.push("*** " + l + " ***");
-    }
-  };
-  d(a, "", new goog.structs.Set);
-  return c.join("");
-};
-goog.debug.exposeArray = function(a) {
-  for (var b = [], c = 0;c < a.length;c++) {
-    goog.isArray(a[c]) ? b.push(goog.debug.exposeArray(a[c])) : b.push(a[c]);
-  }
-  return "[ " + b.join(", ") + " ]";
-};
-goog.debug.exposeException = function(a, b) {
-  try {
-    var c = goog.debug.normalizeErrorObject(a);
-    return "Message: " + goog.string.htmlEscape(c.message) + '\nUrl: \x3ca href\x3d"view-source:' + c.fileName + '" target\x3d"_new"\x3e' + c.fileName + "\x3c/a\x3e\nLine: " + c.lineNumber + "\n\nBrowser stack:\n" + goog.string.htmlEscape(c.stack + "-\x3e ") + "[end]\n\nJS stack traversal:\n" + goog.string.htmlEscape(goog.debug.getStacktrace(b) + "-\x3e ");
-  } catch (d) {
-    return "Exception trying to expose exception! You win, we lose. " + d;
-  }
-};
-goog.debug.normalizeErrorObject = function(a) {
-  var b = goog.getObjectByName("window.location.href");
-  if (goog.isString(a)) {
-    return{message:a, name:"Unknown error", lineNumber:"Not available", fileName:b, stack:"Not available"};
-  }
-  var c, d, e = !1;
-  try {
-    c = a.lineNumber || a.line || "Not available";
-  } catch (f) {
-    c = "Not available", e = !0;
-  }
-  try {
-    d = a.fileName || a.filename || a.sourceURL || goog.global.$googDebugFname || b;
-  } catch (g) {
-    d = "Not available", e = !0;
-  }
-  return!e && a.lineNumber && a.fileName && a.stack && a.message && a.name ? a : {message:a.message || "Not available", name:a.name || "UnknownError", lineNumber:c, fileName:d, stack:a.stack || "Not available"};
-};
-goog.debug.enhanceError = function(a, b) {
-  var c;
-  "string" == typeof a ? (c = Error(a), Error.captureStackTrace && Error.captureStackTrace(c, goog.debug.enhanceError)) : c = a;
-  c.stack || (c.stack = goog.debug.getStacktrace(goog.debug.enhanceError));
-  if (b) {
-    for (var d = 0;c["message" + d];) {
-      ++d;
-    }
-    c["message" + d] = String(b);
-  }
-  return c;
-};
-goog.debug.getStacktraceSimple = function(a) {
-  if (goog.STRICT_MODE_COMPATIBLE) {
-    var b = goog.debug.getNativeStackTrace_(goog.debug.getStacktraceSimple);
-    if (b) {
-      return b;
-    }
-  }
-  for (var b = [], c = arguments.callee.caller, d = 0;c && (!a || d < a);) {
-    b.push(goog.debug.getFunctionName(c));
-    b.push("()\n");
-    try {
-      c = c.caller;
-    } catch (e) {
-      b.push("[exception trying to get caller]\n");
-      break;
-    }
-    d++;
-    if (d >= goog.debug.MAX_STACK_DEPTH) {
-      b.push("[...long stack...]");
-      break;
-    }
-  }
-  a && d >= a ? b.push("[...reached max depth limit...]") : b.push("[end]");
-  return b.join("");
-};
-goog.debug.MAX_STACK_DEPTH = 50;
-goog.debug.getNativeStackTrace_ = function(a) {
-  var b = Error();
-  if (Error.captureStackTrace) {
-    return Error.captureStackTrace(b, a), String(b.stack);
-  }
-  try {
-    throw b;
-  } catch (c) {
-    b = c;
-  }
-  return(a = b.stack) ? String(a) : null;
-};
-goog.debug.getStacktrace = function(a) {
-  var b;
-  goog.STRICT_MODE_COMPATIBLE && (b = goog.debug.getNativeStackTrace_(a || goog.debug.getStacktrace));
-  b || (b = goog.debug.getStacktraceHelper_(a || arguments.callee.caller, []));
-  return b;
-};
-goog.debug.getStacktraceHelper_ = function(a, b) {
-  var c = [];
-  if (goog.array.contains(b, a)) {
-    c.push("[...circular reference...]");
-  } else {
-    if (a && b.length < goog.debug.MAX_STACK_DEPTH) {
-      c.push(goog.debug.getFunctionName(a) + "(");
-      for (var d = a.arguments, e = 0;d && e < d.length;e++) {
-        0 < e && c.push(", ");
-        var f;
-        f = d[e];
-        switch(typeof f) {
-          case "object":
-            f = f ? "object" : "null";
-            break;
-          case "string":
-            break;
-          case "number":
-            f = String(f);
-            break;
-          case "boolean":
-            f = f ? "true" : "false";
-            break;
-          case "function":
-            f = (f = goog.debug.getFunctionName(f)) ? f : "[fn]";
-            break;
-          default:
-            f = typeof f;
-        }
-        40 < f.length && (f = f.substr(0, 40) + "...");
-        c.push(f);
-      }
-      b.push(a);
-      c.push(")\n");
-      try {
-        c.push(goog.debug.getStacktraceHelper_(a.caller, b));
-      } catch (g) {
-        c.push("[exception trying to get caller]\n");
-      }
-    } else {
-      a ? c.push("[...long stack...]") : c.push("[end]");
-    }
-  }
-  return c.join("");
-};
-goog.debug.setFunctionResolver = function(a) {
-  goog.debug.fnNameResolver_ = a;
-};
-goog.debug.getFunctionName = function(a) {
-  if (goog.debug.fnNameCache_[a]) {
-    return goog.debug.fnNameCache_[a];
-  }
-  if (goog.debug.fnNameResolver_) {
-    var b = goog.debug.fnNameResolver_(a);
-    if (b) {
-      return goog.debug.fnNameCache_[a] = b;
-    }
-  }
-  a = String(a);
-  goog.debug.fnNameCache_[a] || (b = /function ([^\(]+)/.exec(a), goog.debug.fnNameCache_[a] = b ? b[1] : "[Anonymous]");
-  return goog.debug.fnNameCache_[a];
-};
-goog.debug.makeWhitespaceVisible = function(a) {
-  return a.replace(/ /g, "[_]").replace(/\f/g, "[f]").replace(/\n/g, "[n]\n").replace(/\r/g, "[r]").replace(/\t/g, "[t]");
-};
-goog.debug.fnNameCache_ = {};
-goog.debug.LogRecord = function(a, b, c, d, e) {
-  this.reset(a, b, c, d, e);
-};
-goog.debug.LogRecord.prototype.sequenceNumber_ = 0;
-goog.debug.LogRecord.prototype.exception_ = null;
-goog.debug.LogRecord.prototype.exceptionText_ = null;
-goog.debug.LogRecord.ENABLE_SEQUENCE_NUMBERS = !0;
-goog.debug.LogRecord.nextSequenceNumber_ = 0;
-goog.debug.LogRecord.prototype.reset = function(a, b, c, d, e) {
-  goog.debug.LogRecord.ENABLE_SEQUENCE_NUMBERS && (this.sequenceNumber_ = "number" == typeof e ? e : goog.debug.LogRecord.nextSequenceNumber_++);
-  this.time_ = d || goog.now();
-  this.level_ = a;
-  this.msg_ = b;
-  this.loggerName_ = c;
-  delete this.exception_;
-  delete this.exceptionText_;
-};
-goog.debug.LogRecord.prototype.getLoggerName = function() {
-  return this.loggerName_;
-};
-goog.debug.LogRecord.prototype.getException = function() {
-  return this.exception_;
-};
-goog.debug.LogRecord.prototype.setException = function(a) {
-  this.exception_ = a;
-};
-goog.debug.LogRecord.prototype.getExceptionText = function() {
-  return this.exceptionText_;
-};
-goog.debug.LogRecord.prototype.setExceptionText = function(a) {
-  this.exceptionText_ = a;
-};
-goog.debug.LogRecord.prototype.setLoggerName = function(a) {
-  this.loggerName_ = a;
-};
-goog.debug.LogRecord.prototype.getLevel = function() {
-  return this.level_;
-};
-goog.debug.LogRecord.prototype.setLevel = function(a) {
-  this.level_ = a;
-};
-goog.debug.LogRecord.prototype.getMessage = function() {
-  return this.msg_;
-};
-goog.debug.LogRecord.prototype.setMessage = function(a) {
-  this.msg_ = a;
-};
-goog.debug.LogRecord.prototype.getMillis = function() {
-  return this.time_;
-};
-goog.debug.LogRecord.prototype.setMillis = function(a) {
-  this.time_ = a;
-};
-goog.debug.LogRecord.prototype.getSequenceNumber = function() {
-  return this.sequenceNumber_;
-};
-goog.debug.LogBuffer = function() {
-  goog.asserts.assert(goog.debug.LogBuffer.isBufferingEnabled(), "Cannot use goog.debug.LogBuffer without defining goog.debug.LogBuffer.CAPACITY.");
-  this.clear();
-};
-goog.debug.LogBuffer.getInstance = function() {
-  goog.debug.LogBuffer.instance_ || (goog.debug.LogBuffer.instance_ = new goog.debug.LogBuffer);
-  return goog.debug.LogBuffer.instance_;
-};
-goog.debug.LogBuffer.CAPACITY = 0;
-goog.debug.LogBuffer.prototype.addRecord = function(a, b, c) {
-  var d = (this.curIndex_ + 1) % goog.debug.LogBuffer.CAPACITY;
-  this.curIndex_ = d;
-  if (this.isFull_) {
-    return d = this.buffer_[d], d.reset(a, b, c), d;
-  }
-  this.isFull_ = d == goog.debug.LogBuffer.CAPACITY - 1;
-  return this.buffer_[d] = new goog.debug.LogRecord(a, b, c);
-};
-goog.debug.LogBuffer.isBufferingEnabled = function() {
-  return 0 < goog.debug.LogBuffer.CAPACITY;
-};
-goog.debug.LogBuffer.prototype.clear = function() {
-  this.buffer_ = Array(goog.debug.LogBuffer.CAPACITY);
-  this.curIndex_ = -1;
-  this.isFull_ = !1;
-};
-goog.debug.LogBuffer.prototype.forEachRecord = function(a) {
-  var b = this.buffer_;
-  if (b[0]) {
-    var c = this.curIndex_, d = this.isFull_ ? c : -1;
-    do {
-      d = (d + 1) % goog.debug.LogBuffer.CAPACITY, a(b[d]);
-    } while (d != c);
-  }
-};
-goog.debug.Logger = function(a) {
-  this.name_ = a;
-  this.handlers_ = this.children_ = this.level_ = this.parent_ = null;
-};
-goog.debug.Logger.ROOT_LOGGER_NAME = "";
-goog.debug.Logger.ENABLE_HIERARCHY = !0;
-goog.debug.Logger.ENABLE_HIERARCHY || (goog.debug.Logger.rootHandlers_ = []);
-goog.debug.Logger.Level = function(a, b) {
-  this.name = a;
-  this.value = b;
-};
-goog.debug.Logger.Level.prototype.toString = function() {
-  return this.name;
-};
-goog.debug.Logger.Level.OFF = new goog.debug.Logger.Level("OFF", Infinity);
-goog.debug.Logger.Level.SHOUT = new goog.debug.Logger.Level("SHOUT", 1200);
-goog.debug.Logger.Level.SEVERE = new goog.debug.Logger.Level("SEVERE", 1E3);
-goog.debug.Logger.Level.WARNING = new goog.debug.Logger.Level("WARNING", 900);
-goog.debug.Logger.Level.INFO = new goog.debug.Logger.Level("INFO", 800);
-goog.debug.Logger.Level.CONFIG = new goog.debug.Logger.Level("CONFIG", 700);
-goog.debug.Logger.Level.FINE = new goog.debug.Logger.Level("FINE", 500);
-goog.debug.Logger.Level.FINER = new goog.debug.Logger.Level("FINER", 400);
-goog.debug.Logger.Level.FINEST = new goog.debug.Logger.Level("FINEST", 300);
-goog.debug.Logger.Level.ALL = new goog.debug.Logger.Level("ALL", 0);
-goog.debug.Logger.Level.PREDEFINED_LEVELS = [goog.debug.Logger.Level.OFF, goog.debug.Logger.Level.SHOUT, goog.debug.Logger.Level.SEVERE, goog.debug.Logger.Level.WARNING, goog.debug.Logger.Level.INFO, goog.debug.Logger.Level.CONFIG, goog.debug.Logger.Level.FINE, goog.debug.Logger.Level.FINER, goog.debug.Logger.Level.FINEST, goog.debug.Logger.Level.ALL];
-goog.debug.Logger.Level.predefinedLevelsCache_ = null;
-goog.debug.Logger.Level.createPredefinedLevelsCache_ = function() {
-  goog.debug.Logger.Level.predefinedLevelsCache_ = {};
-  for (var a = 0, b;b = goog.debug.Logger.Level.PREDEFINED_LEVELS[a];a++) {
-    goog.debug.Logger.Level.predefinedLevelsCache_[b.value] = b, goog.debug.Logger.Level.predefinedLevelsCache_[b.name] = b;
-  }
-};
-goog.debug.Logger.Level.getPredefinedLevel = function(a) {
-  goog.debug.Logger.Level.predefinedLevelsCache_ || goog.debug.Logger.Level.createPredefinedLevelsCache_();
-  return goog.debug.Logger.Level.predefinedLevelsCache_[a] || null;
-};
-goog.debug.Logger.Level.getPredefinedLevelByValue = function(a) {
-  goog.debug.Logger.Level.predefinedLevelsCache_ || goog.debug.Logger.Level.createPredefinedLevelsCache_();
-  if (a in goog.debug.Logger.Level.predefinedLevelsCache_) {
-    return goog.debug.Logger.Level.predefinedLevelsCache_[a];
-  }
-  for (var b = 0;b < goog.debug.Logger.Level.PREDEFINED_LEVELS.length;++b) {
-    var c = goog.debug.Logger.Level.PREDEFINED_LEVELS[b];
-    if (c.value <= a) {
-      return c;
-    }
-  }
-  return null;
-};
-goog.debug.Logger.getLogger = function(a) {
-  return goog.debug.LogManager.getLogger(a);
-};
-goog.debug.Logger.logToProfilers = function(a) {
-  goog.global.console && (goog.global.console.timeStamp ? goog.global.console.timeStamp(a) : goog.global.console.markTimeline && goog.global.console.markTimeline(a));
-  goog.global.msWriteProfilerMark && goog.global.msWriteProfilerMark(a);
-};
-goog.debug.Logger.prototype.getName = function() {
-  return this.name_;
-};
-goog.debug.Logger.prototype.addHandler = function(a) {
-  goog.debug.LOGGING_ENABLED && (goog.debug.Logger.ENABLE_HIERARCHY ? (this.handlers_ || (this.handlers_ = []), this.handlers_.push(a)) : (goog.asserts.assert(!this.name_, "Cannot call addHandler on a non-root logger when goog.debug.Logger.ENABLE_HIERARCHY is false."), goog.debug.Logger.rootHandlers_.push(a)));
-};
-goog.debug.Logger.prototype.removeHandler = function(a) {
-  if (goog.debug.LOGGING_ENABLED) {
-    var b = goog.debug.Logger.ENABLE_HIERARCHY ? this.handlers_ : goog.debug.Logger.rootHandlers_;
-    return!!b && goog.array.remove(b, a);
-  }
-  return!1;
-};
-goog.debug.Logger.prototype.getParent = function() {
-  return this.parent_;
-};
-goog.debug.Logger.prototype.getChildren = function() {
-  this.children_ || (this.children_ = {});
-  return this.children_;
-};
-goog.debug.Logger.prototype.setLevel = function(a) {
-  goog.debug.LOGGING_ENABLED && (goog.debug.Logger.ENABLE_HIERARCHY ? this.level_ = a : (goog.asserts.assert(!this.name_, "Cannot call setLevel() on a non-root logger when goog.debug.Logger.ENABLE_HIERARCHY is false."), goog.debug.Logger.rootLevel_ = a));
-};
-goog.debug.Logger.prototype.getLevel = function() {
-  return goog.debug.LOGGING_ENABLED ? this.level_ : goog.debug.Logger.Level.OFF;
-};
-goog.debug.Logger.prototype.getEffectiveLevel = function() {
-  if (!goog.debug.LOGGING_ENABLED) {
-    return goog.debug.Logger.Level.OFF;
-  }
-  if (!goog.debug.Logger.ENABLE_HIERARCHY) {
-    return goog.debug.Logger.rootLevel_;
-  }
-  if (this.level_) {
-    return this.level_;
-  }
-  if (this.parent_) {
-    return this.parent_.getEffectiveLevel();
-  }
-  goog.asserts.fail("Root logger has no level set.");
-  return null;
-};
-goog.debug.Logger.prototype.isLoggable = function(a) {
-  return goog.debug.LOGGING_ENABLED && a.value >= this.getEffectiveLevel().value;
-};
-goog.debug.Logger.prototype.log = function(a, b, c) {
-  goog.debug.LOGGING_ENABLED && this.isLoggable(a) && (goog.isFunction(b) && (b = b()), this.doLogRecord_(this.getLogRecord(a, b, c, goog.debug.Logger.prototype.log)));
-};
-goog.debug.Logger.prototype.getLogRecord = function(a, b, c, d) {
-  a = goog.debug.LogBuffer.isBufferingEnabled() ? goog.debug.LogBuffer.getInstance().addRecord(a, b, this.name_) : new goog.debug.LogRecord(a, String(b), this.name_);
-  c && (a.setException(c), a.setExceptionText(goog.debug.exposeException(c, d || goog.debug.Logger.prototype.getLogRecord)));
-  return a;
-};
-goog.debug.Logger.prototype.shout = function(a, b) {
-  goog.debug.LOGGING_ENABLED && this.log(goog.debug.Logger.Level.SHOUT, a, b);
-};
-goog.debug.Logger.prototype.severe = function(a, b) {
-  goog.debug.LOGGING_ENABLED && this.log(goog.debug.Logger.Level.SEVERE, a, b);
-};
-goog.debug.Logger.prototype.warning = function(a, b) {
-  goog.debug.LOGGING_ENABLED && this.log(goog.debug.Logger.Level.WARNING, a, b);
-};
-goog.debug.Logger.prototype.info = function(a, b) {
-  goog.debug.LOGGING_ENABLED && this.log(goog.debug.Logger.Level.INFO, a, b);
-};
-goog.debug.Logger.prototype.config = function(a, b) {
-  goog.debug.LOGGING_ENABLED && this.log(goog.debug.Logger.Level.CONFIG, a, b);
-};
-goog.debug.Logger.prototype.fine = function(a, b) {
-  goog.debug.LOGGING_ENABLED && this.log(goog.debug.Logger.Level.FINE, a, b);
-};
-goog.debug.Logger.prototype.finer = function(a, b) {
-  goog.debug.LOGGING_ENABLED && this.log(goog.debug.Logger.Level.FINER, a, b);
-};
-goog.debug.Logger.prototype.finest = function(a, b) {
-  goog.debug.LOGGING_ENABLED && this.log(goog.debug.Logger.Level.FINEST, a, b);
-};
-goog.debug.Logger.prototype.logRecord = function(a) {
-  goog.debug.LOGGING_ENABLED && this.isLoggable(a.getLevel()) && this.doLogRecord_(a);
-};
-goog.debug.Logger.prototype.doLogRecord_ = function(a) {
-  goog.debug.Logger.logToProfilers("log:" + a.getMessage());
-  if (goog.debug.Logger.ENABLE_HIERARCHY) {
-    for (var b = this;b;) {
-      b.callPublish_(a), b = b.getParent();
-    }
-  } else {
-    for (var b = 0, c;c = goog.debug.Logger.rootHandlers_[b++];) {
-      c(a);
-    }
-  }
-};
-goog.debug.Logger.prototype.callPublish_ = function(a) {
-  if (this.handlers_) {
-    for (var b = 0, c;c = this.handlers_[b];b++) {
-      c(a);
-    }
-  }
-};
-goog.debug.Logger.prototype.setParent_ = function(a) {
-  this.parent_ = a;
-};
-goog.debug.Logger.prototype.addChild_ = function(a, b) {
-  this.getChildren()[a] = b;
-};
-goog.debug.LogManager = {};
-goog.debug.LogManager.loggers_ = {};
-goog.debug.LogManager.rootLogger_ = null;
-goog.debug.LogManager.initialize = function() {
-  goog.debug.LogManager.rootLogger_ || (goog.debug.LogManager.rootLogger_ = new goog.debug.Logger(goog.debug.Logger.ROOT_LOGGER_NAME), goog.debug.LogManager.loggers_[goog.debug.Logger.ROOT_LOGGER_NAME] = goog.debug.LogManager.rootLogger_, goog.debug.LogManager.rootLogger_.setLevel(goog.debug.Logger.Level.CONFIG));
-};
-goog.debug.LogManager.getLoggers = function() {
-  return goog.debug.LogManager.loggers_;
-};
-goog.debug.LogManager.getRoot = function() {
-  goog.debug.LogManager.initialize();
-  return goog.debug.LogManager.rootLogger_;
-};
-goog.debug.LogManager.getLogger = function(a) {
-  goog.debug.LogManager.initialize();
-  return goog.debug.LogManager.loggers_[a] || goog.debug.LogManager.createLogger_(a);
-};
-goog.debug.LogManager.createFunctionForCatchErrors = function(a) {
-  return function(b) {
-    (a || goog.debug.LogManager.getRoot()).severe("Error: " + b.message + " (" + b.fileName + " @ Line: " + b.line + ")");
-  };
-};
-goog.debug.LogManager.createLogger_ = function(a) {
-  var b = new goog.debug.Logger(a);
-  if (goog.debug.Logger.ENABLE_HIERARCHY) {
-    var c = a.lastIndexOf("."), d = a.substr(0, c), c = a.substr(c + 1), d = goog.debug.LogManager.getLogger(d);
-    d.addChild_(c, b);
-    b.setParent_(d);
-  }
-  return goog.debug.LogManager.loggers_[a] = b;
-};
-goog.log = {};
-goog.log.ENABLED = goog.debug.LOGGING_ENABLED;
-goog.log.ROOT_LOGGER_NAME = goog.debug.Logger.ROOT_LOGGER_NAME;
-goog.log.Logger = goog.debug.Logger;
-goog.log.Level = goog.debug.Logger.Level;
-goog.log.LogRecord = goog.debug.LogRecord;
-goog.log.getLogger = function(a, b) {
-  if (goog.log.ENABLED) {
-    var c = goog.debug.LogManager.getLogger(a);
-    b && c && c.setLevel(b);
-    return c;
-  }
-  return null;
-};
-goog.log.addHandler = function(a, b) {
-  goog.log.ENABLED && a && a.addHandler(b);
-};
-goog.log.removeHandler = function(a, b) {
-  return goog.log.ENABLED && a ? a.removeHandler(b) : !1;
-};
-goog.log.log = function(a, b, c, d) {
-  goog.log.ENABLED && a && a.log(b, c, d);
-};
-goog.log.error = function(a, b, c) {
-  goog.log.ENABLED && a && a.severe(b, c);
-};
-goog.log.warning = function(a, b, c) {
-  goog.log.ENABLED && a && a.warning(b, c);
-};
-goog.log.info = function(a, b, c) {
-  goog.log.ENABLED && a && a.info(b, c);
-};
-goog.log.fine = function(a, b, c) {
-  goog.log.ENABLED && a && a.fine(b, c);
-};
-goog.dom.safe = {};
-goog.dom.safe.setInnerHtml = function(a, b) {
-  a.innerHTML = goog.html.SafeHtml.unwrap(b);
-};
-goog.dom.safe.setOuterHtml = function(a, b) {
-  a.outerHTML = goog.html.SafeHtml.unwrap(b);
-};
-goog.dom.safe.documentWrite = function(a, b) {
-  a.write(goog.html.SafeHtml.unwrap(b));
-};
-goog.dom.safe.setAnchorHref = function(a, b) {
-  var c;
-  c = b instanceof goog.html.SafeUrl ? b : goog.html.SafeUrl.sanitize(b);
-  a.href = goog.html.SafeUrl.unwrap(c);
-};
-goog.dom.safe.setLocationHref = function(a, b) {
-  var c;
-  c = b instanceof goog.html.SafeUrl ? b : goog.html.SafeUrl.sanitize(b);
-  a.href = goog.html.SafeUrl.unwrap(c);
 };
 goog.html.TrustedResourceUrl = function() {
   this.privateDoNotAccessOrElseTrustedResourceUrlWrappedValue_ = "";
@@ -72963,21 +75857,21 @@ Blockly.Blocks.job = cljs.core.clj__GT_js.call(null, new cljs.core.PersistentArr
   "name", 1843675177)).cljs$core$IFn$_invoke$arity$1(new cljs.core.PersistentArrayMap(null, 3, [new cljs.core.Keyword(null, "type", "type", 1174270348), new cljs.core.Keyword(null, "text", "text", -1790561697), new cljs.core.Keyword(null, "name", "name", 1843675177), "name", new cljs.core.Keyword(null, "label", "label", 1718410804), "Job"], null)));
   return this.appendStatementInput((new cljs.core.Keyword(null, "name", "name", 1843675177)).cljs$core$IFn$_invoke$arity$1(new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "type", "type", 1174270348), new cljs.core.Keyword(null, "statement", "statement", -32780863), new cljs.core.Keyword(null, "name", "name", 1843675177), "steps"], null)));
 }], null));
-for (var block_17779 = Blockly.Blocks.job, seq__17773_17780 = cljs.core.seq.call(null, job_streamer.console.blocks.mutate_behavior), chunk__17774_17781 = null, count__17775_17782 = 0, i__17776_17783 = 0;;) {
-  if (i__17776_17783 < count__17775_17782) {
-    var vec__17777_17784 = cljs.core._nth.call(null, chunk__17774_17781, i__17776_17783), k_17785 = cljs.core.nth.call(null, vec__17777_17784, 0, null), f_17786 = cljs.core.nth.call(null, vec__17777_17784, 1, null);
-    block_17779[cljs.core.name.call(null, k_17785)] = f_17786;
-    var G__17787 = seq__17773_17780, G__17788 = chunk__17774_17781, G__17789 = count__17775_17782, G__17790 = i__17776_17783 + 1, seq__17773_17780 = G__17787, chunk__17774_17781 = G__17788, count__17775_17782 = G__17789, i__17776_17783 = G__17790;
+for (var block_33023 = Blockly.Blocks.job, seq__33017_33024 = cljs.core.seq.call(null, job_streamer.console.blocks.mutate_behavior), chunk__33018_33025 = null, count__33019_33026 = 0, i__33020_33027 = 0;;) {
+  if (i__33020_33027 < count__33019_33026) {
+    var vec__33021_33028 = cljs.core._nth.call(null, chunk__33018_33025, i__33020_33027), k_33029 = cljs.core.nth.call(null, vec__33021_33028, 0, null), f_33030 = cljs.core.nth.call(null, vec__33021_33028, 1, null);
+    block_33023[cljs.core.name.call(null, k_33029)] = f_33030;
+    var G__33031 = seq__33017_33024, G__33032 = chunk__33018_33025, G__33033 = count__33019_33026, G__33034 = i__33020_33027 + 1, seq__33017_33024 = G__33031, chunk__33018_33025 = G__33032, count__33019_33026 = G__33033, i__33020_33027 = G__33034;
   } else {
-    var temp__4126__auto___17791 = cljs.core.seq.call(null, seq__17773_17780);
-    if (temp__4126__auto___17791) {
-      var seq__17773_17792__$1 = temp__4126__auto___17791;
-      if (cljs.core.chunked_seq_QMARK_.call(null, seq__17773_17792__$1)) {
-        var c__4768__auto___17793 = cljs.core.chunk_first.call(null, seq__17773_17792__$1), G__17794 = cljs.core.chunk_rest.call(null, seq__17773_17792__$1), G__17795 = c__4768__auto___17793, G__17796 = cljs.core.count.call(null, c__4768__auto___17793), G__17797 = 0, seq__17773_17780 = G__17794, chunk__17774_17781 = G__17795, count__17775_17782 = G__17796, i__17776_17783 = G__17797
+    var temp__4126__auto___33035 = cljs.core.seq.call(null, seq__33017_33024);
+    if (temp__4126__auto___33035) {
+      var seq__33017_33036__$1 = temp__4126__auto___33035;
+      if (cljs.core.chunked_seq_QMARK_.call(null, seq__33017_33036__$1)) {
+        var c__4768__auto___33037 = cljs.core.chunk_first.call(null, seq__33017_33036__$1), G__33038 = cljs.core.chunk_rest.call(null, seq__33017_33036__$1), G__33039 = c__4768__auto___33037, G__33040 = cljs.core.count.call(null, c__4768__auto___33037), G__33041 = 0, seq__33017_33024 = G__33038, chunk__33018_33025 = G__33039, count__33019_33026 = G__33040, i__33020_33027 = G__33041
       } else {
-        var vec__17778_17798 = cljs.core.first.call(null, seq__17773_17792__$1), k_17799 = cljs.core.nth.call(null, vec__17778_17798, 0, null), f_17800 = cljs.core.nth.call(null, vec__17778_17798, 1, null);
-        block_17779[cljs.core.name.call(null, k_17799)] = f_17800;
-        var G__17801 = cljs.core.next.call(null, seq__17773_17792__$1), G__17802 = null, G__17803 = 0, G__17804 = 0, seq__17773_17780 = G__17801, chunk__17774_17781 = G__17802, count__17775_17782 = G__17803, i__17776_17783 = G__17804;
+        var vec__33022_33042 = cljs.core.first.call(null, seq__33017_33036__$1), k_33043 = cljs.core.nth.call(null, vec__33022_33042, 0, null), f_33044 = cljs.core.nth.call(null, vec__33022_33042, 1, null);
+        block_33023[cljs.core.name.call(null, k_33043)] = f_33044;
+        var G__33045 = cljs.core.next.call(null, seq__33017_33036__$1), G__33046 = null, G__33047 = 0, G__33048 = 0, seq__33017_33024 = G__33045, chunk__33018_33025 = G__33046, count__33019_33026 = G__33047, i__33020_33027 = G__33048;
       }
     } else {
       break;
@@ -72996,32 +75890,120 @@ Blockly.Blocks.step = cljs.core.clj__GT_js.call(null, new cljs.core.PersistentAr
   2, 5, cljs.core.PersistentVector.EMPTY_NODE, ["Batchlet", "Chunk"], null)], null))).appendField((new cljs.core.Keyword(null, "label", "label", 1718410804)).cljs$core$IFn$_invoke$arity$1(new cljs.core.PersistentArrayMap(null, 4, [new cljs.core.Keyword(null, "type", "type", 1174270348), new cljs.core.Keyword(null, "value-input", "value-input", 738715483), new cljs.core.Keyword(null, "name", "name", 1843675177), "step-component", new cljs.core.Keyword(null, "label", "label", 1718410804), "", new cljs.core.Keyword(null, 
   "acceptable", "acceptable", -1772335575), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, ["Batchlet", "Chunk"], null)], null)));
 }], null));
-for (var block_17812 = Blockly.Blocks.step, seq__17806_17813 = cljs.core.seq.call(null, job_streamer.console.blocks.mutate_behavior), chunk__17807_17814 = null, count__17808_17815 = 0, i__17809_17816 = 0;;) {
-  if (i__17809_17816 < count__17808_17815) {
-    var vec__17810_17817 = cljs.core._nth.call(null, chunk__17807_17814, i__17809_17816), k_17818 = cljs.core.nth.call(null, vec__17810_17817, 0, null), f_17819 = cljs.core.nth.call(null, vec__17810_17817, 1, null);
-    block_17812[cljs.core.name.call(null, k_17818)] = f_17819;
-    var G__17820 = seq__17806_17813, G__17821 = chunk__17807_17814, G__17822 = count__17808_17815, G__17823 = i__17809_17816 + 1, seq__17806_17813 = G__17820, chunk__17807_17814 = G__17821, count__17808_17815 = G__17822, i__17809_17816 = G__17823;
+for (var block_33056 = Blockly.Blocks.step, seq__33050_33057 = cljs.core.seq.call(null, job_streamer.console.blocks.mutate_behavior), chunk__33051_33058 = null, count__33052_33059 = 0, i__33053_33060 = 0;;) {
+  if (i__33053_33060 < count__33052_33059) {
+    var vec__33054_33061 = cljs.core._nth.call(null, chunk__33051_33058, i__33053_33060), k_33062 = cljs.core.nth.call(null, vec__33054_33061, 0, null), f_33063 = cljs.core.nth.call(null, vec__33054_33061, 1, null);
+    block_33056[cljs.core.name.call(null, k_33062)] = f_33063;
+    var G__33064 = seq__33050_33057, G__33065 = chunk__33051_33058, G__33066 = count__33052_33059, G__33067 = i__33053_33060 + 1, seq__33050_33057 = G__33064, chunk__33051_33058 = G__33065, count__33052_33059 = G__33066, i__33053_33060 = G__33067;
   } else {
-    var temp__4126__auto___17824 = cljs.core.seq.call(null, seq__17806_17813);
-    if (temp__4126__auto___17824) {
-      var seq__17806_17825__$1 = temp__4126__auto___17824;
-      if (cljs.core.chunked_seq_QMARK_.call(null, seq__17806_17825__$1)) {
-        var c__4768__auto___17826 = cljs.core.chunk_first.call(null, seq__17806_17825__$1), G__17827 = cljs.core.chunk_rest.call(null, seq__17806_17825__$1), G__17828 = c__4768__auto___17826, G__17829 = cljs.core.count.call(null, c__4768__auto___17826), G__17830 = 0, seq__17806_17813 = G__17827, chunk__17807_17814 = G__17828, count__17808_17815 = G__17829, i__17809_17816 = G__17830
+    var temp__4126__auto___33068 = cljs.core.seq.call(null, seq__33050_33057);
+    if (temp__4126__auto___33068) {
+      var seq__33050_33069__$1 = temp__4126__auto___33068;
+      if (cljs.core.chunked_seq_QMARK_.call(null, seq__33050_33069__$1)) {
+        var c__4768__auto___33070 = cljs.core.chunk_first.call(null, seq__33050_33069__$1), G__33071 = cljs.core.chunk_rest.call(null, seq__33050_33069__$1), G__33072 = c__4768__auto___33070, G__33073 = cljs.core.count.call(null, c__4768__auto___33070), G__33074 = 0, seq__33050_33057 = G__33071, chunk__33051_33058 = G__33072, count__33052_33059 = G__33073, i__33053_33060 = G__33074
       } else {
-        var vec__17811_17831 = cljs.core.first.call(null, seq__17806_17825__$1), k_17832 = cljs.core.nth.call(null, vec__17811_17831, 0, null), f_17833 = cljs.core.nth.call(null, vec__17811_17831, 1, null);
-        block_17812[cljs.core.name.call(null, k_17832)] = f_17833;
-        var G__17834 = cljs.core.next.call(null, seq__17806_17825__$1), G__17835 = null, G__17836 = 0, G__17837 = 0, seq__17806_17813 = G__17834, chunk__17807_17814 = G__17835, count__17808_17815 = G__17836, i__17809_17816 = G__17837;
+        var vec__33055_33075 = cljs.core.first.call(null, seq__33050_33069__$1), k_33076 = cljs.core.nth.call(null, vec__33055_33075, 0, null), f_33077 = cljs.core.nth.call(null, vec__33055_33075, 1, null);
+        block_33056[cljs.core.name.call(null, k_33076)] = f_33077;
+        var G__33078 = cljs.core.next.call(null, seq__33050_33069__$1), G__33079 = null, G__33080 = 0, G__33081 = 0, seq__33050_33057 = G__33078, chunk__33051_33058 = G__33079, count__33052_33059 = G__33080, i__33053_33060 = G__33081;
       }
     } else {
       break;
     }
   }
 }
-Blockly.Blocks.batchlet = cljs.core.clj__GT_js.call(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "init", "init", -1875481434), function() {
-  this.setColour(316);
-  this.setOutput(!0);
-  return this.appendDummyInput().appendField((new cljs.core.Keyword(null, "label", "label", 1718410804)).cljs$core$IFn$_invoke$arity$1(new cljs.core.PersistentArrayMap(null, 3, [new cljs.core.Keyword(null, "type", "type", 1174270348), new cljs.core.Keyword(null, "text", "text", -1790561697), new cljs.core.Keyword(null, "name", "name", 1843675177), "ref", new cljs.core.Keyword(null, "label", "label", 1718410804), "Batchlet"], null))).appendField(new Blockly.FieldTextInput(""), (new cljs.core.Keyword(null, 
-  "name", "name", 1843675177)).cljs$core$IFn$_invoke$arity$1(new cljs.core.PersistentArrayMap(null, 3, [new cljs.core.Keyword(null, "type", "type", 1174270348), new cljs.core.Keyword(null, "text", "text", -1790561697), new cljs.core.Keyword(null, "name", "name", 1843675177), "ref", new cljs.core.Keyword(null, "label", "label", 1718410804), "Batchlet"], null)));
+job_streamer.console.api.request.call(null, "" + cljs.core.str("/default/batch-components"), new cljs.core.Keyword(null, "GET", "GET", 1736591026), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "handler", "handler", -195596612), function(a) {
+  var b = (new cljs.core.Keyword("batch-component", "batchlet", "batch-component/batchlet", 1189548438)).cljs$core$IFn$_invoke$arity$1(a);
+  cljs.core.truth_(b) && (Blockly.Blocks.batchlet = cljs.core.clj__GT_js.call(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "init", "init", -1875481434), function(a, b) {
+    return function() {
+      this.setColour(316);
+      this.setOutput(!0);
+      return this.appendDummyInput().appendField((new cljs.core.Keyword(null, "label", "label", 1718410804)).cljs$core$IFn$_invoke$arity$1(new cljs.core.PersistentArrayMap(null, 4, [new cljs.core.Keyword(null, "type", "type", 1174270348), new cljs.core.Keyword(null, "dropdown", "dropdown", 1343185805), new cljs.core.Keyword(null, "name", "name", 1843675177), "ref", new cljs.core.Keyword(null, "label", "label", 1718410804), "Batchlet", new cljs.core.Keyword(null, "value", "value", 305978217), cljs.core.map.call(null, 
+      function(a, b, c) {
+        return function(a) {
+          return cljs.core.take.call(null, 2, cljs.core.repeat.call(null, a));
+        };
+      }(this, a, b), a)], null))).appendField(new Blockly.FieldDropdown(cljs.core.clj__GT_js.call(null, (new cljs.core.Keyword(null, "value", "value", 305978217)).cljs$core$IFn$_invoke$arity$1(new cljs.core.PersistentArrayMap(null, 4, [new cljs.core.Keyword(null, "type", "type", 1174270348), new cljs.core.Keyword(null, "dropdown", "dropdown", 1343185805), new cljs.core.Keyword(null, "name", "name", 1843675177), "ref", new cljs.core.Keyword(null, "label", "label", 1718410804), "Batchlet", new cljs.core.Keyword(null, 
+      "value", "value", 305978217), cljs.core.map.call(null, function(a, b, c) {
+        return function(a) {
+          return cljs.core.take.call(null, 2, cljs.core.repeat.call(null, a));
+        };
+      }(this, a, b), a)], null)))), (new cljs.core.Keyword(null, "name", "name", 1843675177)).cljs$core$IFn$_invoke$arity$1(new cljs.core.PersistentArrayMap(null, 4, [new cljs.core.Keyword(null, "type", "type", 1174270348), new cljs.core.Keyword(null, "dropdown", "dropdown", 1343185805), new cljs.core.Keyword(null, "name", "name", 1843675177), "ref", new cljs.core.Keyword(null, "label", "label", 1718410804), "Batchlet", new cljs.core.Keyword(null, "value", "value", 305978217), cljs.core.map.call(null, 
+      function(a, b, c) {
+        return function(a) {
+          return cljs.core.take.call(null, 2, cljs.core.repeat.call(null, a));
+        };
+      }(this, a, b), a)], null)));
+    };
+  }(b, b)], null)));
+  b = (new cljs.core.Keyword("batch-component", "item-reader", "batch-component/item-reader", 74338233)).cljs$core$IFn$_invoke$arity$1(a);
+  cljs.core.truth_(b) && (Blockly.Blocks.reader = cljs.core.clj__GT_js.call(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "init", "init", -1875481434), function(a, b) {
+    return function() {
+      this.setColour(45);
+      this.setOutput(!0);
+      return this.appendDummyInput().appendField((new cljs.core.Keyword(null, "label", "label", 1718410804)).cljs$core$IFn$_invoke$arity$1(new cljs.core.PersistentArrayMap(null, 4, [new cljs.core.Keyword(null, "type", "type", 1174270348), new cljs.core.Keyword(null, "dropdown", "dropdown", 1343185805), new cljs.core.Keyword(null, "name", "name", 1843675177), "ref", new cljs.core.Keyword(null, "label", "label", 1718410804), "Reader", new cljs.core.Keyword(null, "value", "value", 305978217), cljs.core.map.call(null, 
+      function(a, b, c) {
+        return function(a) {
+          return cljs.core.take.call(null, 2, cljs.core.repeat.call(null, a));
+        };
+      }(this, a, b), a)], null))).appendField(new Blockly.FieldDropdown(cljs.core.clj__GT_js.call(null, (new cljs.core.Keyword(null, "value", "value", 305978217)).cljs$core$IFn$_invoke$arity$1(new cljs.core.PersistentArrayMap(null, 4, [new cljs.core.Keyword(null, "type", "type", 1174270348), new cljs.core.Keyword(null, "dropdown", "dropdown", 1343185805), new cljs.core.Keyword(null, "name", "name", 1843675177), "ref", new cljs.core.Keyword(null, "label", "label", 1718410804), "Reader", new cljs.core.Keyword(null, 
+      "value", "value", 305978217), cljs.core.map.call(null, function(a, b, c) {
+        return function(a) {
+          return cljs.core.take.call(null, 2, cljs.core.repeat.call(null, a));
+        };
+      }(this, a, b), a)], null)))), (new cljs.core.Keyword(null, "name", "name", 1843675177)).cljs$core$IFn$_invoke$arity$1(new cljs.core.PersistentArrayMap(null, 4, [new cljs.core.Keyword(null, "type", "type", 1174270348), new cljs.core.Keyword(null, "dropdown", "dropdown", 1343185805), new cljs.core.Keyword(null, "name", "name", 1843675177), "ref", new cljs.core.Keyword(null, "label", "label", 1718410804), "Reader", new cljs.core.Keyword(null, "value", "value", 305978217), cljs.core.map.call(null, 
+      function(a, b, c) {
+        return function(a) {
+          return cljs.core.take.call(null, 2, cljs.core.repeat.call(null, a));
+        };
+      }(this, a, b), a)], null)));
+    };
+  }(b, b)], null)));
+  b = (new cljs.core.Keyword("batch-component", "item-writer", "batch-component/item-writer", 1128632270)).cljs$core$IFn$_invoke$arity$1(a);
+  cljs.core.truth_(b) && (Blockly.Blocks.writer = cljs.core.clj__GT_js.call(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "init", "init", -1875481434), function(a, b) {
+    return function() {
+      this.setColour(45);
+      this.setOutput(!0);
+      return this.appendDummyInput().appendField((new cljs.core.Keyword(null, "label", "label", 1718410804)).cljs$core$IFn$_invoke$arity$1(new cljs.core.PersistentArrayMap(null, 4, [new cljs.core.Keyword(null, "type", "type", 1174270348), new cljs.core.Keyword(null, "dropdown", "dropdown", 1343185805), new cljs.core.Keyword(null, "name", "name", 1843675177), "ref", new cljs.core.Keyword(null, "label", "label", 1718410804), "Writer", new cljs.core.Keyword(null, "value", "value", 305978217), cljs.core.map.call(null, 
+      function(a, b, c) {
+        return function(a) {
+          return cljs.core.take.call(null, 2, cljs.core.repeat.call(null, a));
+        };
+      }(this, a, b), a)], null))).appendField(new Blockly.FieldDropdown(cljs.core.clj__GT_js.call(null, (new cljs.core.Keyword(null, "value", "value", 305978217)).cljs$core$IFn$_invoke$arity$1(new cljs.core.PersistentArrayMap(null, 4, [new cljs.core.Keyword(null, "type", "type", 1174270348), new cljs.core.Keyword(null, "dropdown", "dropdown", 1343185805), new cljs.core.Keyword(null, "name", "name", 1843675177), "ref", new cljs.core.Keyword(null, "label", "label", 1718410804), "Writer", new cljs.core.Keyword(null, 
+      "value", "value", 305978217), cljs.core.map.call(null, function(a, b, c) {
+        return function(a) {
+          return cljs.core.take.call(null, 2, cljs.core.repeat.call(null, a));
+        };
+      }(this, a, b), a)], null)))), (new cljs.core.Keyword(null, "name", "name", 1843675177)).cljs$core$IFn$_invoke$arity$1(new cljs.core.PersistentArrayMap(null, 4, [new cljs.core.Keyword(null, "type", "type", 1174270348), new cljs.core.Keyword(null, "dropdown", "dropdown", 1343185805), new cljs.core.Keyword(null, "name", "name", 1843675177), "ref", new cljs.core.Keyword(null, "label", "label", 1718410804), "Writer", new cljs.core.Keyword(null, "value", "value", 305978217), cljs.core.map.call(null, 
+      function(a, b, c) {
+        return function(a) {
+          return cljs.core.take.call(null, 2, cljs.core.repeat.call(null, a));
+        };
+      }(this, a, b), a)], null)));
+    };
+  }(b, b)], null)));
+  a = (new cljs.core.Keyword("batch-component", "item-processor", "batch-component/item-processor", 1666069659)).cljs$core$IFn$_invoke$arity$1(a);
+  return cljs.core.truth_(a) ? Blockly.Blocks.processor = cljs.core.clj__GT_js.call(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "init", "init", -1875481434), function(a, b) {
+    return function() {
+      this.setColour(45);
+      this.setOutput(!0);
+      return this.appendDummyInput().appendField((new cljs.core.Keyword(null, "label", "label", 1718410804)).cljs$core$IFn$_invoke$arity$1(new cljs.core.PersistentArrayMap(null, 4, [new cljs.core.Keyword(null, "type", "type", 1174270348), new cljs.core.Keyword(null, "dropdown", "dropdown", 1343185805), new cljs.core.Keyword(null, "name", "name", 1843675177), "ref", new cljs.core.Keyword(null, "label", "label", 1718410804), "Processor", new cljs.core.Keyword(null, "value", "value", 305978217), cljs.core.map.call(null, 
+      function(a, b, c) {
+        return function(a) {
+          return cljs.core.take.call(null, 2, cljs.core.repeat.call(null, a));
+        };
+      }(this, a, b), a)], null))).appendField(new Blockly.FieldDropdown(cljs.core.clj__GT_js.call(null, (new cljs.core.Keyword(null, "value", "value", 305978217)).cljs$core$IFn$_invoke$arity$1(new cljs.core.PersistentArrayMap(null, 4, [new cljs.core.Keyword(null, "type", "type", 1174270348), new cljs.core.Keyword(null, "dropdown", "dropdown", 1343185805), new cljs.core.Keyword(null, "name", "name", 1843675177), "ref", new cljs.core.Keyword(null, "label", "label", 1718410804), "Processor", new cljs.core.Keyword(null, 
+      "value", "value", 305978217), cljs.core.map.call(null, function(a, b, c) {
+        return function(a) {
+          return cljs.core.take.call(null, 2, cljs.core.repeat.call(null, a));
+        };
+      }(this, a, b), a)], null)))), (new cljs.core.Keyword(null, "name", "name", 1843675177)).cljs$core$IFn$_invoke$arity$1(new cljs.core.PersistentArrayMap(null, 4, [new cljs.core.Keyword(null, "type", "type", 1174270348), new cljs.core.Keyword(null, "dropdown", "dropdown", 1343185805), new cljs.core.Keyword(null, "name", "name", 1843675177), "ref", new cljs.core.Keyword(null, "label", "label", 1718410804), "Processor", new cljs.core.Keyword(null, "value", "value", 305978217), cljs.core.map.call(null, 
+      function(a, b, c) {
+        return function(a) {
+          return cljs.core.take.call(null, 2, cljs.core.repeat.call(null, a));
+        };
+      }(this, a, b), a)], null)));
+    };
+  }(a, a)], null)) : null;
 }], null));
 Blockly.Blocks.chunk = cljs.core.clj__GT_js.call(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "init", "init", -1875481434), function() {
   this.setColour(234);
@@ -73036,24 +76018,6 @@ Blockly.Blocks.chunk = cljs.core.clj__GT_js.call(null, new cljs.core.PersistentA
   1, 5, cljs.core.PersistentVector.EMPTY_NODE, ["Writer"], null)], null))).appendField((new cljs.core.Keyword(null, "label", "label", 1718410804)).cljs$core$IFn$_invoke$arity$1(new cljs.core.PersistentArrayMap(null, 4, [new cljs.core.Keyword(null, "type", "type", 1174270348), new cljs.core.Keyword(null, "value-input", "value-input", 738715483), new cljs.core.Keyword(null, "name", "name", 1843675177), "writer", new cljs.core.Keyword(null, "label", "label", 1718410804), "Writer", new cljs.core.Keyword(null, 
   "acceptable", "acceptable", -1772335575), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, ["Writer"], null)], null)));
 }], null));
-Blockly.Blocks.reader = cljs.core.clj__GT_js.call(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "init", "init", -1875481434), function() {
-  this.setColour(45);
-  this.setOutput(!0);
-  return this.appendDummyInput().appendField((new cljs.core.Keyword(null, "label", "label", 1718410804)).cljs$core$IFn$_invoke$arity$1(new cljs.core.PersistentArrayMap(null, 3, [new cljs.core.Keyword(null, "type", "type", 1174270348), new cljs.core.Keyword(null, "text", "text", -1790561697), new cljs.core.Keyword(null, "name", "name", 1843675177), "ref", new cljs.core.Keyword(null, "label", "label", 1718410804), "Reader"], null))).appendField(new Blockly.FieldTextInput(""), (new cljs.core.Keyword(null, 
-  "name", "name", 1843675177)).cljs$core$IFn$_invoke$arity$1(new cljs.core.PersistentArrayMap(null, 3, [new cljs.core.Keyword(null, "type", "type", 1174270348), new cljs.core.Keyword(null, "text", "text", -1790561697), new cljs.core.Keyword(null, "name", "name", 1843675177), "ref", new cljs.core.Keyword(null, "label", "label", 1718410804), "Reader"], null)));
-}], null));
-Blockly.Blocks.processor = cljs.core.clj__GT_js.call(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "init", "init", -1875481434), function() {
-  this.setColour(45);
-  this.setOutput(!0);
-  return this.appendDummyInput().appendField((new cljs.core.Keyword(null, "label", "label", 1718410804)).cljs$core$IFn$_invoke$arity$1(new cljs.core.PersistentArrayMap(null, 3, [new cljs.core.Keyword(null, "type", "type", 1174270348), new cljs.core.Keyword(null, "text", "text", -1790561697), new cljs.core.Keyword(null, "name", "name", 1843675177), "ref", new cljs.core.Keyword(null, "label", "label", 1718410804), "Processor"], null))).appendField(new Blockly.FieldTextInput(""), (new cljs.core.Keyword(null, 
-  "name", "name", 1843675177)).cljs$core$IFn$_invoke$arity$1(new cljs.core.PersistentArrayMap(null, 3, [new cljs.core.Keyword(null, "type", "type", 1174270348), new cljs.core.Keyword(null, "text", "text", -1790561697), new cljs.core.Keyword(null, "name", "name", 1843675177), "ref", new cljs.core.Keyword(null, "label", "label", 1718410804), "Processor"], null)));
-}], null));
-Blockly.Blocks.writer = cljs.core.clj__GT_js.call(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "init", "init", -1875481434), function() {
-  this.setColour(45);
-  this.setOutput(!0);
-  return this.appendDummyInput().appendField((new cljs.core.Keyword(null, "label", "label", 1718410804)).cljs$core$IFn$_invoke$arity$1(new cljs.core.PersistentArrayMap(null, 3, [new cljs.core.Keyword(null, "type", "type", 1174270348), new cljs.core.Keyword(null, "text", "text", -1790561697), new cljs.core.Keyword(null, "name", "name", 1843675177), "ref", new cljs.core.Keyword(null, "label", "label", 1718410804), "Writer"], null))).appendField(new Blockly.FieldTextInput(""), (new cljs.core.Keyword(null, 
-  "name", "name", 1843675177)).cljs$core$IFn$_invoke$arity$1(new cljs.core.PersistentArrayMap(null, 3, [new cljs.core.Keyword(null, "type", "type", 1174270348), new cljs.core.Keyword(null, "text", "text", -1790561697), new cljs.core.Keyword(null, "name", "name", 1843675177), "ref", new cljs.core.Keyword(null, "label", "label", 1718410804), "Writer"], null)));
-}], null));
 Blockly.Blocks.property = cljs.core.clj__GT_js.call(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "init", "init", -1875481434), function() {
   this.setColour(30);
   this.setInputsInline(!0);
@@ -73064,6 +76028,7 @@ Blockly.Blocks.property = cljs.core.clj__GT_js.call(null, new cljs.core.Persiste
   "name", "name", 1843675177)).cljs$core$IFn$_invoke$arity$1(new cljs.core.PersistentArrayMap(null, 3, [new cljs.core.Keyword(null, "type", "type", 1174270348), new cljs.core.Keyword(null, "text", "text", -1790561697), new cljs.core.Keyword(null, "name", "name", 1843675177), "value", new cljs.core.Keyword(null, "label", "label", 1718410804), "Value"], null)));
 }], null));
 job_streamer.console.blocks.emit_element = function emit_element(b) {
+  cljs.core.println.call(null, b);
   return cljs.core._EQ_.call(null, cljs.core.type.call(null, b), String) ? b : [cljs.core.str("\x3c"), cljs.core.str(cljs.core.name.call(null, (new cljs.core.Keyword(null, "tag", "tag", -1290361223)).cljs$core$IFn$_invoke$arity$1(b))), cljs.core.str(function() {
     var c = (new cljs.core.Keyword(null, "attrs", "attrs", -2090668713)).cljs$core$IFn$_invoke$arity$1(b);
     return cljs.core.truth_(c) ? cljs.core.reduce.call(null, cljs.core.str, cljs.core.map.call(null, function(b, c) {
@@ -73077,12 +76042,12 @@ job_streamer.console.blocks.emit_element = function emit_element(b) {
   }())].join("");
 };
 job_streamer.console.blocks.chunk_element__GT_xml = function(a, b) {
-  var c = cljs.core.PersistentArrayMap, d = new cljs.core.Keyword(null, "tag", "tag", -1290361223), e = new cljs.core.Keyword(null, "value", "value", 305978217), f = new cljs.core.Keyword(null, "attrs", "attrs", -2090668713), g = new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "name", "name", 1843675177), b], null), h = new cljs.core.Keyword(null, "content", "content", 15833224), k = cljs.core.PersistentVector, l = cljs.core.PersistentVector.EMPTY_NODE, m;
-  m = cljs.core.get.call(null, a, cljs.core.keyword.call(null, "chunk", b));
-  m = cljs.core.truth_(m) ? new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.PersistentArrayMap(null, 3, [new cljs.core.Keyword(null, "tag", "tag", -1290361223), new cljs.core.Keyword(null, "block", "block", 664686210), new cljs.core.Keyword(null, "attrs", "attrs", -2090668713), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "type", "type", 1174270348), b], null), new cljs.core.Keyword(null, "content", "content", 15833224), new cljs.core.PersistentVector(null, 
+  var c = cljs.core.PersistentArrayMap, d = new cljs.core.Keyword(null, "tag", "tag", -1290361223), e = new cljs.core.Keyword(null, "value", "value", 305978217), f = new cljs.core.Keyword(null, "attrs", "attrs", -2090668713), g = new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "name", "name", 1843675177), b], null), h = new cljs.core.Keyword(null, "content", "content", 15833224), k;
+  k = cljs.core.get.call(null, a, cljs.core.keyword.call(null, "chunk", b));
+  k = cljs.core.truth_(k) ? new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.PersistentArrayMap(null, 3, [new cljs.core.Keyword(null, "tag", "tag", -1290361223), new cljs.core.Keyword(null, "block", "block", 664686210), new cljs.core.Keyword(null, "attrs", "attrs", -2090668713), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "type", "type", 1174270348), b], null), new cljs.core.Keyword(null, "content", "content", 15833224), new cljs.core.PersistentVector(null, 
   1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.PersistentArrayMap(null, 3, [new cljs.core.Keyword(null, "tag", "tag", -1290361223), new cljs.core.Keyword(null, "field", "field", -1302436500), new cljs.core.Keyword(null, "attrs", "attrs", -2090668713), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "name", "name", 1843675177), "ref"], null), new cljs.core.Keyword(null, "content", "content", 15833224), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, 
-  [cljs.core.get.call(null, m, cljs.core.keyword.call(null, b, "ref"))], null)], null)], null)], null)], null) : null;
-  return new c(null, 3, [d, e, f, g, h, new k(null, 1, 5, l, [m], null)], null);
+  [cljs.core.get.call(null, k, cljs.core.keyword.call(null, b, "ref"))], null)], null)], null)], null)], null) : null;
+  return new c(null, 3, [d, e, f, g, h, k], null);
 };
 job_streamer.console.blocks.chunk__GT_xml = function(a) {
   return new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [job_streamer.console.blocks.chunk_element__GT_xml.call(null, a, "reader"), job_streamer.console.blocks.chunk_element__GT_xml.call(null, a, "processor"), job_streamer.console.blocks.chunk_element__GT_xml.call(null, a, "writer")], null);
@@ -73104,14 +76069,14 @@ job_streamer.console.blocks.step__GT_xml = function step__GT_xml(b, c) {
   }(), function() {
     var c = (new cljs.core.Keyword("step", "chunk", "step/chunk", -1203090928)).cljs$core$IFn$_invoke$arity$1(b);
     return cljs.core.truth_(c) ? new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.PersistentArrayMap(null, 3, [new cljs.core.Keyword(null, "tag", "tag", -1290361223), new cljs.core.Keyword(null, "value", "value", 305978217), new cljs.core.Keyword(null, "attrs", "attrs", -2090668713), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "name", "name", 1843675177), "step-component"], null), new cljs.core.Keyword(null, "content", "content", 
-    15833224), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.PersistentArrayMap(null, 3, [new cljs.core.Keyword(null, "tag", "tag", -1290361223), new cljs.core.Keyword(null, "block", "block", 664686210), new cljs.core.Keyword(null, "attrs", "attrs", -2090668713), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "type", "type", 1174270348), "chunk"], null), new cljs.core.Keyword(null, "content", "content", 15833224), new cljs.core.PersistentVector(null, 
-    1, 5, cljs.core.PersistentVector.EMPTY_NODE, [job_streamer.console.blocks.chunk__GT_xml.call(null, c)], null)], null)], null)], null)], null) : null;
+    15833224), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.PersistentArrayMap(null, 3, [new cljs.core.Keyword(null, "tag", "tag", -1290361223), new cljs.core.Keyword(null, "block", "block", 664686210), new cljs.core.Keyword(null, "attrs", "attrs", -2090668713), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "type", "type", 1174270348), "chunk"], null), new cljs.core.Keyword(null, "content", "content", 15833224), job_streamer.console.blocks.chunk__GT_xml.call(null, 
+    c)], null)], null)], null)], null) : null;
   }(), function() {
-    var d = (new cljs.core.Keyword(null, "next", "next", -117701485)).cljs$core$IFn$_invoke$arity$1(b);
+    var d = (new cljs.core.Keyword("step", "next", "step/next", -118096545)).cljs$core$IFn$_invoke$arity$1(b);
     return cljs.core.truth_(d) ? new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "tag", "tag", -1290361223), new cljs.core.Keyword(null, "next", "next", -117701485), new cljs.core.Keyword(null, "content", "content", 15833224), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [step__GT_xml.call(null, cljs.core.first.call(null, cljs.core.filter.call(null, function(b, 
     c) {
       return function(c) {
-        return cljs.core._EQ_.call(null, (new cljs.core.Keyword(null, "id", "id", -1388402092)).cljs$core$IFn$_invoke$arity$1(c), b);
+        return cljs.core._EQ_.call(null, (new cljs.core.Keyword("step", "name", "step/name", 1848792837)).cljs$core$IFn$_invoke$arity$1(c), b);
       };
     }(d, d), c)), c)], null)], null)], null) : null;
   }(), function() {
@@ -73156,2900 +76121,6 @@ job_streamer.console.blocks.job__GT_xml = function(a) {
     }(b, b), b) : null;
   }())], null));
 };
-goog.net = {};
-goog.net.xpc = {};
-goog.net.xpc.TransportTypes = {NATIVE_MESSAGING:1, FRAME_ELEMENT_METHOD:2, IFRAME_RELAY:3, IFRAME_POLLING:4, FLASH:5, NIX:6, DIRECT:7};
-goog.net.xpc.TransportNames = {1:"NativeMessagingTransport", 2:"FrameElementMethodTransport", 3:"IframeRelayTransport", 4:"IframePollingTransport", 5:"FlashTransport", 6:"NixTransport", 7:"DirectTransport"};
-goog.net.xpc.CfgFields = {CHANNEL_NAME:"cn", AUTH_TOKEN:"at", REMOTE_AUTH_TOKEN:"rat", PEER_URI:"pu", IFRAME_ID:"ifrid", TRANSPORT:"tp", LOCAL_RELAY_URI:"lru", PEER_RELAY_URI:"pru", LOCAL_POLL_URI:"lpu", PEER_POLL_URI:"ppu", PEER_HOSTNAME:"ph", ONE_SIDED_HANDSHAKE:"osh", ROLE:"role", NATIVE_TRANSPORT_PROTOCOL_VERSION:"nativeProtocolVersion", DIRECT_TRANSPORT_SYNC_MODE:"directSyncMode"};
-goog.net.xpc.UriCfgFields = [goog.net.xpc.CfgFields.PEER_URI, goog.net.xpc.CfgFields.LOCAL_RELAY_URI, goog.net.xpc.CfgFields.PEER_RELAY_URI, goog.net.xpc.CfgFields.LOCAL_POLL_URI, goog.net.xpc.CfgFields.PEER_POLL_URI];
-goog.net.xpc.ChannelStates = {NOT_CONNECTED:1, CONNECTED:2, CLOSED:3};
-goog.net.xpc.TRANSPORT_SERVICE_ = "tp";
-goog.net.xpc.SETUP = "SETUP";
-goog.net.xpc.SETUP_NTPV2 = "SETUP_NTPV2";
-goog.net.xpc.SETUP_ACK_ = "SETUP_ACK";
-goog.net.xpc.SETUP_ACK_NTPV2 = "SETUP_ACK_NTPV2";
-goog.net.xpc.channels = {};
-goog.net.xpc.getRandomString = function(a, b) {
-  for (var c = b || goog.net.xpc.randomStringCharacters_, d = c.length, e = "";0 < a--;) {
-    e += c.charAt(Math.floor(Math.random() * d));
-  }
-  return e;
-};
-goog.net.xpc.randomStringCharacters_ = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-goog.net.xpc.logger = goog.log.getLogger("goog.net.xpc");
-goog.net.xpc.CrossPageChannelRole = {OUTER:0, INNER:1};
-goog.net.xpc.Transport = function(a) {
-  goog.Disposable.call(this);
-  this.domHelper_ = a || goog.dom.getDomHelper();
-};
-goog.inherits(goog.net.xpc.Transport, goog.Disposable);
-goog.net.xpc.Transport.prototype.transportType = 0;
-goog.net.xpc.Transport.prototype.getType = function() {
-  return this.transportType;
-};
-goog.net.xpc.Transport.prototype.getWindow = function() {
-  return this.domHelper_.getWindow();
-};
-goog.net.xpc.Transport.prototype.getName = function() {
-  return goog.net.xpc.TransportNames[this.transportType] || "";
-};
-goog.net.xpc.IframePollingTransport = function(a, b) {
-  goog.net.xpc.Transport.call(this, b);
-  this.channel_ = a;
-  this.sendUri_ = this.channel_.getConfig()[goog.net.xpc.CfgFields.PEER_POLL_URI];
-  this.rcvUri_ = this.channel_.getConfig()[goog.net.xpc.CfgFields.LOCAL_POLL_URI];
-  this.sendQueue_ = [];
-};
-goog.inherits(goog.net.xpc.IframePollingTransport, goog.net.xpc.Transport);
-goog.net.xpc.IframePollingTransport.prototype.pollsBeforeReconnect_ = 5;
-goog.net.xpc.IframePollingTransport.prototype.transportType = goog.net.xpc.TransportTypes.IFRAME_POLLING;
-goog.net.xpc.IframePollingTransport.prototype.sequence_ = 0;
-goog.net.xpc.IframePollingTransport.prototype.waitForAck_ = !1;
-goog.net.xpc.IframePollingTransport.prototype.initialized_ = !1;
-goog.net.xpc.IframePollingTransport.prototype.reconnectFrame_ = null;
-goog.net.xpc.IframePollingTransport.IFRAME_PREFIX = "googlexpc";
-goog.net.xpc.IframePollingTransport.prototype.getMsgFrameName_ = function() {
-  return goog.net.xpc.IframePollingTransport.IFRAME_PREFIX + "_" + this.channel_.name + "_msg";
-};
-goog.net.xpc.IframePollingTransport.prototype.getAckFrameName_ = function() {
-  return goog.net.xpc.IframePollingTransport.IFRAME_PREFIX + "_" + this.channel_.name + "_ack";
-};
-goog.net.xpc.IframePollingTransport.prototype.isChannelAvailable = function() {
-  return!this.isDisposed() && this.channel_.isPeerAvailable();
-};
-goog.net.xpc.IframePollingTransport.prototype.getPeerFrames_ = function() {
-  try {
-    if (this.isChannelAvailable()) {
-      return this.channel_.getPeerWindowObject().frames || {};
-    }
-  } catch (a) {
-    goog.log.fine(goog.net.xpc.logger, "error retrieving peer frames");
-  }
-  return{};
-};
-goog.net.xpc.IframePollingTransport.prototype.getPeerFrame_ = function(a) {
-  return this.getPeerFrames_()[a];
-};
-goog.net.xpc.IframePollingTransport.prototype.connect = function() {
-  this.isChannelAvailable() && (goog.log.fine(goog.net.xpc.logger, "transport connect called"), this.initialized_ || (goog.log.fine(goog.net.xpc.logger, "initializing..."), this.constructSenderFrames_(), this.initialized_ = !0), this.checkForeignFramesReady_());
-};
-goog.net.xpc.IframePollingTransport.prototype.constructSenderFrames_ = function() {
-  var a = this.getMsgFrameName_();
-  this.msgIframeElm_ = this.constructSenderFrame_(a);
-  this.msgWinObj_ = this.getWindow().frames[a];
-  a = this.getAckFrameName_();
-  this.ackIframeElm_ = this.constructSenderFrame_(a);
-  this.ackWinObj_ = this.getWindow().frames[a];
-};
-goog.net.xpc.IframePollingTransport.prototype.constructSenderFrame_ = function(a) {
-  goog.log.log(goog.net.xpc.logger, goog.log.Level.FINEST, "constructing sender frame: " + a);
-  var b = goog.dom.createElement("iframe"), c = b.style;
-  c.position = "absolute";
-  c.top = "-10px";
-  c.left = "10px";
-  c.width = "1px";
-  c.height = "1px";
-  b.id = b.name = a;
-  b.src = this.sendUri_ + "#INITIAL";
-  this.getWindow().document.body.appendChild(b);
-  return b;
-};
-goog.net.xpc.IframePollingTransport.prototype.maybeInnerPeerReconnect_ = function() {
-  this.reconnectFrame_ || 0 < this.pollsBeforeReconnect_-- || (goog.log.log(goog.net.xpc.logger, goog.log.Level.FINEST, "Inner peer reconnect triggered."), this.channel_.updateChannelNameAndCatalog(goog.net.xpc.getRandomString(10)), goog.log.log(goog.net.xpc.logger, goog.log.Level.FINEST, "switching channels: " + this.channel_.name), this.deconstructSenderFrames_(), this.initialized_ = !1, this.reconnectFrame_ = this.constructSenderFrame_(goog.net.xpc.IframePollingTransport.IFRAME_PREFIX + "_reconnect_" + 
-  this.channel_.name));
-};
-goog.net.xpc.IframePollingTransport.prototype.outerPeerReconnect_ = function() {
-  goog.log.log(goog.net.xpc.logger, goog.log.Level.FINEST, "outerPeerReconnect called");
-  for (var a = this.getPeerFrames_(), b = a.length, c = 0;c < b;c++) {
-    var d;
-    try {
-      a[c] && a[c].name && (d = a[c].name);
-    } catch (e) {
-    }
-    if (d) {
-      var f = d.split("_");
-      if (3 == f.length && f[0] == goog.net.xpc.IframePollingTransport.IFRAME_PREFIX && "reconnect" == f[1]) {
-        this.channel_.name = f[2];
-        this.deconstructSenderFrames_();
-        this.initialized_ = !1;
-        break;
-      }
-    }
-  }
-};
-goog.net.xpc.IframePollingTransport.prototype.deconstructSenderFrames_ = function() {
-  goog.log.log(goog.net.xpc.logger, goog.log.Level.FINEST, "deconstructSenderFrames called");
-  this.msgIframeElm_ && (this.msgIframeElm_.parentNode.removeChild(this.msgIframeElm_), this.msgWinObj_ = this.msgIframeElm_ = null);
-  this.ackIframeElm_ && (this.ackIframeElm_.parentNode.removeChild(this.ackIframeElm_), this.ackWinObj_ = this.ackIframeElm_ = null);
-};
-goog.net.xpc.IframePollingTransport.prototype.checkForeignFramesReady_ = function() {
-  this.isRcvFrameReady_(this.getMsgFrameName_()) && this.isRcvFrameReady_(this.getAckFrameName_()) ? (goog.log.fine(goog.net.xpc.logger, "foreign frames present"), this.msgReceiver_ = new goog.net.xpc.IframePollingTransport.Receiver(this, this.getPeerFrame_(this.getMsgFrameName_()), goog.bind(this.processIncomingMsg, this)), this.ackReceiver_ = new goog.net.xpc.IframePollingTransport.Receiver(this, this.getPeerFrame_(this.getAckFrameName_()), goog.bind(this.processIncomingAck, this)), this.checkLocalFramesPresent_()) : 
-  (goog.log.log(goog.net.xpc.logger, goog.log.Level.FINEST, "foreign frames not (yet) present"), this.channel_.getRole() == goog.net.xpc.CrossPageChannelRole.INNER ? this.maybeInnerPeerReconnect_() : this.channel_.getRole() == goog.net.xpc.CrossPageChannelRole.OUTER && this.outerPeerReconnect_(), this.getWindow().setTimeout(goog.bind(this.connect, this), 100));
-};
-goog.net.xpc.IframePollingTransport.prototype.isRcvFrameReady_ = function(a) {
-  goog.log.log(goog.net.xpc.logger, goog.log.Level.FINEST, "checking for receive frame: " + a);
-  try {
-    var b = this.getPeerFrame_(a);
-    if (!b || 0 != b.location.href.indexOf(this.rcvUri_)) {
-      return!1;
-    }
-  } catch (c) {
-    return!1;
-  }
-  return!0;
-};
-goog.net.xpc.IframePollingTransport.prototype.checkLocalFramesPresent_ = function() {
-  var a = this.getPeerFrames_();
-  a[this.getAckFrameName_()] && a[this.getMsgFrameName_()] ? (this.msgSender_ = new goog.net.xpc.IframePollingTransport.Sender(this.sendUri_, this.msgWinObj_), this.ackSender_ = new goog.net.xpc.IframePollingTransport.Sender(this.sendUri_, this.ackWinObj_), goog.log.fine(goog.net.xpc.logger, "local frames ready"), this.getWindow().setTimeout(goog.bind(function() {
-    this.msgSender_.send(goog.net.xpc.SETUP);
-    this.waitForAck_ = this.sentConnectionSetup_ = !0;
-    goog.log.fine(goog.net.xpc.logger, "SETUP sent");
-  }, this), 100)) : (this.checkLocalFramesPresentCb_ || (this.checkLocalFramesPresentCb_ = goog.bind(this.checkLocalFramesPresent_, this)), this.getWindow().setTimeout(this.checkLocalFramesPresentCb_, 100), goog.log.fine(goog.net.xpc.logger, "local frames not (yet) present"));
-};
-goog.net.xpc.IframePollingTransport.prototype.checkIfConnected_ = function() {
-  if (this.sentConnectionSetupAck_ && this.rcvdConnectionSetupAck_) {
-    if (this.channel_.notifyConnected(), this.deliveryQueue_) {
-      goog.log.fine(goog.net.xpc.logger, "delivering queued messages (" + this.deliveryQueue_.length + ")");
-      for (var a = 0, b;a < this.deliveryQueue_.length;a++) {
-        b = this.deliveryQueue_[a], this.channel_.xpcDeliver(b.service, b.payload);
-      }
-      delete this.deliveryQueue_;
-    }
-  } else {
-    goog.log.log(goog.net.xpc.logger, goog.log.Level.FINEST, "checking if connected: ack sent:" + this.sentConnectionSetupAck_ + ", ack rcvd: " + this.rcvdConnectionSetupAck_);
-  }
-};
-goog.net.xpc.IframePollingTransport.prototype.processIncomingMsg = function(a) {
-  goog.log.log(goog.net.xpc.logger, goog.log.Level.FINEST, "msg received: " + a);
-  if (a == goog.net.xpc.SETUP) {
-    this.ackSender_ && (this.ackSender_.send(goog.net.xpc.SETUP_ACK_), goog.log.log(goog.net.xpc.logger, goog.log.Level.FINEST, "SETUP_ACK sent"), this.sentConnectionSetupAck_ = !0, this.checkIfConnected_());
-  } else {
-    if (this.channel_.isConnected() || this.sentConnectionSetupAck_) {
-      var b = a.indexOf("|"), c = a.substring(0, b);
-      a = a.substring(b + 1);
-      b = c.indexOf(",");
-      if (-1 == b) {
-        var d;
-        this.ackSender_.send("ACK:" + c);
-        this.deliverPayload_(a);
-      } else {
-        d = c.substring(0, b), this.ackSender_.send("ACK:" + d), c = c.substring(b + 1).split("/"), b = parseInt(c[0], 10), c = parseInt(c[1], 10), 1 == b && (this.parts_ = []), this.parts_.push(a), b == c && (this.deliverPayload_(this.parts_.join("")), delete this.parts_);
-      }
-    } else {
-      goog.log.warning(goog.net.xpc.logger, "received msg, but channel is not connected");
-    }
-  }
-};
-goog.net.xpc.IframePollingTransport.prototype.processIncomingAck = function(a) {
-  goog.log.log(goog.net.xpc.logger, goog.log.Level.FINEST, "ack received: " + a);
-  a == goog.net.xpc.SETUP_ACK_ ? (this.waitForAck_ = !1, this.rcvdConnectionSetupAck_ = !0, this.checkIfConnected_()) : this.channel_.isConnected() ? this.waitForAck_ ? parseInt(a.split(":")[1], 10) == this.sequence_ ? (this.waitForAck_ = !1, this.sendNextFrame_()) : goog.log.warning(goog.net.xpc.logger, "got ack with wrong sequence") : goog.log.warning(goog.net.xpc.logger, "got unexpected ack") : goog.log.warning(goog.net.xpc.logger, "received ack, but channel not connected");
-};
-goog.net.xpc.IframePollingTransport.prototype.sendNextFrame_ = function() {
-  if (!this.waitForAck_ && this.sendQueue_.length) {
-    var a = this.sendQueue_.shift();
-    ++this.sequence_;
-    this.msgSender_.send(this.sequence_ + a);
-    goog.log.log(goog.net.xpc.logger, goog.log.Level.FINEST, "msg sent: " + this.sequence_ + a);
-    this.waitForAck_ = !0;
-  }
-};
-goog.net.xpc.IframePollingTransport.prototype.deliverPayload_ = function(a) {
-  var b = a.indexOf(":"), c = a.substr(0, b);
-  a = a.substring(b + 1);
-  this.channel_.isConnected() ? this.channel_.xpcDeliver(c, a) : ((this.deliveryQueue_ || (this.deliveryQueue_ = [])).push({service:c, payload:a}), goog.log.log(goog.net.xpc.logger, goog.log.Level.FINEST, "queued delivery"));
-};
-goog.net.xpc.IframePollingTransport.prototype.MAX_FRAME_LENGTH_ = 3800;
-goog.net.xpc.IframePollingTransport.prototype.send = function(a, b) {
-  var c = a + ":" + b;
-  if (!goog.userAgent.IE || b.length <= this.MAX_FRAME_LENGTH_) {
-    this.sendQueue_.push("|" + c);
-  } else {
-    for (var d = b.length, e = Math.ceil(d / this.MAX_FRAME_LENGTH_), f = 0, g = 1;f < d;) {
-      this.sendQueue_.push("," + g + "/" + e + "|" + c.substr(f, this.MAX_FRAME_LENGTH_)), g++, f += this.MAX_FRAME_LENGTH_;
-    }
-  }
-  this.sendNextFrame_();
-};
-goog.net.xpc.IframePollingTransport.prototype.disposeInternal = function() {
-  goog.net.xpc.IframePollingTransport.superClass_.disposeInternal.call(this);
-  var a = goog.net.xpc.IframePollingTransport.receivers_;
-  goog.array.remove(a, this.msgReceiver_);
-  goog.array.remove(a, this.ackReceiver_);
-  this.msgReceiver_ = this.ackReceiver_ = null;
-  goog.dom.removeNode(this.msgIframeElm_);
-  goog.dom.removeNode(this.ackIframeElm_);
-  this.msgWinObj_ = this.ackWinObj_ = this.msgIframeElm_ = this.ackIframeElm_ = null;
-};
-goog.net.xpc.IframePollingTransport.receivers_ = [];
-goog.net.xpc.IframePollingTransport.TIME_POLL_SHORT_ = 10;
-goog.net.xpc.IframePollingTransport.TIME_POLL_LONG_ = 100;
-goog.net.xpc.IframePollingTransport.TIME_SHORT_POLL_AFTER_ACTIVITY_ = 1E3;
-goog.net.xpc.IframePollingTransport.receive_ = function() {
-  var a = goog.net.xpc.IframePollingTransport.receivers_, b, c = !1;
-  try {
-    for (var d = 0;b = a[d];d++) {
-      c = c || b.receive();
-    }
-  } catch (e) {
-    if (goog.log.info(goog.net.xpc.logger, "receive_() failed: " + e), b.transport_.channel_.notifyTransportError(), !a.length) {
-      return;
-    }
-  }
-  a = goog.now();
-  c && (goog.net.xpc.IframePollingTransport.lastActivity_ = a);
-  goog.net.xpc.IframePollingTransport.rcvTimer_ = window.setTimeout(goog.net.xpc.IframePollingTransport.receiveCb_, a - goog.net.xpc.IframePollingTransport.lastActivity_ < goog.net.xpc.IframePollingTransport.TIME_SHORT_POLL_AFTER_ACTIVITY_ ? goog.net.xpc.IframePollingTransport.TIME_POLL_SHORT_ : goog.net.xpc.IframePollingTransport.TIME_POLL_LONG_);
-};
-goog.net.xpc.IframePollingTransport.receiveCb_ = goog.bind(goog.net.xpc.IframePollingTransport.receive_, goog.net.xpc.IframePollingTransport);
-goog.net.xpc.IframePollingTransport.startRcvTimer_ = function() {
-  goog.log.fine(goog.net.xpc.logger, "starting receive-timer");
-  goog.net.xpc.IframePollingTransport.lastActivity_ = goog.now();
-  goog.net.xpc.IframePollingTransport.rcvTimer_ && window.clearTimeout(goog.net.xpc.IframePollingTransport.rcvTimer_);
-  goog.net.xpc.IframePollingTransport.rcvTimer_ = window.setTimeout(goog.net.xpc.IframePollingTransport.receiveCb_, goog.net.xpc.IframePollingTransport.TIME_POLL_SHORT_);
-};
-goog.net.xpc.IframePollingTransport.Sender = function(a, b) {
-  this.sendUri_ = a;
-  this.sendFrame_ = b;
-  this.cycle_ = 0;
-};
-goog.net.xpc.IframePollingTransport.Sender.prototype.send = function(a) {
-  this.cycle_ = ++this.cycle_ % 2;
-  a = this.sendUri_ + "#" + this.cycle_ + encodeURIComponent(a);
-  try {
-    goog.userAgent.WEBKIT ? this.sendFrame_.location.href = a : this.sendFrame_.location.replace(a);
-  } catch (b) {
-    goog.log.error(goog.net.xpc.logger, "sending failed", b);
-  }
-  goog.net.xpc.IframePollingTransport.startRcvTimer_();
-};
-goog.net.xpc.IframePollingTransport.Receiver = function(a, b, c) {
-  this.transport_ = a;
-  this.rcvFrame_ = b;
-  this.cb_ = c;
-  this.currentLoc_ = this.rcvFrame_.location.href.split("#")[0] + "#INITIAL";
-  goog.net.xpc.IframePollingTransport.receivers_.push(this);
-  goog.net.xpc.IframePollingTransport.startRcvTimer_();
-};
-goog.net.xpc.IframePollingTransport.Receiver.prototype.receive = function() {
-  var a = this.rcvFrame_.location.href;
-  if (a != this.currentLoc_) {
-    this.currentLoc_ = a;
-    if (a = a.split("#")[1]) {
-      a = a.substr(1), this.cb_(decodeURIComponent(a));
-    }
-    return!0;
-  }
-  return!1;
-};
-goog.net.EventType = {COMPLETE:"complete", SUCCESS:"success", ERROR:"error", ABORT:"abort", READY:"ready", READY_STATE_CHANGE:"readystatechange", TIMEOUT:"timeout", INCREMENTAL_DATA:"incrementaldata", PROGRESS:"progress"};
-goog.json = {};
-goog.json.USE_NATIVE_JSON = !1;
-goog.json.isValid = function(a) {
-  return/^\s*$/.test(a) ? !1 : /^[\],:{}\s\u2028\u2029]*$/.test(a.replace(/\\["\\\/bfnrtu]/g, "@").replace(/"[^"\\\n\r\u2028\u2029\x00-\x08\x0a-\x1f]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, "]").replace(/(?:^|:|,)(?:[\s\u2028\u2029]*\[)+/g, ""));
-};
-goog.json.parse = goog.json.USE_NATIVE_JSON ? goog.global.JSON.parse : function(a) {
-  a = String(a);
-  if (goog.json.isValid(a)) {
-    try {
-      return eval("(" + a + ")");
-    } catch (b) {
-    }
-  }
-  throw Error("Invalid JSON string: " + a);
-};
-goog.json.unsafeParse = goog.json.USE_NATIVE_JSON ? goog.global.JSON.parse : function(a) {
-  return eval("(" + a + ")");
-};
-goog.json.serialize = goog.json.USE_NATIVE_JSON ? goog.global.JSON.stringify : function(a, b) {
-  return(new goog.json.Serializer(b)).serialize(a);
-};
-goog.json.Serializer = function(a) {
-  this.replacer_ = a;
-};
-goog.json.Serializer.prototype.serialize = function(a) {
-  var b = [];
-  this.serializeInternal(a, b);
-  return b.join("");
-};
-goog.json.Serializer.prototype.serializeInternal = function(a, b) {
-  switch(typeof a) {
-    case "string":
-      this.serializeString_(a, b);
-      break;
-    case "number":
-      this.serializeNumber_(a, b);
-      break;
-    case "boolean":
-      b.push(a);
-      break;
-    case "undefined":
-      b.push("null");
-      break;
-    case "object":
-      if (null == a) {
-        b.push("null");
-        break;
-      }
-      if (goog.isArray(a)) {
-        this.serializeArray(a, b);
-        break;
-      }
-      this.serializeObject_(a, b);
-      break;
-    case "function":
-      break;
-    default:
-      throw Error("Unknown type: " + typeof a);;
-  }
-};
-goog.json.Serializer.charToJsonCharCache_ = {'"':'\\"', "\\":"\\\\", "/":"\\/", "\b":"\\b", "\f":"\\f", "\n":"\\n", "\r":"\\r", "\t":"\\t", "\x0B":"\\u000b"};
-goog.json.Serializer.charsToReplace_ = /\uffff/.test("\uffff") ? /[\\\"\x00-\x1f\x7f-\uffff]/g : /[\\\"\x00-\x1f\x7f-\xff]/g;
-goog.json.Serializer.prototype.serializeString_ = function(a, b) {
-  b.push('"', a.replace(goog.json.Serializer.charsToReplace_, function(a) {
-    if (a in goog.json.Serializer.charToJsonCharCache_) {
-      return goog.json.Serializer.charToJsonCharCache_[a];
-    }
-    var b = a.charCodeAt(0), e = "\\u";
-    16 > b ? e += "000" : 256 > b ? e += "00" : 4096 > b && (e += "0");
-    return goog.json.Serializer.charToJsonCharCache_[a] = e + b.toString(16);
-  }), '"');
-};
-goog.json.Serializer.prototype.serializeNumber_ = function(a, b) {
-  b.push(isFinite(a) && !isNaN(a) ? a : "null");
-};
-goog.json.Serializer.prototype.serializeArray = function(a, b) {
-  var c = a.length;
-  b.push("[");
-  for (var d = "", e = 0;e < c;e++) {
-    b.push(d), d = a[e], this.serializeInternal(this.replacer_ ? this.replacer_.call(a, String(e), d) : d, b), d = ",";
-  }
-  b.push("]");
-};
-goog.json.Serializer.prototype.serializeObject_ = function(a, b) {
-  b.push("{");
-  var c = "", d;
-  for (d in a) {
-    if (Object.prototype.hasOwnProperty.call(a, d)) {
-      var e = a[d];
-      "function" != typeof e && (b.push(c), this.serializeString_(d, b), b.push(":"), this.serializeInternal(this.replacer_ ? this.replacer_.call(a, d, e) : e, b), c = ",");
-    }
-  }
-  b.push("}");
-};
-goog.net.ErrorCode = {NO_ERROR:0, ACCESS_DENIED:1, FILE_NOT_FOUND:2, FF_SILENT_ERROR:3, CUSTOM_ERROR:4, EXCEPTION:5, HTTP_ERROR:6, ABORT:7, TIMEOUT:8, OFFLINE:9};
-goog.net.ErrorCode.getDebugMessage = function(a) {
-  switch(a) {
-    case goog.net.ErrorCode.NO_ERROR:
-      return "No Error";
-    case goog.net.ErrorCode.ACCESS_DENIED:
-      return "Access denied to content document";
-    case goog.net.ErrorCode.FILE_NOT_FOUND:
-      return "File not found";
-    case goog.net.ErrorCode.FF_SILENT_ERROR:
-      return "Firefox silently errored";
-    case goog.net.ErrorCode.CUSTOM_ERROR:
-      return "Application custom error";
-    case goog.net.ErrorCode.EXCEPTION:
-      return "An exception occurred";
-    case goog.net.ErrorCode.HTTP_ERROR:
-      return "Http response at 400 or 500 level";
-    case goog.net.ErrorCode.ABORT:
-      return "Request was aborted";
-    case goog.net.ErrorCode.TIMEOUT:
-      return "Request timed out";
-    case goog.net.ErrorCode.OFFLINE:
-      return "The resource is not available offline";
-    default:
-      return "Unrecognized error code";
-  }
-};
-goog.net.HttpStatus = {CONTINUE:100, SWITCHING_PROTOCOLS:101, OK:200, CREATED:201, ACCEPTED:202, NON_AUTHORITATIVE_INFORMATION:203, NO_CONTENT:204, RESET_CONTENT:205, PARTIAL_CONTENT:206, MULTIPLE_CHOICES:300, MOVED_PERMANENTLY:301, FOUND:302, SEE_OTHER:303, NOT_MODIFIED:304, USE_PROXY:305, TEMPORARY_REDIRECT:307, BAD_REQUEST:400, UNAUTHORIZED:401, PAYMENT_REQUIRED:402, FORBIDDEN:403, NOT_FOUND:404, METHOD_NOT_ALLOWED:405, NOT_ACCEPTABLE:406, PROXY_AUTHENTICATION_REQUIRED:407, REQUEST_TIMEOUT:408, 
-CONFLICT:409, GONE:410, LENGTH_REQUIRED:411, PRECONDITION_FAILED:412, REQUEST_ENTITY_TOO_LARGE:413, REQUEST_URI_TOO_LONG:414, UNSUPPORTED_MEDIA_TYPE:415, REQUEST_RANGE_NOT_SATISFIABLE:416, EXPECTATION_FAILED:417, INTERNAL_SERVER_ERROR:500, NOT_IMPLEMENTED:501, BAD_GATEWAY:502, SERVICE_UNAVAILABLE:503, GATEWAY_TIMEOUT:504, HTTP_VERSION_NOT_SUPPORTED:505, QUIRK_IE_NO_CONTENT:1223};
-goog.net.HttpStatus.isSuccess = function(a) {
-  switch(a) {
-    case goog.net.HttpStatus.OK:
-    ;
-    case goog.net.HttpStatus.CREATED:
-    ;
-    case goog.net.HttpStatus.ACCEPTED:
-    ;
-    case goog.net.HttpStatus.NO_CONTENT:
-    ;
-    case goog.net.HttpStatus.PARTIAL_CONTENT:
-    ;
-    case goog.net.HttpStatus.NOT_MODIFIED:
-    ;
-    case goog.net.HttpStatus.QUIRK_IE_NO_CONTENT:
-      return!0;
-    default:
-      return!1;
-  }
-};
-goog.net.XhrLike = function() {
-};
-goog.net.XhrLike.prototype.open = function(a, b, c, d, e) {
-};
-goog.net.XhrLike.prototype.send = function(a) {
-};
-goog.net.XhrLike.prototype.abort = function() {
-};
-goog.net.XhrLike.prototype.setRequestHeader = function(a, b) {
-};
-goog.net.XhrLike.prototype.getResponseHeader = function(a) {
-};
-goog.net.XhrLike.prototype.getAllResponseHeaders = function() {
-};
-goog.net.XmlHttpFactory = function() {
-};
-goog.net.XmlHttpFactory.prototype.cachedOptions_ = null;
-goog.net.XmlHttpFactory.prototype.getOptions = function() {
-  return this.cachedOptions_ || (this.cachedOptions_ = this.internalGetOptions());
-};
-goog.net.WrapperXmlHttpFactory = function(a, b) {
-  goog.net.XmlHttpFactory.call(this);
-  this.xhrFactory_ = a;
-  this.optionsFactory_ = b;
-};
-goog.inherits(goog.net.WrapperXmlHttpFactory, goog.net.XmlHttpFactory);
-goog.net.WrapperXmlHttpFactory.prototype.createInstance = function() {
-  return this.xhrFactory_();
-};
-goog.net.WrapperXmlHttpFactory.prototype.getOptions = function() {
-  return this.optionsFactory_();
-};
-goog.net.XmlHttp = function() {
-  return goog.net.XmlHttp.factory_.createInstance();
-};
-goog.net.XmlHttp.ASSUME_NATIVE_XHR = !1;
-goog.net.XmlHttpDefines = {};
-goog.net.XmlHttpDefines.ASSUME_NATIVE_XHR = !1;
-goog.net.XmlHttp.getOptions = function() {
-  return goog.net.XmlHttp.factory_.getOptions();
-};
-goog.net.XmlHttp.OptionType = {USE_NULL_FUNCTION:0, LOCAL_REQUEST_ERROR:1};
-goog.net.XmlHttp.ReadyState = {UNINITIALIZED:0, LOADING:1, LOADED:2, INTERACTIVE:3, COMPLETE:4};
-goog.net.XmlHttp.setFactory = function(a, b) {
-  goog.net.XmlHttp.setGlobalFactory(new goog.net.WrapperXmlHttpFactory(goog.asserts.assert(a), goog.asserts.assert(b)));
-};
-goog.net.XmlHttp.setGlobalFactory = function(a) {
-  goog.net.XmlHttp.factory_ = a;
-};
-goog.net.DefaultXmlHttpFactory = function() {
-  goog.net.XmlHttpFactory.call(this);
-};
-goog.inherits(goog.net.DefaultXmlHttpFactory, goog.net.XmlHttpFactory);
-goog.net.DefaultXmlHttpFactory.prototype.createInstance = function() {
-  var a = this.getProgId_();
-  return a ? new ActiveXObject(a) : new XMLHttpRequest;
-};
-goog.net.DefaultXmlHttpFactory.prototype.internalGetOptions = function() {
-  var a = {};
-  this.getProgId_() && (a[goog.net.XmlHttp.OptionType.USE_NULL_FUNCTION] = !0, a[goog.net.XmlHttp.OptionType.LOCAL_REQUEST_ERROR] = !0);
-  return a;
-};
-goog.net.DefaultXmlHttpFactory.prototype.getProgId_ = function() {
-  if (goog.net.XmlHttp.ASSUME_NATIVE_XHR || goog.net.XmlHttpDefines.ASSUME_NATIVE_XHR) {
-    return "";
-  }
-  if (!this.ieProgId_ && "undefined" == typeof XMLHttpRequest && "undefined" != typeof ActiveXObject) {
-    for (var a = ["MSXML2.XMLHTTP.6.0", "MSXML2.XMLHTTP.3.0", "MSXML2.XMLHTTP", "Microsoft.XMLHTTP"], b = 0;b < a.length;b++) {
-      var c = a[b];
-      try {
-        return new ActiveXObject(c), this.ieProgId_ = c;
-      } catch (d) {
-      }
-    }
-    throw Error("Could not create ActiveXObject. ActiveX might be disabled, or MSXML might not be installed");
-  }
-  return this.ieProgId_;
-};
-goog.net.XmlHttp.setGlobalFactory(new goog.net.DefaultXmlHttpFactory);
-goog.net.XhrIo = function(a) {
-  goog.events.EventTarget.call(this);
-  this.headers = new goog.structs.Map;
-  this.xmlHttpFactory_ = a || null;
-  this.active_ = !1;
-  this.xhrOptions_ = this.xhr_ = null;
-  this.lastMethod_ = this.lastUri_ = "";
-  this.lastErrorCode_ = goog.net.ErrorCode.NO_ERROR;
-  this.lastError_ = "";
-  this.inAbort_ = this.inOpen_ = this.inSend_ = this.errorDispatched_ = !1;
-  this.timeoutInterval_ = 0;
-  this.timeoutId_ = null;
-  this.responseType_ = goog.net.XhrIo.ResponseType.DEFAULT;
-  this.useXhr2Timeout_ = this.withCredentials_ = !1;
-};
-goog.inherits(goog.net.XhrIo, goog.events.EventTarget);
-goog.net.XhrIo.ResponseType = {DEFAULT:"", TEXT:"text", DOCUMENT:"document", BLOB:"blob", ARRAY_BUFFER:"arraybuffer"};
-goog.net.XhrIo.prototype.logger_ = goog.log.getLogger("goog.net.XhrIo");
-goog.net.XhrIo.CONTENT_TYPE_HEADER = "Content-Type";
-goog.net.XhrIo.HTTP_SCHEME_PATTERN = /^https?$/i;
-goog.net.XhrIo.METHODS_WITH_FORM_DATA = ["POST", "PUT"];
-goog.net.XhrIo.FORM_CONTENT_TYPE = "application/x-www-form-urlencoded;charset\x3dutf-8";
-goog.net.XhrIo.XHR2_TIMEOUT_ = "timeout";
-goog.net.XhrIo.XHR2_ON_TIMEOUT_ = "ontimeout";
-goog.net.XhrIo.sendInstances_ = [];
-goog.net.XhrIo.send = function(a, b, c, d, e, f, g) {
-  var h = new goog.net.XhrIo;
-  goog.net.XhrIo.sendInstances_.push(h);
-  b && h.listen(goog.net.EventType.COMPLETE, b);
-  h.listenOnce(goog.net.EventType.READY, h.cleanupSend_);
-  f && h.setTimeoutInterval(f);
-  g && h.setWithCredentials(g);
-  h.send(a, c, d, e);
-  return h;
-};
-goog.net.XhrIo.cleanup = function() {
-  for (var a = goog.net.XhrIo.sendInstances_;a.length;) {
-    a.pop().dispose();
-  }
-};
-goog.net.XhrIo.protectEntryPoints = function(a) {
-  goog.net.XhrIo.prototype.onReadyStateChangeEntryPoint_ = a.protectEntryPoint(goog.net.XhrIo.prototype.onReadyStateChangeEntryPoint_);
-};
-goog.net.XhrIo.prototype.cleanupSend_ = function() {
-  this.dispose();
-  goog.array.remove(goog.net.XhrIo.sendInstances_, this);
-};
-goog.net.XhrIo.prototype.getTimeoutInterval = function() {
-  return this.timeoutInterval_;
-};
-goog.net.XhrIo.prototype.setTimeoutInterval = function(a) {
-  this.timeoutInterval_ = Math.max(0, a);
-};
-goog.net.XhrIo.prototype.setResponseType = function(a) {
-  this.responseType_ = a;
-};
-goog.net.XhrIo.prototype.getResponseType = function() {
-  return this.responseType_;
-};
-goog.net.XhrIo.prototype.setWithCredentials = function(a) {
-  this.withCredentials_ = a;
-};
-goog.net.XhrIo.prototype.getWithCredentials = function() {
-  return this.withCredentials_;
-};
-goog.net.XhrIo.prototype.send = function(a, b, c, d) {
-  if (this.xhr_) {
-    throw Error("[goog.net.XhrIo] Object is active with another request\x3d" + this.lastUri_ + "; newUri\x3d" + a);
-  }
-  b = b ? b.toUpperCase() : "GET";
-  this.lastUri_ = a;
-  this.lastError_ = "";
-  this.lastErrorCode_ = goog.net.ErrorCode.NO_ERROR;
-  this.lastMethod_ = b;
-  this.errorDispatched_ = !1;
-  this.active_ = !0;
-  this.xhr_ = this.createXhr();
-  this.xhrOptions_ = this.xmlHttpFactory_ ? this.xmlHttpFactory_.getOptions() : goog.net.XmlHttp.getOptions();
-  this.xhr_.onreadystatechange = goog.bind(this.onReadyStateChange_, this);
-  try {
-    goog.log.fine(this.logger_, this.formatMsg_("Opening Xhr")), this.inOpen_ = !0, this.xhr_.open(b, String(a), !0), this.inOpen_ = !1;
-  } catch (e) {
-    goog.log.fine(this.logger_, this.formatMsg_("Error opening Xhr: " + e.message));
-    this.error_(goog.net.ErrorCode.EXCEPTION, e);
-    return;
-  }
-  a = c || "";
-  var f = this.headers.clone();
-  d && goog.structs.forEach(d, function(a, b) {
-    f.set(b, a);
-  });
-  d = goog.array.find(f.getKeys(), goog.net.XhrIo.isContentTypeHeader_);
-  c = goog.global.FormData && a instanceof goog.global.FormData;
-  !goog.array.contains(goog.net.XhrIo.METHODS_WITH_FORM_DATA, b) || d || c || f.set(goog.net.XhrIo.CONTENT_TYPE_HEADER, goog.net.XhrIo.FORM_CONTENT_TYPE);
-  f.forEach(function(a, b) {
-    this.xhr_.setRequestHeader(b, a);
-  }, this);
-  this.responseType_ && (this.xhr_.responseType = this.responseType_);
-  goog.object.containsKey(this.xhr_, "withCredentials") && (this.xhr_.withCredentials = this.withCredentials_);
-  try {
-    this.cleanUpTimeoutTimer_(), 0 < this.timeoutInterval_ && (this.useXhr2Timeout_ = goog.net.XhrIo.shouldUseXhr2Timeout_(this.xhr_), goog.log.fine(this.logger_, this.formatMsg_("Will abort after " + this.timeoutInterval_ + "ms if incomplete, xhr2 " + this.useXhr2Timeout_)), this.useXhr2Timeout_ ? (this.xhr_[goog.net.XhrIo.XHR2_TIMEOUT_] = this.timeoutInterval_, this.xhr_[goog.net.XhrIo.XHR2_ON_TIMEOUT_] = goog.bind(this.timeout_, this)) : this.timeoutId_ = goog.Timer.callOnce(this.timeout_, this.timeoutInterval_, 
-    this)), goog.log.fine(this.logger_, this.formatMsg_("Sending request")), this.inSend_ = !0, this.xhr_.send(a), this.inSend_ = !1;
-  } catch (g) {
-    goog.log.fine(this.logger_, this.formatMsg_("Send error: " + g.message)), this.error_(goog.net.ErrorCode.EXCEPTION, g);
-  }
-};
-goog.net.XhrIo.shouldUseXhr2Timeout_ = function(a) {
-  return goog.userAgent.IE && goog.userAgent.isVersionOrHigher(9) && goog.isNumber(a[goog.net.XhrIo.XHR2_TIMEOUT_]) && goog.isDef(a[goog.net.XhrIo.XHR2_ON_TIMEOUT_]);
-};
-goog.net.XhrIo.isContentTypeHeader_ = function(a) {
-  return goog.string.caseInsensitiveEquals(goog.net.XhrIo.CONTENT_TYPE_HEADER, a);
-};
-goog.net.XhrIo.prototype.createXhr = function() {
-  return this.xmlHttpFactory_ ? this.xmlHttpFactory_.createInstance() : goog.net.XmlHttp();
-};
-goog.net.XhrIo.prototype.timeout_ = function() {
-  "undefined" != typeof goog && this.xhr_ && (this.lastError_ = "Timed out after " + this.timeoutInterval_ + "ms, aborting", this.lastErrorCode_ = goog.net.ErrorCode.TIMEOUT, goog.log.fine(this.logger_, this.formatMsg_(this.lastError_)), this.dispatchEvent(goog.net.EventType.TIMEOUT), this.abort(goog.net.ErrorCode.TIMEOUT));
-};
-goog.net.XhrIo.prototype.error_ = function(a, b) {
-  this.active_ = !1;
-  this.xhr_ && (this.inAbort_ = !0, this.xhr_.abort(), this.inAbort_ = !1);
-  this.lastError_ = b;
-  this.lastErrorCode_ = a;
-  this.dispatchErrors_();
-  this.cleanUpXhr_();
-};
-goog.net.XhrIo.prototype.dispatchErrors_ = function() {
-  this.errorDispatched_ || (this.errorDispatched_ = !0, this.dispatchEvent(goog.net.EventType.COMPLETE), this.dispatchEvent(goog.net.EventType.ERROR));
-};
-goog.net.XhrIo.prototype.abort = function(a) {
-  this.xhr_ && this.active_ && (goog.log.fine(this.logger_, this.formatMsg_("Aborting")), this.active_ = !1, this.inAbort_ = !0, this.xhr_.abort(), this.inAbort_ = !1, this.lastErrorCode_ = a || goog.net.ErrorCode.ABORT, this.dispatchEvent(goog.net.EventType.COMPLETE), this.dispatchEvent(goog.net.EventType.ABORT), this.cleanUpXhr_());
-};
-goog.net.XhrIo.prototype.disposeInternal = function() {
-  this.xhr_ && (this.active_ && (this.active_ = !1, this.inAbort_ = !0, this.xhr_.abort(), this.inAbort_ = !1), this.cleanUpXhr_(!0));
-  goog.net.XhrIo.superClass_.disposeInternal.call(this);
-};
-goog.net.XhrIo.prototype.onReadyStateChange_ = function() {
-  if (!this.isDisposed()) {
-    if (this.inOpen_ || this.inSend_ || this.inAbort_) {
-      this.onReadyStateChangeHelper_();
-    } else {
-      this.onReadyStateChangeEntryPoint_();
-    }
-  }
-};
-goog.net.XhrIo.prototype.onReadyStateChangeEntryPoint_ = function() {
-  this.onReadyStateChangeHelper_();
-};
-goog.net.XhrIo.prototype.onReadyStateChangeHelper_ = function() {
-  if (this.active_ && "undefined" != typeof goog) {
-    if (this.xhrOptions_[goog.net.XmlHttp.OptionType.LOCAL_REQUEST_ERROR] && this.getReadyState() == goog.net.XmlHttp.ReadyState.COMPLETE && 2 == this.getStatus()) {
-      goog.log.fine(this.logger_, this.formatMsg_("Local request error detected and ignored"));
-    } else {
-      if (this.inSend_ && this.getReadyState() == goog.net.XmlHttp.ReadyState.COMPLETE) {
-        goog.Timer.callOnce(this.onReadyStateChange_, 0, this);
-      } else {
-        if (this.dispatchEvent(goog.net.EventType.READY_STATE_CHANGE), this.isComplete()) {
-          goog.log.fine(this.logger_, this.formatMsg_("Request complete"));
-          this.active_ = !1;
-          try {
-            this.isSuccess() ? (this.dispatchEvent(goog.net.EventType.COMPLETE), this.dispatchEvent(goog.net.EventType.SUCCESS)) : (this.lastErrorCode_ = goog.net.ErrorCode.HTTP_ERROR, this.lastError_ = this.getStatusText() + " [" + this.getStatus() + "]", this.dispatchErrors_());
-          } finally {
-            this.cleanUpXhr_();
-          }
-        }
-      }
-    }
-  }
-};
-goog.net.XhrIo.prototype.cleanUpXhr_ = function(a) {
-  if (this.xhr_) {
-    this.cleanUpTimeoutTimer_();
-    var b = this.xhr_, c = this.xhrOptions_[goog.net.XmlHttp.OptionType.USE_NULL_FUNCTION] ? goog.nullFunction : null;
-    this.xhrOptions_ = this.xhr_ = null;
-    a || this.dispatchEvent(goog.net.EventType.READY);
-    try {
-      b.onreadystatechange = c;
-    } catch (d) {
-      goog.log.error(this.logger_, "Problem encountered resetting onreadystatechange: " + d.message);
-    }
-  }
-};
-goog.net.XhrIo.prototype.cleanUpTimeoutTimer_ = function() {
-  this.xhr_ && this.useXhr2Timeout_ && (this.xhr_[goog.net.XhrIo.XHR2_ON_TIMEOUT_] = null);
-  goog.isNumber(this.timeoutId_) && (goog.Timer.clear(this.timeoutId_), this.timeoutId_ = null);
-};
-goog.net.XhrIo.prototype.isActive = function() {
-  return!!this.xhr_;
-};
-goog.net.XhrIo.prototype.isComplete = function() {
-  return this.getReadyState() == goog.net.XmlHttp.ReadyState.COMPLETE;
-};
-goog.net.XhrIo.prototype.isSuccess = function() {
-  var a = this.getStatus();
-  return goog.net.HttpStatus.isSuccess(a) || 0 === a && !this.isLastUriEffectiveSchemeHttp_();
-};
-goog.net.XhrIo.prototype.isLastUriEffectiveSchemeHttp_ = function() {
-  var a = goog.uri.utils.getEffectiveScheme(String(this.lastUri_));
-  return goog.net.XhrIo.HTTP_SCHEME_PATTERN.test(a);
-};
-goog.net.XhrIo.prototype.getReadyState = function() {
-  return this.xhr_ ? this.xhr_.readyState : goog.net.XmlHttp.ReadyState.UNINITIALIZED;
-};
-goog.net.XhrIo.prototype.getStatus = function() {
-  try {
-    return this.getReadyState() > goog.net.XmlHttp.ReadyState.LOADED ? this.xhr_.status : -1;
-  } catch (a) {
-    return-1;
-  }
-};
-goog.net.XhrIo.prototype.getStatusText = function() {
-  try {
-    return this.getReadyState() > goog.net.XmlHttp.ReadyState.LOADED ? this.xhr_.statusText : "";
-  } catch (a) {
-    return goog.log.fine(this.logger_, "Can not get status: " + a.message), "";
-  }
-};
-goog.net.XhrIo.prototype.getLastUri = function() {
-  return String(this.lastUri_);
-};
-goog.net.XhrIo.prototype.getResponseText = function() {
-  try {
-    return this.xhr_ ? this.xhr_.responseText : "";
-  } catch (a) {
-    return goog.log.fine(this.logger_, "Can not get responseText: " + a.message), "";
-  }
-};
-goog.net.XhrIo.prototype.getResponseBody = function() {
-  try {
-    if (this.xhr_ && "responseBody" in this.xhr_) {
-      return this.xhr_.responseBody;
-    }
-  } catch (a) {
-    goog.log.fine(this.logger_, "Can not get responseBody: " + a.message);
-  }
-  return null;
-};
-goog.net.XhrIo.prototype.getResponseXml = function() {
-  try {
-    return this.xhr_ ? this.xhr_.responseXML : null;
-  } catch (a) {
-    return goog.log.fine(this.logger_, "Can not get responseXML: " + a.message), null;
-  }
-};
-goog.net.XhrIo.prototype.getResponseJson = function(a) {
-  if (this.xhr_) {
-    var b = this.xhr_.responseText;
-    a && 0 == b.indexOf(a) && (b = b.substring(a.length));
-    return goog.json.parse(b);
-  }
-};
-goog.net.XhrIo.prototype.getResponse = function() {
-  try {
-    if (!this.xhr_) {
-      return null;
-    }
-    if ("response" in this.xhr_) {
-      return this.xhr_.response;
-    }
-    switch(this.responseType_) {
-      case goog.net.XhrIo.ResponseType.DEFAULT:
-      ;
-      case goog.net.XhrIo.ResponseType.TEXT:
-        return this.xhr_.responseText;
-      case goog.net.XhrIo.ResponseType.ARRAY_BUFFER:
-        if ("mozResponseArrayBuffer" in this.xhr_) {
-          return this.xhr_.mozResponseArrayBuffer;
-        }
-      ;
-    }
-    goog.log.error(this.logger_, "Response type " + this.responseType_ + " is not supported on this browser");
-    return null;
-  } catch (a) {
-    return goog.log.fine(this.logger_, "Can not get response: " + a.message), null;
-  }
-};
-goog.net.XhrIo.prototype.getResponseHeader = function(a) {
-  return this.xhr_ && this.isComplete() ? this.xhr_.getResponseHeader(a) : void 0;
-};
-goog.net.XhrIo.prototype.getAllResponseHeaders = function() {
-  return this.xhr_ && this.isComplete() ? this.xhr_.getAllResponseHeaders() : "";
-};
-goog.net.XhrIo.prototype.getResponseHeaders = function() {
-  for (var a = {}, b = this.getAllResponseHeaders().split("\r\n"), c = 0;c < b.length;c++) {
-    if (!goog.string.isEmpty(b[c])) {
-      var d = goog.string.splitLimit(b[c], ": ", 2);
-      a[d[0]] = a[d[0]] ? a[d[0]] + (", " + d[1]) : d[1];
-    }
-  }
-  return a;
-};
-goog.net.XhrIo.prototype.getLastErrorCode = function() {
-  return this.lastErrorCode_;
-};
-goog.net.XhrIo.prototype.getLastError = function() {
-  return goog.isString(this.lastError_) ? this.lastError_ : String(this.lastError_);
-};
-goog.net.XhrIo.prototype.formatMsg_ = function(a) {
-  return a + " [" + this.lastMethod_ + " " + this.lastUri_ + " " + this.getStatus() + "]";
-};
-goog.debug.entryPointRegistry.register(function(a) {
-  goog.net.XhrIo.prototype.onReadyStateChangeEntryPoint_ = a(goog.net.XhrIo.prototype.onReadyStateChangeEntryPoint_);
-});
-goog.Thenable = function() {
-};
-goog.Thenable.prototype.then = function(a, b, c) {
-};
-goog.Thenable.IMPLEMENTED_BY_PROP = "$goog_Thenable";
-goog.Thenable.addImplementation = function(a) {
-  goog.exportProperty(a.prototype, "then", a.prototype.then);
-  COMPILED ? a.prototype[goog.Thenable.IMPLEMENTED_BY_PROP] = !0 : a.prototype.$goog_Thenable = !0;
-};
-goog.Thenable.isImplementedBy = function(a) {
-  if (!a) {
-    return!1;
-  }
-  try {
-    return COMPILED ? !!a[goog.Thenable.IMPLEMENTED_BY_PROP] : !!a.$goog_Thenable;
-  } catch (b) {
-    return!1;
-  }
-};
-goog.testing = {};
-goog.testing.watchers = {};
-goog.testing.watchers.resetWatchers_ = [];
-goog.testing.watchers.signalClockReset = function() {
-  for (var a = goog.testing.watchers.resetWatchers_, b = 0;b < a.length;b++) {
-    goog.testing.watchers.resetWatchers_[b]();
-  }
-};
-goog.testing.watchers.watchClockReset = function(a) {
-  goog.testing.watchers.resetWatchers_.push(a);
-};
-goog.async.run = function(a, b) {
-  goog.async.run.schedule_ || goog.async.run.initializeRunner_();
-  goog.async.run.workQueueScheduled_ || (goog.async.run.schedule_(), goog.async.run.workQueueScheduled_ = !0);
-  goog.async.run.workQueue_.push(new goog.async.run.WorkItem_(a, b));
-};
-goog.async.run.initializeRunner_ = function() {
-  if (goog.global.Promise && goog.global.Promise.resolve) {
-    var a = goog.global.Promise.resolve();
-    goog.async.run.schedule_ = function() {
-      a.then(goog.async.run.processWorkQueue);
-    };
-  } else {
-    goog.async.run.schedule_ = function() {
-      goog.async.nextTick(goog.async.run.processWorkQueue);
-    };
-  }
-};
-goog.async.run.forceNextTick = function() {
-  goog.async.run.schedule_ = function() {
-    goog.async.nextTick(goog.async.run.processWorkQueue);
-  };
-};
-goog.async.run.workQueueScheduled_ = !1;
-goog.async.run.workQueue_ = [];
-goog.DEBUG && (goog.async.run.resetQueue_ = function() {
-  goog.async.run.workQueueScheduled_ = !1;
-  goog.async.run.workQueue_ = [];
-}, goog.testing.watchers.watchClockReset(goog.async.run.resetQueue_));
-goog.async.run.processWorkQueue = function() {
-  for (;goog.async.run.workQueue_.length;) {
-    var a = goog.async.run.workQueue_;
-    goog.async.run.workQueue_ = [];
-    for (var b = 0;b < a.length;b++) {
-      var c = a[b];
-      try {
-        c.fn.call(c.scope);
-      } catch (d) {
-        goog.async.throwException(d);
-      }
-    }
-  }
-  goog.async.run.workQueueScheduled_ = !1;
-};
-goog.async.run.WorkItem_ = function(a, b) {
-  this.fn = a;
-  this.scope = b;
-};
-goog.promise = {};
-goog.promise.Resolver = function() {
-};
-goog.Promise = function(a, b) {
-  this.state_ = goog.Promise.State_.PENDING;
-  this.result_ = void 0;
-  this.callbackEntries_ = this.parent_ = null;
-  this.executing_ = !1;
-  0 < goog.Promise.UNHANDLED_REJECTION_DELAY ? this.unhandledRejectionId_ = 0 : 0 == goog.Promise.UNHANDLED_REJECTION_DELAY && (this.hadUnhandledRejection_ = !1);
-  goog.Promise.LONG_STACK_TRACES && (this.stack_ = [], this.addStackTrace_(Error("created")), this.currentStep_ = 0);
-  try {
-    var c = this;
-    a.call(b, function(a) {
-      c.resolve_(goog.Promise.State_.FULFILLED, a);
-    }, function(a) {
-      c.resolve_(goog.Promise.State_.REJECTED, a);
-    });
-  } catch (d) {
-    this.resolve_(goog.Promise.State_.REJECTED, d);
-  }
-};
-goog.Promise.LONG_STACK_TRACES = !1;
-goog.Promise.UNHANDLED_REJECTION_DELAY = 0;
-goog.Promise.State_ = {PENDING:0, BLOCKED:1, FULFILLED:2, REJECTED:3};
-goog.Promise.resolve = function(a) {
-  return new goog.Promise(function(b, c) {
-    b(a);
-  });
-};
-goog.Promise.reject = function(a) {
-  return new goog.Promise(function(b, c) {
-    c(a);
-  });
-};
-goog.Promise.race = function(a) {
-  return new goog.Promise(function(b, c) {
-    a.length || b(void 0);
-    for (var d = 0, e;e = a[d];d++) {
-      e.then(b, c);
-    }
-  });
-};
-goog.Promise.all = function(a) {
-  return new goog.Promise(function(b, c) {
-    var d = a.length, e = [];
-    if (d) {
-      for (var f = function(a, c) {
-        d--;
-        e[a] = c;
-        0 == d && b(e);
-      }, g = function(a) {
-        c(a);
-      }, h = 0, k;k = a[h];h++) {
-        k.then(goog.partial(f, h), g);
-      }
-    } else {
-      b(e);
-    }
-  });
-};
-goog.Promise.firstFulfilled = function(a) {
-  return new goog.Promise(function(b, c) {
-    var d = a.length, e = [];
-    if (d) {
-      for (var f = function(a) {
-        b(a);
-      }, g = function(a, b) {
-        d--;
-        e[a] = b;
-        0 == d && c(e);
-      }, h = 0, k;k = a[h];h++) {
-        k.then(f, goog.partial(g, h));
-      }
-    } else {
-      b(void 0);
-    }
-  });
-};
-goog.Promise.withResolver = function() {
-  var a, b, c = new goog.Promise(function(c, e) {
-    a = c;
-    b = e;
-  });
-  return new goog.Promise.Resolver_(c, a, b);
-};
-goog.Promise.prototype.then = function(a, b, c) {
-  null != a && goog.asserts.assertFunction(a, "opt_onFulfilled should be a function.");
-  null != b && goog.asserts.assertFunction(b, "opt_onRejected should be a function. Did you pass opt_context as the second argument instead of the third?");
-  goog.Promise.LONG_STACK_TRACES && this.addStackTrace_(Error("then"));
-  return this.addChildPromise_(goog.isFunction(a) ? a : null, goog.isFunction(b) ? b : null, c);
-};
-goog.Thenable.addImplementation(goog.Promise);
-goog.Promise.prototype.thenAlways = function(a, b) {
-  goog.Promise.LONG_STACK_TRACES && this.addStackTrace_(Error("thenAlways"));
-  var c = function() {
-    try {
-      a.call(b);
-    } catch (c) {
-      goog.Promise.handleRejection_.call(null, c);
-    }
-  };
-  this.addCallbackEntry_({child:null, onRejected:c, onFulfilled:c});
-  return this;
-};
-goog.Promise.prototype.thenCatch = function(a, b) {
-  goog.Promise.LONG_STACK_TRACES && this.addStackTrace_(Error("thenCatch"));
-  return this.addChildPromise_(null, a, b);
-};
-goog.Promise.prototype.cancel = function(a) {
-  this.state_ == goog.Promise.State_.PENDING && goog.async.run(function() {
-    var b = new goog.Promise.CancellationError(a);
-    this.cancelInternal_(b);
-  }, this);
-};
-goog.Promise.prototype.cancelInternal_ = function(a) {
-  this.state_ == goog.Promise.State_.PENDING && (this.parent_ ? this.parent_.cancelChild_(this, a) : this.resolve_(goog.Promise.State_.REJECTED, a));
-};
-goog.Promise.prototype.cancelChild_ = function(a, b) {
-  if (this.callbackEntries_) {
-    for (var c = 0, d = -1, e = 0, f;f = this.callbackEntries_[e];e++) {
-      if (f = f.child) {
-        if (c++, f == a && (d = e), 0 <= d && 1 < c) {
-          break;
-        }
-      }
-    }
-    0 <= d && (this.state_ == goog.Promise.State_.PENDING && 1 == c ? this.cancelInternal_(b) : (c = this.callbackEntries_.splice(d, 1)[0], this.executeCallback_(c, goog.Promise.State_.REJECTED, b)));
-  }
-};
-goog.Promise.prototype.addCallbackEntry_ = function(a) {
-  this.callbackEntries_ && this.callbackEntries_.length || this.state_ != goog.Promise.State_.FULFILLED && this.state_ != goog.Promise.State_.REJECTED || this.scheduleCallbacks_();
-  this.callbackEntries_ || (this.callbackEntries_ = []);
-  this.callbackEntries_.push(a);
-};
-goog.Promise.prototype.addChildPromise_ = function(a, b, c) {
-  var d = {child:null, onFulfilled:null, onRejected:null};
-  d.child = new goog.Promise(function(e, f) {
-    d.onFulfilled = a ? function(b) {
-      try {
-        var d = a.call(c, b);
-        e(d);
-      } catch (k) {
-        f(k);
-      }
-    } : e;
-    d.onRejected = b ? function(a) {
-      try {
-        var d = b.call(c, a);
-        !goog.isDef(d) && a instanceof goog.Promise.CancellationError ? f(a) : e(d);
-      } catch (k) {
-        f(k);
-      }
-    } : f;
-  });
-  d.child.parent_ = this;
-  this.addCallbackEntry_(d);
-  return d.child;
-};
-goog.Promise.prototype.unblockAndFulfill_ = function(a) {
-  goog.asserts.assert(this.state_ == goog.Promise.State_.BLOCKED);
-  this.state_ = goog.Promise.State_.PENDING;
-  this.resolve_(goog.Promise.State_.FULFILLED, a);
-};
-goog.Promise.prototype.unblockAndReject_ = function(a) {
-  goog.asserts.assert(this.state_ == goog.Promise.State_.BLOCKED);
-  this.state_ = goog.Promise.State_.PENDING;
-  this.resolve_(goog.Promise.State_.REJECTED, a);
-};
-goog.Promise.prototype.resolve_ = function(a, b) {
-  if (this.state_ == goog.Promise.State_.PENDING) {
-    if (this == b) {
-      a = goog.Promise.State_.REJECTED, b = new TypeError("Promise cannot resolve to itself");
-    } else {
-      if (goog.Thenable.isImplementedBy(b)) {
-        this.state_ = goog.Promise.State_.BLOCKED;
-        b.then(this.unblockAndFulfill_, this.unblockAndReject_, this);
-        return;
-      }
-      if (goog.isObject(b)) {
-        try {
-          var c = b.then;
-          if (goog.isFunction(c)) {
-            this.tryThen_(b, c);
-            return;
-          }
-        } catch (d) {
-          a = goog.Promise.State_.REJECTED, b = d;
-        }
-      }
-    }
-    this.result_ = b;
-    this.state_ = a;
-    this.scheduleCallbacks_();
-    a != goog.Promise.State_.REJECTED || b instanceof goog.Promise.CancellationError || goog.Promise.addUnhandledRejection_(this, b);
-  }
-};
-goog.Promise.prototype.tryThen_ = function(a, b) {
-  this.state_ = goog.Promise.State_.BLOCKED;
-  var c = this, d = !1, e = function(a) {
-    d || (d = !0, c.unblockAndFulfill_(a));
-  }, f = function(a) {
-    d || (d = !0, c.unblockAndReject_(a));
-  };
-  try {
-    b.call(a, e, f);
-  } catch (g) {
-    f(g);
-  }
-};
-goog.Promise.prototype.scheduleCallbacks_ = function() {
-  this.executing_ || (this.executing_ = !0, goog.async.run(this.executeCallbacks_, this));
-};
-goog.Promise.prototype.executeCallbacks_ = function() {
-  for (;this.callbackEntries_ && this.callbackEntries_.length;) {
-    var a = this.callbackEntries_;
-    this.callbackEntries_ = [];
-    for (var b = 0;b < a.length;b++) {
-      goog.Promise.LONG_STACK_TRACES && this.currentStep_++, this.executeCallback_(a[b], this.state_, this.result_);
-    }
-  }
-  this.executing_ = !1;
-};
-goog.Promise.prototype.executeCallback_ = function(a, b, c) {
-  if (b == goog.Promise.State_.FULFILLED) {
-    a.onFulfilled(c);
-  } else {
-    this.removeUnhandledRejection_(), a.onRejected(c);
-  }
-};
-goog.Promise.prototype.addStackTrace_ = function(a) {
-  if (goog.Promise.LONG_STACK_TRACES && goog.isString(a.stack)) {
-    var b = a.stack.split("\n", 4)[3];
-    a = a.message;
-    a += Array(11 - a.length).join(" ");
-    this.stack_.push(a + b);
-  }
-};
-goog.Promise.prototype.appendLongStack_ = function(a) {
-  if (goog.Promise.LONG_STACK_TRACES && a && goog.isString(a.stack) && this.stack_.length) {
-    for (var b = ["Promise trace:"], c = this;c;c = c.parent_) {
-      for (var d = this.currentStep_;0 <= d;d--) {
-        b.push(c.stack_[d]);
-      }
-      b.push("Value: [" + (c.state_ == goog.Promise.State_.REJECTED ? "REJECTED" : "FULFILLED") + "] \x3c" + String(c.result_) + "\x3e");
-    }
-    a.stack += "\n\n" + b.join("\n");
-  }
-};
-goog.Promise.prototype.removeUnhandledRejection_ = function() {
-  if (0 < goog.Promise.UNHANDLED_REJECTION_DELAY) {
-    for (var a = this;a && a.unhandledRejectionId_;a = a.parent_) {
-      goog.global.clearTimeout(a.unhandledRejectionId_), a.unhandledRejectionId_ = 0;
-    }
-  } else {
-    if (0 == goog.Promise.UNHANDLED_REJECTION_DELAY) {
-      for (a = this;a && a.hadUnhandledRejection_;a = a.parent_) {
-        a.hadUnhandledRejection_ = !1;
-      }
-    }
-  }
-};
-goog.Promise.addUnhandledRejection_ = function(a, b) {
-  0 < goog.Promise.UNHANDLED_REJECTION_DELAY ? a.unhandledRejectionId_ = goog.global.setTimeout(function() {
-    a.appendLongStack_(b);
-    goog.Promise.handleRejection_.call(null, b);
-  }, goog.Promise.UNHANDLED_REJECTION_DELAY) : 0 == goog.Promise.UNHANDLED_REJECTION_DELAY && (a.hadUnhandledRejection_ = !0, goog.async.run(function() {
-    a.hadUnhandledRejection_ && (a.appendLongStack_(b), goog.Promise.handleRejection_.call(null, b));
-  }));
-};
-goog.Promise.handleRejection_ = goog.async.throwException;
-goog.Promise.setUnhandledRejectionHandler = function(a) {
-  goog.Promise.handleRejection_ = a;
-};
-goog.Promise.CancellationError = function(a) {
-  goog.debug.Error.call(this, a);
-};
-goog.inherits(goog.Promise.CancellationError, goog.debug.Error);
-goog.Promise.CancellationError.prototype.name = "cancel";
-goog.Promise.Resolver_ = function(a, b, c) {
-  this.promise = a;
-  this.resolve = b;
-  this.reject = c;
-};
-/*
- Portions of this code are from MochiKit, received by
- The Closure Authors under the MIT license. All other code is Copyright
- 2005-2009 The Closure Authors. All Rights Reserved.
-*/
-goog.async.Deferred = function(a, b) {
-  this.sequence_ = [];
-  this.onCancelFunction_ = a;
-  this.defaultScope_ = b || null;
-  this.hadError_ = this.fired_ = !1;
-  this.result_ = void 0;
-  this.silentlyCanceled_ = this.blocking_ = this.blocked_ = !1;
-  this.unhandledErrorId_ = 0;
-  this.parent_ = null;
-  this.branches_ = 0;
-  if (goog.async.Deferred.LONG_STACK_TRACES && (this.constructorStack_ = null, Error.captureStackTrace)) {
-    var c = {stack:""};
-    Error.captureStackTrace(c, goog.async.Deferred);
-    "string" == typeof c.stack && (this.constructorStack_ = c.stack.replace(/^[^\n]*\n/, ""));
-  }
-};
-goog.async.Deferred.STRICT_ERRORS = !1;
-goog.async.Deferred.LONG_STACK_TRACES = !1;
-goog.async.Deferred.prototype.cancel = function(a) {
-  if (this.hasFired()) {
-    this.result_ instanceof goog.async.Deferred && this.result_.cancel();
-  } else {
-    if (this.parent_) {
-      var b = this.parent_;
-      delete this.parent_;
-      a ? b.cancel(a) : b.branchCancel_();
-    }
-    this.onCancelFunction_ ? this.onCancelFunction_.call(this.defaultScope_, this) : this.silentlyCanceled_ = !0;
-    this.hasFired() || this.errback(new goog.async.Deferred.CanceledError(this));
-  }
-};
-goog.async.Deferred.prototype.branchCancel_ = function() {
-  this.branches_--;
-  0 >= this.branches_ && this.cancel();
-};
-goog.async.Deferred.prototype.continue_ = function(a, b) {
-  this.blocked_ = !1;
-  this.updateResult_(a, b);
-};
-goog.async.Deferred.prototype.updateResult_ = function(a, b) {
-  this.fired_ = !0;
-  this.result_ = b;
-  this.hadError_ = !a;
-  this.fire_();
-};
-goog.async.Deferred.prototype.check_ = function() {
-  if (this.hasFired()) {
-    if (!this.silentlyCanceled_) {
-      throw new goog.async.Deferred.AlreadyCalledError(this);
-    }
-    this.silentlyCanceled_ = !1;
-  }
-};
-goog.async.Deferred.prototype.callback = function(a) {
-  this.check_();
-  this.assertNotDeferred_(a);
-  this.updateResult_(!0, a);
-};
-goog.async.Deferred.prototype.errback = function(a) {
-  this.check_();
-  this.assertNotDeferred_(a);
-  this.makeStackTraceLong_(a);
-  this.updateResult_(!1, a);
-};
-goog.async.Deferred.prototype.makeStackTraceLong_ = function(a) {
-  goog.async.Deferred.LONG_STACK_TRACES && this.constructorStack_ && goog.isObject(a) && a.stack && /^[^\n]+(\n   [^\n]+)+/.test(a.stack) && (a.stack = a.stack + "\nDEFERRED OPERATION:\n" + this.constructorStack_);
-};
-goog.async.Deferred.prototype.assertNotDeferred_ = function(a) {
-  goog.asserts.assert(!(a instanceof goog.async.Deferred), "An execution sequence may not be initiated with a blocking Deferred.");
-};
-goog.async.Deferred.prototype.addCallback = function(a, b) {
-  return this.addCallbacks(a, null, b);
-};
-goog.async.Deferred.prototype.addErrback = function(a, b) {
-  return this.addCallbacks(null, a, b);
-};
-goog.async.Deferred.prototype.addBoth = function(a, b) {
-  return this.addCallbacks(a, a, b);
-};
-goog.async.Deferred.prototype.addCallbacks = function(a, b, c) {
-  goog.asserts.assert(!this.blocking_, "Blocking Deferreds can not be re-used");
-  this.sequence_.push([a, b, c]);
-  this.hasFired() && this.fire_();
-  return this;
-};
-goog.async.Deferred.prototype.then = function(a, b, c) {
-  var d, e, f = new goog.Promise(function(a, b) {
-    d = a;
-    e = b;
-  });
-  this.addCallbacks(d, function(a) {
-    a instanceof goog.async.Deferred.CanceledError ? f.cancel() : e(a);
-  });
-  return f.then(a, b, c);
-};
-goog.Thenable.addImplementation(goog.async.Deferred);
-goog.async.Deferred.prototype.chainDeferred = function(a) {
-  this.addCallbacks(a.callback, a.errback, a);
-  return this;
-};
-goog.async.Deferred.prototype.awaitDeferred = function(a) {
-  return a instanceof goog.async.Deferred ? this.addCallback(goog.bind(a.branch, a)) : this.addCallback(function() {
-    return a;
-  });
-};
-goog.async.Deferred.prototype.branch = function(a) {
-  var b = new goog.async.Deferred;
-  this.chainDeferred(b);
-  a && (b.parent_ = this, this.branches_++);
-  return b;
-};
-goog.async.Deferred.prototype.hasFired = function() {
-  return this.fired_;
-};
-goog.async.Deferred.prototype.isError = function(a) {
-  return a instanceof Error;
-};
-goog.async.Deferred.prototype.hasErrback_ = function() {
-  return goog.array.some(this.sequence_, function(a) {
-    return goog.isFunction(a[1]);
-  });
-};
-goog.async.Deferred.prototype.fire_ = function() {
-  this.unhandledErrorId_ && this.hasFired() && this.hasErrback_() && (goog.async.Deferred.unscheduleError_(this.unhandledErrorId_), this.unhandledErrorId_ = 0);
-  this.parent_ && (this.parent_.branches_--, delete this.parent_);
-  for (var a = this.result_, b = !1, c = !1;this.sequence_.length && !this.blocked_;) {
-    var d = this.sequence_.shift(), e = d[0], f = d[1], d = d[2];
-    if (e = this.hadError_ ? f : e) {
-      try {
-        var g = e.call(d || this.defaultScope_, a);
-        goog.isDef(g) && (this.hadError_ = this.hadError_ && (g == a || this.isError(g)), this.result_ = a = g);
-        goog.Thenable.isImplementedBy(a) && (this.blocked_ = c = !0);
-      } catch (h) {
-        a = h, this.hadError_ = !0, this.makeStackTraceLong_(a), this.hasErrback_() || (b = !0);
-      }
-    }
-  }
-  this.result_ = a;
-  c ? (c = goog.bind(this.continue_, this, !0), g = goog.bind(this.continue_, this, !1), a instanceof goog.async.Deferred ? (a.addCallbacks(c, g), a.blocking_ = !0) : a.then(c, g)) : !goog.async.Deferred.STRICT_ERRORS || !this.isError(a) || a instanceof goog.async.Deferred.CanceledError || (b = this.hadError_ = !0);
-  b && (this.unhandledErrorId_ = goog.async.Deferred.scheduleError_(a));
-};
-goog.async.Deferred.succeed = function(a) {
-  var b = new goog.async.Deferred;
-  b.callback(a);
-  return b;
-};
-goog.async.Deferred.fromPromise = function(a) {
-  var b = new goog.async.Deferred;
-  b.callback();
-  b.addCallback(function() {
-    return a;
-  });
-  return b;
-};
-goog.async.Deferred.fail = function(a) {
-  var b = new goog.async.Deferred;
-  b.errback(a);
-  return b;
-};
-goog.async.Deferred.canceled = function() {
-  var a = new goog.async.Deferred;
-  a.cancel();
-  return a;
-};
-goog.async.Deferred.when = function(a, b, c) {
-  return a instanceof goog.async.Deferred ? a.branch(!0).addCallback(b, c) : goog.async.Deferred.succeed(a).addCallback(b, c);
-};
-goog.async.Deferred.AlreadyCalledError = function(a) {
-  goog.debug.Error.call(this);
-  this.deferred = a;
-};
-goog.inherits(goog.async.Deferred.AlreadyCalledError, goog.debug.Error);
-goog.async.Deferred.AlreadyCalledError.prototype.message = "Deferred has already fired";
-goog.async.Deferred.AlreadyCalledError.prototype.name = "AlreadyCalledError";
-goog.async.Deferred.CanceledError = function(a) {
-  goog.debug.Error.call(this);
-  this.deferred = a;
-};
-goog.inherits(goog.async.Deferred.CanceledError, goog.debug.Error);
-goog.async.Deferred.CanceledError.prototype.message = "Deferred was canceled";
-goog.async.Deferred.CanceledError.prototype.name = "CanceledError";
-goog.async.Deferred.Error_ = function(a) {
-  this.id_ = goog.global.setTimeout(goog.bind(this.throwError, this), 0);
-  this.error_ = a;
-};
-goog.async.Deferred.Error_.prototype.throwError = function() {
-  goog.asserts.assert(goog.async.Deferred.errorMap_[this.id_], "Cannot throw an error that is not scheduled.");
-  delete goog.async.Deferred.errorMap_[this.id_];
-  throw this.error_;
-};
-goog.async.Deferred.Error_.prototype.resetTimer = function() {
-  goog.global.clearTimeout(this.id_);
-};
-goog.async.Deferred.errorMap_ = {};
-goog.async.Deferred.scheduleError_ = function(a) {
-  a = new goog.async.Deferred.Error_(a);
-  goog.async.Deferred.errorMap_[a.id_] = a;
-  return a.id_;
-};
-goog.async.Deferred.unscheduleError_ = function(a) {
-  var b = goog.async.Deferred.errorMap_[a];
-  b && (b.resetTimer(), delete goog.async.Deferred.errorMap_[a]);
-};
-goog.async.Deferred.assertNoErrors = function() {
-  var a = goog.async.Deferred.errorMap_, b;
-  for (b in a) {
-    var c = a[b];
-    c.resetTimer();
-    c.throwError();
-  }
-};
-goog.async.Delay = function(a, b, c) {
-  goog.Disposable.call(this);
-  this.listener_ = a;
-  this.interval_ = b || 0;
-  this.handler_ = c;
-  this.callback_ = goog.bind(this.doAction_, this);
-};
-goog.inherits(goog.async.Delay, goog.Disposable);
-goog.Delay = goog.async.Delay;
-goog.async.Delay.prototype.id_ = 0;
-goog.async.Delay.prototype.disposeInternal = function() {
-  goog.async.Delay.superClass_.disposeInternal.call(this);
-  this.stop();
-  delete this.listener_;
-  delete this.handler_;
-};
-goog.async.Delay.prototype.start = function(a) {
-  this.stop();
-  this.id_ = goog.Timer.callOnce(this.callback_, goog.isDef(a) ? a : this.interval_);
-};
-goog.async.Delay.prototype.stop = function() {
-  this.isActive() && goog.Timer.clear(this.id_);
-  this.id_ = 0;
-};
-goog.async.Delay.prototype.fire = function() {
-  this.stop();
-  this.doAction_();
-};
-goog.async.Delay.prototype.fireIfActive = function() {
-  this.isActive() && this.fire();
-};
-goog.async.Delay.prototype.isActive = function() {
-  return 0 != this.id_;
-};
-goog.async.Delay.prototype.doAction_ = function() {
-  this.id_ = 0;
-  this.listener_ && this.listener_.call(this.handler_);
-};
-goog.messaging = {};
-goog.messaging.MessageChannel = function() {
-};
-goog.messaging.MessageChannel.prototype.connect = function(a) {
-};
-goog.messaging.MessageChannel.prototype.isConnected = function() {
-};
-goog.messaging.MessageChannel.prototype.registerService = function(a, b, c) {
-};
-goog.messaging.MessageChannel.prototype.registerDefaultService = function(a) {
-};
-goog.messaging.MessageChannel.prototype.send = function(a, b) {
-};
-goog.messaging.AbstractChannel = function() {
-  goog.Disposable.call(this);
-  this.services_ = {};
-};
-goog.inherits(goog.messaging.AbstractChannel, goog.Disposable);
-goog.messaging.AbstractChannel.prototype.logger = goog.log.getLogger("goog.messaging.AbstractChannel");
-goog.messaging.AbstractChannel.prototype.connect = function(a) {
-  a && a();
-};
-goog.messaging.AbstractChannel.prototype.isConnected = function() {
-  return!0;
-};
-goog.messaging.AbstractChannel.prototype.registerService = function(a, b, c) {
-  this.services_[a] = {callback:b, objectPayload:!!c};
-};
-goog.messaging.AbstractChannel.prototype.registerDefaultService = function(a) {
-  this.defaultService_ = a;
-};
-goog.messaging.AbstractChannel.prototype.deliver = function(a, b) {
-  var c = this.getService(a, b);
-  if (c) {
-    var d = this.decodePayload(a, b, c.objectPayload);
-    goog.isDefAndNotNull(d) && c.callback(d);
-  }
-};
-goog.messaging.AbstractChannel.prototype.getService = function(a, b) {
-  var c = this.services_[a];
-  if (c) {
-    return c;
-  }
-  if (this.defaultService_) {
-    var c = goog.partial(this.defaultService_, a), d = goog.isObject(b);
-    return{callback:c, objectPayload:d};
-  }
-  goog.log.warning(this.logger, 'Unknown service name "' + a + '"');
-  return null;
-};
-goog.messaging.AbstractChannel.prototype.decodePayload = function(a, b, c) {
-  if (c && goog.isString(b)) {
-    try {
-      return goog.json.parse(b);
-    } catch (d) {
-      return goog.log.warning(this.logger, "Expected JSON payload for " + a + ', was "' + b + '"'), null;
-    }
-  } else {
-    if (!c && !goog.isString(b)) {
-      return goog.json.serialize(b);
-    }
-  }
-  return b;
-};
-goog.messaging.AbstractChannel.prototype.disposeInternal = function() {
-  goog.messaging.AbstractChannel.superClass_.disposeInternal.call(this);
-  delete this.logger;
-  delete this.services_;
-  delete this.defaultService_;
-};
-goog.net.xpc.DirectTransport = function(a, b) {
-  goog.net.xpc.Transport.call(this, b);
-  this.channel_ = a;
-  this.eventHandler_ = new goog.events.EventHandler(this);
-  this.registerDisposable(this.eventHandler_);
-  this.maybeAttemptToConnectTimer_ = new goog.Timer(goog.net.xpc.DirectTransport.CONNECTION_ATTEMPT_INTERVAL_MS_, this.getWindow());
-  this.registerDisposable(this.maybeAttemptToConnectTimer_);
-  this.setupAckReceived_ = new goog.async.Deferred;
-  this.setupAckSent_ = new goog.async.Deferred;
-  this.connected_ = new goog.async.Deferred;
-  this.endpointId_ = goog.net.xpc.getRandomString(10);
-  this.peerEndpointId_ = null;
-  this.asyncSendsMap_ = {};
-  this.originalChannelName_ = this.channel_.name;
-  this.channel_.updateChannelNameAndCatalog(goog.net.xpc.DirectTransport.getRoledChannelName_(this.channel_.name, this.channel_.getRole()));
-  this.initialized_ = !1;
-  this.connected_.awaitDeferred(this.setupAckReceived_);
-  this.connected_.awaitDeferred(this.setupAckSent_);
-  this.connected_.addCallback(this.notifyConnected_, this);
-  this.connected_.callback(!0);
-  this.eventHandler_.listen(this.maybeAttemptToConnectTimer_, goog.Timer.TICK, this.maybeAttemptToConnect_);
-  goog.log.info(goog.net.xpc.logger, "DirectTransport created. role\x3d" + this.channel_.getRole());
-};
-goog.inherits(goog.net.xpc.DirectTransport, goog.net.xpc.Transport);
-goog.net.xpc.DirectTransport.CONNECTION_ATTEMPT_INTERVAL_MS_ = 100;
-goog.net.xpc.DirectTransport.CONNECTION_DELAY_INTERVAL_MS_ = 0;
-goog.net.xpc.DirectTransport.isSupported = function(a) {
-  try {
-    return window.document.domain == a.document.domain;
-  } catch (b) {
-    return!1;
-  }
-};
-goog.net.xpc.DirectTransport.activeCount_ = {};
-goog.net.xpc.DirectTransport.GLOBAL_TRANPORT_PATH_ = "crosswindowmessaging.channel";
-goog.net.xpc.DirectTransport.MESSAGE_DELIMITER_ = ",";
-goog.net.xpc.DirectTransport.initialize_ = function(a) {
-  var b = goog.getUid(a);
-  0 == (goog.net.xpc.DirectTransport.activeCount_[b] || 0) && null == goog.getObjectByName(goog.net.xpc.DirectTransport.GLOBAL_TRANPORT_PATH_, a) && goog.exportSymbol(goog.net.xpc.DirectTransport.GLOBAL_TRANPORT_PATH_, goog.net.xpc.DirectTransport.messageReceivedHandler_, a);
-  goog.net.xpc.DirectTransport.activeCount_[b]++;
-};
-goog.net.xpc.DirectTransport.getRoledChannelName_ = function(a, b) {
-  return a + "_" + b;
-};
-goog.net.xpc.DirectTransport.messageReceivedHandler_ = function(a) {
-  var b = goog.net.xpc.DirectTransport.Message_.fromLiteral(a);
-  a = b.channelName;
-  var c = b.service, b = b.payload;
-  goog.log.fine(goog.net.xpc.logger, "messageReceived: channel\x3d" + a + ", service\x3d" + c + ", payload\x3d" + b);
-  var d = goog.net.xpc.channels[a];
-  if (d) {
-    return d.xpcDeliver(c, b), !0;
-  }
-  var d = goog.net.xpc.DirectTransport.parseTransportPayload_(b)[0], e;
-  for (e in goog.net.xpc.channels) {
-    var f = goog.net.xpc.channels[e];
-    if (f.getRole() == goog.net.xpc.CrossPageChannelRole.INNER && !f.isConnected() && c == goog.net.xpc.TRANSPORT_SERVICE_ && d == goog.net.xpc.SETUP) {
-      return f.updateChannelNameAndCatalog(a), f.xpcDeliver(c, b), !0;
-    }
-  }
-  goog.log.info(goog.net.xpc.logger, "channel name mismatch; message ignored.");
-  return!1;
-};
-goog.net.xpc.DirectTransport.prototype.transportType = goog.net.xpc.TransportTypes.DIRECT;
-goog.net.xpc.DirectTransport.prototype.transportServiceHandler = function(a) {
-  a = goog.net.xpc.DirectTransport.parseTransportPayload_(a);
-  var b = a[1];
-  switch(a[0]) {
-    case goog.net.xpc.SETUP_ACK_:
-      this.setupAckReceived_.hasFired() || this.setupAckReceived_.callback(!0);
-      break;
-    case goog.net.xpc.SETUP:
-      this.sendSetupAckMessage_(), null != this.peerEndpointId_ && this.peerEndpointId_ != b && (goog.log.info(goog.net.xpc.logger, "Sending SETUP and changing peer ID to: " + b), this.sendSetupMessage_()), this.peerEndpointId_ = b;
-  }
-};
-goog.net.xpc.DirectTransport.prototype.sendSetupMessage_ = function() {
-  var a = goog.net.xpc.SETUP, a = a + goog.net.xpc.DirectTransport.MESSAGE_DELIMITER_, a = a + this.endpointId_;
-  this.send(goog.net.xpc.TRANSPORT_SERVICE_, a);
-};
-goog.net.xpc.DirectTransport.prototype.sendSetupAckMessage_ = function() {
-  this.send(goog.net.xpc.TRANSPORT_SERVICE_, goog.net.xpc.SETUP_ACK_);
-  this.setupAckSent_.hasFired() || this.setupAckSent_.callback(!0);
-};
-goog.net.xpc.DirectTransport.prototype.connect = function() {
-  var a = this.getWindow();
-  a ? (goog.net.xpc.DirectTransport.initialize_(a), this.initialized_ = !0, this.maybeAttemptToConnect_()) : goog.log.fine(goog.net.xpc.logger, "connect(): no window to initialize.");
-};
-goog.net.xpc.DirectTransport.prototype.maybeAttemptToConnect_ = function() {
-  this.channel_.getRole();
-  this.channel_.isConnected() ? this.maybeAttemptToConnectTimer_.stop() : (this.maybeAttemptToConnectTimer_.start(), this.sendSetupMessage_());
-};
-goog.net.xpc.DirectTransport.prototype.send = function(a, b) {
-  if (this.channel_.getPeerWindowObject()) {
-    var c = goog.net.xpc.DirectTransport.getRoledChannelName_(this.originalChannelName_, this.getPeerRole_()), c = new goog.net.xpc.DirectTransport.Message_(c, a, b);
-    this.channel_.getConfig()[goog.net.xpc.CfgFields.DIRECT_TRANSPORT_SYNC_MODE] ? this.executeScheduledSend_(c) : this.asyncSendsMap_[goog.getUid(c)] = goog.Timer.callOnce(goog.bind(this.executeScheduledSend_, this, c), 0);
-  } else {
-    goog.log.fine(goog.net.xpc.logger, "send(): window not ready");
-  }
-};
-goog.net.xpc.DirectTransport.prototype.executeScheduledSend_ = function(a) {
-  var b = goog.getUid(a);
-  this.asyncSendsMap_[b] && delete this.asyncSendsMap_[b];
-  try {
-    var c = goog.getObjectByName(goog.net.xpc.DirectTransport.GLOBAL_TRANPORT_PATH_, this.channel_.getPeerWindowObject());
-  } catch (d) {
-    goog.log.warning(goog.net.xpc.logger, "Can't access other window, ignoring.", d);
-    return;
-  }
-  if (goog.isNull(c)) {
-    goog.log.warning(goog.net.xpc.logger, "Peer window had no global function.");
-  } else {
-    try {
-      c(a.toLiteral()), goog.log.info(goog.net.xpc.logger, "send(): channelName\x3d" + a.channelName + " service\x3d" + a.service + " payload\x3d" + a.payload);
-    } catch (e) {
-      goog.log.warning(goog.net.xpc.logger, "Error performing call, ignoring.", e);
-    }
-  }
-};
-goog.net.xpc.DirectTransport.prototype.getPeerRole_ = function() {
-  return this.channel_.getRole() == goog.net.xpc.CrossPageChannelRole.OUTER ? goog.net.xpc.CrossPageChannelRole.INNER : goog.net.xpc.CrossPageChannelRole.OUTER;
-};
-goog.net.xpc.DirectTransport.prototype.notifyConnected_ = function() {
-  this.channel_.notifyConnected(this.channel_.getConfig()[goog.net.xpc.CfgFields.DIRECT_TRANSPORT_SYNC_MODE] ? goog.net.xpc.DirectTransport.CONNECTION_DELAY_INTERVAL_MS_ : 0);
-};
-goog.net.xpc.DirectTransport.prototype.disposeInternal = function() {
-  if (this.initialized_) {
-    var a = this.getWindow(), b = goog.getUid(a);
-    1 == --goog.net.xpc.DirectTransport.activeCount_[b] && goog.exportSymbol(goog.net.xpc.DirectTransport.GLOBAL_TRANPORT_PATH_, null, a);
-  }
-  this.asyncSendsMap_ && (goog.object.forEach(this.asyncSendsMap_, function(a) {
-    goog.Timer.clear(a);
-  }), this.asyncSendsMap_ = null);
-  this.setupAckReceived_ && (this.setupAckReceived_.cancel(), delete this.setupAckReceived_);
-  this.setupAckSent_ && (this.setupAckSent_.cancel(), delete this.setupAckSent_);
-  this.connected_ && (this.connected_.cancel(), delete this.connected_);
-  goog.net.xpc.DirectTransport.superClass_.disposeInternal.call(this);
-};
-goog.net.xpc.DirectTransport.parseTransportPayload_ = function(a) {
-  a = a.split(goog.net.xpc.DirectTransport.MESSAGE_DELIMITER_);
-  a[1] = a[1] || null;
-  return a;
-};
-goog.net.xpc.DirectTransport.Message_ = function(a, b, c) {
-  this.channelName = a;
-  this.service = b;
-  this.payload = c;
-};
-goog.net.xpc.DirectTransport.Message_.prototype.toLiteral = function() {
-  return{channelName:this.channelName, service:this.service, payload:this.payload};
-};
-goog.net.xpc.DirectTransport.Message_.fromLiteral = function(a) {
-  return new goog.net.xpc.DirectTransport.Message_(a.channelName, a.service, a.payload);
-};
-goog.net.xpc.FrameElementMethodTransport = function(a, b) {
-  goog.net.xpc.Transport.call(this, b);
-  this.channel_ = a;
-  this.queue_ = [];
-  this.deliverQueuedCb_ = goog.bind(this.deliverQueued_, this);
-};
-goog.inherits(goog.net.xpc.FrameElementMethodTransport, goog.net.xpc.Transport);
-goog.net.xpc.FrameElementMethodTransport.prototype.transportType = goog.net.xpc.TransportTypes.FRAME_ELEMENT_METHOD;
-goog.net.xpc.FrameElementMethodTransport.prototype.recursive_ = !1;
-goog.net.xpc.FrameElementMethodTransport.prototype.timer_ = 0;
-goog.net.xpc.FrameElementMethodTransport.outgoing_ = null;
-goog.net.xpc.FrameElementMethodTransport.prototype.connect = function() {
-  this.channel_.getRole() == goog.net.xpc.CrossPageChannelRole.OUTER ? (this.iframeElm_ = this.channel_.getIframeElement(), this.iframeElm_.XPC_toOuter = goog.bind(this.incoming_, this)) : this.attemptSetup_();
-};
-goog.net.xpc.FrameElementMethodTransport.prototype.attemptSetup_ = function() {
-  var a = !0;
-  try {
-    this.iframeElm_ || (this.iframeElm_ = this.getWindow().frameElement), this.iframeElm_ && this.iframeElm_.XPC_toOuter && (this.outgoing_ = this.iframeElm_.XPC_toOuter, this.iframeElm_.XPC_toOuter.XPC_toInner = goog.bind(this.incoming_, this), a = !1, this.send(goog.net.xpc.TRANSPORT_SERVICE_, goog.net.xpc.SETUP_ACK_), this.channel_.notifyConnected());
-  } catch (b) {
-    goog.log.error(goog.net.xpc.logger, "exception caught while attempting setup: " + b);
-  }
-  a && (this.attemptSetupCb_ || (this.attemptSetupCb_ = goog.bind(this.attemptSetup_, this)), this.getWindow().setTimeout(this.attemptSetupCb_, 100));
-};
-goog.net.xpc.FrameElementMethodTransport.prototype.transportServiceHandler = function(a) {
-  if (this.channel_.getRole() != goog.net.xpc.CrossPageChannelRole.OUTER || this.channel_.isConnected() || a != goog.net.xpc.SETUP_ACK_) {
-    throw Error("Got unexpected transport message.");
-  }
-  this.outgoing_ = this.iframeElm_.XPC_toOuter.XPC_toInner;
-  this.channel_.notifyConnected();
-};
-goog.net.xpc.FrameElementMethodTransport.prototype.incoming_ = function(a, b) {
-  this.recursive_ || 0 != this.queue_.length ? (this.queue_.push({serviceName:a, payload:b}), 1 == this.queue_.length && (this.timer_ = this.getWindow().setTimeout(this.deliverQueuedCb_, 1))) : this.channel_.xpcDeliver(a, b);
-};
-goog.net.xpc.FrameElementMethodTransport.prototype.deliverQueued_ = function() {
-  for (;this.queue_.length;) {
-    var a = this.queue_.shift();
-    this.channel_.xpcDeliver(a.serviceName, a.payload);
-  }
-};
-goog.net.xpc.FrameElementMethodTransport.prototype.send = function(a, b) {
-  this.recursive_ = !0;
-  this.outgoing_(a, b);
-  this.recursive_ = !1;
-};
-goog.net.xpc.FrameElementMethodTransport.prototype.disposeInternal = function() {
-  goog.net.xpc.FrameElementMethodTransport.superClass_.disposeInternal.call(this);
-  this.iframeElm_ = this.outgoing_ = null;
-};
-goog.net.xpc.IframeRelayTransport = function(a, b) {
-  goog.net.xpc.Transport.call(this, b);
-  this.channel_ = a;
-  this.peerRelayUri_ = this.channel_.getConfig()[goog.net.xpc.CfgFields.PEER_RELAY_URI];
-  this.peerIframeId_ = this.channel_.getConfig()[goog.net.xpc.CfgFields.IFRAME_ID];
-  goog.userAgent.WEBKIT && goog.net.xpc.IframeRelayTransport.startCleanupTimer_();
-};
-goog.inherits(goog.net.xpc.IframeRelayTransport, goog.net.xpc.Transport);
-goog.userAgent.WEBKIT && (goog.net.xpc.IframeRelayTransport.iframeRefs_ = [], goog.net.xpc.IframeRelayTransport.CLEANUP_INTERVAL_ = 1E3, goog.net.xpc.IframeRelayTransport.IFRAME_MAX_AGE_ = 3E3, goog.net.xpc.IframeRelayTransport.cleanupTimer_ = 0, goog.net.xpc.IframeRelayTransport.startCleanupTimer_ = function() {
-  goog.net.xpc.IframeRelayTransport.cleanupTimer_ || (goog.net.xpc.IframeRelayTransport.cleanupTimer_ = window.setTimeout(function() {
-    goog.net.xpc.IframeRelayTransport.cleanup_();
-  }, goog.net.xpc.IframeRelayTransport.CLEANUP_INTERVAL_));
-}, goog.net.xpc.IframeRelayTransport.cleanup_ = function(a) {
-  var b = goog.now();
-  for (a = a || goog.net.xpc.IframeRelayTransport.IFRAME_MAX_AGE_;goog.net.xpc.IframeRelayTransport.iframeRefs_.length && b - goog.net.xpc.IframeRelayTransport.iframeRefs_[0].timestamp >= a;) {
-    var c = goog.net.xpc.IframeRelayTransport.iframeRefs_.shift().iframeElement;
-    goog.dom.removeNode(c);
-    goog.log.log(goog.net.xpc.logger, goog.log.Level.FINEST, "iframe removed");
-  }
-  goog.net.xpc.IframeRelayTransport.cleanupTimer_ = window.setTimeout(goog.net.xpc.IframeRelayTransport.cleanupCb_, goog.net.xpc.IframeRelayTransport.CLEANUP_INTERVAL_);
-}, goog.net.xpc.IframeRelayTransport.cleanupCb_ = function() {
-  goog.net.xpc.IframeRelayTransport.cleanup_();
-});
-goog.net.xpc.IframeRelayTransport.IE_PAYLOAD_MAX_SIZE_ = 1800;
-goog.net.xpc.IframeRelayTransport.fragmentMap_ = {};
-goog.net.xpc.IframeRelayTransport.prototype.transportType = goog.net.xpc.TransportTypes.IFRAME_RELAY;
-goog.net.xpc.IframeRelayTransport.prototype.connect = function() {
-  this.getWindow().xpcRelay || (this.getWindow().xpcRelay = goog.net.xpc.IframeRelayTransport.receiveMessage_);
-  this.send(goog.net.xpc.TRANSPORT_SERVICE_, goog.net.xpc.SETUP);
-};
-goog.net.xpc.IframeRelayTransport.receiveMessage_ = function(a, b) {
-  var c = b.indexOf(":"), d = b.substr(0, c), e = b.substr(c + 1);
-  if (goog.userAgent.IE && -1 != (c = d.indexOf("|"))) {
-    var f = d.substr(0, c), d = d.substr(c + 1), c = d.indexOf("+"), g = d.substr(0, c), c = parseInt(d.substr(c + 1), 10), h = goog.net.xpc.IframeRelayTransport.fragmentMap_[g];
-    h || (h = goog.net.xpc.IframeRelayTransport.fragmentMap_[g] = {fragments:[], received:0, expected:0});
-    goog.string.contains(d, "++") && (h.expected = c + 1);
-    h.fragments[c] = e;
-    h.received++;
-    if (h.received != h.expected) {
-      return;
-    }
-    e = h.fragments.join("");
-    delete goog.net.xpc.IframeRelayTransport.fragmentMap_[g];
-  } else {
-    var f = d
-  }
-  goog.net.xpc.channels[a].xpcDeliver(f, decodeURIComponent(e));
-};
-goog.net.xpc.IframeRelayTransport.prototype.transportServiceHandler = function(a) {
-  a == goog.net.xpc.SETUP ? (this.send(goog.net.xpc.TRANSPORT_SERVICE_, goog.net.xpc.SETUP_ACK_), this.channel_.notifyConnected()) : a == goog.net.xpc.SETUP_ACK_ && this.channel_.notifyConnected();
-};
-goog.net.xpc.IframeRelayTransport.prototype.send = function(a, b) {
-  var c = encodeURIComponent(b), d = c.length, e = goog.net.xpc.IframeRelayTransport.IE_PAYLOAD_MAX_SIZE_;
-  if (goog.userAgent.IE && d > e) {
-    for (var f = goog.string.getRandomString(), g = 0, h = 0;g < d;h++) {
-      var k = c.substr(g, e), g = g + e;
-      this.send_(a, k, f + (g >= d ? "++" : "+") + h);
-    }
-  } else {
-    this.send_(a, c);
-  }
-};
-goog.net.xpc.IframeRelayTransport.prototype.send_ = function(a, b, c) {
-  if (goog.userAgent.IE) {
-    var d = this.getWindow().document.createElement("div");
-    goog.dom.safe.setInnerHtml(d, goog.html.SafeHtml.create("iframe", {onload:goog.string.Const.from("this.xpcOnload()")}));
-    d = d.childNodes[0];
-    d.xpcOnload = goog.net.xpc.IframeRelayTransport.iframeLoadHandler_;
-  } else {
-    d = this.getWindow().document.createElement("iframe"), goog.userAgent.WEBKIT ? goog.net.xpc.IframeRelayTransport.iframeRefs_.push({timestamp:goog.now(), iframeElement:d}) : goog.events.listen(d, "load", goog.net.xpc.IframeRelayTransport.iframeLoadHandler_);
-  }
-  var e = d.style;
-  e.visibility = "hidden";
-  e.width = d.style.height = "0px";
-  e.position = "absolute";
-  e = this.peerRelayUri_;
-  e += "#" + this.channel_.name;
-  this.peerIframeId_ && (e += "," + this.peerIframeId_);
-  e += "|" + a;
-  c && (e += "|" + c);
-  e += ":" + b;
-  d.src = e;
-  this.getWindow().document.body.appendChild(d);
-  goog.log.log(goog.net.xpc.logger, goog.log.Level.FINEST, "msg sent: " + e);
-};
-goog.net.xpc.IframeRelayTransport.iframeLoadHandler_ = function() {
-  goog.log.log(goog.net.xpc.logger, goog.log.Level.FINEST, "iframe-load");
-  goog.dom.removeNode(this);
-  this.xpcOnload = null;
-};
-goog.net.xpc.IframeRelayTransport.prototype.disposeInternal = function() {
-  goog.net.xpc.IframeRelayTransport.superClass_.disposeInternal.call(this);
-  goog.userAgent.WEBKIT && goog.net.xpc.IframeRelayTransport.cleanup_(0);
-};
-goog.net.xpc.NativeMessagingTransport = function(a, b, c, d, e) {
-  goog.net.xpc.Transport.call(this, c);
-  this.channel_ = a;
-  this.protocolVersion_ = e || 2;
-  goog.asserts.assert(1 <= this.protocolVersion_);
-  goog.asserts.assert(2 >= this.protocolVersion_);
-  this.peerHostname_ = b || "*";
-  this.eventHandler_ = new goog.events.EventHandler(this);
-  this.maybeAttemptToConnectTimer_ = new goog.Timer(100, this.getWindow());
-  this.oneSidedHandshake_ = !!d;
-  this.setupAckReceived_ = new goog.async.Deferred;
-  this.setupAckSent_ = new goog.async.Deferred;
-  this.connected_ = new goog.async.Deferred;
-  this.endpointId_ = goog.net.xpc.getRandomString(10);
-  this.peerEndpointId_ = null;
-  this.oneSidedHandshake_ ? this.channel_.getRole() == goog.net.xpc.CrossPageChannelRole.INNER ? this.connected_.awaitDeferred(this.setupAckReceived_) : this.connected_.awaitDeferred(this.setupAckSent_) : (this.connected_.awaitDeferred(this.setupAckReceived_), 2 == this.protocolVersion_ && this.connected_.awaitDeferred(this.setupAckSent_));
-  this.connected_.addCallback(this.notifyConnected_, this);
-  this.connected_.callback(!0);
-  this.eventHandler_.listen(this.maybeAttemptToConnectTimer_, goog.Timer.TICK, this.maybeAttemptToConnect_);
-  goog.log.info(goog.net.xpc.logger, "NativeMessagingTransport created.  protocolVersion\x3d" + this.protocolVersion_ + ", oneSidedHandshake\x3d" + this.oneSidedHandshake_ + ", role\x3d" + this.channel_.getRole());
-};
-goog.inherits(goog.net.xpc.NativeMessagingTransport, goog.net.xpc.Transport);
-goog.net.xpc.NativeMessagingTransport.CONNECTION_DELAY_MS_ = 200;
-goog.net.xpc.NativeMessagingTransport.prototype.peerProtocolVersion_ = null;
-goog.net.xpc.NativeMessagingTransport.prototype.initialized_ = !1;
-goog.net.xpc.NativeMessagingTransport.prototype.transportType = goog.net.xpc.TransportTypes.NATIVE_MESSAGING;
-goog.net.xpc.NativeMessagingTransport.MESSAGE_DELIMITER_ = ",";
-goog.net.xpc.NativeMessagingTransport.activeCount_ = {};
-goog.net.xpc.NativeMessagingTransport.sendTimerId_ = 0;
-goog.net.xpc.NativeMessagingTransport.prototype.couldPeerVersionBe_ = function(a) {
-  return null == this.peerProtocolVersion_ || this.peerProtocolVersion_ == a;
-};
-goog.net.xpc.NativeMessagingTransport.initialize_ = function(a) {
-  var b = goog.getUid(a), c = goog.net.xpc.NativeMessagingTransport.activeCount_[b];
-  goog.isNumber(c) || (c = 0);
-  0 == c && goog.events.listen(a.postMessage ? a : a.document, "message", goog.net.xpc.NativeMessagingTransport.messageReceived_, !1, goog.net.xpc.NativeMessagingTransport);
-  goog.net.xpc.NativeMessagingTransport.activeCount_[b] = c + 1;
-};
-goog.net.xpc.NativeMessagingTransport.messageReceived_ = function(a) {
-  var b = a.getBrowserEvent().data;
-  if (!goog.isString(b)) {
-    return!1;
-  }
-  var c = b.indexOf("|"), d = b.indexOf(":");
-  if (-1 == c || -1 == d) {
-    return!1;
-  }
-  var e = b.substring(0, c), c = b.substring(c + 1, d), b = b.substring(d + 1);
-  goog.log.fine(goog.net.xpc.logger, "messageReceived: channel\x3d" + e + ", service\x3d" + c + ", payload\x3d" + b);
-  if (d = goog.net.xpc.channels[e]) {
-    return d.xpcDeliver(c, b, a.getBrowserEvent().origin), !0;
-  }
-  a = goog.net.xpc.NativeMessagingTransport.parseTransportPayload_(b)[0];
-  for (var f in goog.net.xpc.channels) {
-    if (d = goog.net.xpc.channels[f], d.getRole() == goog.net.xpc.CrossPageChannelRole.INNER && !d.isConnected() && c == goog.net.xpc.TRANSPORT_SERVICE_ && (a == goog.net.xpc.SETUP || a == goog.net.xpc.SETUP_NTPV2)) {
-      return d.updateChannelNameAndCatalog(e), d.xpcDeliver(c, b), !0;
-    }
-  }
-  goog.log.info(goog.net.xpc.logger, 'channel name mismatch; message ignored"');
-  return!1;
-};
-goog.net.xpc.NativeMessagingTransport.prototype.transportServiceHandler = function(a) {
-  var b = goog.net.xpc.NativeMessagingTransport.parseTransportPayload_(a);
-  a = b[1];
-  switch(b[0]) {
-    case goog.net.xpc.SETUP_ACK_:
-      this.setPeerProtocolVersion_(1);
-      this.setupAckReceived_.hasFired() || this.setupAckReceived_.callback(!0);
-      break;
-    case goog.net.xpc.SETUP_ACK_NTPV2:
-      2 == this.protocolVersion_ && (this.setPeerProtocolVersion_(2), this.setupAckReceived_.hasFired() || this.setupAckReceived_.callback(!0));
-      break;
-    case goog.net.xpc.SETUP:
-      this.setPeerProtocolVersion_(1);
-      this.sendSetupAckMessage_(1);
-      break;
-    case goog.net.xpc.SETUP_NTPV2:
-      2 == this.protocolVersion_ && (b = this.peerProtocolVersion_, this.setPeerProtocolVersion_(2), this.sendSetupAckMessage_(2), 1 != b && null == this.peerEndpointId_ || this.peerEndpointId_ == a || (goog.log.info(goog.net.xpc.logger, "Sending SETUP and changing peer ID to: " + a), this.sendSetupMessage_()), this.peerEndpointId_ = a);
-  }
-};
-goog.net.xpc.NativeMessagingTransport.prototype.sendSetupMessage_ = function() {
-  goog.asserts.assert(!(1 == this.protocolVersion_ && 2 == this.peerProtocolVersion_));
-  if (2 == this.protocolVersion_ && this.couldPeerVersionBe_(2)) {
-    var a = goog.net.xpc.SETUP_NTPV2, a = a + goog.net.xpc.NativeMessagingTransport.MESSAGE_DELIMITER_, a = a + this.endpointId_;
-    this.send(goog.net.xpc.TRANSPORT_SERVICE_, a);
-  }
-  this.couldPeerVersionBe_(1) && this.send(goog.net.xpc.TRANSPORT_SERVICE_, goog.net.xpc.SETUP);
-};
-goog.net.xpc.NativeMessagingTransport.prototype.sendSetupAckMessage_ = function(a) {
-  goog.asserts.assert(1 != this.protocolVersion_ || 2 != a, "Shouldn't try to send a v2 setup ack in v1 mode.");
-  if (2 == this.protocolVersion_ && this.couldPeerVersionBe_(2) && 2 == a) {
-    this.send(goog.net.xpc.TRANSPORT_SERVICE_, goog.net.xpc.SETUP_ACK_NTPV2);
-  } else {
-    if (this.couldPeerVersionBe_(1) && 1 == a) {
-      this.send(goog.net.xpc.TRANSPORT_SERVICE_, goog.net.xpc.SETUP_ACK_);
-    } else {
-      return;
-    }
-  }
-  this.setupAckSent_.hasFired() || this.setupAckSent_.callback(!0);
-};
-goog.net.xpc.NativeMessagingTransport.prototype.setPeerProtocolVersion_ = function(a) {
-  a > this.peerProtocolVersion_ && (this.peerProtocolVersion_ = a);
-  1 == this.peerProtocolVersion_ && (this.setupAckSent_.hasFired() || this.oneSidedHandshake_ || this.setupAckSent_.callback(!0), this.peerEndpointId_ = null);
-};
-goog.net.xpc.NativeMessagingTransport.prototype.connect = function() {
-  goog.net.xpc.NativeMessagingTransport.initialize_(this.getWindow());
-  this.initialized_ = !0;
-  this.maybeAttemptToConnect_();
-};
-goog.net.xpc.NativeMessagingTransport.prototype.maybeAttemptToConnect_ = function() {
-  var a = this.channel_.getRole() == goog.net.xpc.CrossPageChannelRole.OUTER;
-  this.oneSidedHandshake_ && a || this.channel_.isConnected() || this.isDisposed() ? this.maybeAttemptToConnectTimer_.stop() : (this.maybeAttemptToConnectTimer_.start(), this.sendSetupMessage_());
-};
-goog.net.xpc.NativeMessagingTransport.prototype.send = function(a, b) {
-  var c = this.channel_.getPeerWindowObject();
-  c ? (this.send = function(a, b) {
-    var f = this, g = this.channel_.name;
-    this.sendTimerId_ = goog.Timer.callOnce(function() {
-      f.sendTimerId_ = 0;
-      try {
-        var h = c.postMessage ? c : c.document;
-        h.postMessage ? (h.postMessage(g + "|" + a + ":" + b, f.peerHostname_), goog.log.fine(goog.net.xpc.logger, "send(): service\x3d" + a + " payload\x3d" + b + " to hostname\x3d" + f.peerHostname_)) : goog.log.warning(goog.net.xpc.logger, "Peer window had no postMessage function.");
-      } catch (k) {
-        goog.log.warning(goog.net.xpc.logger, "Error performing postMessage, ignoring.", k);
-      }
-    }, 0);
-  }, this.send(a, b)) : goog.log.fine(goog.net.xpc.logger, "send(): window not ready");
-};
-goog.net.xpc.NativeMessagingTransport.prototype.notifyConnected_ = function() {
-  this.channel_.notifyConnected(1 == this.protocolVersion_ || 1 == this.peerProtocolVersion_ ? goog.net.xpc.NativeMessagingTransport.CONNECTION_DELAY_MS_ : void 0);
-};
-goog.net.xpc.NativeMessagingTransport.prototype.disposeInternal = function() {
-  if (this.initialized_) {
-    var a = this.getWindow(), b = goog.getUid(a), c = goog.net.xpc.NativeMessagingTransport.activeCount_[b];
-    goog.net.xpc.NativeMessagingTransport.activeCount_[b] = c - 1;
-    1 == c && goog.events.unlisten(a.postMessage ? a : a.document, "message", goog.net.xpc.NativeMessagingTransport.messageReceived_, !1, goog.net.xpc.NativeMessagingTransport);
-  }
-  this.sendTimerId_ && (goog.Timer.clear(this.sendTimerId_), this.sendTimerId_ = 0);
-  goog.dispose(this.eventHandler_);
-  delete this.eventHandler_;
-  goog.dispose(this.maybeAttemptToConnectTimer_);
-  delete this.maybeAttemptToConnectTimer_;
-  this.setupAckReceived_.cancel();
-  delete this.setupAckReceived_;
-  this.setupAckSent_.cancel();
-  delete this.setupAckSent_;
-  this.connected_.cancel();
-  delete this.connected_;
-  delete this.send;
-  goog.net.xpc.NativeMessagingTransport.superClass_.disposeInternal.call(this);
-};
-goog.net.xpc.NativeMessagingTransport.parseTransportPayload_ = function(a) {
-  a = a.split(goog.net.xpc.NativeMessagingTransport.MESSAGE_DELIMITER_);
-  a[1] = a[1] || null;
-  return a;
-};
-goog.net.xpc.NixTransport = function(a, b) {
-  goog.net.xpc.Transport.call(this, b);
-  this.channel_ = a;
-  this.authToken_ = a[goog.net.xpc.CfgFields.AUTH_TOKEN] || "";
-  this.remoteAuthToken_ = a[goog.net.xpc.CfgFields.REMOTE_AUTH_TOKEN] || "";
-  goog.net.xpc.NixTransport.conductGlobalSetup_(this.getWindow());
-  this[goog.net.xpc.NixTransport.NIX_HANDLE_MESSAGE] = this.handleMessage_;
-  this[goog.net.xpc.NixTransport.NIX_CREATE_CHANNEL] = this.createChannel_;
-};
-goog.inherits(goog.net.xpc.NixTransport, goog.net.xpc.Transport);
-goog.net.xpc.NixTransport.NIX_WRAPPER = "GCXPC____NIXVBS_wrapper";
-goog.net.xpc.NixTransport.NIX_GET_WRAPPER = "GCXPC____NIXVBS_get_wrapper";
-goog.net.xpc.NixTransport.NIX_HANDLE_MESSAGE = "GCXPC____NIXJS_handle_message";
-goog.net.xpc.NixTransport.NIX_CREATE_CHANNEL = "GCXPC____NIXJS_create_channel";
-goog.net.xpc.NixTransport.NIX_ID_FIELD = "GCXPC____NIXVBS_container";
-goog.net.xpc.NixTransport.isNixSupported = function() {
-  var a = !1;
-  try {
-    var b = window.opener;
-    window.opener = {};
-    a = goog.reflect.canAccessProperty(window, "opener");
-    window.opener = b;
-  } catch (c) {
-  }
-  return a;
-};
-goog.net.xpc.NixTransport.conductGlobalSetup_ = function(a) {
-  if (!a.nix_setup_complete) {
-    var b = "Class " + goog.net.xpc.NixTransport.NIX_WRAPPER + "\n Private m_Transport\nPrivate m_Auth\nPublic Sub SetTransport(transport)\nIf isEmpty(m_Transport) Then\nSet m_Transport \x3d transport\nEnd If\nEnd Sub\nPublic Sub SetAuth(auth)\nIf isEmpty(m_Auth) Then\nm_Auth \x3d auth\nEnd If\nEnd Sub\nPublic Function GetAuthToken()\n GetAuthToken \x3d m_Auth\nEnd Function\nPublic Sub SendMessage(service, payload)\n Call m_Transport." + goog.net.xpc.NixTransport.NIX_HANDLE_MESSAGE + "(service, payload)\nEnd Sub\nPublic Sub CreateChannel(channel)\n Call m_Transport." + 
-    goog.net.xpc.NixTransport.NIX_CREATE_CHANNEL + "(channel)\nEnd Sub\nPublic Sub " + goog.net.xpc.NixTransport.NIX_ID_FIELD + "()\n End Sub\nEnd Class\n Function " + goog.net.xpc.NixTransport.NIX_GET_WRAPPER + "(transport, auth)\nDim wrap\nSet wrap \x3d New " + goog.net.xpc.NixTransport.NIX_WRAPPER + "\nwrap.SetTransport transport\nwrap.SetAuth auth\nSet " + goog.net.xpc.NixTransport.NIX_GET_WRAPPER + " \x3d wrap\nEnd Function";
-    try {
-      a.execScript(b, "vbscript"), a.nix_setup_complete = !0;
-    } catch (c) {
-      goog.log.error(goog.net.xpc.logger, "exception caught while attempting global setup: " + c);
-    }
-  }
-};
-goog.net.xpc.NixTransport.prototype.transportType = goog.net.xpc.TransportTypes.NIX;
-goog.net.xpc.NixTransport.prototype.localSetupCompleted_ = !1;
-goog.net.xpc.NixTransport.prototype.nixChannel_ = null;
-goog.net.xpc.NixTransport.prototype.connect = function() {
-  this.channel_.getRole() == goog.net.xpc.CrossPageChannelRole.OUTER ? this.attemptOuterSetup_() : this.attemptInnerSetup_();
-};
-goog.net.xpc.NixTransport.prototype.attemptOuterSetup_ = function() {
-  if (!this.localSetupCompleted_) {
-    var a = this.channel_.getIframeElement();
-    try {
-      var b = this.getWindow()[goog.net.xpc.NixTransport.NIX_GET_WRAPPER];
-      a.contentWindow.opener = b(this, this.authToken_);
-      this.localSetupCompleted_ = !0;
-    } catch (c) {
-      goog.log.error(goog.net.xpc.logger, "exception caught while attempting setup: " + c);
-    }
-    this.localSetupCompleted_ || this.getWindow().setTimeout(goog.bind(this.attemptOuterSetup_, this), 100);
-  }
-};
-goog.net.xpc.NixTransport.prototype.attemptInnerSetup_ = function() {
-  if (!this.localSetupCompleted_) {
-    try {
-      var a = this.getWindow().opener;
-      if (a && goog.net.xpc.NixTransport.NIX_ID_FIELD in a) {
-        this.nixChannel_ = a;
-        if (this.nixChannel_.GetAuthToken() != this.remoteAuthToken_) {
-          goog.log.error(goog.net.xpc.logger, "Invalid auth token from other party");
-          return;
-        }
-        var b = this.getWindow()[goog.net.xpc.NixTransport.NIX_GET_WRAPPER];
-        this.nixChannel_.CreateChannel(b(this, this.authToken_));
-        this.localSetupCompleted_ = !0;
-        this.channel_.notifyConnected();
-      }
-    } catch (c) {
-      goog.log.error(goog.net.xpc.logger, "exception caught while attempting setup: " + c);
-      return;
-    }
-    this.localSetupCompleted_ || this.getWindow().setTimeout(goog.bind(this.attemptInnerSetup_, this), 100);
-  }
-};
-goog.net.xpc.NixTransport.prototype.createChannel_ = function(a) {
-  "unknown" == typeof a && goog.net.xpc.NixTransport.NIX_ID_FIELD in a || goog.log.error(goog.net.xpc.logger, "Invalid NIX channel given to createChannel_");
-  this.nixChannel_ = a;
-  this.nixChannel_.GetAuthToken() != this.remoteAuthToken_ ? goog.log.error(goog.net.xpc.logger, "Invalid auth token from other party") : this.channel_.notifyConnected();
-};
-goog.net.xpc.NixTransport.prototype.handleMessage_ = function(a, b) {
-  this.getWindow().setTimeout(goog.bind(function() {
-    this.channel_.xpcDeliver(a, b);
-  }, this), 1);
-};
-goog.net.xpc.NixTransport.prototype.send = function(a, b) {
-  "unknown" !== typeof this.nixChannel_ && goog.log.error(goog.net.xpc.logger, "NIX channel not connected");
-  this.nixChannel_.SendMessage(a, b);
-};
-goog.net.xpc.NixTransport.prototype.disposeInternal = function() {
-  goog.net.xpc.NixTransport.superClass_.disposeInternal.call(this);
-  this.nixChannel_ = null;
-};
-goog.net.xpc.CrossPageChannel = function(a, b) {
-  goog.messaging.AbstractChannel.call(this);
-  for (var c = 0, d;d = goog.net.xpc.UriCfgFields[c];c++) {
-    if (d in a && !/^https?:\/\//.test(a[d])) {
-      throw Error("URI " + a[d] + " is invalid for field " + d);
-    }
-  }
-  this.cfg_ = a;
-  this.name = this.cfg_[goog.net.xpc.CfgFields.CHANNEL_NAME] || goog.net.xpc.getRandomString(10);
-  this.domHelper_ = b || goog.dom.getDomHelper();
-  this.deferredDeliveries_ = [];
-  this.peerLoadHandler_ = new goog.events.EventHandler(this);
-  a[goog.net.xpc.CfgFields.LOCAL_POLL_URI] = a[goog.net.xpc.CfgFields.LOCAL_POLL_URI] || goog.uri.utils.getHost(this.domHelper_.getWindow().location.href) + "/robots.txt";
-  a[goog.net.xpc.CfgFields.PEER_POLL_URI] = a[goog.net.xpc.CfgFields.PEER_POLL_URI] || goog.uri.utils.getHost(a[goog.net.xpc.CfgFields.PEER_URI] || "") + "/robots.txt";
-  goog.net.xpc.channels[this.name] = this;
-  goog.events.getListener(window, goog.events.EventType.UNLOAD, goog.net.xpc.CrossPageChannel.disposeAll_) || goog.events.listenOnce(window, goog.events.EventType.UNLOAD, goog.net.xpc.CrossPageChannel.disposeAll_);
-  goog.log.info(goog.net.xpc.logger, "CrossPageChannel created: " + this.name);
-};
-goog.inherits(goog.net.xpc.CrossPageChannel, goog.messaging.AbstractChannel);
-goog.net.xpc.CrossPageChannel.TRANSPORT_SERVICE_ESCAPE_RE_ = new RegExp("^%*" + goog.net.xpc.TRANSPORT_SERVICE_ + "$");
-goog.net.xpc.CrossPageChannel.TRANSPORT_SERVICE_UNESCAPE_RE_ = new RegExp("^%+" + goog.net.xpc.TRANSPORT_SERVICE_ + "$");
-goog.net.xpc.CrossPageChannel.prototype.connectionDelay_ = null;
-goog.net.xpc.CrossPageChannel.prototype.peerWindowDeferred_ = null;
-goog.net.xpc.CrossPageChannel.prototype.transport_ = null;
-goog.net.xpc.CrossPageChannel.prototype.state_ = goog.net.xpc.ChannelStates.NOT_CONNECTED;
-goog.net.xpc.CrossPageChannel.prototype.isConnected = function() {
-  return this.state_ == goog.net.xpc.ChannelStates.CONNECTED;
-};
-goog.net.xpc.CrossPageChannel.prototype.peerWindowObject_ = null;
-goog.net.xpc.CrossPageChannel.prototype.iframeElement_ = null;
-goog.net.xpc.CrossPageChannel.prototype.getConfig = function() {
-  return this.cfg_;
-};
-goog.net.xpc.CrossPageChannel.prototype.getIframeElement = function() {
-  return this.iframeElement_;
-};
-goog.net.xpc.CrossPageChannel.prototype.setPeerWindowObject = function(a) {
-  this.peerWindowObject_ = a;
-};
-goog.net.xpc.CrossPageChannel.prototype.getPeerWindowObject = function() {
-  return this.peerWindowObject_;
-};
-goog.net.xpc.CrossPageChannel.prototype.isPeerAvailable = function() {
-  try {
-    return!!this.peerWindowObject_ && !Boolean(this.peerWindowObject_.closed);
-  } catch (a) {
-    return!1;
-  }
-};
-goog.net.xpc.CrossPageChannel.prototype.determineTransportType_ = function() {
-  return goog.isFunction(document.postMessage) || goog.isFunction(window.postMessage) || goog.userAgent.IE && window.postMessage ? goog.net.xpc.TransportTypes.NATIVE_MESSAGING : goog.userAgent.GECKO ? goog.net.xpc.TransportTypes.FRAME_ELEMENT_METHOD : goog.userAgent.IE && this.cfg_[goog.net.xpc.CfgFields.PEER_RELAY_URI] ? goog.net.xpc.TransportTypes.IFRAME_RELAY : goog.userAgent.IE && goog.net.xpc.NixTransport.isNixSupported() ? goog.net.xpc.TransportTypes.NIX : goog.net.xpc.TransportTypes.IFRAME_POLLING;
-};
-goog.net.xpc.CrossPageChannel.prototype.createTransport_ = function() {
-  if (!this.transport_) {
-    var a = goog.net.xpc.CfgFields;
-    this.cfg_[a.TRANSPORT] || (this.cfg_[a.TRANSPORT] = this.determineTransportType_());
-    switch(this.cfg_[a.TRANSPORT]) {
-      case goog.net.xpc.TransportTypes.NATIVE_MESSAGING:
-        this.transport_ = new goog.net.xpc.NativeMessagingTransport(this, this.cfg_[a.PEER_HOSTNAME], this.domHelper_, !!this.cfg_[a.ONE_SIDED_HANDSHAKE], this.cfg_[a.NATIVE_TRANSPORT_PROTOCOL_VERSION] || 2);
-        break;
-      case goog.net.xpc.TransportTypes.NIX:
-        this.transport_ = new goog.net.xpc.NixTransport(this, this.domHelper_);
-        break;
-      case goog.net.xpc.TransportTypes.FRAME_ELEMENT_METHOD:
-        this.transport_ = new goog.net.xpc.FrameElementMethodTransport(this, this.domHelper_);
-        break;
-      case goog.net.xpc.TransportTypes.IFRAME_RELAY:
-        this.transport_ = new goog.net.xpc.IframeRelayTransport(this, this.domHelper_);
-        break;
-      case goog.net.xpc.TransportTypes.IFRAME_POLLING:
-        this.transport_ = new goog.net.xpc.IframePollingTransport(this, this.domHelper_);
-        break;
-      case goog.net.xpc.TransportTypes.DIRECT:
-        this.peerWindowObject_ && goog.net.xpc.DirectTransport.isSupported(this.peerWindowObject_) ? this.transport_ = new goog.net.xpc.DirectTransport(this, this.domHelper_) : goog.log.info(goog.net.xpc.logger, "DirectTransport not supported for this window, peer window in different security context or not set yet.");
-    }
-    if (this.transport_) {
-      goog.log.info(goog.net.xpc.logger, "Transport created: " + this.transport_.getName());
-    } else {
-      throw Error("CrossPageChannel: No suitable transport found!");
-    }
-  }
-};
-goog.net.xpc.CrossPageChannel.prototype.getTransportType = function() {
-  return this.transport_.getType();
-};
-goog.net.xpc.CrossPageChannel.prototype.getTransportName = function() {
-  return this.transport_.getName();
-};
-goog.net.xpc.CrossPageChannel.prototype.getPeerConfiguration = function() {
-  var a = {};
-  a[goog.net.xpc.CfgFields.CHANNEL_NAME] = this.name;
-  a[goog.net.xpc.CfgFields.TRANSPORT] = this.cfg_[goog.net.xpc.CfgFields.TRANSPORT];
-  a[goog.net.xpc.CfgFields.ONE_SIDED_HANDSHAKE] = this.cfg_[goog.net.xpc.CfgFields.ONE_SIDED_HANDSHAKE];
-  this.cfg_[goog.net.xpc.CfgFields.LOCAL_RELAY_URI] && (a[goog.net.xpc.CfgFields.PEER_RELAY_URI] = this.cfg_[goog.net.xpc.CfgFields.LOCAL_RELAY_URI]);
-  this.cfg_[goog.net.xpc.CfgFields.LOCAL_POLL_URI] && (a[goog.net.xpc.CfgFields.PEER_POLL_URI] = this.cfg_[goog.net.xpc.CfgFields.LOCAL_POLL_URI]);
-  this.cfg_[goog.net.xpc.CfgFields.PEER_POLL_URI] && (a[goog.net.xpc.CfgFields.LOCAL_POLL_URI] = this.cfg_[goog.net.xpc.CfgFields.PEER_POLL_URI]);
-  var b = this.cfg_[goog.net.xpc.CfgFields.ROLE];
-  b && (a[goog.net.xpc.CfgFields.ROLE] = b == goog.net.xpc.CrossPageChannelRole.INNER ? goog.net.xpc.CrossPageChannelRole.OUTER : goog.net.xpc.CrossPageChannelRole.INNER);
-  return a;
-};
-goog.net.xpc.CrossPageChannel.prototype.createPeerIframe = function(a, b, c) {
-  goog.log.info(goog.net.xpc.logger, "createPeerIframe()");
-  var d = this.cfg_[goog.net.xpc.CfgFields.IFRAME_ID];
-  d || (d = this.cfg_[goog.net.xpc.CfgFields.IFRAME_ID] = "xpcpeer" + goog.net.xpc.getRandomString(4));
-  var e = goog.dom.getDomHelper(a).createElement("IFRAME");
-  e.id = e.name = d;
-  b ? b(e) : e.style.width = e.style.height = "100%";
-  this.cleanUpIncompleteConnection_();
-  this.peerWindowDeferred_ = new goog.async.Deferred(void 0, this);
-  var f = this.getPeerUri(c);
-  this.peerLoadHandler_.listenOnceWithScope(e, "load", this.peerWindowDeferred_.callback, !1, this.peerWindowDeferred_);
-  goog.userAgent.GECKO || goog.userAgent.WEBKIT ? window.setTimeout(goog.bind(function() {
-    a.appendChild(e);
-    e.src = f.toString();
-    goog.log.info(goog.net.xpc.logger, "peer iframe created (" + d + ")");
-  }, this), 1) : (e.src = f.toString(), a.appendChild(e), goog.log.info(goog.net.xpc.logger, "peer iframe created (" + d + ")"));
-  return e;
-};
-goog.net.xpc.CrossPageChannel.prototype.cleanUpIncompleteConnection_ = function() {
-  this.peerWindowDeferred_ && (this.peerWindowDeferred_.cancel(), this.peerWindowDeferred_ = null);
-  this.deferredDeliveries_.length = 0;
-  this.peerLoadHandler_.removeAll();
-};
-goog.net.xpc.CrossPageChannel.prototype.getPeerUri = function(a) {
-  var b = this.cfg_[goog.net.xpc.CfgFields.PEER_URI];
-  goog.isString(b) && (b = this.cfg_[goog.net.xpc.CfgFields.PEER_URI] = new goog.Uri(b));
-  !1 !== a && b.setParameterValue("xpc", goog.json.serialize(this.getPeerConfiguration()));
-  return b;
-};
-goog.net.xpc.CrossPageChannel.prototype.connect = function(a) {
-  this.connectCb_ = a || goog.nullFunction;
-  this.peerWindowDeferred_ ? this.peerWindowDeferred_.addCallback(this.continueConnection_) : this.continueConnection_();
-};
-goog.net.xpc.CrossPageChannel.prototype.continueConnection_ = function() {
-  goog.log.info(goog.net.xpc.logger, "continueConnection_()");
-  this.peerWindowDeferred_ = null;
-  this.cfg_[goog.net.xpc.CfgFields.IFRAME_ID] && (this.iframeElement_ = this.domHelper_.getElement(this.cfg_[goog.net.xpc.CfgFields.IFRAME_ID]));
-  if (this.iframeElement_) {
-    var a = this.iframeElement_.contentWindow;
-    a || (a = window.frames[this.cfg_[goog.net.xpc.CfgFields.IFRAME_ID]]);
-    this.setPeerWindowObject(a);
-  }
-  if (!this.peerWindowObject_) {
-    if (window == window.top) {
-      throw Error("CrossPageChannel: Can't connect, peer window-object not set.");
-    }
-    this.setPeerWindowObject(window.parent);
-  }
-  this.createTransport_();
-  for (this.transport_.connect();0 < this.deferredDeliveries_.length;) {
-    this.deferredDeliveries_.shift()();
-  }
-};
-goog.net.xpc.CrossPageChannel.prototype.close = function() {
-  this.cleanUpIncompleteConnection_();
-  this.state_ = goog.net.xpc.ChannelStates.CLOSED;
-  goog.dispose(this.transport_);
-  this.connectCb_ = this.transport_ = null;
-  goog.dispose(this.connectionDelay_);
-  this.connectionDelay_ = null;
-  goog.log.info(goog.net.xpc.logger, 'Channel "' + this.name + '" closed');
-};
-goog.net.xpc.CrossPageChannel.prototype.notifyConnected = function(a) {
-  this.isConnected() || this.connectionDelay_ && this.connectionDelay_.isActive() || (this.state_ = goog.net.xpc.ChannelStates.CONNECTED, goog.log.info(goog.net.xpc.logger, 'Channel "' + this.name + '" connected'), goog.dispose(this.connectionDelay_), goog.isDef(a) ? (this.connectionDelay_ = new goog.async.Delay(this.connectCb_, a), this.connectionDelay_.start()) : (this.connectionDelay_ = null, this.connectCb_()));
-};
-goog.net.xpc.CrossPageChannel.prototype.notifyConnected_ = goog.net.xpc.CrossPageChannel.prototype.notifyConnected;
-goog.net.xpc.CrossPageChannel.prototype.notifyTransportError = function() {
-  goog.log.info(goog.net.xpc.logger, "Transport Error");
-  this.close();
-};
-goog.net.xpc.CrossPageChannel.prototype.send = function(a, b) {
-  this.isConnected() ? this.isPeerAvailable() ? (goog.isObject(b) && (b = goog.json.serialize(b)), this.transport_.send(this.escapeServiceName_(a), b)) : (goog.log.error(goog.net.xpc.logger, "Peer has disappeared."), this.close()) : goog.log.error(goog.net.xpc.logger, "Can't send. Channel not connected.");
-};
-goog.net.xpc.CrossPageChannel.prototype.xpcDeliver = function(a, b, c) {
-  this.peerWindowDeferred_ ? this.deferredDeliveries_.push(goog.bind(this.xpcDeliver, this, a, b, c)) : this.isMessageOriginAcceptable_(c) ? this.isDisposed() ? goog.log.warning(goog.net.xpc.logger, "CrossPageChannel::xpcDeliver(): Disposed.") : a && a != goog.net.xpc.TRANSPORT_SERVICE_ ? this.isConnected() ? this.deliver(this.unescapeServiceName_(a), b) : goog.log.info(goog.net.xpc.logger, "CrossPageChannel::xpcDeliver(): Not connected.") : this.transport_.transportServiceHandler(b) : goog.log.warning(goog.net.xpc.logger, 
-  'Message received from unapproved origin "' + c + '" - rejected.');
-};
-goog.net.xpc.CrossPageChannel.prototype.escapeServiceName_ = function(a) {
-  goog.net.xpc.CrossPageChannel.TRANSPORT_SERVICE_ESCAPE_RE_.test(a) && (a = "%" + a);
-  return a.replace(/[%:|]/g, encodeURIComponent);
-};
-goog.net.xpc.CrossPageChannel.prototype.unescapeServiceName_ = function(a) {
-  a = a.replace(/%[0-9a-f]{2}/gi, decodeURIComponent);
-  return goog.net.xpc.CrossPageChannel.TRANSPORT_SERVICE_UNESCAPE_RE_.test(a) ? a.substring(1) : a;
-};
-goog.net.xpc.CrossPageChannel.prototype.getRole = function() {
-  var a = this.cfg_[goog.net.xpc.CfgFields.ROLE];
-  return goog.isNumber(a) ? a : window.parent == this.peerWindowObject_ ? goog.net.xpc.CrossPageChannelRole.INNER : goog.net.xpc.CrossPageChannelRole.OUTER;
-};
-goog.net.xpc.CrossPageChannel.prototype.updateChannelNameAndCatalog = function(a) {
-  goog.log.fine(goog.net.xpc.logger, "changing channel name to " + a);
-  delete goog.net.xpc.channels[this.name];
-  this.name = a;
-  goog.net.xpc.channels[a] = this;
-};
-goog.net.xpc.CrossPageChannel.prototype.isMessageOriginAcceptable_ = function(a) {
-  var b = this.cfg_[goog.net.xpc.CfgFields.PEER_HOSTNAME];
-  return goog.string.isEmptySafe(a) || goog.string.isEmptySafe(b) || a == this.cfg_[goog.net.xpc.CfgFields.PEER_HOSTNAME];
-};
-goog.net.xpc.CrossPageChannel.prototype.disposeInternal = function() {
-  this.close();
-  this.iframeElement_ = this.peerWindowObject_ = null;
-  delete goog.net.xpc.channels[this.name];
-  goog.dispose(this.peerLoadHandler_);
-  delete this.peerLoadHandler_;
-  goog.net.xpc.CrossPageChannel.superClass_.disposeInternal.call(this);
-};
-goog.net.xpc.CrossPageChannel.disposeAll_ = function() {
-  for (var a in goog.net.xpc.channels) {
-    goog.dispose(goog.net.xpc.channels[a]);
-  }
-};
-goog.net.WebSocket = function(a, b) {
-  goog.events.EventTarget.call(this);
-  this.autoReconnect_ = goog.isDef(a) ? a : !0;
-  this.getNextReconnect_ = b || goog.net.WebSocket.EXPONENTIAL_BACKOFF_;
-  this.nextReconnect_ = this.getNextReconnect_(this.reconnectAttempt_);
-};
-goog.inherits(goog.net.WebSocket, goog.events.EventTarget);
-goog.net.WebSocket.prototype.webSocket_ = null;
-goog.net.WebSocket.prototype.url_ = null;
-goog.net.WebSocket.prototype.protocol_ = void 0;
-goog.net.WebSocket.prototype.closeExpected_ = !1;
-goog.net.WebSocket.prototype.reconnectAttempt_ = 0;
-goog.net.WebSocket.prototype.logger_ = goog.log.getLogger("goog.net.WebSocket");
-goog.net.WebSocket.EventType = {CLOSED:goog.events.getUniqueId("closed"), ERROR:goog.events.getUniqueId("error"), MESSAGE:goog.events.getUniqueId("message"), OPENED:goog.events.getUniqueId("opened")};
-goog.net.WebSocket.ReadyState_ = {CONNECTING:0, OPEN:1, CLOSING:2, CLOSED:3};
-goog.net.WebSocket.EXPONENTIAL_BACKOFF_CEILING_ = 6E4;
-goog.net.WebSocket.EXPONENTIAL_BACKOFF_ = function(a) {
-  a = 1E3 * Math.pow(2, a);
-  return Math.min(a, goog.net.WebSocket.EXPONENTIAL_BACKOFF_CEILING_);
-};
-goog.net.WebSocket.protectEntryPoints = function(a) {
-  goog.net.WebSocket.prototype.onOpen_ = a.protectEntryPoint(goog.net.WebSocket.prototype.onOpen_);
-  goog.net.WebSocket.prototype.onClose_ = a.protectEntryPoint(goog.net.WebSocket.prototype.onClose_);
-  goog.net.WebSocket.prototype.onMessage_ = a.protectEntryPoint(goog.net.WebSocket.prototype.onMessage_);
-  goog.net.WebSocket.prototype.onError_ = a.protectEntryPoint(goog.net.WebSocket.prototype.onError_);
-};
-goog.net.WebSocket.prototype.open = function(a, b) {
-  goog.asserts.assert(goog.global.WebSocket, "This browser does not support WebSocket");
-  goog.asserts.assert(!this.isOpen(), "The WebSocket is already open");
-  this.clearReconnectTimer_();
-  this.url_ = a;
-  (this.protocol_ = b) ? (goog.log.info(this.logger_, "Opening the WebSocket on " + this.url_ + " with protocol " + this.protocol_), this.webSocket_ = new WebSocket(this.url_, this.protocol_)) : (goog.log.info(this.logger_, "Opening the WebSocket on " + this.url_), this.webSocket_ = new WebSocket(this.url_));
-  this.webSocket_.onopen = goog.bind(this.onOpen_, this);
-  this.webSocket_.onclose = goog.bind(this.onClose_, this);
-  this.webSocket_.onmessage = goog.bind(this.onMessage_, this);
-  this.webSocket_.onerror = goog.bind(this.onError_, this);
-};
-goog.net.WebSocket.prototype.close = function() {
-  this.clearReconnectTimer_();
-  this.webSocket_ && (goog.log.info(this.logger_, "Closing the WebSocket."), this.closeExpected_ = !0, this.webSocket_.close(), this.webSocket_ = null);
-};
-goog.net.WebSocket.prototype.send = function(a) {
-  goog.asserts.assert(this.isOpen(), "Cannot send without an open socket");
-  this.webSocket_.send(a);
-};
-goog.net.WebSocket.prototype.isOpen = function() {
-  return!!this.webSocket_ && this.webSocket_.readyState == goog.net.WebSocket.ReadyState_.OPEN;
-};
-goog.net.WebSocket.prototype.onOpen_ = function() {
-  goog.log.info(this.logger_, "WebSocket opened on " + this.url_);
-  this.dispatchEvent(goog.net.WebSocket.EventType.OPENED);
-  this.reconnectAttempt_ = 0;
-  this.nextReconnect_ = this.getNextReconnect_(this.reconnectAttempt_);
-};
-goog.net.WebSocket.prototype.onClose_ = function(a) {
-  goog.log.info(this.logger_, "The WebSocket on " + this.url_ + " closed.");
-  this.dispatchEvent(goog.net.WebSocket.EventType.CLOSED);
-  this.webSocket_ = null;
-  this.closeExpected_ ? (goog.log.info(this.logger_, "The WebSocket closed normally."), this.url_ = null, this.protocol_ = void 0) : (goog.log.error(this.logger_, "The WebSocket disconnected unexpectedly: " + a.data), this.autoReconnect_ && (goog.log.info(this.logger_, "Seconds until next reconnect attempt: " + Math.floor(this.nextReconnect_ / 1E3)), this.reconnectTimer_ = goog.Timer.callOnce(goog.bind(this.open, this, this.url_, this.protocol_), this.nextReconnect_, this), this.reconnectAttempt_++, 
-  this.nextReconnect_ = this.getNextReconnect_(this.reconnectAttempt_)));
-  this.closeExpected_ = !1;
-};
-goog.net.WebSocket.prototype.onMessage_ = function(a) {
-  this.dispatchEvent(new goog.net.WebSocket.MessageEvent(a.data));
-};
-goog.net.WebSocket.prototype.onError_ = function(a) {
-  a = a.data;
-  goog.log.error(this.logger_, "An error occurred: " + a);
-  this.dispatchEvent(new goog.net.WebSocket.ErrorEvent(a));
-};
-goog.net.WebSocket.prototype.clearReconnectTimer_ = function() {
-  goog.isDefAndNotNull(this.reconnectTimer_) && goog.Timer.clear(this.reconnectTimer_);
-  this.reconnectTimer_ = null;
-};
-goog.net.WebSocket.prototype.disposeInternal = function() {
-  goog.net.WebSocket.superClass_.disposeInternal.call(this);
-  this.close();
-};
-goog.net.WebSocket.MessageEvent = function(a) {
-  goog.events.Event.call(this, goog.net.WebSocket.EventType.MESSAGE);
-  this.message = a;
-};
-goog.inherits(goog.net.WebSocket.MessageEvent, goog.events.Event);
-goog.net.WebSocket.ErrorEvent = function(a) {
-  goog.events.Event.call(this, goog.net.WebSocket.EventType.ERROR);
-  this.data = a;
-};
-goog.inherits(goog.net.WebSocket.ErrorEvent, goog.events.Event);
-goog.debug.entryPointRegistry.register(function(a) {
-  goog.net.WebSocket.prototype.onOpen_ = a(goog.net.WebSocket.prototype.onOpen_);
-  goog.net.WebSocket.prototype.onClose_ = a(goog.net.WebSocket.prototype.onClose_);
-  goog.net.WebSocket.prototype.onMessage_ = a(goog.net.WebSocket.prototype.onMessage_);
-  goog.net.WebSocket.prototype.onError_ = a(goog.net.WebSocket.prototype.onError_);
-});
-clojure.browser = {};
-clojure.browser.event = {};
-clojure.browser.event.IEventType = function() {
-  return{};
-}();
-clojure.browser.event.event_types = function(a) {
-  if (a ? a.clojure$browser$event$IEventType$event_types$arity$1 : a) {
-    return a.clojure$browser$event$IEventType$event_types$arity$1(a);
-  }
-  var b;
-  b = clojure.browser.event.event_types[goog.typeOf(null == a ? null : a)];
-  if (!b && (b = clojure.browser.event.event_types._, !b)) {
-    throw cljs.core.missing_protocol.call(null, "IEventType.event-types", a);
-  }
-  return b.call(null, a);
-};
-goog.events.EventTarget.prototype.clojure$browser$event$IEventType$ = !0;
-goog.events.EventTarget.prototype.clojure$browser$event$IEventType$event_types$arity$1 = function(a) {
-  return cljs.core.into.call(null, cljs.core.PersistentArrayMap.EMPTY, cljs.core.map.call(null, function(a) {
-    return function(a) {
-      var b = cljs.core.nth.call(null, a, 0, null);
-      a = cljs.core.nth.call(null, a, 1, null);
-      return new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.keyword.call(null, b.toLowerCase()), a], null);
-    };
-  }(this), cljs.core.merge.call(null, cljs.core.js__GT_clj.call(null, goog.events.EventType))));
-};
-"undefined" !== typeof Element && (Element.prototype.clojure$browser$event$IEventType$ = !0, Element.prototype.clojure$browser$event$IEventType$event_types$arity$1 = function(a) {
-  return cljs.core.into.call(null, cljs.core.PersistentArrayMap.EMPTY, cljs.core.map.call(null, function(a) {
-    return function(a) {
-      var b = cljs.core.nth.call(null, a, 0, null);
-      a = cljs.core.nth.call(null, a, 1, null);
-      return new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.keyword.call(null, b.toLowerCase()), a], null);
-    };
-  }(this), cljs.core.merge.call(null, cljs.core.js__GT_clj.call(null, goog.events.EventType))));
-});
-clojure.browser.event.listen = function() {
-  var a = null, b = function(b, c, f) {
-    return a.call(null, b, c, f, !1);
-  }, c = function(a, b, c, g) {
-    return goog.events.listen(a, cljs.core.get.call(null, clojure.browser.event.event_types.call(null, a), b, b), c, g);
-  }, a = function(a, e, f, g) {
-    switch(arguments.length) {
-      case 3:
-        return b.call(this, a, e, f);
-      case 4:
-        return c.call(this, a, e, f, g);
-    }
-    throw Error("Invalid arity: " + arguments.length);
-  };
-  a.cljs$core$IFn$_invoke$arity$3 = b;
-  a.cljs$core$IFn$_invoke$arity$4 = c;
-  return a;
-}();
-clojure.browser.event.listen_once = function() {
-  var a = null, b = function(b, c, f) {
-    return a.call(null, b, c, f, !1);
-  }, c = function(a, b, c, g) {
-    return goog.events.listenOnce(a, cljs.core.get.call(null, clojure.browser.event.event_types.call(null, a), b, b), c, g);
-  }, a = function(a, e, f, g) {
-    switch(arguments.length) {
-      case 3:
-        return b.call(this, a, e, f);
-      case 4:
-        return c.call(this, a, e, f, g);
-    }
-    throw Error("Invalid arity: " + arguments.length);
-  };
-  a.cljs$core$IFn$_invoke$arity$3 = b;
-  a.cljs$core$IFn$_invoke$arity$4 = c;
-  return a;
-}();
-clojure.browser.event.unlisten = function() {
-  var a = null, b = function(b, c, f) {
-    return a.call(null, b, c, f, !1);
-  }, c = function(a, b, c, g) {
-    return goog.events.unlisten(a, cljs.core.get.call(null, clojure.browser.event.event_types.call(null, a), b, b), c, g);
-  }, a = function(a, e, f, g) {
-    switch(arguments.length) {
-      case 3:
-        return b.call(this, a, e, f);
-      case 4:
-        return c.call(this, a, e, f, g);
-    }
-    throw Error("Invalid arity: " + arguments.length);
-  };
-  a.cljs$core$IFn$_invoke$arity$3 = b;
-  a.cljs$core$IFn$_invoke$arity$4 = c;
-  return a;
-}();
-clojure.browser.event.unlisten_by_key = function(a) {
-  return goog.events.unlistenByKey(a);
-};
-clojure.browser.event.dispatch_event = function(a, b) {
-  return goog.events.dispatchEvent(a, b);
-};
-clojure.browser.event.expose = function(a) {
-  return goog.events.expose(a);
-};
-clojure.browser.event.fire_listeners = function(a, b, c, d) {
-  return null;
-};
-clojure.browser.event.total_listener_count = function() {
-  return goog.events.getTotalListenerCount();
-};
-clojure.browser.event.get_listener = function(a, b, c, d, e) {
-  return null;
-};
-clojure.browser.event.all_listeners = function(a, b, c) {
-  return null;
-};
-clojure.browser.event.unique_event_id = function(a) {
-  return null;
-};
-clojure.browser.event.has_listener = function(a, b, c) {
-  return null;
-};
-clojure.browser.event.remove_all = function(a, b, c) {
-  return null;
-};
-clojure.browser.net = {};
-clojure.browser.net._STAR_timeout_STAR_ = 1E4;
-clojure.browser.net.event_types = cljs.core.into.call(null, cljs.core.PersistentArrayMap.EMPTY, cljs.core.map.call(null, function(a) {
-  var b = cljs.core.nth.call(null, a, 0, null);
-  a = cljs.core.nth.call(null, a, 1, null);
-  return new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.keyword.call(null, b.toLowerCase()), a], null);
-}, cljs.core.merge.call(null, cljs.core.js__GT_clj.call(null, goog.net.EventType))));
-clojure.browser.net.IConnection = function() {
-  return{};
-}();
-clojure.browser.net.connect = function() {
-  var a = null, b = function(a) {
-    if (a ? a.clojure$browser$net$IConnection$connect$arity$1 : a) {
-      return a.clojure$browser$net$IConnection$connect$arity$1(a);
-    }
-    var b;
-    b = clojure.browser.net.connect[goog.typeOf(null == a ? null : a)];
-    if (!b && (b = clojure.browser.net.connect._, !b)) {
-      throw cljs.core.missing_protocol.call(null, "IConnection.connect", a);
-    }
-    return b.call(null, a);
-  }, c = function(a, b) {
-    if (a ? a.clojure$browser$net$IConnection$connect$arity$2 : a) {
-      return a.clojure$browser$net$IConnection$connect$arity$2(a, b);
-    }
-    var c;
-    c = clojure.browser.net.connect[goog.typeOf(null == a ? null : a)];
-    if (!c && (c = clojure.browser.net.connect._, !c)) {
-      throw cljs.core.missing_protocol.call(null, "IConnection.connect", a);
-    }
-    return c.call(null, a, b);
-  }, d = function(a, b, c) {
-    if (a ? a.clojure$browser$net$IConnection$connect$arity$3 : a) {
-      return a.clojure$browser$net$IConnection$connect$arity$3(a, b, c);
-    }
-    var d;
-    d = clojure.browser.net.connect[goog.typeOf(null == a ? null : a)];
-    if (!d && (d = clojure.browser.net.connect._, !d)) {
-      throw cljs.core.missing_protocol.call(null, "IConnection.connect", a);
-    }
-    return d.call(null, a, b, c);
-  }, e = function(a, b, c, d) {
-    if (a ? a.clojure$browser$net$IConnection$connect$arity$4 : a) {
-      return a.clojure$browser$net$IConnection$connect$arity$4(a, b, c, d);
-    }
-    var e;
-    e = clojure.browser.net.connect[goog.typeOf(null == a ? null : a)];
-    if (!e && (e = clojure.browser.net.connect._, !e)) {
-      throw cljs.core.missing_protocol.call(null, "IConnection.connect", a);
-    }
-    return e.call(null, a, b, c, d);
-  }, a = function(a, g, h, k) {
-    switch(arguments.length) {
-      case 1:
-        return b.call(this, a);
-      case 2:
-        return c.call(this, a, g);
-      case 3:
-        return d.call(this, a, g, h);
-      case 4:
-        return e.call(this, a, g, h, k);
-    }
-    throw Error("Invalid arity: " + arguments.length);
-  };
-  a.cljs$core$IFn$_invoke$arity$1 = b;
-  a.cljs$core$IFn$_invoke$arity$2 = c;
-  a.cljs$core$IFn$_invoke$arity$3 = d;
-  a.cljs$core$IFn$_invoke$arity$4 = e;
-  return a;
-}();
-clojure.browser.net.transmit = function() {
-  var a = null, b = function(a, b) {
-    if (a ? a.clojure$browser$net$IConnection$transmit$arity$2 : a) {
-      return a.clojure$browser$net$IConnection$transmit$arity$2(a, b);
-    }
-    var c;
-    c = clojure.browser.net.transmit[goog.typeOf(null == a ? null : a)];
-    if (!c && (c = clojure.browser.net.transmit._, !c)) {
-      throw cljs.core.missing_protocol.call(null, "IConnection.transmit", a);
-    }
-    return c.call(null, a, b);
-  }, c = function(a, b, c) {
-    if (a ? a.clojure$browser$net$IConnection$transmit$arity$3 : a) {
-      return a.clojure$browser$net$IConnection$transmit$arity$3(a, b, c);
-    }
-    var d;
-    d = clojure.browser.net.transmit[goog.typeOf(null == a ? null : a)];
-    if (!d && (d = clojure.browser.net.transmit._, !d)) {
-      throw cljs.core.missing_protocol.call(null, "IConnection.transmit", a);
-    }
-    return d.call(null, a, b, c);
-  }, d = function(a, b, c, d) {
-    if (a ? a.clojure$browser$net$IConnection$transmit$arity$4 : a) {
-      return a.clojure$browser$net$IConnection$transmit$arity$4(a, b, c, d);
-    }
-    var e;
-    e = clojure.browser.net.transmit[goog.typeOf(null == a ? null : a)];
-    if (!e && (e = clojure.browser.net.transmit._, !e)) {
-      throw cljs.core.missing_protocol.call(null, "IConnection.transmit", a);
-    }
-    return e.call(null, a, b, c, d);
-  }, e = function(a, b, c, d, e) {
-    if (a ? a.clojure$browser$net$IConnection$transmit$arity$5 : a) {
-      return a.clojure$browser$net$IConnection$transmit$arity$5(a, b, c, d, e);
-    }
-    var f;
-    f = clojure.browser.net.transmit[goog.typeOf(null == a ? null : a)];
-    if (!f && (f = clojure.browser.net.transmit._, !f)) {
-      throw cljs.core.missing_protocol.call(null, "IConnection.transmit", a);
-    }
-    return f.call(null, a, b, c, d, e);
-  }, f = function(a, b, c, d, e, f) {
-    if (a ? a.clojure$browser$net$IConnection$transmit$arity$6 : a) {
-      return a.clojure$browser$net$IConnection$transmit$arity$6(a, b, c, d, e, f);
-    }
-    var p;
-    p = clojure.browser.net.transmit[goog.typeOf(null == a ? null : a)];
-    if (!p && (p = clojure.browser.net.transmit._, !p)) {
-      throw cljs.core.missing_protocol.call(null, "IConnection.transmit", a);
-    }
-    return p.call(null, a, b, c, d, e, f);
-  }, a = function(a, h, k, l, m, n) {
-    switch(arguments.length) {
-      case 2:
-        return b.call(this, a, h);
-      case 3:
-        return c.call(this, a, h, k);
-      case 4:
-        return d.call(this, a, h, k, l);
-      case 5:
-        return e.call(this, a, h, k, l, m);
-      case 6:
-        return f.call(this, a, h, k, l, m, n);
-    }
-    throw Error("Invalid arity: " + arguments.length);
-  };
-  a.cljs$core$IFn$_invoke$arity$2 = b;
-  a.cljs$core$IFn$_invoke$arity$3 = c;
-  a.cljs$core$IFn$_invoke$arity$4 = d;
-  a.cljs$core$IFn$_invoke$arity$5 = e;
-  a.cljs$core$IFn$_invoke$arity$6 = f;
-  return a;
-}();
-clojure.browser.net.close = function(a) {
-  if (a ? a.clojure$browser$net$IConnection$close$arity$1 : a) {
-    return a.clojure$browser$net$IConnection$close$arity$1(a);
-  }
-  var b;
-  b = clojure.browser.net.close[goog.typeOf(null == a ? null : a)];
-  if (!b && (b = clojure.browser.net.close._, !b)) {
-    throw cljs.core.missing_protocol.call(null, "IConnection.close", a);
-  }
-  return b.call(null, a);
-};
-goog.net.XhrIo.prototype.clojure$browser$event$IEventType$ = !0;
-goog.net.XhrIo.prototype.clojure$browser$event$IEventType$event_types$arity$1 = function(a) {
-  return cljs.core.into.call(null, cljs.core.PersistentArrayMap.EMPTY, cljs.core.map.call(null, function(a) {
-    return function(a) {
-      var b = cljs.core.nth.call(null, a, 0, null);
-      a = cljs.core.nth.call(null, a, 1, null);
-      return new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.keyword.call(null, b.toLowerCase()), a], null);
-    };
-  }(this), cljs.core.merge.call(null, cljs.core.js__GT_clj.call(null, goog.net.EventType))));
-};
-goog.net.XhrIo.prototype.clojure$browser$net$IConnection$ = !0;
-goog.net.XhrIo.prototype.clojure$browser$net$IConnection$transmit$arity$2 = function(a, b) {
-  return clojure.browser.net.transmit.call(null, this, b, "GET", null, null, clojure.browser.net._STAR_timeout_STAR_);
-};
-goog.net.XhrIo.prototype.clojure$browser$net$IConnection$transmit$arity$3 = function(a, b, c) {
-  return clojure.browser.net.transmit.call(null, this, b, c, null, null, clojure.browser.net._STAR_timeout_STAR_);
-};
-goog.net.XhrIo.prototype.clojure$browser$net$IConnection$transmit$arity$4 = function(a, b, c, d) {
-  return clojure.browser.net.transmit.call(null, this, b, c, d, null, clojure.browser.net._STAR_timeout_STAR_);
-};
-goog.net.XhrIo.prototype.clojure$browser$net$IConnection$transmit$arity$5 = function(a, b, c, d, e) {
-  return clojure.browser.net.transmit.call(null, this, b, c, d, e, clojure.browser.net._STAR_timeout_STAR_);
-};
-goog.net.XhrIo.prototype.clojure$browser$net$IConnection$transmit$arity$6 = function(a, b, c, d, e, f) {
-  this.setTimeoutInterval(f);
-  return this.send(b, c, d, e);
-};
-clojure.browser.net.xpc_config_fields = cljs.core.into.call(null, cljs.core.PersistentArrayMap.EMPTY, cljs.core.map.call(null, function(a) {
-  var b = cljs.core.nth.call(null, a, 0, null);
-  a = cljs.core.nth.call(null, a, 1, null);
-  return new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.keyword.call(null, b.toLowerCase()), a], null);
-}, cljs.core.js__GT_clj.call(null, goog.net.xpc.CfgFields)));
-clojure.browser.net.xhr_connection = function() {
-  return new goog.net.XhrIo;
-};
-clojure.browser.net.ICrossPageChannel = function() {
-  return{};
-}();
-clojure.browser.net.register_service = function() {
-  var a = null, b = function(a, b, c) {
-    if (a ? a.clojure$browser$net$ICrossPageChannel$register_service$arity$3 : a) {
-      return a.clojure$browser$net$ICrossPageChannel$register_service$arity$3(a, b, c);
-    }
-    var g;
-    g = clojure.browser.net.register_service[goog.typeOf(null == a ? null : a)];
-    if (!g && (g = clojure.browser.net.register_service._, !g)) {
-      throw cljs.core.missing_protocol.call(null, "ICrossPageChannel.register-service", a);
-    }
-    return g.call(null, a, b, c);
-  }, c = function(a, b, c, g) {
-    if (a ? a.clojure$browser$net$ICrossPageChannel$register_service$arity$4 : a) {
-      return a.clojure$browser$net$ICrossPageChannel$register_service$arity$4(a, b, c, g);
-    }
-    var h;
-    h = clojure.browser.net.register_service[goog.typeOf(null == a ? null : a)];
-    if (!h && (h = clojure.browser.net.register_service._, !h)) {
-      throw cljs.core.missing_protocol.call(null, "ICrossPageChannel.register-service", a);
-    }
-    return h.call(null, a, b, c, g);
-  }, a = function(a, e, f, g) {
-    switch(arguments.length) {
-      case 3:
-        return b.call(this, a, e, f);
-      case 4:
-        return c.call(this, a, e, f, g);
-    }
-    throw Error("Invalid arity: " + arguments.length);
-  };
-  a.cljs$core$IFn$_invoke$arity$3 = b;
-  a.cljs$core$IFn$_invoke$arity$4 = c;
-  return a;
-}();
-goog.net.xpc.CrossPageChannel.prototype.clojure$browser$net$IConnection$ = !0;
-goog.net.xpc.CrossPageChannel.prototype.clojure$browser$net$IConnection$connect$arity$1 = function(a) {
-  return clojure.browser.net.connect.call(null, this, null);
-};
-goog.net.xpc.CrossPageChannel.prototype.clojure$browser$net$IConnection$connect$arity$2 = function(a, b) {
-  return this.connect(b);
-};
-goog.net.xpc.CrossPageChannel.prototype.clojure$browser$net$IConnection$connect$arity$3 = function(a, b, c) {
-  return clojure.browser.net.connect.call(null, this, b, c, document.body);
-};
-goog.net.xpc.CrossPageChannel.prototype.clojure$browser$net$IConnection$connect$arity$4 = function(a, b, c, d) {
-  this.createPeerIframe(d, c);
-  return this.connect(b);
-};
-goog.net.xpc.CrossPageChannel.prototype.clojure$browser$net$IConnection$transmit$arity$3 = function(a, b, c) {
-  return this.send(cljs.core.name.call(null, b), c);
-};
-goog.net.xpc.CrossPageChannel.prototype.clojure$browser$net$IConnection$close$arity$1 = function(a) {
-  return this.close();
-};
-goog.net.xpc.CrossPageChannel.prototype.clojure$browser$net$ICrossPageChannel$ = !0;
-goog.net.xpc.CrossPageChannel.prototype.clojure$browser$net$ICrossPageChannel$register_service$arity$3 = function(a, b, c) {
-  return clojure.browser.net.register_service.call(null, this, b, c, !1);
-};
-goog.net.xpc.CrossPageChannel.prototype.clojure$browser$net$ICrossPageChannel$register_service$arity$4 = function(a, b, c, d) {
-  return this.registerService(cljs.core.name.call(null, b), c, d);
-};
-clojure.browser.net.xpc_connection = function() {
-  var a = null, b = function() {
-    var a = (new goog.Uri(window.location.href)).getParameterValue("xpc");
-    return cljs.core.truth_(a) ? new goog.net.xpc.CrossPageChannel(goog.json.parse(a)) : null;
-  }, c = function(a) {
-    return new goog.net.xpc.CrossPageChannel(cljs.core.reduce.call(null, function(a, b) {
-      var c = cljs.core.nth.call(null, b, 0, null), d = cljs.core.nth.call(null, b, 1, null), c = cljs.core.get.call(null, clojure.browser.net.xpc_config_fields, c);
-      cljs.core.truth_(c) && (a[c] = d);
-      return a;
-    }, {}, a));
-  }, a = function(a) {
-    switch(arguments.length) {
-      case 0:
-        return b.call(this);
-      case 1:
-        return c.call(this, a);
-    }
-    throw Error("Invalid arity: " + arguments.length);
-  };
-  a.cljs$core$IFn$_invoke$arity$0 = b;
-  a.cljs$core$IFn$_invoke$arity$1 = c;
-  return a;
-}();
-clojure.browser.net.IWebSocket = function() {
-  return{};
-}();
-clojure.browser.net.open_QMARK_ = function(a) {
-  if (a ? a.clojure$browser$net$IWebSocket$open_QMARK_$arity$1 : a) {
-    return a.clojure$browser$net$IWebSocket$open_QMARK_$arity$1(a);
-  }
-  var b;
-  b = clojure.browser.net.open_QMARK_[goog.typeOf(null == a ? null : a)];
-  if (!b && (b = clojure.browser.net.open_QMARK_._, !b)) {
-    throw cljs.core.missing_protocol.call(null, "IWebSocket.open?", a);
-  }
-  return b.call(null, a);
-};
-goog.net.WebSocket.prototype.clojure$browser$event$IEventType$ = !0;
-goog.net.WebSocket.prototype.clojure$browser$event$IEventType$event_types$arity$1 = function(a) {
-  return cljs.core.into.call(null, cljs.core.PersistentArrayMap.EMPTY, cljs.core.map.call(null, function(a) {
-    return function(a) {
-      var b = cljs.core.nth.call(null, a, 0, null);
-      a = cljs.core.nth.call(null, a, 1, null);
-      return new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.keyword.call(null, b.toLowerCase()), a], null);
-    };
-  }(this), cljs.core.merge.call(null, cljs.core.js__GT_clj.call(null, goog.net.WebSocket.EventType))));
-};
-goog.net.WebSocket.prototype.clojure$browser$net$IConnection$ = !0;
-goog.net.WebSocket.prototype.clojure$browser$net$IConnection$connect$arity$2 = function(a, b) {
-  return clojure.browser.net.connect.call(null, this, b, null);
-};
-goog.net.WebSocket.prototype.clojure$browser$net$IConnection$connect$arity$3 = function(a, b, c) {
-  return this.open(b, c);
-};
-goog.net.WebSocket.prototype.clojure$browser$net$IConnection$transmit$arity$2 = function(a, b) {
-  return this.send(b);
-};
-goog.net.WebSocket.prototype.clojure$browser$net$IConnection$close$arity$1 = function(a) {
-  return this.close(cljs.core.List.EMPTY);
-};
-goog.net.WebSocket.prototype.clojure$browser$net$IWebSocket$ = !0;
-goog.net.WebSocket.prototype.clojure$browser$net$IWebSocket$open_QMARK_$arity$1 = function(a) {
-  return this.isOpen(cljs.core.List.EMPTY);
-};
-clojure.browser.net.websocket_connection = function() {
-  var a = null, b = function() {
-    return a.call(null, null, null);
-  }, c = function(b) {
-    return a.call(null, b, null);
-  }, d = function(a, b) {
-    return new goog.net.WebSocket(a, b);
-  }, a = function(a, f) {
-    switch(arguments.length) {
-      case 0:
-        return b.call(this);
-      case 1:
-        return c.call(this, a);
-      case 2:
-        return d.call(this, a, f);
-    }
-    throw Error("Invalid arity: " + arguments.length);
-  };
-  a.cljs$core$IFn$_invoke$arity$0 = b;
-  a.cljs$core$IFn$_invoke$arity$1 = c;
-  a.cljs$core$IFn$_invoke$arity$2 = d;
-  return a;
-}();
-job_streamer.console.api = {};
-job_streamer.console.api.control_bus_url = document.querySelector("meta[name\x3dcontrol-bus-url]").getAttribute("content");
-job_streamer.console.api.url_for = function(a) {
-  return cljs.core.truth_(goog.string.startsWith(a, "/")) ? [cljs.core.str(job_streamer.console.api.control_bus_url), cljs.core.str(a)].join("") : a;
-};
-job_streamer.console.api.handle_each_type = function(a, b, c) {
-  return cljs.core.fn_QMARK_.call(null, a) ? a.call(null, b) : console.error([cljs.core.str(goog.net.ErrorCode.getDebugMessage(c.getLastErrorCode())), cljs.core.str(" from "), cljs.core.str(c.getLastUri())].join(""));
-};
-job_streamer.console.api.request = function() {
-  var a = null, b = function(b) {
-    return a.call(null, b, new cljs.core.Keyword(null, "GET", "GET", 1736591026), null, cljs.core.PersistentArrayMap.EMPTY);
-  }, c = function(b, c) {
-    return a.call(null, b, new cljs.core.Keyword(null, "GET", "GET", 1736591026), null, c);
-  }, d = function(b, c, d) {
-    return a.call(null, b, c, null, d);
-  }, e = function(a, b, c, d) {
-    var e = cljs.core.seq_QMARK_.call(null, d) ? cljs.core.apply.call(null, cljs.core.hash_map, d) : d, m = cljs.core.get.call(null, e, new cljs.core.Keyword(null, "format", "format", -1306924766)), n = cljs.core.get.call(null, e, new cljs.core.Keyword(null, "error-handler", "error-handler", -484945776)), p = cljs.core.get.call(null, e, new cljs.core.Keyword(null, "handler", "handler", -195596612)), q = clojure.browser.net.xhr_connection.call(null);
-    cljs.core.truth_(p) && goog.events.listen(q, goog.net.EventType.SUCCESS, function(a, b, c, d, e, f) {
-      return function(b) {
-        b = cljs.reader.read_string.call(null, a.getResponseText());
-        return f.call(null, b);
-      };
-    }(q, d, e, m, n, p));
-    cljs.core.truth_(n) && goog.events.listen(q, goog.net.EventType.ERROR, function(a, b, c, d, e, f) {
-      return function(b) {
-        b = cljs.reader.read_string.call(null, a.getResponseText());
-        if (cljs.core.fn_QMARK_.call(null, e)) {
-          return e.call(null, b, a.getLastErrorCode());
-        }
-        if (cljs.core.map_QMARK_.call(null, e)) {
-          var c = cljs.core._EQ_, d = a.getLastErrorCode();
-          if (cljs.core.truth_(c.call(null, goog.net.ErrorCode.ACCESS_DENIED, d))) {
-            return job_streamer.console.api.handle_each_type.call(null, (new cljs.core.Keyword(null, "access-denied", "access-denied", 959449406)).cljs$core$IFn$_invoke$arity$1(e), b, a);
-          }
-          if (cljs.core.truth_(c.call(null, goog.net.ErrorCode.FILE_NOT_FOUND, d))) {
-            return job_streamer.console.api.handle_each_type.call(null, (new cljs.core.Keyword(null, "file-not-found", "file-not-found", -65398940)).cljs$core$IFn$_invoke$arity$1(e), b, a);
-          }
-          if (cljs.core.truth_(c.call(null, goog.net.ErrorCode.CUSTOM_ERROR, d))) {
-            return job_streamer.console.api.handle_each_type.call(null, (new cljs.core.Keyword(null, "custom-error", "custom-error", -1565161123)).cljs$core$IFn$_invoke$arity$1(e), b, a);
-          }
-          if (cljs.core.truth_(c.call(null, goog.net.ErrorCode.EXCEPTION, d))) {
-            return job_streamer.console.api.handle_each_type.call(null, (new cljs.core.Keyword(null, "exception", "exception", -335277064)).cljs$core$IFn$_invoke$arity$1(e), b, a);
-          }
-          if (cljs.core.truth_(c.call(null, goog.net.ErrorCode.HTTP_ERROR, d))) {
-            return job_streamer.console.api.handle_each_type.call(null, (new cljs.core.Keyword(null, "http-error", "http-error", -1040049553)).cljs$core$IFn$_invoke$arity$1(e), b, a);
-          }
-          if (cljs.core.truth_(c.call(null, goog.net.ErrorCode.ABORT, d))) {
-            return job_streamer.console.api.handle_each_type.call(null, (new cljs.core.Keyword(null, "abort", "abort", 521193198)).cljs$core$IFn$_invoke$arity$1(e), b, a);
-          }
-          if (cljs.core.truth_(c.call(null, goog.net.ErrorCode.TIMEOUT, d))) {
-            return job_streamer.console.api.handle_each_type.call(null, (new cljs.core.Keyword(null, "timeout", "timeout", -318625318)).cljs$core$IFn$_invoke$arity$1(e), b, a);
-          }
-          if (cljs.core.truth_(c.call(null, goog.net.ErrorCode.OFFLINE, d))) {
-            return job_streamer.console.api.handle_each_type.call(null, (new cljs.core.Keyword(null, "offline", "offline", -107631935)).cljs$core$IFn$_invoke$arity$1(e), b, a);
-          }
-          throw Error([cljs.core.str("No matching clause: "), cljs.core.str(d)].join(""));
-        }
-        return null;
-      };
-    }(q, d, e, m, n, p));
-    return q.send(job_streamer.console.api.url_for.call(null, a), cljs.core.name.call(null, b).toLowerCase(), c, function() {
-      switch(m instanceof cljs.core.Keyword ? m.fqn : null) {
-        case "xml":
-          return cljs.core.clj__GT_js.call(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "content-type", "content-type", -508222634), "application/xml"], null));
-        default:
-          return cljs.core.clj__GT_js.call(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "content-type", "content-type", -508222634), "application/edn"], null));
-      }
-    }());
-  }, a = function(a, g, h, k) {
-    switch(arguments.length) {
-      case 1:
-        return b.call(this, a);
-      case 2:
-        return c.call(this, a, g);
-      case 3:
-        return d.call(this, a, g, h);
-      case 4:
-        return e.call(this, a, g, h, k);
-    }
-    throw Error("Invalid arity: " + arguments.length);
-  };
-  a.cljs$core$IFn$_invoke$arity$1 = b;
-  a.cljs$core$IFn$_invoke$arity$2 = c;
-  a.cljs$core$IFn$_invoke$arity$3 = d;
-  a.cljs$core$IFn$_invoke$arity$4 = e;
-  return a;
-}();
 var bouncer = {core:{}};
 bouncer.core.build_multi_step = function() {
   var a = null, b = function(b, c) {
@@ -78661,8 +78732,8 @@ job_streamer.console.components.job_settings.delete_job = function(a) {
     return location.href = "#/";
   }], null));
 };
-var ufv___116262 = schema.utils.use_fn_validation, output_schema116242_116263 = schema.core.Any, input_schema116243_116264 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "app", "app", 1079569820, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker116244_116265 = schema.core.checker.call(null, input_schema116243_116264), 
-output_checker116245_116266 = schema.core.checker.call(null, output_schema116242_116263);
+var ufv___29220 = schema.utils.use_fn_validation, output_schema29200_29221 = schema.core.Any, input_schema29201_29222 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "app", "app", 1079569820, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker29202_29223 = schema.core.checker.call(null, input_schema29201_29222), 
+output_checker29203_29224 = schema.core.checker.call(null, output_schema29200_29221);
 job_streamer.console.components.job_settings.job_settings_view = function(a, b, c, d, e) {
   return function g(h, k) {
     var l = a.get_cell();
@@ -78675,51 +78746,51 @@ job_streamer.console.components.job_settings.job_settings_view = function(a, b, 
     }
     m = function() {
       for (;;) {
-        return "undefined" === typeof job_streamer.console.components.job_settings.t116255 && (job_streamer.console.components.job_settings.t116255 = function(a, b, c, d, e, g, h, k, l, m, n, B) {
-          this.output_checker116245 = a;
-          this.owner = b;
+        return "undefined" === typeof job_streamer.console.components.job_settings.t29213 && (job_streamer.console.components.job_settings.t29213 = function(a, b, c, d, e, g, h, k, l, m, n, B) {
+          this.owner = a;
+          this.input_checker29202 = b;
           this.job_settings_view = c;
-          this.input_schema116243 = d;
-          this.output_schema116242 = e;
-          this.G__116247 = g;
-          this.input_checker116244 = h;
-          this.G__116246 = k;
+          this.output_checker29203 = d;
+          this.G__29205 = e;
+          this.input_schema29201 = g;
+          this.validate__10767__auto__ = h;
+          this.output_schema29200 = k;
           this.app = l;
           this.ufv__ = m;
-          this.validate__11396__auto__ = n;
-          this.meta116256 = B;
+          this.G__29204 = n;
+          this.meta29214 = B;
           this.cljs$lang$protocol_mask$partition1$ = 0;
           this.cljs$lang$protocol_mask$partition0$ = 393216;
-        }, job_streamer.console.components.job_settings.t116255.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.job_settings.t116255.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
+        }, job_streamer.console.components.job_settings.t29213.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.job_settings.t29213.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
             return "job-settings-view";
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_settings.t116255.prototype.om$core$IRender$ = !0, job_streamer.console.components.job_settings.t116255.prototype.om$core$IRender$render$arity$1 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_settings.t29213.prototype.om$core$IRender$ = !0, job_streamer.console.components.job_settings.t29213.prototype.om$core$IRender$render$arity$1 = function(a, b, c, d, e, g) {
           return function(h) {
             var k = this;
             return React.DOM.div({className:"ui segment"}, React.DOM.div({className:"ui top attached label"}, "Danger Zone"), React.DOM.div({className:"content"}, React.DOM.h4({className:"ui header"}, "Delete this job"), "Once you delete a job, there is no going back.", React.DOM.button({className:"ui red button", type:"button", onClick:function(a, b, c, d, e, g, h) {
               return function(a) {
-                return job_streamer.console.components.job_settings.delete_job.call(null, (new cljs.core.Keyword(null, "job-id", "job-id", 651349542)).cljs$core$IFn$_invoke$arity$1(k.app));
+                return job_streamer.console.components.job_settings.delete_job.call(null, (new cljs.core.Keyword(null, "job-name", "job-name", 607418212)).cljs$core$IFn$_invoke$arity$1(k.app));
               };
             }(this, a, b, c, d, e, g)}, "Delete this job")));
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_settings.t116255.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_settings.t29213.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
-            return this.meta116256;
+            return this.meta29214;
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_settings.t116255.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_settings.t29213.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
           return function(a, b) {
-            return new job_streamer.console.components.job_settings.t116255(this.output_checker116245, this.owner, this.job_settings_view, this.input_schema116243, this.output_schema116242, this.G__116247, this.input_checker116244, this.G__116246, this.app, this.ufv__, this.validate__11396__auto__, b);
+            return new job_streamer.console.components.job_settings.t29213(this.owner, this.input_checker29202, this.job_settings_view, this.output_checker29203, this.G__29205, this.input_schema29201, this.validate__10767__auto__, this.output_schema29200, this.app, this.ufv__, this.G__29204, b);
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_settings.t116255.cljs$lang$type = !0, job_streamer.console.components.job_settings.t116255.cljs$lang$ctorStr = "job-streamer.console.components.job-settings/t116255", job_streamer.console.components.job_settings.t116255.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_settings.t29213.cljs$lang$type = !0, job_streamer.console.components.job_settings.t29213.cljs$lang$ctorStr = "job-streamer.console.components.job-settings/t29213", job_streamer.console.components.job_settings.t29213.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
           return function(a, b, c) {
-            return cljs.core._write.call(null, b, "job-streamer.console.components.job-settings/t116255");
+            return cljs.core._write.call(null, b, "job-streamer.console.components.job-settings/t29213");
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_settings.__GT_t116255 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_settings.__GT_t29213 = function(a, b, c, d, e, g) {
           return function(a, b, c, d, e, g, h, k, l, m, n, p) {
-            return new job_streamer.console.components.job_settings.t116255(a, b, c, d, e, g, h, k, l, m, n, p);
+            return new job_streamer.console.components.job_settings.t29213(a, b, c, d, e, g, h, k, l, m, n, p);
           };
-        }(l, a, b, c, d, e)), new job_streamer.console.components.job_settings.t116255(e, k, g, c, b, k, d, h, h, a, l, null);
+        }(l, a, b, c, d, e)), new job_streamer.console.components.job_settings.t29213(k, d, g, e, k, c, l, b, h, a, h, null);
       }
     }();
     if (cljs.core.truth_(l) && (n = e.call(null, m), cljs.core.truth_(n))) {
@@ -78728,8 +78799,8 @@ job_streamer.console.components.job_settings.job_settings_view = function(a, b, 
     }
     return m;
   };
-}(ufv___116262, output_schema116242_116263, input_schema116243_116264, input_checker116244_116265, output_checker116245_116266);
-schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.job_settings.job_settings_view), schema.core.make_fn_schema.call(null, output_schema116242_116263, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema116243_116264], null)));
+}(ufv___29220, output_schema29200_29221, input_schema29201_29222, input_checker29202_29223, output_checker29203_29224);
+schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.job_settings.job_settings_view), schema.core.make_fn_schema.call(null, output_schema29200_29221, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema29201_29222], null)));
 job_streamer.console.components.job_settings.__GT_job_settings_view = function() {
   var a = null, b = function(a) {
     return om.core.build.call(null, job_streamer.console.components.job_settings.job_settings_view, a);
@@ -79153,7 +79224,7 @@ job_streamer.console.components.job_detail.render_job_structure = function(a, b)
         return function(a, b, c, d) {
           return function() {
             var b = null, c = function() {
-              var a = [null, null, null, null, null, null, null, null];
+              var a = [null, null, null, null, null, null, null, null, null, null];
               a[0] = b;
               a[1] = 1;
               return a;
@@ -79202,10 +79273,12 @@ job_streamer.console.components.job_detail.render_job_structure = function(a, b)
           return function(a) {
             var c = a[1];
             if (2 === c) {
-              var c = a[2], e = (new cljs.core.Keyword("job", "edn-notation", "job/edn-notation", -630511151)).cljs$core$IFn$_invoke$arity$1(c), e = cljs.reader.read_string.call(null, e), e = job_streamer.console.blocks.job__GT_xml.call(null, e), c = om.core.set_state_BANG_.call(null, b, new cljs.core.Keyword(null, "job", "job", 850873087), c), e = [cljs.core.str("\x3cxml\x3e"), cljs.core.str(e), cljs.core.str("\x3c/xml\x3e")].join(""), e = Blockly.Xml.textToDom.call(null, e), e = Blockly.Xml.domToWorkspace.call(null, 
-              Blockly.mainWorkspace, e);
-              a[7] = c;
-              return cljs.core.async.impl.ioc_helpers.return_chan.call(null, a, e);
+              var e = a[2], c = (new cljs.core.Keyword("job", "edn-notation", "job/edn-notation", -630511151)).cljs$core$IFn$_invoke$arity$1(e), c = cljs.reader.read_string.call(null, c), f = job_streamer.console.blocks.job__GT_xml.call(null, c), c = cljs.core.println.call(null, "\x3d\x3d\x3d\x3d\x3d\x3d\x3d\x3d\x3d\x3d\x3d\x3d\x3d\x3d\x3d\x3d\x3d\x3d"), g = cljs.core.println.call(null, f), e = om.core.set_state_BANG_.call(null, b, new cljs.core.Keyword(null, "job", "job", 850873087), e), f = [cljs.core.str("\x3cxml\x3e"), 
+              cljs.core.str(f), cljs.core.str("\x3c/xml\x3e")].join(""), f = Blockly.Xml.textToDom.call(null, f), f = Blockly.Xml.domToWorkspace.call(null, Blockly.mainWorkspace, f);
+              a[7] = g;
+              a[8] = e;
+              a[9] = c;
+              return cljs.core.async.impl.ioc_helpers.return_chan.call(null, a, f);
             }
             return 1 === c ? cljs.core.async.impl.ioc_helpers.take_BANG_.call(null, a, 2, d) : null;
           };
@@ -79232,15 +79305,15 @@ job_streamer.console.components.job_detail.status_color = function(a) {
     case "batch-status/completed":
       return "green";
     default:
-      throw Error([cljs.core.str("No matching clause: "), cljs.core.str(a)].join(""));;
+      return "";
   }
 };
 job_streamer.console.components.job_detail.breadcrumb_elements = new cljs.core.PersistentArrayMap(null, 6, [new cljs.core.Keyword(null, "jobs", "jobs", -313607120), new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "name", "name", 1843675177), "Jobs", new cljs.core.Keyword(null, "href", "href", -793805698), "#/"], null), new cljs.core.Keyword(null, "jobs.new", "jobs.new", 617188098), new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "name", "name", 1843675177), 
 "New", new cljs.core.Keyword(null, "href", "href", -793805698), "#/jobs/new"], null), new cljs.core.Keyword(null, "jobs.detail", "jobs.detail", -2009404242), new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "name", "name", 1843675177), "Job: %s", new cljs.core.Keyword(null, "href", "href", -793805698), "#/job/%s"], null), new cljs.core.Keyword(null, "jobs.detail.current.edit", "jobs.detail.current.edit", -949837139), new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, 
 "name", "name", 1843675177), "Edit", new cljs.core.Keyword(null, "href", "href", -793805698), "#/job/%s/edit"], null), new cljs.core.Keyword(null, "jobs.detail.history", "jobs.detail.history", 1960402676), new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "name", "name", 1843675177), "History", new cljs.core.Keyword(null, "href", "href", -793805698), "#/job/%s/history"], null), new cljs.core.Keyword(null, "jobs.detail.settings", "jobs.detail.settings", 147483705), new cljs.core.PersistentArrayMap(null, 
 2, [new cljs.core.Keyword(null, "name", "name", 1843675177), "Settings", new cljs.core.Keyword(null, "href", "href", -793805698), "#/job/%s/settings"], null)], null);
-var ufv___115709 = schema.utils.use_fn_validation, output_schema115691_115710 = schema.core.Any, input_schema115692_115711 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "mode", "mode", -2000032078, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker115693_115712 = schema.core.checker.call(null, input_schema115692_115711), 
-output_checker115694_115713 = schema.core.checker.call(null, output_schema115691_115710);
+var ufv___34045 = schema.utils.use_fn_validation, output_schema34027_34046 = schema.core.Any, input_schema34028_34047 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "mode", "mode", -2000032078, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker34029_34048 = schema.core.checker.call(null, input_schema34028_34047), 
+output_checker34030_34049 = schema.core.checker.call(null, output_schema34027_34046);
 job_streamer.console.components.job_detail.breadcrumb_view = function(a, b, c, d, e) {
   return function g(h, k) {
     var l = a.get_cell();
@@ -79253,26 +79326,26 @@ job_streamer.console.components.job_detail.breadcrumb_view = function(a, b, c, d
     }
     m = function() {
       for (;;) {
-        return "undefined" === typeof job_streamer.console.components.job_detail.t115703 && (job_streamer.console.components.job_detail.t115703 = function(a, b, c, d, e, g, h, k, l, m, n, B) {
+        return "undefined" === typeof job_streamer.console.components.job_detail.t34039 && (job_streamer.console.components.job_detail.t34039 = function(a, b, c, d, e, g, h, k, l, m, n, B) {
           this.owner = a;
-          this.output_checker115694 = b;
-          this.input_schema115692 = c;
-          this.mode = d;
-          this.breadcrumb_view = e;
-          this.input_checker115693 = g;
-          this.G__115695 = h;
-          this.ufv__ = k;
-          this.output_schema115691 = l;
-          this.G__115696 = m;
-          this.validate__11396__auto__ = n;
-          this.meta115704 = B;
+          this.output_checker34030 = b;
+          this.input_schema34028 = c;
+          this.output_schema34027 = d;
+          this.mode = e;
+          this.breadcrumb_view = g;
+          this.validate__10767__auto__ = h;
+          this.G__34031 = k;
+          this.ufv__ = l;
+          this.input_checker34029 = m;
+          this.G__34032 = n;
+          this.meta34040 = B;
           this.cljs$lang$protocol_mask$partition1$ = 0;
           this.cljs$lang$protocol_mask$partition0$ = 393216;
-        }, job_streamer.console.components.job_detail.t115703.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.job_detail.t115703.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
+        }, job_streamer.console.components.job_detail.t34039.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.job_detail.t34039.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
             return "breadcrumb-view";
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t115703.prototype.om$core$IRenderState$ = !0, job_streamer.console.components.job_detail.t115703.prototype.om$core$IRenderState$render_state$arity$2 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t34039.prototype.om$core$IRenderState$ = !0, job_streamer.console.components.job_detail.t34039.prototype.om$core$IRenderState$render_state$arity$2 = function(a, b, c, d, e, g) {
           return function(a, b) {
             var c = this, d = cljs.core.seq_QMARK_.call(null, b) ? cljs.core.apply.call(null, cljs.core.hash_map, b) : b, e = cljs.core.get.call(null, d, new cljs.core.Keyword(null, "job-name", "job-name", 607418212)), d = cljs.core.drop_last.call(null, cljs.core.interleave.call(null, function() {
               for (var a = 1, b = cljs.core.PersistentVector.EMPTY;;) {
@@ -79290,23 +79363,23 @@ job_streamer.console.components.job_detail.breadcrumb_view = function(a, b, c, d
             return cljs.core.apply.call(null, React.DOM.div, cljs.core.map_QMARK_.call(null, d) ? sablono.interpreter.attributes.call(null, sablono.util.merge_with_class.call(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "class", "class", -2030961996), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, ["ui", "breadcrumb"], null)], null), d)) : {className:"ui breadcrumb"}, cljs.core.remove.call(null, cljs.core.nil_QMARK_, cljs.core.map_QMARK_.call(null, 
             d) ? cljs.core.PersistentVector.EMPTY : new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [sablono.interpreter.interpret.call(null, d)], null)));
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t115703.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t34039.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
-            return this.meta115704;
+            return this.meta34040;
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t115703.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t34039.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
           return function(a, b) {
-            return new job_streamer.console.components.job_detail.t115703(this.owner, this.output_checker115694, this.input_schema115692, this.mode, this.breadcrumb_view, this.input_checker115693, this.G__115695, this.ufv__, this.output_schema115691, this.G__115696, this.validate__11396__auto__, b);
+            return new job_streamer.console.components.job_detail.t34039(this.owner, this.output_checker34030, this.input_schema34028, this.output_schema34027, this.mode, this.breadcrumb_view, this.validate__10767__auto__, this.G__34031, this.ufv__, this.input_checker34029, this.G__34032, b);
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t115703.cljs$lang$type = !0, job_streamer.console.components.job_detail.t115703.cljs$lang$ctorStr = "job-streamer.console.components.job-detail/t115703", job_streamer.console.components.job_detail.t115703.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t34039.cljs$lang$type = !0, job_streamer.console.components.job_detail.t34039.cljs$lang$ctorStr = "job-streamer.console.components.job-detail/t34039", job_streamer.console.components.job_detail.t34039.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
           return function(a, b, c) {
-            return cljs.core._write.call(null, b, "job-streamer.console.components.job-detail/t115703");
+            return cljs.core._write.call(null, b, "job-streamer.console.components.job-detail/t34039");
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.__GT_t115703 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.__GT_t34039 = function(a, b, c, d, e, g) {
           return function(a, b, c, d, e, g, h, k, l, m, n, p) {
-            return new job_streamer.console.components.job_detail.t115703(a, b, c, d, e, g, h, k, l, m, n, p);
+            return new job_streamer.console.components.job_detail.t34039(a, b, c, d, e, g, h, k, l, m, n, p);
           };
-        }(l, a, b, c, d, e)), new job_streamer.console.components.job_detail.t115703(k, e, c, h, g, d, h, a, b, k, l, null);
+        }(l, a, b, c, d, e)), new job_streamer.console.components.job_detail.t34039(k, e, c, b, h, g, l, h, a, d, k, null);
       }
     }();
     if (cljs.core.truth_(l) && (n = e.call(null, m), cljs.core.truth_(n))) {
@@ -79315,8 +79388,8 @@ job_streamer.console.components.job_detail.breadcrumb_view = function(a, b, c, d
     }
     return m;
   };
-}(ufv___115709, output_schema115691_115710, input_schema115692_115711, input_checker115693_115712, output_checker115694_115713);
-schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.job_detail.breadcrumb_view), schema.core.make_fn_schema.call(null, output_schema115691_115710, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema115692_115711], null)));
+}(ufv___34045, output_schema34027_34046, input_schema34028_34047, input_checker34029_34048, output_checker34030_34049);
+schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.job_detail.breadcrumb_view), schema.core.make_fn_schema.call(null, output_schema34027_34046, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema34028_34047], null)));
 job_streamer.console.components.job_detail.__GT_breadcrumb_view = function() {
   var a = null, b = function(a) {
     return om.core.build.call(null, job_streamer.console.components.job_detail.breadcrumb_view, a);
@@ -79335,8 +79408,8 @@ job_streamer.console.components.job_detail.__GT_breadcrumb_view = function() {
   a.cljs$core$IFn$_invoke$arity$2 = c;
   return a;
 }();
-var ufv___115756 = schema.utils.use_fn_validation, output_schema115722_115757 = schema.core.Any, input_schema115723_115758 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "job", "job", -1803562682, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker115724_115759 = schema.core.checker.call(null, input_schema115723_115758), 
-output_checker115725_115760 = schema.core.checker.call(null, output_schema115722_115757);
+var ufv___34092 = schema.utils.use_fn_validation, output_schema34058_34093 = schema.core.Any, input_schema34059_34094 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "job", "job", -1803562682, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker34060_34095 = schema.core.checker.call(null, input_schema34059_34094), 
+output_checker34061_34096 = schema.core.checker.call(null, output_schema34058_34093);
 job_streamer.console.components.job_detail.job_edit_view = function(a, b, c, d, e) {
   return function g(h, k) {
     var l = a.get_cell();
@@ -79349,31 +79422,31 @@ job_streamer.console.components.job_detail.job_edit_view = function(a, b, c, d, 
     }
     m = function() {
       for (;;) {
-        return "undefined" === typeof job_streamer.console.components.job_detail.t115742 && (job_streamer.console.components.job_detail.t115742 = function(a, b, c, d, e, g, h, k, l, m, n, B) {
-          this.output_schema115722 = a;
-          this.owner = b;
-          this.input_checker115724 = c;
-          this.job = d;
-          this.output_checker115725 = e;
-          this.input_schema115723 = g;
-          this.G__115726 = h;
-          this.job_edit_view = k;
-          this.G__115727 = l;
-          this.ufv__ = m;
-          this.validate__11396__auto__ = n;
-          this.meta115743 = B;
+        return "undefined" === typeof job_streamer.console.components.job_detail.t34078 && (job_streamer.console.components.job_detail.t34078 = function(a, b, c, d, e, g, h, k, l, m, n, B) {
+          this.owner = a;
+          this.job = b;
+          this.input_schema34059 = c;
+          this.job_edit_view = d;
+          this.input_checker34060 = e;
+          this.output_checker34061 = g;
+          this.validate__10767__auto__ = h;
+          this.G__34063 = k;
+          this.ufv__ = l;
+          this.G__34062 = m;
+          this.output_schema34058 = n;
+          this.meta34079 = B;
           this.cljs$lang$protocol_mask$partition1$ = 0;
           this.cljs$lang$protocol_mask$partition0$ = 393216;
-        }, job_streamer.console.components.job_detail.t115742.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.job_detail.t115742.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
+        }, job_streamer.console.components.job_detail.t34078.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.job_detail.t34078.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
             return "job-edit-view";
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t115742.prototype.om$core$IDidMount$ = !0, job_streamer.console.components.job_detail.t115742.prototype.om$core$IDidMount$did_mount$arity$1 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t34078.prototype.om$core$IDidMount$ = !0, job_streamer.console.components.job_detail.t34078.prototype.om$core$IDidMount$did_mount$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
             Blockly.inject.call(null, document.getElementById("job-blocks-inner"), cljs.core.clj__GT_js.call(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "toolbox", "toolbox", 762819836), document.getElementById("job-toolbox")], null)));
             return cljs.core.truth_(this.job) ? (a = job_streamer.console.blocks.job__GT_xml.call(null, cljs.reader.read_string.call(null, (new cljs.core.Keyword("job", "edn-notation", "job/edn-notation", -630511151)).cljs$core$IFn$_invoke$arity$1(this.job))), Blockly.Xml.domToWorkspace.call(null, Blockly.mainWorkspace, Blockly.Xml.textToDom.call(null, [cljs.core.str("\x3cxml\x3e"), cljs.core.str(a), cljs.core.str("\x3c/xml\x3e")].join("")))) : null;
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t115742.prototype.om$core$IRenderState$ = !0, job_streamer.console.components.job_detail.t115742.prototype.om$core$IRenderState$render_state$arity$2 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t34078.prototype.om$core$IRenderState$ = !0, job_streamer.console.components.job_detail.t34078.prototype.om$core$IRenderState$render_state$arity$2 = function(a, b, c, d, e, g) {
           return function(h, k) {
             var l = this, m = cljs.core.seq_QMARK_.call(null, k) ? cljs.core.apply.call(null, cljs.core.hash_map, k) : k, n = cljs.core.get.call(null, m, new cljs.core.Keyword(null, "message", "message", -406056002)), B = cljs.core.truth_(n) ? new cljs.core.PersistentVector(null, 4, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div.ui.message", "div.ui.message", -654087095), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "class", "class", -2030961996), 
             (new cljs.core.Keyword(null, "class", "class", -2030961996)).cljs$core$IFn$_invoke$arity$1(n)], null), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div.header", "div.header", 1964513620), (new cljs.core.Keyword(null, "header", "header", 119441134)).cljs$core$IFn$_invoke$arity$1(n)], null), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div", "div", 1057191632), 
@@ -79391,23 +79464,23 @@ job_streamer.console.components.job_detail.job_edit_view = function(a, b, c, d, 
               };
             }(B, this, k, m, n, a, b, c, d, e, g)}, React.DOM.i({className:"save icon"}))))), React.DOM.div({id:"job-blocks-inner"})], null)));
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t115742.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t34078.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
-            return this.meta115743;
+            return this.meta34079;
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t115742.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t34078.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
           return function(a, b) {
-            return new job_streamer.console.components.job_detail.t115742(this.output_schema115722, this.owner, this.input_checker115724, this.job, this.output_checker115725, this.input_schema115723, this.G__115726, this.job_edit_view, this.G__115727, this.ufv__, this.validate__11396__auto__, b);
+            return new job_streamer.console.components.job_detail.t34078(this.owner, this.job, this.input_schema34059, this.job_edit_view, this.input_checker34060, this.output_checker34061, this.validate__10767__auto__, this.G__34063, this.ufv__, this.G__34062, this.output_schema34058, b);
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t115742.cljs$lang$type = !0, job_streamer.console.components.job_detail.t115742.cljs$lang$ctorStr = "job-streamer.console.components.job-detail/t115742", job_streamer.console.components.job_detail.t115742.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t34078.cljs$lang$type = !0, job_streamer.console.components.job_detail.t34078.cljs$lang$ctorStr = "job-streamer.console.components.job-detail/t34078", job_streamer.console.components.job_detail.t34078.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
           return function(a, b, c) {
-            return cljs.core._write.call(null, b, "job-streamer.console.components.job-detail/t115742");
+            return cljs.core._write.call(null, b, "job-streamer.console.components.job-detail/t34078");
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.__GT_t115742 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.__GT_t34078 = function(a, b, c, d, e, g) {
           return function(a, b, c, d, e, g, h, k, l, m, n, p) {
-            return new job_streamer.console.components.job_detail.t115742(a, b, c, d, e, g, h, k, l, m, n, p);
+            return new job_streamer.console.components.job_detail.t34078(a, b, c, d, e, g, h, k, l, m, n, p);
           };
-        }(l, a, b, c, d, e)), new job_streamer.console.components.job_detail.t115742(b, k, d, h, e, c, h, g, k, a, l, null);
+        }(l, a, b, c, d, e)), new job_streamer.console.components.job_detail.t34078(k, h, c, g, d, e, l, k, a, h, b, null);
       }
     }();
     if (cljs.core.truth_(l) && (n = e.call(null, m), cljs.core.truth_(n))) {
@@ -79416,8 +79489,8 @@ job_streamer.console.components.job_detail.job_edit_view = function(a, b, c, d, 
     }
     return m;
   };
-}(ufv___115756, output_schema115722_115757, input_schema115723_115758, input_checker115724_115759, output_checker115725_115760);
-schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.job_detail.job_edit_view), schema.core.make_fn_schema.call(null, output_schema115722_115757, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema115723_115758], null)));
+}(ufv___34092, output_schema34058_34093, input_schema34059_34094, input_checker34060_34095, output_checker34061_34096);
+schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.job_detail.job_edit_view), schema.core.make_fn_schema.call(null, output_schema34058_34093, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema34059_34094], null)));
 job_streamer.console.components.job_detail.__GT_job_edit_view = function() {
   var a = null, b = function(a) {
     return om.core.build.call(null, job_streamer.console.components.job_detail.job_edit_view, a);
@@ -79436,8 +79509,8 @@ job_streamer.console.components.job_detail.__GT_job_edit_view = function() {
   a.cljs$core$IFn$_invoke$arity$2 = c;
   return a;
 }();
-var ufv___115785 = schema.utils.use_fn_validation, output_schema115767_115786 = schema.core.Any, input_schema115768_115787 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "app", "app", 1079569820, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker115769_115788 = schema.core.checker.call(null, input_schema115768_115787), 
-output_checker115770_115789 = schema.core.checker.call(null, output_schema115767_115786);
+var ufv___34121 = schema.utils.use_fn_validation, output_schema34103_34122 = schema.core.Any, input_schema34104_34123 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "app", "app", 1079569820, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker34105_34124 = schema.core.checker.call(null, input_schema34104_34123), 
+output_checker34106_34125 = schema.core.checker.call(null, output_schema34103_34122);
 job_streamer.console.components.job_detail.job_new_view = function(a, b, c, d, e) {
   return function g(h, k) {
     var l = a.get_cell();
@@ -79450,26 +79523,26 @@ job_streamer.console.components.job_detail.job_new_view = function(a, b, c, d, e
     }
     m = function() {
       for (;;) {
-        return "undefined" === typeof job_streamer.console.components.job_detail.t115779 && (job_streamer.console.components.job_detail.t115779 = function(a, b, c, d, e, g, h, k, l, m, n, B) {
-          this.input_schema115768 = a;
-          this.owner = b;
-          this.G__115772 = c;
-          this.job_new_view = d;
-          this.output_checker115770 = e;
-          this.input_checker115769 = g;
-          this.output_schema115767 = h;
-          this.G__115771 = k;
-          this.app = l;
-          this.ufv__ = m;
-          this.validate__11396__auto__ = n;
-          this.meta115780 = B;
+        return "undefined" === typeof job_streamer.console.components.job_detail.t34115 && (job_streamer.console.components.job_detail.t34115 = function(a, b, c, d, e, g, h, k, l, m, n, B) {
+          this.owner = a;
+          this.job_new_view = b;
+          this.output_schema34103 = c;
+          this.output_checker34106 = d;
+          this.input_checker34105 = e;
+          this.G__34107 = g;
+          this.input_schema34104 = h;
+          this.validate__10767__auto__ = k;
+          this.G__34108 = l;
+          this.app = m;
+          this.ufv__ = n;
+          this.meta34116 = B;
           this.cljs$lang$protocol_mask$partition1$ = 0;
           this.cljs$lang$protocol_mask$partition0$ = 393216;
-        }, job_streamer.console.components.job_detail.t115779.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.job_detail.t115779.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
+        }, job_streamer.console.components.job_detail.t34115.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.job_detail.t34115.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
             return "job-new-view";
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t115779.prototype.om$core$IRenderState$ = !0, job_streamer.console.components.job_detail.t115779.prototype.om$core$IRenderState$render_state$arity$2 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t34115.prototype.om$core$IRenderState$ = !0, job_streamer.console.components.job_detail.t34115.prototype.om$core$IRenderState$render_state$arity$2 = function(a, b, c, d, e, g) {
           return function(a, b) {
             var c = cljs.core.seq_QMARK_.call(null, b) ? cljs.core.apply.call(null, cljs.core.hash_map, b) : b;
             cljs.core.get.call(null, c, new cljs.core.Keyword(null, "message", "message", -406056002));
@@ -79477,23 +79550,23 @@ job_streamer.console.components.job_detail.job_new_view = function(a, b, c, d, e
             return cljs.core.apply.call(null, React.DOM.div, cljs.core.map_QMARK_.call(null, c) ? sablono.interpreter.attributes.call(null, c) : null, cljs.core.remove.call(null, cljs.core.nil_QMARK_, cljs.core.map_QMARK_.call(null, c) ? new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [sablono.interpreter.interpret.call(null, om.core.build.call(null, job_streamer.console.components.job_detail.job_edit_view, (new cljs.core.Keyword(null, "job-name", "job-name", 607418212)).cljs$core$IFn$_invoke$arity$1(this.app)))], 
             null) : new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [sablono.interpreter.interpret.call(null, c), sablono.interpreter.interpret.call(null, om.core.build.call(null, job_streamer.console.components.job_detail.job_edit_view, (new cljs.core.Keyword(null, "job-name", "job-name", 607418212)).cljs$core$IFn$_invoke$arity$1(this.app)))], null)));
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t115779.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t34115.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
-            return this.meta115780;
+            return this.meta34116;
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t115779.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t34115.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
           return function(a, b) {
-            return new job_streamer.console.components.job_detail.t115779(this.input_schema115768, this.owner, this.G__115772, this.job_new_view, this.output_checker115770, this.input_checker115769, this.output_schema115767, this.G__115771, this.app, this.ufv__, this.validate__11396__auto__, b);
+            return new job_streamer.console.components.job_detail.t34115(this.owner, this.job_new_view, this.output_schema34103, this.output_checker34106, this.input_checker34105, this.G__34107, this.input_schema34104, this.validate__10767__auto__, this.G__34108, this.app, this.ufv__, b);
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t115779.cljs$lang$type = !0, job_streamer.console.components.job_detail.t115779.cljs$lang$ctorStr = "job-streamer.console.components.job-detail/t115779", job_streamer.console.components.job_detail.t115779.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t34115.cljs$lang$type = !0, job_streamer.console.components.job_detail.t34115.cljs$lang$ctorStr = "job-streamer.console.components.job-detail/t34115", job_streamer.console.components.job_detail.t34115.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
           return function(a, b, c) {
-            return cljs.core._write.call(null, b, "job-streamer.console.components.job-detail/t115779");
+            return cljs.core._write.call(null, b, "job-streamer.console.components.job-detail/t34115");
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.__GT_t115779 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.__GT_t34115 = function(a, b, c, d, e, g) {
           return function(a, b, c, d, e, g, h, k, l, m, n, p) {
-            return new job_streamer.console.components.job_detail.t115779(a, b, c, d, e, g, h, k, l, m, n, p);
+            return new job_streamer.console.components.job_detail.t34115(a, b, c, d, e, g, h, k, l, m, n, p);
           };
-        }(l, a, b, c, d, e)), new job_streamer.console.components.job_detail.t115779(c, k, k, g, e, d, b, h, h, a, l, null);
+        }(l, a, b, c, d, e)), new job_streamer.console.components.job_detail.t34115(k, g, b, e, d, h, c, l, k, h, a, null);
       }
     }();
     if (cljs.core.truth_(l) && (n = e.call(null, m), cljs.core.truth_(n))) {
@@ -79502,8 +79575,8 @@ job_streamer.console.components.job_detail.job_new_view = function(a, b, c, d, e
     }
     return m;
   };
-}(ufv___115785, output_schema115767_115786, input_schema115768_115787, input_checker115769_115788, output_checker115770_115789);
-schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.job_detail.job_new_view), schema.core.make_fn_schema.call(null, output_schema115767_115786, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema115768_115787], null)));
+}(ufv___34121, output_schema34103_34122, input_schema34104_34123, input_checker34105_34124, output_checker34106_34125);
+schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.job_detail.job_new_view), schema.core.make_fn_schema.call(null, output_schema34103_34122, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema34104_34123], null)));
 job_streamer.console.components.job_detail.__GT_job_new_view = function() {
   var a = null, b = function(a) {
     return om.core.build.call(null, job_streamer.console.components.job_detail.job_new_view, a);
@@ -79522,8 +79595,8 @@ job_streamer.console.components.job_detail.__GT_job_new_view = function() {
   a.cljs$core$IFn$_invoke$arity$2 = c;
   return a;
 }();
-var ufv___115830 = schema.utils.use_fn_validation, output_schema115796_115831 = schema.core.Any, input_schema115797_115832 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "arg0", "arg0", -1024593414, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker115798_115833 = schema.core.checker.call(null, input_schema115797_115832), 
-output_checker115799_115834 = schema.core.checker.call(null, output_schema115796_115831);
+var ufv___34166 = schema.utils.use_fn_validation, output_schema34132_34167 = schema.core.Any, input_schema34133_34168 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "arg0", "arg0", -1024593414, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker34134_34169 = schema.core.checker.call(null, input_schema34133_34168), 
+output_checker34135_34170 = schema.core.checker.call(null, output_schema34132_34167);
 job_streamer.console.components.job_detail.job_history_view = function(a, b, c, d, e) {
   return function g(h, k) {
     var l = a.get_cell();
@@ -79537,29 +79610,29 @@ job_streamer.console.components.job_detail.job_history_view = function(a, b, c, 
     m = function() {
       for (var m = cljs.core.seq_QMARK_.call(null, h) ? cljs.core.apply.call(null, cljs.core.hash_map, h) : h, n = cljs.core.get.call(null, m, new cljs.core.Keyword(null, "job-name", "job-name", 607418212));;) {
         var r = h, s = cljs.core.seq_QMARK_.call(null, r) ? cljs.core.apply.call(null, cljs.core.hash_map, r) : r, t = cljs.core.get.call(null, s, new cljs.core.Keyword(null, "job-name", "job-name", 607418212)), u = k;
-        "undefined" === typeof job_streamer.console.components.job_detail.t115820 && (job_streamer.console.components.job_detail.t115820 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s) {
+        "undefined" === typeof job_streamer.console.components.job_detail.t34156 && (job_streamer.console.components.job_detail.t34156 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s) {
           this.job_history_view = a;
-          this.owner = b;
-          this.map__115818 = c;
-          this.output_checker115799 = d;
-          this.job_name = e;
-          this.input_checker115798 = g;
-          this.input_schema115797 = h;
-          this.map__115819 = k;
-          this.output_schema115796 = l;
-          this.G__115817 = m;
-          this.G__115801 = n;
-          this.G__115800 = p;
-          this.ufv__ = q;
-          this.validate__11396__auto__ = r;
-          this.meta115821 = s;
+          this.G__34137 = b;
+          this.map__34154 = c;
+          this.G__34153 = d;
+          this.owner = e;
+          this.map__34155 = g;
+          this.job_name = h;
+          this.input_checker34134 = k;
+          this.G__34136 = l;
+          this.input_schema34133 = m;
+          this.validate__10767__auto__ = n;
+          this.output_checker34135 = p;
+          this.output_schema34132 = q;
+          this.ufv__ = r;
+          this.meta34157 = s;
           this.cljs$lang$protocol_mask$partition1$ = 0;
           this.cljs$lang$protocol_mask$partition0$ = 393216;
-        }, job_streamer.console.components.job_detail.t115820.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.job_detail.t115820.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s) {
+        }, job_streamer.console.components.job_detail.t34156.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.job_detail.t34156.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s) {
           return function(a) {
             return "job-history-view";
           };
-        }(r, s, t, u, h, h, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t115820.prototype.om$core$IRenderState$ = !0, job_streamer.console.components.job_detail.t115820.prototype.om$core$IRenderState$render_state$arity$2 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s) {
+        }(r, s, t, u, h, h, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t34156.prototype.om$core$IRenderState$ = !0, job_streamer.console.components.job_detail.t34156.prototype.om$core$IRenderState$render_state$arity$2 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s) {
           return function(t, u) {
             var M = this, P = cljs.core.seq_QMARK_.call(null, u) ? cljs.core.apply.call(null, cljs.core.hash_map, u) : u, L = cljs.core.get.call(null, P, new cljs.core.Keyword(null, "executions", "executions", 1302642273)), O = this;
             return React.DOM.table({className:"ui compact table"}, React.DOM.thead(null, React.DOM.tr(null, React.DOM.th(null, "#"), React.DOM.th(null, "Agent"), React.DOM.th(null, "Started at"), React.DOM.th(null, "Duration"), React.DOM.th(null, "Status"))), function() {
@@ -79584,7 +79657,7 @@ job_streamer.console.components.job_detail.job_history_view = function(a, b, c, 
               return cljs.core.apply.call(null, React.DOM.tbody, cljs.core.map_QMARK_.call(null, t) ? sablono.interpreter.attributes.call(null, t) : null, cljs.core.remove.call(null, cljs.core.nil_QMARK_, cljs.core.map_QMARK_.call(null, t) ? cljs.core.PersistentVector.EMPTY : new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [sablono.interpreter.interpret.call(null, t)], null)));
             }());
           };
-        }(r, s, t, u, h, h, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t115820.prototype.om$core$IWillMount$ = !0, job_streamer.console.components.job_detail.t115820.prototype.om$core$IWillMount$will_mount$arity$1 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s) {
+        }(r, s, t, u, h, h, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t34156.prototype.om$core$IWillMount$ = !0, job_streamer.console.components.job_detail.t34156.prototype.om$core$IWillMount$will_mount$arity$1 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s) {
           return function(t) {
             var u = this;
             return job_streamer.console.api.request.call(null, [cljs.core.str("/"), cljs.core.str(job_streamer.console.components.job_detail.app_name), cljs.core.str("/job/"), cljs.core.str(u.job_name), cljs.core.str("/executions")].join(""), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "handler", "handler", -195596612), function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t) {
@@ -79593,24 +79666,24 @@ job_streamer.console.components.job_detail.job_history_view = function(a, b, c, 
               };
             }(this, a, b, c, d, e, g, h, k, l, m, n, p, q, r, s)], null));
           };
-        }(r, s, t, u, h, h, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t115820.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s) {
+        }(r, s, t, u, h, h, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t34156.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s) {
           return function(a) {
-            return this.meta115821;
+            return this.meta34157;
           };
-        }(r, s, t, u, h, h, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t115820.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s) {
+        }(r, s, t, u, h, h, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t34156.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s) {
           return function(a, b) {
-            return new job_streamer.console.components.job_detail.t115820(this.job_history_view, this.owner, this.map__115818, this.output_checker115799, this.job_name, this.input_checker115798, this.input_schema115797, this.map__115819, this.output_schema115796, this.G__115817, this.G__115801, this.G__115800, this.ufv__, this.validate__11396__auto__, b);
+            return new job_streamer.console.components.job_detail.t34156(this.job_history_view, this.G__34137, this.map__34154, this.G__34153, this.owner, this.map__34155, this.job_name, this.input_checker34134, this.G__34136, this.input_schema34133, this.validate__10767__auto__, this.output_checker34135, this.output_schema34132, this.ufv__, b);
           };
-        }(r, s, t, u, h, h, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t115820.cljs$lang$type = !0, job_streamer.console.components.job_detail.t115820.cljs$lang$ctorStr = "job-streamer.console.components.job-detail/t115820", job_streamer.console.components.job_detail.t115820.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s) {
+        }(r, s, t, u, h, h, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t34156.cljs$lang$type = !0, job_streamer.console.components.job_detail.t34156.cljs$lang$ctorStr = "job-streamer.console.components.job-detail/t34156", job_streamer.console.components.job_detail.t34156.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s) {
           return function(a, b, c) {
-            return cljs.core._write.call(null, b, "job-streamer.console.components.job-detail/t115820");
+            return cljs.core._write.call(null, b, "job-streamer.console.components.job-detail/t34156");
           };
-        }(r, s, t, u, h, h, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.__GT_t115820 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s) {
+        }(r, s, t, u, h, h, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.__GT_t34156 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s) {
           return function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s) {
-            return new job_streamer.console.components.job_detail.t115820(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s);
+            return new job_streamer.console.components.job_detail.t34156(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s);
           };
         }(r, s, t, u, h, h, m, n, k, l, a, b, c, d, e));
-        return new job_streamer.console.components.job_detail.t115820(g, u, m, e, t, d, c, s, b, h, k, h, a, l, null);
+        return new job_streamer.console.components.job_detail.t34156(g, k, m, h, u, s, t, d, h, c, l, e, b, a, null);
       }
     }();
     if (cljs.core.truth_(l) && (n = e.call(null, m), cljs.core.truth_(n))) {
@@ -79619,8 +79692,8 @@ job_streamer.console.components.job_detail.job_history_view = function(a, b, c, 
     }
     return m;
   };
-}(ufv___115830, output_schema115796_115831, input_schema115797_115832, input_checker115798_115833, output_checker115799_115834);
-schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.job_detail.job_history_view), schema.core.make_fn_schema.call(null, output_schema115796_115831, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema115797_115832], null)));
+}(ufv___34166, output_schema34132_34167, input_schema34133_34168, input_checker34134_34169, output_checker34135_34170);
+schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.job_detail.job_history_view), schema.core.make_fn_schema.call(null, output_schema34132_34167, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema34133_34168], null)));
 job_streamer.console.components.job_detail.__GT_job_history_view = function() {
   var a = null, b = function(a) {
     return om.core.build.call(null, job_streamer.console.components.job_detail.job_history_view, a);
@@ -79639,8 +79712,8 @@ job_streamer.console.components.job_detail.__GT_job_history_view = function() {
   a.cljs$core$IFn$_invoke$arity$2 = c;
   return a;
 }();
-var ufv___115943 = schema.utils.use_fn_validation, output_schema115841_115944 = schema.core.Any, input_schema115842_115945 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "job", "job", -1803562682, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker115843_115946 = schema.core.checker.call(null, input_schema115842_115945), 
-output_checker115844_115947 = schema.core.checker.call(null, output_schema115841_115944);
+var ufv___34279 = schema.utils.use_fn_validation, output_schema34177_34280 = schema.core.Any, input_schema34178_34281 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "job", "job", -1803562682, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker34179_34282 = schema.core.checker.call(null, input_schema34178_34281), 
+output_checker34180_34283 = schema.core.checker.call(null, output_schema34177_34280);
 job_streamer.console.components.job_detail.scheduling_view = function(a, b, c, d, e) {
   return function g(h, k) {
     var l = a.get_cell();
@@ -79653,26 +79726,26 @@ job_streamer.console.components.job_detail.scheduling_view = function(a, b, c, d
     }
     m = function() {
       for (;;) {
-        return "undefined" === typeof job_streamer.console.components.job_detail.t115895 && (job_streamer.console.components.job_detail.t115895 = function(a, b, c, d, e, g, h, k, l, m, n, B) {
-          this.owner = a;
-          this.job = b;
-          this.output_schema115841 = c;
-          this.input_schema115842 = d;
-          this.G__115845 = e;
-          this.scheduling_view = g;
-          this.output_checker115844 = h;
-          this.G__115846 = k;
-          this.ufv__ = l;
-          this.input_checker115843 = m;
-          this.validate__11396__auto__ = n;
-          this.meta115896 = B;
+        return "undefined" === typeof job_streamer.console.components.job_detail.t34231 && (job_streamer.console.components.job_detail.t34231 = function(a, b, c, d, e, g, h, k, l, m, n, B) {
+          this.input_checker34179 = a;
+          this.output_checker34180 = b;
+          this.output_schema34177 = c;
+          this.owner = d;
+          this.job = e;
+          this.input_schema34178 = g;
+          this.G__34181 = h;
+          this.G__34182 = k;
+          this.validate__10767__auto__ = l;
+          this.scheduling_view = m;
+          this.ufv__ = n;
+          this.meta34232 = B;
           this.cljs$lang$protocol_mask$partition1$ = 0;
           this.cljs$lang$protocol_mask$partition0$ = 393216;
-        }, job_streamer.console.components.job_detail.t115895.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.job_detail.t115895.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
+        }, job_streamer.console.components.job_detail.t34231.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.job_detail.t34231.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
             return "scheduling-view";
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t115895.prototype.om$core$IRenderState$ = !0, job_streamer.console.components.job_detail.t115895.prototype.om$core$IRenderState$render_state$arity$2 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t34231.prototype.om$core$IRenderState$ = !0, job_streamer.console.components.job_detail.t34231.prototype.om$core$IRenderState$render_state$arity$2 = function(a, b, c, d, e, g) {
           return function(h, k) {
             var l = this, m = cljs.core.seq_QMARK_.call(null, k) ? cljs.core.apply.call(null, cljs.core.hash_map, k) : k, n = cljs.core.get.call(null, m, new cljs.core.Keyword(null, "has-error", "has-error", -786302929)), B = cljs.core.get.call(null, m, new cljs.core.Keyword(null, "error-ch", "error-ch", -1177587736)), y = cljs.core.get.call(null, m, new cljs.core.Keyword(null, "refresh-job-ch", "refresh-job-ch", -1511210105)), A = cljs.core.get.call(null, m, new cljs.core.Keyword(null, "scheduling-ch", 
             "scheduling-ch", 1344950219)), z = cljs.core.merge.call(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "on-submit", "on-submit", 1227871159), function(a, b, c, d, e, g, h, k, m, n, p, q, r) {
@@ -79707,7 +79780,7 @@ job_streamer.console.components.job_detail.scheduling_view = function(a, b, c, d
               };
             }(z, this, k, m, n, B, y, A, a, b, c, d, e, g)}, "Cancel"), React.DOM.div({className:"or"}), React.DOM.button({className:"ui positive button", type:"submit"}, "Save"))], null)));
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t115895.prototype.om$core$IWillMount$ = !0, job_streamer.console.components.job_detail.t115895.prototype.om$core$IWillMount$will_mount$arity$1 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t34231.prototype.om$core$IWillMount$ = !0, job_streamer.console.components.job_detail.t34231.prototype.om$core$IWillMount$will_mount$arity$1 = function(a, b, c, d, e, g) {
           return function(h) {
             var k = this;
             h = cljs.core.async.chan.call(null, 1);
@@ -79793,27 +79866,27 @@ job_streamer.console.components.job_detail.scheduling_view = function(a, b, c, d
             }(h, this, a, b, c, d, e, g));
             return h;
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t115895.prototype.om$core$IInitState$ = !0, job_streamer.console.components.job_detail.t115895.prototype.om$core$IInitState$init_state$arity$1 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t34231.prototype.om$core$IInitState$ = !0, job_streamer.console.components.job_detail.t34231.prototype.om$core$IInitState$init_state$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
             return new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "error-ch", "error-ch", -1177587736), cljs.core.async.chan.call(null), new cljs.core.Keyword(null, "has-error", "has-error", -786302929), !1], null);
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t115895.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t34231.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
-            return this.meta115896;
+            return this.meta34232;
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t115895.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t34231.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
           return function(a, b) {
-            return new job_streamer.console.components.job_detail.t115895(this.owner, this.job, this.output_schema115841, this.input_schema115842, this.G__115845, this.scheduling_view, this.output_checker115844, this.G__115846, this.ufv__, this.input_checker115843, this.validate__11396__auto__, b);
+            return new job_streamer.console.components.job_detail.t34231(this.input_checker34179, this.output_checker34180, this.output_schema34177, this.owner, this.job, this.input_schema34178, this.G__34181, this.G__34182, this.validate__10767__auto__, this.scheduling_view, this.ufv__, b);
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t115895.cljs$lang$type = !0, job_streamer.console.components.job_detail.t115895.cljs$lang$ctorStr = "job-streamer.console.components.job-detail/t115895", job_streamer.console.components.job_detail.t115895.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t34231.cljs$lang$type = !0, job_streamer.console.components.job_detail.t34231.cljs$lang$ctorStr = "job-streamer.console.components.job-detail/t34231", job_streamer.console.components.job_detail.t34231.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
           return function(a, b, c) {
-            return cljs.core._write.call(null, b, "job-streamer.console.components.job-detail/t115895");
+            return cljs.core._write.call(null, b, "job-streamer.console.components.job-detail/t34231");
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.__GT_t115895 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.__GT_t34231 = function(a, b, c, d, e, g) {
           return function(a, b, c, d, e, g, h, k, l, m, n, p) {
-            return new job_streamer.console.components.job_detail.t115895(a, b, c, d, e, g, h, k, l, m, n, p);
+            return new job_streamer.console.components.job_detail.t34231(a, b, c, d, e, g, h, k, l, m, n, p);
           };
-        }(l, a, b, c, d, e)), new job_streamer.console.components.job_detail.t115895(k, h, b, c, h, g, e, k, a, d, l, null);
+        }(l, a, b, c, d, e)), new job_streamer.console.components.job_detail.t34231(d, e, b, k, h, c, h, k, l, g, a, null);
       }
     }();
     if (cljs.core.truth_(l) && (n = e.call(null, m), cljs.core.truth_(n))) {
@@ -79822,8 +79895,8 @@ job_streamer.console.components.job_detail.scheduling_view = function(a, b, c, d
     }
     return m;
   };
-}(ufv___115943, output_schema115841_115944, input_schema115842_115945, input_checker115843_115946, output_checker115844_115947);
-schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.job_detail.scheduling_view), schema.core.make_fn_schema.call(null, output_schema115841_115944, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema115842_115945], null)));
+}(ufv___34279, output_schema34177_34280, input_schema34178_34281, input_checker34179_34282, output_checker34180_34283);
+schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.job_detail.scheduling_view), schema.core.make_fn_schema.call(null, output_schema34177_34280, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema34178_34281], null)));
 job_streamer.console.components.job_detail.__GT_scheduling_view = function() {
   var a = null, b = function(a) {
     return om.core.build.call(null, job_streamer.console.components.job_detail.scheduling_view, a);
@@ -79842,8 +79915,8 @@ job_streamer.console.components.job_detail.__GT_scheduling_view = function() {
   a.cljs$core$IFn$_invoke$arity$2 = c;
   return a;
 }();
-var ufv___116024 = schema.utils.use_fn_validation, output_schema115962_116025 = schema.core.Any, input_schema115963_116026 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "job", "job", -1803562682, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker115964_116027 = schema.core.checker.call(null, input_schema115963_116026), 
-output_checker115965_116028 = schema.core.checker.call(null, output_schema115962_116025);
+var ufv___34360 = schema.utils.use_fn_validation, output_schema34298_34361 = schema.core.Any, input_schema34299_34362 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "job", "job", -1803562682, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker34300_34363 = schema.core.checker.call(null, input_schema34299_34362), 
+output_checker34301_34364 = schema.core.checker.call(null, output_schema34298_34361);
 job_streamer.console.components.job_detail.next_execution_view = function(a, b, c, d, e) {
   return function g(h, k) {
     var l = a.get_cell();
@@ -79856,26 +79929,26 @@ job_streamer.console.components.job_detail.next_execution_view = function(a, b, 
     }
     m = function() {
       for (;;) {
-        return "undefined" === typeof job_streamer.console.components.job_detail.t115996 && (job_streamer.console.components.job_detail.t115996 = function(a, b, c, d, e, g, h, k, l, m, n, B) {
-          this.input_checker115964 = a;
-          this.owner = b;
-          this.next_execution_view = c;
-          this.job = d;
-          this.G__115967 = e;
-          this.G__115966 = g;
-          this.output_schema115962 = h;
-          this.output_checker115965 = k;
-          this.input_schema115963 = l;
-          this.ufv__ = m;
-          this.validate__11396__auto__ = n;
-          this.meta115997 = B;
+        return "undefined" === typeof job_streamer.console.components.job_detail.t34332 && (job_streamer.console.components.job_detail.t34332 = function(a, b, c, d, e, g, h, k, l, m, n, B) {
+          this.owner = a;
+          this.next_execution_view = b;
+          this.job = c;
+          this.output_schema34298 = d;
+          this.G__34303 = e;
+          this.validate__10767__auto__ = g;
+          this.input_checker34300 = h;
+          this.G__34302 = k;
+          this.input_schema34299 = l;
+          this.output_checker34301 = m;
+          this.ufv__ = n;
+          this.meta34333 = B;
           this.cljs$lang$protocol_mask$partition1$ = 0;
           this.cljs$lang$protocol_mask$partition0$ = 393216;
-        }, job_streamer.console.components.job_detail.t115996.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.job_detail.t115996.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
+        }, job_streamer.console.components.job_detail.t34332.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.job_detail.t34332.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
             return "next-execution-view";
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t115996.prototype.om$core$IRenderState$ = !0, job_streamer.console.components.job_detail.t115996.prototype.om$core$IRenderState$render_state$arity$2 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t34332.prototype.om$core$IRenderState$ = !0, job_streamer.console.components.job_detail.t34332.prototype.om$core$IRenderState$render_state$arity$2 = function(a, b, c, d, e, g) {
           return function(h, k) {
             var l = this, m = cljs.core.seq_QMARK_.call(null, k) ? cljs.core.apply.call(null, cljs.core.hash_map, k) : k, n = cljs.core.get.call(null, m, new cljs.core.Keyword(null, "scheduling?", "scheduling?", 428287461)), B = cljs.core.get.call(null, m, new cljs.core.Keyword(null, "scheduling-ch", "scheduling-ch", 1344950219)), y = cljs.core.get.call(null, m, new cljs.core.Keyword(null, "refresh-job-ch", "refresh-job-ch", -1511210105)), A = this;
             return React.DOM.div({className:"ui raised segment"}, React.DOM.h3({className:"ui header"}, "Next"), cljs.core.truth_(n) ? sablono.interpreter.interpret.call(null, om.core.build.call(null, job_streamer.console.components.job_detail.scheduling_view, l.job, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "init-state", "init-state", 1450863212), new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "scheduling-ch", "scheduling-ch", 1344950219), B, 
@@ -79916,7 +79989,7 @@ job_streamer.console.components.job_detail.next_execution_view = function(a, b, 
               }(h, A, k, m, n, B, y, a, b, c, d, e, g)], null), "Schedule this job"], null)], null);
             }()));
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t115996.prototype.om$core$IWillMount$ = !0, job_streamer.console.components.job_detail.t115996.prototype.om$core$IWillMount$will_mount$arity$1 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t34332.prototype.om$core$IWillMount$ = !0, job_streamer.console.components.job_detail.t34332.prototype.om$core$IWillMount$will_mount$arity$1 = function(a, b, c, d, e, g) {
           return function(h) {
             var k = this;
             h = cljs.core.async.chan.call(null, 1);
@@ -79988,27 +80061,27 @@ job_streamer.console.components.job_detail.next_execution_view = function(a, b, 
             }(h, this, a, b, c, d, e, g));
             return h;
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t115996.prototype.om$core$IInitState$ = !0, job_streamer.console.components.job_detail.t115996.prototype.om$core$IInitState$init_state$arity$1 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t34332.prototype.om$core$IInitState$ = !0, job_streamer.console.components.job_detail.t34332.prototype.om$core$IInitState$init_state$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
             return new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "scheduling-ch", "scheduling-ch", 1344950219), cljs.core.async.chan.call(null), new cljs.core.Keyword(null, "scheduling?", "scheduling?", 428287461), !1], null);
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t115996.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t34332.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
-            return this.meta115997;
+            return this.meta34333;
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t115996.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t34332.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
           return function(a, b) {
-            return new job_streamer.console.components.job_detail.t115996(this.input_checker115964, this.owner, this.next_execution_view, this.job, this.G__115967, this.G__115966, this.output_schema115962, this.output_checker115965, this.input_schema115963, this.ufv__, this.validate__11396__auto__, b);
+            return new job_streamer.console.components.job_detail.t34332(this.owner, this.next_execution_view, this.job, this.output_schema34298, this.G__34303, this.validate__10767__auto__, this.input_checker34300, this.G__34302, this.input_schema34299, this.output_checker34301, this.ufv__, b);
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t115996.cljs$lang$type = !0, job_streamer.console.components.job_detail.t115996.cljs$lang$ctorStr = "job-streamer.console.components.job-detail/t115996", job_streamer.console.components.job_detail.t115996.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.t34332.cljs$lang$type = !0, job_streamer.console.components.job_detail.t34332.cljs$lang$ctorStr = "job-streamer.console.components.job-detail/t34332", job_streamer.console.components.job_detail.t34332.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
           return function(a, b, c) {
-            return cljs.core._write.call(null, b, "job-streamer.console.components.job-detail/t115996");
+            return cljs.core._write.call(null, b, "job-streamer.console.components.job-detail/t34332");
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.__GT_t115996 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.job_detail.__GT_t34332 = function(a, b, c, d, e, g) {
           return function(a, b, c, d, e, g, h, k, l, m, n, p) {
-            return new job_streamer.console.components.job_detail.t115996(a, b, c, d, e, g, h, k, l, m, n, p);
+            return new job_streamer.console.components.job_detail.t34332(a, b, c, d, e, g, h, k, l, m, n, p);
           };
-        }(l, a, b, c, d, e)), new job_streamer.console.components.job_detail.t115996(d, k, g, h, k, h, b, e, c, a, l, null);
+        }(l, a, b, c, d, e)), new job_streamer.console.components.job_detail.t34332(k, g, h, b, k, l, d, h, c, e, a, null);
       }
     }();
     if (cljs.core.truth_(l) && (n = e.call(null, m), cljs.core.truth_(n))) {
@@ -80017,8 +80090,8 @@ job_streamer.console.components.job_detail.next_execution_view = function(a, b, 
     }
     return m;
   };
-}(ufv___116024, output_schema115962_116025, input_schema115963_116026, input_checker115964_116027, output_checker115965_116028);
-schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.job_detail.next_execution_view), schema.core.make_fn_schema.call(null, output_schema115962_116025, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema115963_116026], null)));
+}(ufv___34360, output_schema34298_34361, input_schema34299_34362, input_checker34300_34363, output_checker34301_34364);
+schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.job_detail.next_execution_view), schema.core.make_fn_schema.call(null, output_schema34298_34361, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema34299_34362], null)));
 job_streamer.console.components.job_detail.__GT_next_execution_view = function() {
   var a = null, b = function(a) {
     return om.core.build.call(null, job_streamer.console.components.job_detail.next_execution_view, a);
@@ -80037,8 +80110,8 @@ job_streamer.console.components.job_detail.__GT_next_execution_view = function()
   a.cljs$core$IFn$_invoke$arity$2 = c;
   return a;
 }();
-var ufv___116117 = schema.utils.use_fn_validation, output_schema116039_116118 = schema.core.Any, input_schema116040_116119 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "arg0", "arg0", -1024593414, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker116041_116120 = schema.core.checker.call(null, input_schema116040_116119), 
-output_checker116042_116121 = schema.core.checker.call(null, output_schema116039_116118);
+var ufv___34453 = schema.utils.use_fn_validation, output_schema34375_34454 = schema.core.Any, input_schema34376_34455 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "arg0", "arg0", -1024593414, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker34377_34456 = schema.core.checker.call(null, input_schema34376_34455), 
+output_checker34378_34457 = schema.core.checker.call(null, output_schema34375_34454);
 job_streamer.console.components.job_detail.current_job_view = function(a, b, c, d, e) {
   return function g(h, k) {
     var l = a.get_cell();
@@ -80052,38 +80125,38 @@ job_streamer.console.components.job_detail.current_job_view = function(a, b, c, 
     m = function() {
       for (var m = cljs.core.seq_QMARK_.call(null, h) ? cljs.core.apply.call(null, cljs.core.hash_map, h) : h, n = cljs.core.get.call(null, m, new cljs.core.Keyword(null, "job-name", "job-name", 607418212));;) {
         var r = h, s = cljs.core.seq_QMARK_.call(null, r) ? cljs.core.apply.call(null, cljs.core.hash_map, r) : r, t = s, u = cljs.core.get.call(null, s, new cljs.core.Keyword(null, "job-name", "job-name", 607418212)), v = k;
-        "undefined" === typeof job_streamer.console.components.job_detail.t116085 && (job_streamer.console.components.job_detail.t116085 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t) {
-          this.owner = a;
-          this.output_checker116042 = b;
-          this.current_job_view = c;
-          this.map__116084 = d;
-          this.G__116044 = e;
-          this.job_name = g;
-          this.input_schema116040 = h;
-          this.G__116043 = k;
-          this.input_checker116041 = l;
-          this.G__116082 = m;
-          this.app = n;
-          this.output_schema116039 = p;
-          this.ufv__ = q;
-          this.map__116083 = r;
-          this.validate__11396__auto__ = s;
-          this.meta116086 = t;
+        "undefined" === typeof job_streamer.console.components.job_detail.t34421 && (job_streamer.console.components.job_detail.t34421 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t) {
+          this.G__34380 = a;
+          this.map__34419 = b;
+          this.owner = c;
+          this.input_checker34377 = d;
+          this.G__34418 = e;
+          this.current_job_view = g;
+          this.output_checker34378 = h;
+          this.job_name = k;
+          this.G__34379 = l;
+          this.output_schema34375 = m;
+          this.input_schema34376 = n;
+          this.validate__10767__auto__ = p;
+          this.map__34420 = q;
+          this.app = r;
+          this.ufv__ = s;
+          this.meta34422 = t;
           this.cljs$lang$protocol_mask$partition1$ = 0;
           this.cljs$lang$protocol_mask$partition0$ = 393216;
-        }, job_streamer.console.components.job_detail.t116085.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.job_detail.t116085.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
+        }, job_streamer.console.components.job_detail.t34421.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.job_detail.t34421.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
           return function(a) {
             return "current-job-view";
           };
-        }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t116085.prototype.om$core$IDidMount$ = !0, job_streamer.console.components.job_detail.t116085.prototype.om$core$IDidMount$did_mount$arity$1 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
+        }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t34421.prototype.om$core$IDidMount$ = !0, job_streamer.console.components.job_detail.t34421.prototype.om$core$IDidMount$did_mount$arity$1 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
           return function(a) {
             return job_streamer.console.components.job_detail.render_job_structure.call(null, this.job_name, this.owner);
           };
-        }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t116085.prototype.om$core$IDidUpdate$ = !0, job_streamer.console.components.job_detail.t116085.prototype.om$core$IDidUpdate$did_update$arity$3 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
+        }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t34421.prototype.om$core$IDidUpdate$ = !0, job_streamer.console.components.job_detail.t34421.prototype.om$core$IDidUpdate$did_update$arity$3 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
           return function(a, b, c) {
             return cljs.core.truth_(document.getElementById("job-blocks-inner").firstChild) ? null : job_streamer.console.components.job_detail.render_job_structure.call(null, this.job_name, this.owner);
           };
-        }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t116085.prototype.om$core$IRenderState$ = !0, job_streamer.console.components.job_detail.t116085.prototype.om$core$IRenderState$render_state$arity$2 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
+        }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t34421.prototype.om$core$IRenderState$ = !0, job_streamer.console.components.job_detail.t34421.prototype.om$core$IRenderState$render_state$arity$2 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
           return function(v, L) {
             var O = this, Q = cljs.core.seq_QMARK_.call(null, L) ? cljs.core.apply.call(null, cljs.core.hash_map, L) : L, R = cljs.core.get.call(null, Q, new cljs.core.Keyword(null, "refresh-job-ch", "refresh-job-ch", -1511210105)), S = cljs.core.get.call(null, Q, new cljs.core.Keyword(null, "dimmed?", "dimmed?", -111032912)), T = cljs.core.get.call(null, Q, new cljs.core.Keyword(null, "job", "job", 850873087)), V = this, U = cljs.core.first.call(null, cljs.core.drop.call(null, 3, (new cljs.core.Keyword(null, 
             "mode", "mode", 654403691)).cljs$core$IFn$_invoke$arity$1(O.app)));
@@ -80138,7 +80211,7 @@ job_streamer.console.components.job_detail.current_job_view = function(a, b, c, 
               }
             }());
           };
-        }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t116085.prototype.om$core$IWillMount$ = !0, job_streamer.console.components.job_detail.t116085.prototype.om$core$IWillMount$will_mount$arity$1 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
+        }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t34421.prototype.om$core$IWillMount$ = !0, job_streamer.console.components.job_detail.t34421.prototype.om$core$IWillMount$will_mount$arity$1 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
           return function(v) {
             var L = this;
             v = cljs.core.async.chan.call(null, 1);
@@ -80222,28 +80295,28 @@ job_streamer.console.components.job_detail.current_job_view = function(a, b, c, 
             }(v, this, a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u));
             return v;
           };
-        }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t116085.prototype.om$core$IInitState$ = !0, job_streamer.console.components.job_detail.t116085.prototype.om$core$IInitState$init_state$arity$1 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
+        }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t34421.prototype.om$core$IInitState$ = !0, job_streamer.console.components.job_detail.t34421.prototype.om$core$IInitState$init_state$arity$1 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
           return function(a) {
             return new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "refresh-job-ch", "refresh-job-ch", -1511210105), cljs.core.async.chan.call(null)], null);
           };
-        }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t116085.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
+        }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t34421.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
           return function(a) {
-            return this.meta116086;
+            return this.meta34422;
           };
-        }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t116085.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
+        }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t34421.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
           return function(a, b) {
-            return new job_streamer.console.components.job_detail.t116085(this.owner, this.output_checker116042, this.current_job_view, this.map__116084, this.G__116044, this.job_name, this.input_schema116040, this.G__116043, this.input_checker116041, this.G__116082, this.app, this.output_schema116039, this.ufv__, this.map__116083, this.validate__11396__auto__, b);
+            return new job_streamer.console.components.job_detail.t34421(this.G__34380, this.map__34419, this.owner, this.input_checker34377, this.G__34418, this.current_job_view, this.output_checker34378, this.job_name, this.G__34379, this.output_schema34375, this.input_schema34376, this.validate__10767__auto__, this.map__34420, this.app, this.ufv__, b);
           };
-        }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t116085.cljs$lang$type = !0, job_streamer.console.components.job_detail.t116085.cljs$lang$ctorStr = "job-streamer.console.components.job-detail/t116085", job_streamer.console.components.job_detail.t116085.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
+        }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t34421.cljs$lang$type = !0, job_streamer.console.components.job_detail.t34421.cljs$lang$ctorStr = "job-streamer.console.components.job-detail/t34421", job_streamer.console.components.job_detail.t34421.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
           return function(a, b, c) {
-            return cljs.core._write.call(null, b, "job-streamer.console.components.job-detail/t116085");
+            return cljs.core._write.call(null, b, "job-streamer.console.components.job-detail/t34421");
           };
-        }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.__GT_t116085 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
+        }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.__GT_t34421 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
           return function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t) {
-            return new job_streamer.console.components.job_detail.t116085(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t);
+            return new job_streamer.console.components.job_detail.t34421(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t);
           };
         }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e));
-        return new job_streamer.console.components.job_detail.t116085(v, e, g, s, k, u, c, h, d, h, t, b, a, m, l, null);
+        return new job_streamer.console.components.job_detail.t34421(k, m, v, d, h, g, e, u, h, b, c, l, s, t, a, null);
       }
     }();
     if (cljs.core.truth_(l) && (n = e.call(null, m), cljs.core.truth_(n))) {
@@ -80252,8 +80325,8 @@ job_streamer.console.components.job_detail.current_job_view = function(a, b, c, 
     }
     return m;
   };
-}(ufv___116117, output_schema116039_116118, input_schema116040_116119, input_checker116041_116120, output_checker116042_116121);
-schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.job_detail.current_job_view), schema.core.make_fn_schema.call(null, output_schema116039_116118, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema116040_116119], null)));
+}(ufv___34453, output_schema34375_34454, input_schema34376_34455, input_checker34377_34456, output_checker34378_34457);
+schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.job_detail.current_job_view), schema.core.make_fn_schema.call(null, output_schema34375_34454, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema34376_34455], null)));
 job_streamer.console.components.job_detail.__GT_current_job_view = function() {
   var a = null, b = function(a) {
     return om.core.build.call(null, job_streamer.console.components.job_detail.current_job_view, a);
@@ -80272,8 +80345,8 @@ job_streamer.console.components.job_detail.__GT_current_job_view = function() {
   a.cljs$core$IFn$_invoke$arity$2 = c;
   return a;
 }();
-var ufv___116227 = schema.utils.use_fn_validation, output_schema116133_116228 = schema.core.Any, input_schema116134_116229 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "arg0", "arg0", -1024593414, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker116135_116230 = schema.core.checker.call(null, input_schema116134_116229), 
-output_checker116136_116231 = schema.core.checker.call(null, output_schema116133_116228);
+var ufv___34563 = schema.utils.use_fn_validation, output_schema34469_34564 = schema.core.Any, input_schema34470_34565 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "arg0", "arg0", -1024593414, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker34471_34566 = schema.core.checker.call(null, input_schema34470_34565), 
+output_checker34472_34567 = schema.core.checker.call(null, output_schema34469_34564);
 job_streamer.console.components.job_detail.job_detail_view = function(a, b, c, d, e) {
   return function g(h, k) {
     var l = a.get_cell();
@@ -80287,30 +80360,30 @@ job_streamer.console.components.job_detail.job_detail_view = function(a, b, c, d
     m = function() {
       for (var m = cljs.core.seq_QMARK_.call(null, h) ? cljs.core.apply.call(null, cljs.core.hash_map, h) : h, n = cljs.core.get.call(null, m, new cljs.core.Keyword(null, "job-name", "job-name", 607418212));;) {
         var r = h, s = cljs.core.seq_QMARK_.call(null, r) ? cljs.core.apply.call(null, cljs.core.hash_map, r) : r, t = s, u = cljs.core.get.call(null, s, new cljs.core.Keyword(null, "job-name", "job-name", 607418212)), v = k;
-        "undefined" === typeof job_streamer.console.components.job_detail.t116187 && (job_streamer.console.components.job_detail.t116187 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t) {
-          this.owner = a;
-          this.job_detail_view = b;
-          this.G__116184 = c;
-          this.job_name = d;
-          this.input_checker116135 = e;
-          this.G__116137 = g;
-          this.map__116185 = h;
-          this.G__116138 = k;
-          this.input_schema116134 = l;
-          this.output_checker116136 = m;
-          this.output_schema116133 = n;
-          this.map__116186 = p;
+        "undefined" === typeof job_streamer.console.components.job_detail.t34523 && (job_streamer.console.components.job_detail.t34523 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t) {
+          this.output_checker34472 = a;
+          this.map__34522 = b;
+          this.owner = c;
+          this.input_schema34470 = d;
+          this.output_schema34469 = e;
+          this.job_detail_view = g;
+          this.G__34474 = h;
+          this.map__34521 = k;
+          this.input_checker34471 = l;
+          this.job_name = m;
+          this.validate__10767__auto__ = n;
+          this.G__34520 = p;
           this.app = q;
-          this.ufv__ = r;
-          this.validate__11396__auto__ = s;
-          this.meta116188 = t;
+          this.G__34473 = r;
+          this.ufv__ = s;
+          this.meta34524 = t;
           this.cljs$lang$protocol_mask$partition1$ = 0;
           this.cljs$lang$protocol_mask$partition0$ = 393216;
-        }, job_streamer.console.components.job_detail.t116187.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.job_detail.t116187.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
+        }, job_streamer.console.components.job_detail.t34523.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.job_detail.t34523.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
           return function(a) {
             return "job-detail-view";
           };
-        }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t116187.prototype.om$core$IRenderState$ = !0, job_streamer.console.components.job_detail.t116187.prototype.om$core$IRenderState$render_state$arity$2 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
+        }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t34523.prototype.om$core$IRenderState$ = !0, job_streamer.console.components.job_detail.t34523.prototype.om$core$IRenderState$render_state$arity$2 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
           return function(a, b) {
             var c = this, d = cljs.core.seq_QMARK_.call(null, b) ? cljs.core.apply.call(null, cljs.core.hash_map, b) : b;
             cljs.core.get.call(null, d, new cljs.core.Keyword(null, "breadcrumbs", "breadcrumbs", -354629220));
@@ -80379,24 +80452,24 @@ job_streamer.console.components.job_detail.job_detail_view = function(a, b, c, d
               [sablono.interpreter.interpret.call(null, a)], null)));
             }())], null)));
           };
-        }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t116187.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
+        }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t34523.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
           return function(a) {
-            return this.meta116188;
+            return this.meta34524;
           };
-        }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t116187.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
+        }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t34523.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
           return function(a, b) {
-            return new job_streamer.console.components.job_detail.t116187(this.owner, this.job_detail_view, this.G__116184, this.job_name, this.input_checker116135, this.G__116137, this.map__116185, this.G__116138, this.input_schema116134, this.output_checker116136, this.output_schema116133, this.map__116186, this.app, this.ufv__, this.validate__11396__auto__, b);
+            return new job_streamer.console.components.job_detail.t34523(this.output_checker34472, this.map__34522, this.owner, this.input_schema34470, this.output_schema34469, this.job_detail_view, this.G__34474, this.map__34521, this.input_checker34471, this.job_name, this.validate__10767__auto__, this.G__34520, this.app, this.G__34473, this.ufv__, b);
           };
-        }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t116187.cljs$lang$type = !0, job_streamer.console.components.job_detail.t116187.cljs$lang$ctorStr = "job-streamer.console.components.job-detail/t116187", job_streamer.console.components.job_detail.t116187.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
+        }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.t34523.cljs$lang$type = !0, job_streamer.console.components.job_detail.t34523.cljs$lang$ctorStr = "job-streamer.console.components.job-detail/t34523", job_streamer.console.components.job_detail.t34523.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
           return function(a, b, c) {
-            return cljs.core._write.call(null, b, "job-streamer.console.components.job-detail/t116187");
+            return cljs.core._write.call(null, b, "job-streamer.console.components.job-detail/t34523");
           };
-        }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.__GT_t116187 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
+        }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e), job_streamer.console.components.job_detail.__GT_t34523 = function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
           return function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t) {
-            return new job_streamer.console.components.job_detail.t116187(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t);
+            return new job_streamer.console.components.job_detail.t34523(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t);
           };
         }(r, s, t, u, v, h, h, m, m, n, k, l, a, b, c, d, e));
-        return new job_streamer.console.components.job_detail.t116187(v, g, h, u, d, h, m, k, c, e, b, s, t, a, l, null);
+        return new job_streamer.console.components.job_detail.t34523(e, s, v, c, b, g, k, m, d, u, l, h, t, h, a, null);
       }
     }();
     if (cljs.core.truth_(l) && (n = e.call(null, m), cljs.core.truth_(n))) {
@@ -80405,8 +80478,8 @@ job_streamer.console.components.job_detail.job_detail_view = function(a, b, c, d
     }
     return m;
   };
-}(ufv___116227, output_schema116133_116228, input_schema116134_116229, input_checker116135_116230, output_checker116136_116231);
-schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.job_detail.job_detail_view), schema.core.make_fn_schema.call(null, output_schema116133_116228, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema116134_116229], null)));
+}(ufv___34563, output_schema34469_34564, input_schema34470_34565, input_checker34471_34566, output_checker34472_34567);
+schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.job_detail.job_detail_view), schema.core.make_fn_schema.call(null, output_schema34469_34564, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema34470_34565], null)));
 job_streamer.console.components.job_detail.__GT_job_detail_view = function() {
   var a = null, b = function(a) {
     return om.core.build.call(null, job_streamer.console.components.job_detail.job_detail_view, a);
@@ -80557,6 +80630,15 @@ job_streamer.console.components.jobs.execute_job = function(a) {
     return null;
   }], null));
 };
+job_streamer.console.components.jobs.stop_job = function(a) {
+  var b = (new cljs.core.Keyword("job", "latest-execution", "job/latest-execution", -1364961031)).cljs$core$IFn$_invoke$arity$1(a);
+  return cljs.core.truth_(b) ? job_streamer.console.api.request.call(null, [cljs.core.str("/"), cljs.core.str(job_streamer.console.components.jobs.app_name), cljs.core.str("/job/"), cljs.core.str((new cljs.core.Keyword("job", "name", "job/name", 1843780588)).cljs$core$IFn$_invoke$arity$1(a)), cljs.core.str("/execution/"), cljs.core.str((new cljs.core.Keyword("db", "id", "db/id", -1388397098)).cljs$core$IFn$_invoke$arity$1(b)), cljs.core.str("/stop")].join(""), new cljs.core.Keyword(null, "PUT", "PUT", 
+  -1841999943), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "handler", "handler", -195596612), function(a, b) {
+    return function(b) {
+      return om.core.update_BANG_.call(null, a, new cljs.core.Keyword("job-execution", "batch-status", "job-execution/batch-status", 1615935519), new cljs.core.Keyword("batch-status", "stopped", "batch-status/stopped", -99291669));
+    };
+  }(b, b)], null)) : null;
+};
 job_streamer.console.components.jobs.search_execution = function(a, b, c) {
   return job_streamer.console.api.request.call(null, [cljs.core.str("/"), cljs.core.str(job_streamer.console.components.jobs.app_name), cljs.core.str("/job/"), cljs.core.str(b), cljs.core.str("/execution/"), cljs.core.str(c)].join(""), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "handler", "handler", -195596612), function(b) {
     b = (new cljs.core.Keyword("job-execution", "step-executions", "job-execution/step-executions", -1002976124)).cljs$core$IFn$_invoke$arity$1(b);
@@ -80567,8 +80649,8 @@ job_streamer.console.components.jobs.search_execution = function(a, b, c) {
     }(b));
   }], null));
 };
-var ufv___116354 = schema.utils.use_fn_validation, output_schema116276_116355 = schema.core.Any, input_schema116277_116356 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "app", "app", 1079569820, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker116278_116357 = schema.core.checker.call(null, input_schema116277_116356), 
-output_checker116279_116358 = schema.core.checker.call(null, output_schema116276_116355);
+var ufv___35607 = schema.utils.use_fn_validation, output_schema35529_35608 = schema.core.Any, input_schema35530_35609 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "app", "app", 1079569820, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker35531_35610 = schema.core.checker.call(null, input_schema35530_35609), 
+output_checker35532_35611 = schema.core.checker.call(null, output_schema35529_35608);
 job_streamer.console.components.jobs.job_list_view = function(a, b, c, d, e) {
   return function g(h, k) {
     var l = a.get_cell();
@@ -80581,26 +80663,26 @@ job_streamer.console.components.jobs.job_list_view = function(a, b, c, d, e) {
     }
     m = function() {
       for (;;) {
-        return "undefined" === typeof job_streamer.console.components.jobs.t116318 && (job_streamer.console.components.jobs.t116318 = function(a, b, c, d, e, g, h, k, l, m, n, B) {
-          this.output_checker116279 = a;
-          this.job_list_view = b;
-          this.input_schema116277 = c;
-          this.owner = d;
-          this.G__116281 = e;
-          this.G__116280 = g;
-          this.input_checker116278 = h;
-          this.output_schema116276 = k;
-          this.app = l;
-          this.ufv__ = m;
-          this.validate__11396__auto__ = n;
-          this.meta116319 = B;
+        return "undefined" === typeof job_streamer.console.components.jobs.t35571 && (job_streamer.console.components.jobs.t35571 = function(a, b, c, d, e, g, h, k, l, m, n, B) {
+          this.job_list_view = a;
+          this.owner = b;
+          this.G__35534 = c;
+          this.G__35533 = d;
+          this.output_checker35532 = e;
+          this.input_schema35530 = g;
+          this.validate__10767__auto__ = h;
+          this.output_schema35529 = k;
+          this.input_checker35531 = l;
+          this.app = m;
+          this.ufv__ = n;
+          this.meta35572 = B;
           this.cljs$lang$protocol_mask$partition1$ = 0;
           this.cljs$lang$protocol_mask$partition0$ = 393216;
-        }, job_streamer.console.components.jobs.t116318.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.jobs.t116318.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
+        }, job_streamer.console.components.jobs.t35571.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.jobs.t35571.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
             return "job-list-view";
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.jobs.t116318.prototype.om$core$IRender$ = !0, job_streamer.console.components.jobs.t116318.prototype.om$core$IRender$render$arity$1 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.jobs.t35571.prototype.om$core$IRender$ = !0, job_streamer.console.components.jobs.t35571.prototype.om$core$IRender$render$arity$1 = function(a, b, c, d, e, g) {
           return function(h) {
             var k = this, l = this;
             return cljs.core.empty_QMARK_.call(null, (new cljs.core.Keyword(null, "jobs", "jobs", -313607120)).cljs$core$IFn$_invoke$arity$1(k.app)) ? React.DOM.div({className:"ui grid"}, React.DOM.div({className:"ui one column row"}, React.DOM.div({className:"column"}, React.DOM.div({className:"ui icon message"}, React.DOM.i({className:"child icon"}), React.DOM.div({className:"content"}, React.DOM.div({className:"header"}, "Let's create a job!"), React.DOM.p(null, React.DOM.button({className:"ui primary button", 
@@ -80662,8 +80744,13 @@ job_streamer.console.components.jobs.job_list_view = function(a, b, c, d, e) {
                                       return cljs.core.truth_(a) ? job_streamer.console.format.date_medium.call(null, (new cljs.core.Keyword("job-execution", "start-time", "job-execution/start-time", -398843134)).cljs$core$IFn$_invoke$arity$1(a)) : "-";
                                     }()], null), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "td", "td", 1479933353), cljs.core.truth_(cljs.core.some.call(null, new cljs.core.PersistentHashSet(null, new cljs.core.PersistentArrayMap(null, 4, [new cljs.core.Keyword("batch-status", "started", "batch-status/started", -170822559), null, new cljs.core.Keyword("batch-status", "stopping", "batch-status/stopping", 1826741446), null, new cljs.core.Keyword("batch-status", 
                                     "registered", "batch-status/registered", -1712455490), null, new cljs.core.Keyword("batch-status", "starting", "batch-status/starting", -1064150401), null], null), null), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.get_in.call(null, t, new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword("job", "latest-execution", "job/latest-execution", -1364961031), new cljs.core.Keyword("job-execution", 
-                                    "batch-status", "job-execution/batch-status", 1615935519), new cljs.core.Keyword("db", "ident", "db/ident", -737096)], null))], null))) ? new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div.ui.circular.icon.orange.button", "div.ui.circular.icon.orange.button", -730766235), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "i.setting.loading.icon", 
-                                    "i.setting.loading.icon", -1040737769)], null)], null) : new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "button.ui.circular.icon.green.button", "button.ui.circular.icon.green.button", -353913612), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "on-click", "on-click", 1632826543), function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
+                                    "batch-status", "job-execution/batch-status", 1615935519), new cljs.core.Keyword("db", "ident", "db/ident", -737096)], null))], null))) ? new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "button.ui.circular.icon.orange.button", "button.ui.circular.icon.orange.button", 368240203), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "on-click", "on-click", 1632826543), function(a, b, 
+                                    c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
+                                      return function(a) {
+                                        return job_streamer.console.components.jobs.stop_job.call(null, d);
+                                      };
+                                    }(k, r, s, t, u, n, p, q, m, l, a, b, c, d, e, g, h)], null), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "i.setting.loading.icon", "i.setting.loading.icon", -1040737769)], null)], null) : new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "button.ui.circular.icon.green.button", "button.ui.circular.icon.green.button", -353913612), new cljs.core.PersistentArrayMap(null, 
+                                    1, [new cljs.core.Keyword(null, "on-click", "on-click", 1632826543), function(a, b, c, d, e, g, h, k, l, m, n, p, q, r, s, t, u) {
                                       return function(a) {
                                         om.core.update_BANG_.call(null, d, new cljs.core.Keyword("job", "latest-execution", "job/latest-execution", -1364961031), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword("job-execution", "batch-status", "job-execution/batch-status", 1615935519), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword("db", "ident", "db/ident", -737096), new cljs.core.Keyword("batch-status", "registered", "batch-status/registered", -1712455490)], null)], 
                                         null));
@@ -80711,8 +80798,13 @@ job_streamer.console.components.jobs.job_list_view = function(a, b, c, d, e) {
                               return cljs.core.truth_(a) ? job_streamer.console.format.date_medium.call(null, (new cljs.core.Keyword("job-execution", "start-time", "job-execution/start-time", -398843134)).cljs$core$IFn$_invoke$arity$1(a)) : "-";
                             }()], null), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "td", "td", 1479933353), cljs.core.truth_(cljs.core.some.call(null, new cljs.core.PersistentHashSet(null, new cljs.core.PersistentArrayMap(null, 4, [new cljs.core.Keyword("batch-status", "started", "batch-status/started", -170822559), null, new cljs.core.Keyword("batch-status", "stopping", "batch-status/stopping", 1826741446), null, new cljs.core.Keyword("batch-status", 
                             "registered", "batch-status/registered", -1712455490), null, new cljs.core.Keyword("batch-status", "starting", "batch-status/starting", -1064150401), null], null), null), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.get_in.call(null, t, new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword("job", "latest-execution", "job/latest-execution", -1364961031), new cljs.core.Keyword("job-execution", 
-                            "batch-status", "job-execution/batch-status", 1615935519), new cljs.core.Keyword("db", "ident", "db/ident", -737096)], null))], null))) ? new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "div.ui.circular.icon.orange.button", "div.ui.circular.icon.orange.button", -730766235), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "i.setting.loading.icon", 
-                            "i.setting.loading.icon", -1040737769)], null)], null) : new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "button.ui.circular.icon.green.button", "button.ui.circular.icon.green.button", -353913612), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "on-click", "on-click", 1632826543), function(a, b, c, d, e, g, h, k, l, m, n, p, q) {
+                            "batch-status", "job-execution/batch-status", 1615935519), new cljs.core.Keyword("db", "ident", "db/ident", -737096)], null))], null))) ? new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "button.ui.circular.icon.orange.button", "button.ui.circular.icon.orange.button", 368240203), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "on-click", "on-click", 1632826543), function(a, b, c, d, e, 
+                            g, h, k, l, m, n, p, q) {
+                              return function(a) {
+                                return job_streamer.console.components.jobs.stop_job.call(null, c);
+                              };
+                            }(r, s, t, u, m, l, a, b, c, d, e, g, h)], null), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "i.setting.loading.icon", "i.setting.loading.icon", -1040737769)], null)], null) : new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "button.ui.circular.icon.green.button", "button.ui.circular.icon.green.button", -353913612), new cljs.core.PersistentArrayMap(null, 
+                            1, [new cljs.core.Keyword(null, "on-click", "on-click", 1632826543), function(a, b, c, d, e, g, h, k, l, m, n, p, q) {
                               return function(a) {
                                 om.core.update_BANG_.call(null, c, new cljs.core.Keyword("job", "latest-execution", "job/latest-execution", -1364961031), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword("job-execution", "batch-status", "job-execution/batch-status", 1615935519), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword("db", "ident", "db/ident", -737096), new cljs.core.Keyword("batch-status", "registered", "batch-status/registered", -1712455490)], null)], null));
                                 return job_streamer.console.components.jobs.execute_job.call(null, d);
@@ -80733,23 +80825,23 @@ job_streamer.console.components.jobs.job_list_view = function(a, b, c, d, e) {
               return cljs.core.apply.call(null, React.DOM.tbody, cljs.core.map_QMARK_.call(null, h) ? sablono.interpreter.attributes.call(null, h) : null, cljs.core.remove.call(null, cljs.core.nil_QMARK_, cljs.core.map_QMARK_.call(null, h) ? cljs.core.PersistentVector.EMPTY : new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [sablono.interpreter.interpret.call(null, h)], null)));
             }()))));
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.jobs.t116318.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.jobs.t35571.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
-            return this.meta116319;
+            return this.meta35572;
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.jobs.t116318.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.jobs.t35571.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
           return function(a, b) {
-            return new job_streamer.console.components.jobs.t116318(this.output_checker116279, this.job_list_view, this.input_schema116277, this.owner, this.G__116281, this.G__116280, this.input_checker116278, this.output_schema116276, this.app, this.ufv__, this.validate__11396__auto__, b);
+            return new job_streamer.console.components.jobs.t35571(this.job_list_view, this.owner, this.G__35534, this.G__35533, this.output_checker35532, this.input_schema35530, this.validate__10767__auto__, this.output_schema35529, this.input_checker35531, this.app, this.ufv__, b);
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.jobs.t116318.cljs$lang$type = !0, job_streamer.console.components.jobs.t116318.cljs$lang$ctorStr = "job-streamer.console.components.jobs/t116318", job_streamer.console.components.jobs.t116318.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.jobs.t35571.cljs$lang$type = !0, job_streamer.console.components.jobs.t35571.cljs$lang$ctorStr = "job-streamer.console.components.jobs/t35571", job_streamer.console.components.jobs.t35571.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
           return function(a, b, c) {
-            return cljs.core._write.call(null, b, "job-streamer.console.components.jobs/t116318");
+            return cljs.core._write.call(null, b, "job-streamer.console.components.jobs/t35571");
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.jobs.__GT_t116318 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.jobs.__GT_t35571 = function(a, b, c, d, e, g) {
           return function(a, b, c, d, e, g, h, k, l, m, n, p) {
-            return new job_streamer.console.components.jobs.t116318(a, b, c, d, e, g, h, k, l, m, n, p);
+            return new job_streamer.console.components.jobs.t35571(a, b, c, d, e, g, h, k, l, m, n, p);
           };
-        }(l, a, b, c, d, e)), new job_streamer.console.components.jobs.t116318(e, g, c, k, k, h, d, b, h, a, l, null);
+        }(l, a, b, c, d, e)), new job_streamer.console.components.jobs.t35571(g, k, k, h, e, c, l, b, d, h, a, null);
       }
     }();
     if (cljs.core.truth_(l) && (n = e.call(null, m), cljs.core.truth_(n))) {
@@ -80758,8 +80850,8 @@ job_streamer.console.components.jobs.job_list_view = function(a, b, c, d, e) {
     }
     return m;
   };
-}(ufv___116354, output_schema116276_116355, input_schema116277_116356, input_checker116278_116357, output_checker116279_116358);
-schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.jobs.job_list_view), schema.core.make_fn_schema.call(null, output_schema116276_116355, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema116277_116356], null)));
+}(ufv___35607, output_schema35529_35608, input_schema35530_35609, input_checker35531_35610, output_checker35532_35611);
+schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.jobs.job_list_view), schema.core.make_fn_schema.call(null, output_schema35529_35608, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema35530_35609], null)));
 job_streamer.console.components.jobs.__GT_job_list_view = function() {
   var a = null, b = function(a) {
     return om.core.build.call(null, job_streamer.console.components.jobs.job_list_view, a);
@@ -80778,8 +80870,8 @@ job_streamer.console.components.jobs.__GT_job_list_view = function() {
   a.cljs$core$IFn$_invoke$arity$2 = c;
   return a;
 }();
-var ufv___116386 = schema.utils.use_fn_validation, output_schema116366_116387 = schema.core.Any, input_schema116367_116388 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "app", "app", 1079569820, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker116368_116389 = schema.core.checker.call(null, input_schema116367_116388), 
-output_checker116369_116390 = schema.core.checker.call(null, output_schema116366_116387);
+var ufv___35639 = schema.utils.use_fn_validation, output_schema35619_35640 = schema.core.Any, input_schema35620_35641 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "app", "app", 1079569820, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker35621_35642 = schema.core.checker.call(null, input_schema35620_35641), 
+output_checker35622_35643 = schema.core.checker.call(null, output_schema35619_35640);
 job_streamer.console.components.jobs.jobs_view = function(a, b, c, d, e) {
   return function g(h, k) {
     var l = a.get_cell();
@@ -80792,26 +80884,26 @@ job_streamer.console.components.jobs.jobs_view = function(a, b, c, d, e) {
     }
     m = function() {
       for (;;) {
-        return "undefined" === typeof job_streamer.console.components.jobs.t116379 && (job_streamer.console.components.jobs.t116379 = function(a, b, c, d, e, g, h, k, l, m, n, B) {
-          this.owner = a;
-          this.input_checker116368 = b;
-          this.G__116371 = c;
-          this.output_checker116369 = d;
-          this.input_schema116367 = e;
-          this.G__116370 = g;
-          this.output_schema116366 = h;
+        return "undefined" === typeof job_streamer.console.components.jobs.t35632 && (job_streamer.console.components.jobs.t35632 = function(a, b, c, d, e, g, h, k, l, m, n, B) {
+          this.input_checker35621 = a;
+          this.owner = b;
+          this.output_checker35622 = c;
+          this.G__35624 = d;
+          this.input_schema35620 = e;
+          this.output_schema35619 = g;
+          this.validate__10767__auto__ = h;
           this.jobs_view = k;
           this.app = l;
           this.ufv__ = m;
-          this.validate__11396__auto__ = n;
-          this.meta116380 = B;
+          this.G__35623 = n;
+          this.meta35633 = B;
           this.cljs$lang$protocol_mask$partition1$ = 0;
           this.cljs$lang$protocol_mask$partition0$ = 393216;
-        }, job_streamer.console.components.jobs.t116379.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.jobs.t116379.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
+        }, job_streamer.console.components.jobs.t35632.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.jobs.t35632.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
             return "jobs-view";
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.jobs.t116379.prototype.om$core$IRender$ = !0, job_streamer.console.components.jobs.t116379.prototype.om$core$IRender$render$arity$1 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.jobs.t35632.prototype.om$core$IRender$ = !0, job_streamer.console.components.jobs.t35632.prototype.om$core$IRender$render$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
             var b = this, c = cljs.core.second.call(null, (new cljs.core.Keyword(null, "mode", "mode", 654403691)).cljs$core$IFn$_invoke$arity$1(b.app));
             return React.DOM.div(null, React.DOM.h2({className:"ui purple header"}, React.DOM.i({className:"setting icon"}), React.DOM.div({className:"content"}, "Job", React.DOM.div({className:"sub header"}, "Edit and execute a job."))), sablono.interpreter.interpret.call(null, function() {
@@ -80837,27 +80929,27 @@ job_streamer.console.components.jobs.jobs_view = function(a, b, c, d, e) {
               }
             }()));
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.jobs.t116379.prototype.om$core$IWillMount$ = !0, job_streamer.console.components.jobs.t116379.prototype.om$core$IWillMount$will_mount$arity$1 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.jobs.t35632.prototype.om$core$IWillMount$ = !0, job_streamer.console.components.jobs.t35632.prototype.om$core$IWillMount$will_mount$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
             return job_streamer.console.search.search_jobs.call(null, this.app, "");
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.jobs.t116379.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.jobs.t35632.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
-            return this.meta116380;
+            return this.meta35633;
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.jobs.t116379.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.jobs.t35632.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
           return function(a, b) {
-            return new job_streamer.console.components.jobs.t116379(this.owner, this.input_checker116368, this.G__116371, this.output_checker116369, this.input_schema116367, this.G__116370, this.output_schema116366, this.jobs_view, this.app, this.ufv__, this.validate__11396__auto__, b);
+            return new job_streamer.console.components.jobs.t35632(this.input_checker35621, this.owner, this.output_checker35622, this.G__35624, this.input_schema35620, this.output_schema35619, this.validate__10767__auto__, this.jobs_view, this.app, this.ufv__, this.G__35623, b);
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.jobs.t116379.cljs$lang$type = !0, job_streamer.console.components.jobs.t116379.cljs$lang$ctorStr = "job-streamer.console.components.jobs/t116379", job_streamer.console.components.jobs.t116379.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.jobs.t35632.cljs$lang$type = !0, job_streamer.console.components.jobs.t35632.cljs$lang$ctorStr = "job-streamer.console.components.jobs/t35632", job_streamer.console.components.jobs.t35632.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
           return function(a, b, c) {
-            return cljs.core._write.call(null, b, "job-streamer.console.components.jobs/t116379");
+            return cljs.core._write.call(null, b, "job-streamer.console.components.jobs/t35632");
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.jobs.__GT_t116379 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.jobs.__GT_t35632 = function(a, b, c, d, e, g) {
           return function(a, b, c, d, e, g, h, k, l, m, n, p) {
-            return new job_streamer.console.components.jobs.t116379(a, b, c, d, e, g, h, k, l, m, n, p);
+            return new job_streamer.console.components.jobs.t35632(a, b, c, d, e, g, h, k, l, m, n, p);
           };
-        }(l, a, b, c, d, e)), new job_streamer.console.components.jobs.t116379(k, d, k, e, c, h, b, g, h, a, l, null);
+        }(l, a, b, c, d, e)), new job_streamer.console.components.jobs.t35632(d, k, e, k, c, b, l, g, h, a, h, null);
       }
     }();
     if (cljs.core.truth_(l) && (n = e.call(null, m), cljs.core.truth_(n))) {
@@ -80866,8 +80958,8 @@ job_streamer.console.components.jobs.jobs_view = function(a, b, c, d, e) {
     }
     return m;
   };
-}(ufv___116386, output_schema116366_116387, input_schema116367_116388, input_checker116368_116389, output_checker116369_116390);
-schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.jobs.jobs_view), schema.core.make_fn_schema.call(null, output_schema116366_116387, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema116367_116388], null)));
+}(ufv___35639, output_schema35619_35640, input_schema35620_35641, input_checker35621_35642, output_checker35622_35643);
+schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.jobs.jobs_view), schema.core.make_fn_schema.call(null, output_schema35619_35640, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema35620_35641], null)));
 job_streamer.console.components.jobs.__GT_jobs_view = function() {
   var a = null, b = function(a) {
     return om.core.build.call(null, job_streamer.console.components.jobs.jobs_view, a);
@@ -81629,8 +81721,8 @@ job_streamer.console.routing.init = function(a, b) {
   return job_streamer.console.routing.setup_history.call(null, b);
 };
 job_streamer.console.components.agents = {};
-var ufv___30679 = schema.utils.use_fn_validation, output_schema30649_30680 = schema.core.Any, input_schema30650_30681 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "instance-id", "instance-id", -1703074506, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker30651_30682 = schema.core.checker.call(null, input_schema30650_30681), 
-output_checker30652_30683 = schema.core.checker.call(null, output_schema30649_30680);
+var ufv___31578 = schema.utils.use_fn_validation, output_schema31540_31579 = schema.core.Any, input_schema31541_31580 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "instance-id", "instance-id", -1703074506, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker31542_31581 = schema.core.checker.call(null, input_schema31541_31580), 
+output_checker31543_31582 = schema.core.checker.call(null, output_schema31540_31579);
 job_streamer.console.components.agents.agent_detail_view = function(a, b, c, d, e) {
   return function g(h, k) {
     var l = a.get_cell();
@@ -81643,26 +81735,26 @@ job_streamer.console.components.agents.agent_detail_view = function(a, b, c, d, 
     }
     m = function() {
       for (;;) {
-        return "undefined" === typeof job_streamer.console.components.agents.t30667 && (job_streamer.console.components.agents.t30667 = function(a, b, c, d, e, g, h, k, l, m, n, B) {
-          this.owner = a;
-          this.output_schema30649 = b;
-          this.agent_detail_view = c;
-          this.validate__11392__auto__ = d;
-          this.G__30654 = e;
-          this.instance_id = g;
-          this.input_schema30650 = h;
-          this.input_checker30651 = k;
-          this.output_checker30652 = l;
-          this.G__30653 = m;
+        return "undefined" === typeof job_streamer.console.components.agents.t31562 && (job_streamer.console.components.agents.t31562 = function(a, b, c, d, e, g, h, k, l, m, n, B) {
+          this.G__31545 = a;
+          this.owner = b;
+          this.input_checker31542 = c;
+          this.input_schema31541 = d;
+          this.output_checker31543 = e;
+          this.agent_detail_view = g;
+          this.validate__11392__auto__ = h;
+          this.output_schema31540 = k;
+          this.instance_id = l;
+          this.G__31544 = m;
           this.ufv__ = n;
-          this.meta30668 = B;
+          this.meta31563 = B;
           this.cljs$lang$protocol_mask$partition1$ = 0;
           this.cljs$lang$protocol_mask$partition0$ = 393216;
-        }, job_streamer.console.components.agents.t30667.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.agents.t30667.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
+        }, job_streamer.console.components.agents.t31562.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.agents.t31562.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
             return "agent-detail-view";
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.agents.t30667.prototype.om$core$IRenderState$ = !0, job_streamer.console.components.agents.t30667.prototype.om$core$IRenderState$render_state$arity$2 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.agents.t31562.prototype.om$core$IRenderState$ = !0, job_streamer.console.components.agents.t31562.prototype.om$core$IRenderState$render_state$arity$2 = function(a, b, c, d, e, g) {
           return function(a, b) {
             var c = cljs.core.seq_QMARK_.call(null, b) ? cljs.core.apply.call(null, cljs.core.hash_map, b) : b, d = cljs.core.get.call(null, c, new cljs.core.Keyword(null, "agent", "agent", -766455027));
             return cljs.core.truth_(d) ? React.DOM.div({className:"ui stackable two column grid"}, React.DOM.div({className:"column"}, function() {
@@ -81677,9 +81769,10 @@ job_streamer.console.components.agents.agent_detail_view = function(a, b, c, d, 
                 return cljs.core.apply.call(null, React.DOM.div, cljs.core.map_QMARK_.call(null, a) ? sablono.interpreter.attributes.call(null, sablono.util.merge_with_class.call(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "class", "class", -2030961996), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, ["sub", "header"], null)], null), a)) : {className:"sub header"}, cljs.core.remove.call(null, cljs.core.nil_QMARK_, cljs.core.map_QMARK_.call(null, 
                 a) ? cljs.core.PersistentVector.EMPTY : new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [sablono.interpreter.interpret.call(null, a)], null)));
               }()], null)));
-            }(), React.DOM.div({className:"image"}, React.DOM.img({className:"ui image", src:job_streamer.console.api.url_for.call(null, [cljs.core.str("/agent/"), cljs.core.str(this.instance_id), cljs.core.str("/monitor/cpu/daily")].join(""))}))), React.DOM.div({className:"column"})) : React.DOM.img({src:"/img/loader.gif"});
+            }(), React.DOM.h4({className:"ui header"}, "CPU usage"), React.DOM.div({className:"image"}, React.DOM.img({className:"ui image", src:job_streamer.console.api.url_for.call(null, [cljs.core.str("/agent/"), cljs.core.str(this.instance_id), cljs.core.str("/monitor/cpu/daily")].join(""))})), React.DOM.h4({className:"ui header"}, "Memory usage"), React.DOM.div({className:"image"}, React.DOM.img({className:"ui image", src:job_streamer.console.api.url_for.call(null, [cljs.core.str("/agent/"), 
+            cljs.core.str(this.instance_id), cljs.core.str("/monitor/memory/daily")].join(""))}))), React.DOM.div({className:"column"})) : React.DOM.img({src:"/img/loader.gif"});
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.agents.t30667.prototype.om$core$IWillMount$ = !0, job_streamer.console.components.agents.t30667.prototype.om$core$IWillMount$will_mount$arity$1 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.agents.t31562.prototype.om$core$IWillMount$ = !0, job_streamer.console.components.agents.t31562.prototype.om$core$IWillMount$will_mount$arity$1 = function(a, b, c, d, e, g) {
           return function(h) {
             var k = this;
             return job_streamer.console.api.request.call(null, [cljs.core.str("/agent/"), cljs.core.str(k.instance_id)].join(""), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "handler", "handler", -195596612), function(a, b, c, d, e, g, h) {
@@ -81688,23 +81781,23 @@ job_streamer.console.components.agents.agent_detail_view = function(a, b, c, d, 
               };
             }(this, a, b, c, d, e, g)], null));
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.agents.t30667.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.agents.t31562.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
-            return this.meta30668;
+            return this.meta31563;
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.agents.t30667.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.agents.t31562.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
           return function(a, b) {
-            return new job_streamer.console.components.agents.t30667(this.owner, this.output_schema30649, this.agent_detail_view, this.validate__11392__auto__, this.G__30654, this.instance_id, this.input_schema30650, this.input_checker30651, this.output_checker30652, this.G__30653, this.ufv__, b);
+            return new job_streamer.console.components.agents.t31562(this.G__31545, this.owner, this.input_checker31542, this.input_schema31541, this.output_checker31543, this.agent_detail_view, this.validate__11392__auto__, this.output_schema31540, this.instance_id, this.G__31544, this.ufv__, b);
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.agents.t30667.cljs$lang$type = !0, job_streamer.console.components.agents.t30667.cljs$lang$ctorStr = "job-streamer.console.components.agents/t30667", job_streamer.console.components.agents.t30667.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.agents.t31562.cljs$lang$type = !0, job_streamer.console.components.agents.t31562.cljs$lang$ctorStr = "job-streamer.console.components.agents/t31562", job_streamer.console.components.agents.t31562.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
           return function(a, b, c) {
-            return cljs.core._write.call(null, b, "job-streamer.console.components.agents/t30667");
+            return cljs.core._write.call(null, b, "job-streamer.console.components.agents/t31562");
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.agents.__GT_t30667 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.agents.__GT_t31562 = function(a, b, c, d, e, g) {
           return function(a, b, c, d, e, g, h, k, l, m, n, p) {
-            return new job_streamer.console.components.agents.t30667(a, b, c, d, e, g, h, k, l, m, n, p);
+            return new job_streamer.console.components.agents.t31562(a, b, c, d, e, g, h, k, l, m, n, p);
           };
-        }(l, a, b, c, d, e)), new job_streamer.console.components.agents.t30667(k, b, g, l, k, h, c, d, e, h, a, null);
+        }(l, a, b, c, d, e)), new job_streamer.console.components.agents.t31562(k, k, d, c, e, g, l, b, h, h, a, null);
       }
     }();
     if (cljs.core.truth_(l) && (n = e.call(null, m), cljs.core.truth_(n))) {
@@ -81713,8 +81806,8 @@ job_streamer.console.components.agents.agent_detail_view = function(a, b, c, d, 
     }
     return m;
   };
-}(ufv___30679, output_schema30649_30680, input_schema30650_30681, input_checker30651_30682, output_checker30652_30683);
-schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.agents.agent_detail_view), schema.core.make_fn_schema.call(null, output_schema30649_30680, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema30650_30681], null)));
+}(ufv___31578, output_schema31540_31579, input_schema31541_31580, input_checker31542_31581, output_checker31543_31582);
+schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.agents.agent_detail_view), schema.core.make_fn_schema.call(null, output_schema31540_31579, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema31541_31580], null)));
 job_streamer.console.components.agents.__GT_agent_detail_view = function() {
   var a = null, b = function(a) {
     return om.core.build.call(null, job_streamer.console.components.agents.agent_detail_view, a);
@@ -81733,8 +81826,8 @@ job_streamer.console.components.agents.__GT_agent_detail_view = function() {
   a.cljs$core$IFn$_invoke$arity$2 = c;
   return a;
 }();
-var ufv___30706 = schema.utils.use_fn_validation, output_schema30690_30707 = schema.core.Any, input_schema30691_30708 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "app", "app", 1079569820, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker30692_30709 = schema.core.checker.call(null, input_schema30691_30708), 
-output_checker30693_30710 = schema.core.checker.call(null, output_schema30690_30707);
+var ufv___31605 = schema.utils.use_fn_validation, output_schema31589_31606 = schema.core.Any, input_schema31590_31607 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "app", "app", 1079569820, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker31591_31608 = schema.core.checker.call(null, input_schema31590_31607), 
+output_checker31592_31609 = schema.core.checker.call(null, output_schema31589_31606);
 job_streamer.console.components.agents.no_agents_view = function(a, b, c, d, e) {
   return function g(h, k) {
     var l = a.get_cell();
@@ -81747,47 +81840,47 @@ job_streamer.console.components.agents.no_agents_view = function(a, b, c, d, e) 
     }
     m = function() {
       for (;;) {
-        return "undefined" === typeof job_streamer.console.components.agents.t30701 && (job_streamer.console.components.agents.t30701 = function(a, b, c, d, e, g, h, k, l, m, n, B) {
-          this.owner = a;
-          this.input_schema30691 = b;
-          this.no_agents_view = c;
-          this.validate__11392__auto__ = d;
-          this.output_checker30693 = e;
-          this.G__30694 = g;
-          this.output_schema30690 = h;
-          this.input_checker30692 = k;
-          this.app = l;
-          this.G__30695 = m;
+        return "undefined" === typeof job_streamer.console.components.agents.t31600 && (job_streamer.console.components.agents.t31600 = function(a, b, c, d, e, g, h, k, l, m, n, B) {
+          this.output_checker31592 = a;
+          this.output_schema31589 = b;
+          this.input_schema31590 = c;
+          this.owner = d;
+          this.G__31594 = e;
+          this.G__31593 = g;
+          this.no_agents_view = h;
+          this.input_checker31591 = k;
+          this.validate__11392__auto__ = l;
+          this.app = m;
           this.ufv__ = n;
-          this.meta30702 = B;
+          this.meta31601 = B;
           this.cljs$lang$protocol_mask$partition1$ = 0;
           this.cljs$lang$protocol_mask$partition0$ = 393216;
-        }, job_streamer.console.components.agents.t30701.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.agents.t30701.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
+        }, job_streamer.console.components.agents.t31600.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.agents.t31600.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
             return "no-agents-view";
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.agents.t30701.prototype.om$core$IRender$ = !0, job_streamer.console.components.agents.t30701.prototype.om$core$IRender$render$arity$1 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.agents.t31600.prototype.om$core$IRender$ = !0, job_streamer.console.components.agents.t31600.prototype.om$core$IRender$render$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
             return React.DOM.div({className:"ui icon message"}, React.DOM.i({className:"child icon"}), React.DOM.div({className:"content"}, React.DOM.div({className:"header"}, "Let's setup agents!"), React.DOM.ol({className:"ui list"}, React.DOM.li(null, React.DOM.h4({className:"ui header"}, "Clone repository."), React.DOM.pre(null, React.DOM.code(null, "% git clone https://github.com/job-streamer/job-streamer-agent.git"))), React.DOM.li(null, React.DOM.h4({className:"ui header"}, "Build docker container."), 
             React.DOM.pre(null, React.DOM.code(null, "% cd job-streamer-agent\n", "% docker build -t job-streamer/agent:0.1.0 ."))), React.DOM.li(null, React.DOM.h4({className:"ui header"}, "Run docker container."), React.DOM.pre(null, React.DOM.code(null, "% docker run job-streamer/agent:0.1.0"))))));
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.agents.t30701.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.agents.t31600.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
-            return this.meta30702;
+            return this.meta31601;
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.agents.t30701.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.agents.t31600.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
           return function(a, b) {
-            return new job_streamer.console.components.agents.t30701(this.owner, this.input_schema30691, this.no_agents_view, this.validate__11392__auto__, this.output_checker30693, this.G__30694, this.output_schema30690, this.input_checker30692, this.app, this.G__30695, this.ufv__, b);
+            return new job_streamer.console.components.agents.t31600(this.output_checker31592, this.output_schema31589, this.input_schema31590, this.owner, this.G__31594, this.G__31593, this.no_agents_view, this.input_checker31591, this.validate__11392__auto__, this.app, this.ufv__, b);
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.agents.t30701.cljs$lang$type = !0, job_streamer.console.components.agents.t30701.cljs$lang$ctorStr = "job-streamer.console.components.agents/t30701", job_streamer.console.components.agents.t30701.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.agents.t31600.cljs$lang$type = !0, job_streamer.console.components.agents.t31600.cljs$lang$ctorStr = "job-streamer.console.components.agents/t31600", job_streamer.console.components.agents.t31600.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
           return function(a, b, c) {
-            return cljs.core._write.call(null, b, "job-streamer.console.components.agents/t30701");
+            return cljs.core._write.call(null, b, "job-streamer.console.components.agents/t31600");
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.agents.__GT_t30701 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.agents.__GT_t31600 = function(a, b, c, d, e, g) {
           return function(a, b, c, d, e, g, h, k, l, m, n, p) {
-            return new job_streamer.console.components.agents.t30701(a, b, c, d, e, g, h, k, l, m, n, p);
+            return new job_streamer.console.components.agents.t31600(a, b, c, d, e, g, h, k, l, m, n, p);
           };
-        }(l, a, b, c, d, e)), new job_streamer.console.components.agents.t30701(k, c, g, l, e, h, b, d, h, k, a, null);
+        }(l, a, b, c, d, e)), new job_streamer.console.components.agents.t31600(e, b, c, k, k, h, g, d, l, h, a, null);
       }
     }();
     if (cljs.core.truth_(l) && (n = e.call(null, m), cljs.core.truth_(n))) {
@@ -81796,8 +81889,8 @@ job_streamer.console.components.agents.no_agents_view = function(a, b, c, d, e) 
     }
     return m;
   };
-}(ufv___30706, output_schema30690_30707, input_schema30691_30708, input_checker30692_30709, output_checker30693_30710);
-schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.agents.no_agents_view), schema.core.make_fn_schema.call(null, output_schema30690_30707, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema30691_30708], null)));
+}(ufv___31605, output_schema31589_31606, input_schema31590_31607, input_checker31591_31608, output_checker31592_31609);
+schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.agents.no_agents_view), schema.core.make_fn_schema.call(null, output_schema31589_31606, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema31590_31607], null)));
 job_streamer.console.components.agents.__GT_no_agents_view = function() {
   var a = null, b = function(a) {
     return om.core.build.call(null, job_streamer.console.components.agents.no_agents_view, a);
@@ -81816,8 +81909,8 @@ job_streamer.console.components.agents.__GT_no_agents_view = function() {
   a.cljs$core$IFn$_invoke$arity$2 = c;
   return a;
 }();
-var ufv___30753 = schema.utils.use_fn_validation, output_schema30717_30754 = schema.core.Any, input_schema30718_30755 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "agents", "agents", 528117827, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker30719_30756 = schema.core.checker.call(null, input_schema30718_30755), 
-output_checker30720_30757 = schema.core.checker.call(null, output_schema30717_30754);
+var ufv___31652 = schema.utils.use_fn_validation, output_schema31616_31653 = schema.core.Any, input_schema31617_31654 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "agents", "agents", 528117827, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker31618_31655 = schema.core.checker.call(null, input_schema31617_31654), 
+output_checker31619_31656 = schema.core.checker.call(null, output_schema31616_31653);
 job_streamer.console.components.agents.agent_list_view = function(a, b, c, d, e) {
   return function g(h, k) {
     var l = a.get_cell();
@@ -81830,26 +81923,26 @@ job_streamer.console.components.agents.agent_list_view = function(a, b, c, d, e)
     }
     m = function() {
       for (;;) {
-        return "undefined" === typeof job_streamer.console.components.agents.t30738 && (job_streamer.console.components.agents.t30738 = function(a, b, c, d, e, g, h, k, l, m, n, B) {
-          this.output_schema30717 = a;
-          this.G__30722 = b;
-          this.agents = c;
-          this.agent_list_view = d;
+        return "undefined" === typeof job_streamer.console.components.agents.t31637 && (job_streamer.console.components.agents.t31637 = function(a, b, c, d, e, g, h, k, l, m, n, B) {
+          this.agents = a;
+          this.G__31620 = b;
+          this.agent_list_view = c;
+          this.G__31621 = d;
           this.owner = e;
-          this.input_schema30718 = g;
-          this.validate__11392__auto__ = h;
-          this.G__30721 = k;
-          this.output_checker30720 = l;
+          this.output_checker31619 = g;
+          this.input_schema31617 = h;
+          this.validate__11392__auto__ = k;
+          this.input_checker31618 = l;
           this.ufv__ = m;
-          this.input_checker30719 = n;
-          this.meta30739 = B;
+          this.output_schema31616 = n;
+          this.meta31638 = B;
           this.cljs$lang$protocol_mask$partition1$ = 0;
           this.cljs$lang$protocol_mask$partition0$ = 393216;
-        }, job_streamer.console.components.agents.t30738.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.agents.t30738.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
+        }, job_streamer.console.components.agents.t31637.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.agents.t31637.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
             return "agent-list-view";
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.agents.t30738.prototype.om$core$IRender$ = !0, job_streamer.console.components.agents.t30738.prototype.om$core$IRender$render$arity$1 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.agents.t31637.prototype.om$core$IRender$ = !0, job_streamer.console.components.agents.t31637.prototype.om$core$IRender$render$arity$1 = function(a, b, c, d, e, g) {
           return function(h) {
             var k = this, l = this;
             return React.DOM.table({className:"ui celled striped table"}, React.DOM.thead(null, React.DOM.tr(null, React.DOM.th(null, "Name"), React.DOM.th(null, "CPU"))), React.DOM.tbody(null, cljs.core.into_array.call(null, function() {
@@ -81917,23 +82010,23 @@ job_streamer.console.components.agents.agent_list_view = function(a, b, c, d, e)
               }(l, a, b, c, d, e, g).call(null, k.agents);
             }())));
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.agents.t30738.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.agents.t31637.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
-            return this.meta30739;
+            return this.meta31638;
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.agents.t30738.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.agents.t31637.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
           return function(a, b) {
-            return new job_streamer.console.components.agents.t30738(this.output_schema30717, this.G__30722, this.agents, this.agent_list_view, this.owner, this.input_schema30718, this.validate__11392__auto__, this.G__30721, this.output_checker30720, this.ufv__, this.input_checker30719, b);
+            return new job_streamer.console.components.agents.t31637(this.agents, this.G__31620, this.agent_list_view, this.G__31621, this.owner, this.output_checker31619, this.input_schema31617, this.validate__11392__auto__, this.input_checker31618, this.ufv__, this.output_schema31616, b);
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.agents.t30738.cljs$lang$type = !0, job_streamer.console.components.agents.t30738.cljs$lang$ctorStr = "job-streamer.console.components.agents/t30738", job_streamer.console.components.agents.t30738.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.agents.t31637.cljs$lang$type = !0, job_streamer.console.components.agents.t31637.cljs$lang$ctorStr = "job-streamer.console.components.agents/t31637", job_streamer.console.components.agents.t31637.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
           return function(a, b, c) {
-            return cljs.core._write.call(null, b, "job-streamer.console.components.agents/t30738");
+            return cljs.core._write.call(null, b, "job-streamer.console.components.agents/t31637");
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.agents.__GT_t30738 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.agents.__GT_t31637 = function(a, b, c, d, e, g) {
           return function(a, b, c, d, e, g, h, k, l, m, n, p) {
-            return new job_streamer.console.components.agents.t30738(a, b, c, d, e, g, h, k, l, m, n, p);
+            return new job_streamer.console.components.agents.t31637(a, b, c, d, e, g, h, k, l, m, n, p);
           };
-        }(l, a, b, c, d, e)), new job_streamer.console.components.agents.t30738(b, k, h, g, k, c, l, h, e, a, d, null);
+        }(l, a, b, c, d, e)), new job_streamer.console.components.agents.t31637(h, h, g, k, k, e, c, l, d, a, b, null);
       }
     }();
     if (cljs.core.truth_(l) && (n = e.call(null, m), cljs.core.truth_(n))) {
@@ -81942,8 +82035,8 @@ job_streamer.console.components.agents.agent_list_view = function(a, b, c, d, e)
     }
     return m;
   };
-}(ufv___30753, output_schema30717_30754, input_schema30718_30755, input_checker30719_30756, output_checker30720_30757);
-schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.agents.agent_list_view), schema.core.make_fn_schema.call(null, output_schema30717_30754, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema30718_30755], null)));
+}(ufv___31652, output_schema31616_31653, input_schema31617_31654, input_checker31618_31655, output_checker31619_31656);
+schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.agents.agent_list_view), schema.core.make_fn_schema.call(null, output_schema31616_31653, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema31617_31654], null)));
 job_streamer.console.components.agents.__GT_agent_list_view = function() {
   var a = null, b = function(a) {
     return om.core.build.call(null, job_streamer.console.components.agents.agent_list_view, a);
@@ -81962,8 +82055,8 @@ job_streamer.console.components.agents.__GT_agent_list_view = function() {
   a.cljs$core$IFn$_invoke$arity$2 = c;
   return a;
 }();
-var ufv___30787 = schema.utils.use_fn_validation, output_schema30767_30788 = schema.core.Any, input_schema30768_30789 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "app", "app", 1079569820, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker30769_30790 = schema.core.checker.call(null, input_schema30768_30789), 
-output_checker30770_30791 = schema.core.checker.call(null, output_schema30767_30788);
+var ufv___31686 = schema.utils.use_fn_validation, output_schema31666_31687 = schema.core.Any, input_schema31667_31688 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "app", "app", 1079569820, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker31668_31689 = schema.core.checker.call(null, input_schema31667_31688), 
+output_checker31669_31690 = schema.core.checker.call(null, output_schema31666_31687);
 job_streamer.console.components.agents.agents_view = function(a, b, c, d, e) {
   return function g(h, k) {
     var l = a.get_cell();
@@ -81976,26 +82069,26 @@ job_streamer.console.components.agents.agents_view = function(a, b, c, d, e) {
     }
     m = function() {
       for (;;) {
-        return "undefined" === typeof job_streamer.console.components.agents.t30780 && (job_streamer.console.components.agents.t30780 = function(a, b, c, d, e, g, h, k, l, m, n, B) {
+        return "undefined" === typeof job_streamer.console.components.agents.t31679 && (job_streamer.console.components.agents.t31679 = function(a, b, c, d, e, g, h, k, l, m, n, B) {
           this.owner = a;
-          this.output_checker30770 = b;
-          this.input_schema30768 = c;
-          this.output_schema30767 = d;
-          this.validate__11392__auto__ = e;
-          this.G__30772 = g;
-          this.G__30771 = h;
-          this.input_checker30769 = k;
+          this.output_schema31666 = b;
+          this.G__31670 = c;
+          this.validate__11392__auto__ = d;
+          this.output_checker31669 = e;
+          this.input_checker31668 = g;
+          this.G__31671 = h;
+          this.input_schema31667 = k;
           this.app = l;
           this.agents_view = m;
           this.ufv__ = n;
-          this.meta30781 = B;
+          this.meta31680 = B;
           this.cljs$lang$protocol_mask$partition1$ = 0;
           this.cljs$lang$protocol_mask$partition0$ = 393216;
-        }, job_streamer.console.components.agents.t30780.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.agents.t30780.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
+        }, job_streamer.console.components.agents.t31679.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.agents.t31679.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
             return "agents-view";
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.agents.t30780.prototype.om$core$IRender$ = !0, job_streamer.console.components.agents.t30780.prototype.om$core$IRender$render$arity$1 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.agents.t31679.prototype.om$core$IRender$ = !0, job_streamer.console.components.agents.t31679.prototype.om$core$IRender$render$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
             var b = this;
             return React.DOM.div({className:"ui grid"}, React.DOM.div({className:"ui row"}, React.DOM.div({className:"ui column"}, React.DOM.h2({className:"ui purple header"}, React.DOM.i({className:"laptop icon"}), React.DOM.div({className:"content"}, "Agent", React.DOM.div({className:"sub header"}, "Agents for executing jobs."))))), React.DOM.div({className:"ui row"}, function() {
@@ -82014,7 +82107,7 @@ job_streamer.console.components.agents.agents_view = function(a, b, c, d, e) {
               a) ? cljs.core.PersistentVector.EMPTY : new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [sablono.interpreter.interpret.call(null, a)], null)));
             }()));
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.agents.t30780.prototype.om$core$IWillMount$ = !0, job_streamer.console.components.agents.t30780.prototype.om$core$IWillMount$will_mount$arity$1 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.agents.t31679.prototype.om$core$IWillMount$ = !0, job_streamer.console.components.agents.t31679.prototype.om$core$IWillMount$will_mount$arity$1 = function(a, b, c, d, e, g) {
           return function(h) {
             var k = this;
             return job_streamer.console.api.request.call(null, "/agents", new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "handler", "handler", -195596612), function(a, b, c, d, e, g, h) {
@@ -82023,23 +82116,23 @@ job_streamer.console.components.agents.agents_view = function(a, b, c, d, e) {
               };
             }(this, a, b, c, d, e, g)], null));
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.agents.t30780.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.agents.t31679.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
-            return this.meta30781;
+            return this.meta31680;
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.agents.t30780.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.agents.t31679.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
           return function(a, b) {
-            return new job_streamer.console.components.agents.t30780(this.owner, this.output_checker30770, this.input_schema30768, this.output_schema30767, this.validate__11392__auto__, this.G__30772, this.G__30771, this.input_checker30769, this.app, this.agents_view, this.ufv__, b);
+            return new job_streamer.console.components.agents.t31679(this.owner, this.output_schema31666, this.G__31670, this.validate__11392__auto__, this.output_checker31669, this.input_checker31668, this.G__31671, this.input_schema31667, this.app, this.agents_view, this.ufv__, b);
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.agents.t30780.cljs$lang$type = !0, job_streamer.console.components.agents.t30780.cljs$lang$ctorStr = "job-streamer.console.components.agents/t30780", job_streamer.console.components.agents.t30780.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.agents.t31679.cljs$lang$type = !0, job_streamer.console.components.agents.t31679.cljs$lang$ctorStr = "job-streamer.console.components.agents/t31679", job_streamer.console.components.agents.t31679.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
           return function(a, b, c) {
-            return cljs.core._write.call(null, b, "job-streamer.console.components.agents/t30780");
+            return cljs.core._write.call(null, b, "job-streamer.console.components.agents/t31679");
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.agents.__GT_t30780 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.agents.__GT_t31679 = function(a, b, c, d, e, g) {
           return function(a, b, c, d, e, g, h, k, l, m, n, p) {
-            return new job_streamer.console.components.agents.t30780(a, b, c, d, e, g, h, k, l, m, n, p);
+            return new job_streamer.console.components.agents.t31679(a, b, c, d, e, g, h, k, l, m, n, p);
           };
-        }(l, a, b, c, d, e)), new job_streamer.console.components.agents.t30780(k, e, c, b, l, k, h, d, h, g, a, null);
+        }(l, a, b, c, d, e)), new job_streamer.console.components.agents.t31679(k, b, h, l, e, d, k, c, h, g, a, null);
       }
     }();
     if (cljs.core.truth_(l) && (n = e.call(null, m), cljs.core.truth_(n))) {
@@ -82048,8 +82141,8 @@ job_streamer.console.components.agents.agents_view = function(a, b, c, d, e) {
     }
     return m;
   };
-}(ufv___30787, output_schema30767_30788, input_schema30768_30789, input_checker30769_30790, output_checker30770_30791);
-schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.agents.agents_view), schema.core.make_fn_schema.call(null, output_schema30767_30788, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema30768_30789], null)));
+}(ufv___31686, output_schema31666_31687, input_schema31667_31688, input_checker31668_31689, output_checker31669_31690);
+schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.agents.agents_view), schema.core.make_fn_schema.call(null, output_schema31666_31687, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema31667_31688], null)));
 job_streamer.console.components.agents.__GT_agents_view = function() {
   var a = null, b = function(a) {
     return om.core.build.call(null, job_streamer.console.components.agents.agents_view, a);
@@ -82070,8 +82163,8 @@ job_streamer.console.components.agents.__GT_agents_view = function() {
 }();
 job_streamer.console.components.root = {};
 job_streamer.console.components.root.app_name = "default";
-var ufv___30842 = schema.utils.use_fn_validation, output_schema30802_30843 = schema.core.Any, input_schema30803_30844 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "app", "app", 1079569820, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker30804_30845 = schema.core.checker.call(null, input_schema30803_30844), 
-output_checker30805_30846 = schema.core.checker.call(null, output_schema30802_30843);
+var ufv___35697 = schema.utils.use_fn_validation, output_schema35657_35698 = schema.core.Any, input_schema35658_35699 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "app", "app", 1079569820, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker35659_35700 = schema.core.checker.call(null, input_schema35658_35699), 
+output_checker35660_35701 = schema.core.checker.call(null, output_schema35657_35698);
 job_streamer.console.components.root.right_menu_view = function(a, b, c, d, e) {
   return function g(h, k) {
     var l = a.get_cell();
@@ -82084,26 +82177,26 @@ job_streamer.console.components.root.right_menu_view = function(a, b, c, d, e) {
     }
     m = function() {
       for (;;) {
-        return "undefined" === typeof job_streamer.console.components.root.t30825 && (job_streamer.console.components.root.t30825 = function(a, b, c, d, e, g, h, k, l, m, n, B) {
-          this.input_checker30804 = a;
-          this.owner = b;
-          this.input_schema30803 = c;
-          this.output_checker30805 = d;
-          this.G__30807 = e;
-          this.G__30806 = g;
-          this.validate__11392__auto__ = h;
-          this.right_menu_view = k;
-          this.output_schema30802 = l;
-          this.app = m;
+        return "undefined" === typeof job_streamer.console.components.root.t35680 && (job_streamer.console.components.root.t35680 = function(a, b, c, d, e, g, h, k, l, m, n, B) {
+          this.output_checker35660 = a;
+          this.input_schema35658 = b;
+          this.G__35662 = c;
+          this.owner = d;
+          this.G__35661 = e;
+          this.right_menu_view = g;
+          this.validate__10767__auto__ = h;
+          this.output_schema35657 = k;
+          this.app = l;
+          this.input_checker35659 = m;
           this.ufv__ = n;
-          this.meta30826 = B;
+          this.meta35681 = B;
           this.cljs$lang$protocol_mask$partition1$ = 0;
           this.cljs$lang$protocol_mask$partition0$ = 393216;
-        }, job_streamer.console.components.root.t30825.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.root.t30825.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
+        }, job_streamer.console.components.root.t35680.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.root.t35680.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
             return "right-menu-view";
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.root.t30825.prototype.om$core$IRenderState$ = !0, job_streamer.console.components.root.t30825.prototype.om$core$IRenderState$render_state$arity$2 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.root.t35680.prototype.om$core$IRenderState$ = !0, job_streamer.console.components.root.t35680.prototype.om$core$IRenderState$render_state$arity$2 = function(a, b, c, d, e, g) {
           return function(h, k) {
             var l = this, m = cljs.core.seq_QMARK_.call(null, k) ? cljs.core.apply.call(null, cljs.core.hash_map, k) : k, n = cljs.core.get.call(null, m, new cljs.core.Keyword(null, "control-bus-not-found?", "control-bus-not-found?", 1437877491)), B = cljs.core.get.call(null, m, new cljs.core.Keyword(null, "jobs-count", "jobs-count", 444020358)), y = cljs.core.get.call(null, m, new cljs.core.Keyword(null, "agents-count", "agents-count", -134723530));
             return React.DOM.div({className:"right menu"}, function() {
@@ -82141,7 +82234,7 @@ job_streamer.console.components.root.right_menu_view = function(a, b, c, d, e) {
               };
             }(this, k, m, n, B, y, a, b, c, d, e, g)}, React.DOM.div({className:"ui icon transparent inverted input"}, sablono.interpreter.input.call(null, {id:"job-query", type:"text"}), React.DOM.i({className:"search icon"})))));
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.root.t30825.prototype.om$core$IWillMount$ = !0, job_streamer.console.components.root.t30825.prototype.om$core$IWillMount$will_mount$arity$1 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.root.t35680.prototype.om$core$IWillMount$ = !0, job_streamer.console.components.root.t35680.prototype.om$core$IWillMount$will_mount$arity$1 = function(a, b, c, d, e, g) {
           return function(h) {
             var k = this;
             return job_streamer.console.api.request.call(null, [cljs.core.str("/"), cljs.core.str(job_streamer.console.components.root.app_name), cljs.core.str("/stats")].join(""), new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "handler", "handler", -195596612), function(a, b, c, d, e, g, h) {
@@ -82158,23 +82251,23 @@ job_streamer.console.components.root.right_menu_view = function(a, b, c, d, e) {
               };
             }(this, a, b, c, d, e, g)], null)], null));
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.root.t30825.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.root.t35680.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
-            return this.meta30826;
+            return this.meta35681;
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.root.t30825.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.root.t35680.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
           return function(a, b) {
-            return new job_streamer.console.components.root.t30825(this.input_checker30804, this.owner, this.input_schema30803, this.output_checker30805, this.G__30807, this.G__30806, this.validate__11392__auto__, this.right_menu_view, this.output_schema30802, this.app, this.ufv__, b);
+            return new job_streamer.console.components.root.t35680(this.output_checker35660, this.input_schema35658, this.G__35662, this.owner, this.G__35661, this.right_menu_view, this.validate__10767__auto__, this.output_schema35657, this.app, this.input_checker35659, this.ufv__, b);
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.root.t30825.cljs$lang$type = !0, job_streamer.console.components.root.t30825.cljs$lang$ctorStr = "job-streamer.console.components.root/t30825", job_streamer.console.components.root.t30825.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.root.t35680.cljs$lang$type = !0, job_streamer.console.components.root.t35680.cljs$lang$ctorStr = "job-streamer.console.components.root/t35680", job_streamer.console.components.root.t35680.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
           return function(a, b, c) {
-            return cljs.core._write.call(null, b, "job-streamer.console.components.root/t30825");
+            return cljs.core._write.call(null, b, "job-streamer.console.components.root/t35680");
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.root.__GT_t30825 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.root.__GT_t35680 = function(a, b, c, d, e, g) {
           return function(a, b, c, d, e, g, h, k, l, m, n, p) {
-            return new job_streamer.console.components.root.t30825(a, b, c, d, e, g, h, k, l, m, n, p);
+            return new job_streamer.console.components.root.t35680(a, b, c, d, e, g, h, k, l, m, n, p);
           };
-        }(l, a, b, c, d, e)), new job_streamer.console.components.root.t30825(d, k, c, e, k, h, l, g, b, h, a, null);
+        }(l, a, b, c, d, e)), new job_streamer.console.components.root.t35680(e, c, k, k, h, g, l, b, h, d, a, null);
       }
     }();
     if (cljs.core.truth_(l) && (n = e.call(null, m), cljs.core.truth_(n))) {
@@ -82183,8 +82276,8 @@ job_streamer.console.components.root.right_menu_view = function(a, b, c, d, e) {
     }
     return m;
   };
-}(ufv___30842, output_schema30802_30843, input_schema30803_30844, input_checker30804_30845, output_checker30805_30846);
-schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.root.right_menu_view), schema.core.make_fn_schema.call(null, output_schema30802_30843, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema30803_30844], null)));
+}(ufv___35697, output_schema35657_35698, input_schema35658_35699, input_checker35659_35700, output_checker35660_35701);
+schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.root.right_menu_view), schema.core.make_fn_schema.call(null, output_schema35657_35698, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema35658_35699], null)));
 job_streamer.console.components.root.__GT_right_menu_view = function() {
   var a = null, b = function(a) {
     return om.core.build.call(null, job_streamer.console.components.root.right_menu_view, a);
@@ -82203,8 +82296,8 @@ job_streamer.console.components.root.__GT_right_menu_view = function() {
   a.cljs$core$IFn$_invoke$arity$2 = c;
   return a;
 }();
-var ufv___30869 = schema.utils.use_fn_validation, output_schema30853_30870 = schema.core.Any, input_schema30854_30871 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "app", "app", 1079569820, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker30855_30872 = schema.core.checker.call(null, input_schema30854_30871), 
-output_checker30856_30873 = schema.core.checker.call(null, output_schema30853_30870);
+var ufv___35724 = schema.utils.use_fn_validation, output_schema35708_35725 = schema.core.Any, input_schema35709_35726 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "app", "app", 1079569820, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker35710_35727 = schema.core.checker.call(null, input_schema35709_35726), 
+output_checker35711_35728 = schema.core.checker.call(null, output_schema35708_35725);
 job_streamer.console.components.root.system_error_view = function(a, b, c, d, e) {
   return function g(h, k) {
     var l = a.get_cell();
@@ -82217,46 +82310,46 @@ job_streamer.console.components.root.system_error_view = function(a, b, c, d, e)
     }
     m = function() {
       for (;;) {
-        return "undefined" === typeof job_streamer.console.components.root.t30864 && (job_streamer.console.components.root.t30864 = function(a, b, c, d, e, g, h, k, l, m, n, B) {
-          this.G__30858 = a;
-          this.owner = b;
-          this.input_checker30855 = c;
-          this.validate__11392__auto__ = d;
-          this.system_error_view = e;
-          this.output_schema30853 = g;
-          this.input_schema30854 = h;
-          this.app = k;
-          this.G__30857 = l;
-          this.ufv__ = m;
-          this.output_checker30856 = n;
-          this.meta30865 = B;
+        return "undefined" === typeof job_streamer.console.components.root.t35719 && (job_streamer.console.components.root.t35719 = function(a, b, c, d, e, g, h, k, l, m, n, B) {
+          this.output_checker35711 = a;
+          this.G__35712 = b;
+          this.input_schema35709 = c;
+          this.owner = d;
+          this.output_schema35708 = e;
+          this.input_checker35710 = g;
+          this.system_error_view = h;
+          this.validate__10767__auto__ = k;
+          this.G__35713 = l;
+          this.app = m;
+          this.ufv__ = n;
+          this.meta35720 = B;
           this.cljs$lang$protocol_mask$partition1$ = 0;
           this.cljs$lang$protocol_mask$partition0$ = 393216;
-        }, job_streamer.console.components.root.t30864.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.root.t30864.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
+        }, job_streamer.console.components.root.t35719.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.root.t35719.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
             return "system-error-view";
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.root.t30864.prototype.om$core$IRender$ = !0, job_streamer.console.components.root.t30864.prototype.om$core$IRender$render$arity$1 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.root.t35719.prototype.om$core$IRender$ = !0, job_streamer.console.components.root.t35719.prototype.om$core$IRender$render$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
             return React.DOM.div({className:"ui dimmer modals transition visible active"}, React.DOM.div({className:"ui basic modal transition visible active", style:{marginTop:"-142.5px;"}}, React.DOM.div({className:"header"}, "A Control bus is NOT found."), React.DOM.div({className:"content"}, React.DOM.div({className:"image"}, React.DOM.i({className:"announcement icon"})), React.DOM.div({className:"description"}, React.DOM.p(null, "Run a control bus first and reload this page.")))));
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.root.t30864.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.root.t35719.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
-            return this.meta30865;
+            return this.meta35720;
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.root.t30864.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.root.t35719.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
           return function(a, b) {
-            return new job_streamer.console.components.root.t30864(this.G__30858, this.owner, this.input_checker30855, this.validate__11392__auto__, this.system_error_view, this.output_schema30853, this.input_schema30854, this.app, this.G__30857, this.ufv__, this.output_checker30856, b);
+            return new job_streamer.console.components.root.t35719(this.output_checker35711, this.G__35712, this.input_schema35709, this.owner, this.output_schema35708, this.input_checker35710, this.system_error_view, this.validate__10767__auto__, this.G__35713, this.app, this.ufv__, b);
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.root.t30864.cljs$lang$type = !0, job_streamer.console.components.root.t30864.cljs$lang$ctorStr = "job-streamer.console.components.root/t30864", job_streamer.console.components.root.t30864.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.root.t35719.cljs$lang$type = !0, job_streamer.console.components.root.t35719.cljs$lang$ctorStr = "job-streamer.console.components.root/t35719", job_streamer.console.components.root.t35719.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
           return function(a, b, c) {
-            return cljs.core._write.call(null, b, "job-streamer.console.components.root/t30864");
+            return cljs.core._write.call(null, b, "job-streamer.console.components.root/t35719");
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.root.__GT_t30864 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.root.__GT_t35719 = function(a, b, c, d, e, g) {
           return function(a, b, c, d, e, g, h, k, l, m, n, p) {
-            return new job_streamer.console.components.root.t30864(a, b, c, d, e, g, h, k, l, m, n, p);
+            return new job_streamer.console.components.root.t35719(a, b, c, d, e, g, h, k, l, m, n, p);
           };
-        }(l, a, b, c, d, e)), new job_streamer.console.components.root.t30864(k, k, d, l, g, b, c, h, h, a, e, null);
+        }(l, a, b, c, d, e)), new job_streamer.console.components.root.t35719(e, h, c, k, b, d, g, l, k, h, a, null);
       }
     }();
     if (cljs.core.truth_(l) && (n = e.call(null, m), cljs.core.truth_(n))) {
@@ -82265,8 +82358,8 @@ job_streamer.console.components.root.system_error_view = function(a, b, c, d, e)
     }
     return m;
   };
-}(ufv___30869, output_schema30853_30870, input_schema30854_30871, input_checker30855_30872, output_checker30856_30873);
-schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.root.system_error_view), schema.core.make_fn_schema.call(null, output_schema30853_30870, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema30854_30871], null)));
+}(ufv___35724, output_schema35708_35725, input_schema35709_35726, input_checker35710_35727, output_checker35711_35728);
+schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.root.system_error_view), schema.core.make_fn_schema.call(null, output_schema35708_35725, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema35709_35726], null)));
 job_streamer.console.components.root.__GT_system_error_view = function() {
   var a = null, b = function(a) {
     return om.core.build.call(null, job_streamer.console.components.root.system_error_view, a);
@@ -82285,8 +82378,8 @@ job_streamer.console.components.root.__GT_system_error_view = function() {
   a.cljs$core$IFn$_invoke$arity$2 = c;
   return a;
 }();
-var ufv___30896 = schema.utils.use_fn_validation, output_schema30880_30897 = schema.core.Any, input_schema30881_30898 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "app", "app", 1079569820, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker30882_30899 = schema.core.checker.call(null, input_schema30881_30898), 
-output_checker30883_30900 = schema.core.checker.call(null, output_schema30880_30897);
+var ufv___35751 = schema.utils.use_fn_validation, output_schema35735_35752 = schema.core.Any, input_schema35736_35753 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "app", "app", 1079569820, null)), schema.core.one.call(null, schema.core.Any, new cljs.core.Symbol(null, "owner", "owner", 1247919588, null))], null), input_checker35737_35754 = schema.core.checker.call(null, input_schema35736_35753), 
+output_checker35738_35755 = schema.core.checker.call(null, output_schema35735_35752);
 job_streamer.console.components.root.root_view = function(a, b, c, d, e) {
   return function g(h, k) {
     var l = a.get_cell();
@@ -82299,26 +82392,26 @@ job_streamer.console.components.root.root_view = function(a, b, c, d, e) {
     }
     m = function() {
       for (;;) {
-        return "undefined" === typeof job_streamer.console.components.root.t30891 && (job_streamer.console.components.root.t30891 = function(a, b, c, d, e, g, h, k, l, m, n, B) {
-          this.G__30884 = a;
-          this.owner = b;
-          this.validate__11392__auto__ = c;
-          this.output_checker30883 = d;
-          this.input_checker30882 = e;
-          this.root_view = g;
-          this.G__30885 = h;
-          this.app = k;
-          this.ufv__ = l;
-          this.input_schema30881 = m;
-          this.output_schema30880 = n;
-          this.meta30892 = B;
+        return "undefined" === typeof job_streamer.console.components.root.t35746 && (job_streamer.console.components.root.t35746 = function(a, b, c, d, e, g, h, k, l, m, n, B) {
+          this.G__35739 = a;
+          this.output_checker35738 = b;
+          this.owner = c;
+          this.G__35740 = d;
+          this.output_schema35735 = e;
+          this.validate__10767__auto__ = g;
+          this.input_checker35737 = h;
+          this.root_view = k;
+          this.app = l;
+          this.ufv__ = m;
+          this.input_schema35736 = n;
+          this.meta35747 = B;
           this.cljs$lang$protocol_mask$partition1$ = 0;
           this.cljs$lang$protocol_mask$partition0$ = 393216;
-        }, job_streamer.console.components.root.t30891.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.root.t30891.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
+        }, job_streamer.console.components.root.t35746.prototype.om$core$IDisplayName$ = !0, job_streamer.console.components.root.t35746.prototype.om$core$IDisplayName$display_name$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
             return "root-view";
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.root.t30891.prototype.om$core$IRender$ = !0, job_streamer.console.components.root.t30891.prototype.om$core$IRender$render$arity$1 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.root.t35746.prototype.om$core$IRender$ = !0, job_streamer.console.components.root.t35746.prototype.om$core$IRender$render$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
             var b = this;
             a = function() {
@@ -82338,27 +82431,27 @@ job_streamer.console.components.root.root_view = function(a, b, c, d, e) {
             return cljs.core.apply.call(null, React.DOM.div, cljs.core.map_QMARK_.call(null, a) ? sablono.interpreter.attributes.call(null, sablono.util.merge_with_class.call(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "class", "class", -2030961996), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, ["ui", "page"], null)], null), a)) : {className:"ui page"}, cljs.core.remove.call(null, cljs.core.nil_QMARK_, cljs.core.map_QMARK_.call(null, 
             a) ? cljs.core.PersistentVector.EMPTY : new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [sablono.interpreter.interpret.call(null, a)], null)));
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.root.t30891.prototype.om$core$IWillMount$ = !0, job_streamer.console.components.root.t30891.prototype.om$core$IWillMount$will_mount$arity$1 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.root.t35746.prototype.om$core$IWillMount$ = !0, job_streamer.console.components.root.t35746.prototype.om$core$IWillMount$will_mount$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
             return job_streamer.console.routing.init.call(null, this.app, this.owner);
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.root.t30891.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.root.t35746.prototype.cljs$core$IMeta$_meta$arity$1 = function(a, b, c, d, e, g) {
           return function(a) {
-            return this.meta30892;
+            return this.meta35747;
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.root.t30891.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.root.t35746.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(a, b, c, d, e, g) {
           return function(a, b) {
-            return new job_streamer.console.components.root.t30891(this.G__30884, this.owner, this.validate__11392__auto__, this.output_checker30883, this.input_checker30882, this.root_view, this.G__30885, this.app, this.ufv__, this.input_schema30881, this.output_schema30880, b);
+            return new job_streamer.console.components.root.t35746(this.G__35739, this.output_checker35738, this.owner, this.G__35740, this.output_schema35735, this.validate__10767__auto__, this.input_checker35737, this.root_view, this.app, this.ufv__, this.input_schema35736, b);
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.root.t30891.cljs$lang$type = !0, job_streamer.console.components.root.t30891.cljs$lang$ctorStr = "job-streamer.console.components.root/t30891", job_streamer.console.components.root.t30891.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.root.t35746.cljs$lang$type = !0, job_streamer.console.components.root.t35746.cljs$lang$ctorStr = "job-streamer.console.components.root/t35746", job_streamer.console.components.root.t35746.cljs$lang$ctorPrWriter = function(a, b, c, d, e, g) {
           return function(a, b, c) {
-            return cljs.core._write.call(null, b, "job-streamer.console.components.root/t30891");
+            return cljs.core._write.call(null, b, "job-streamer.console.components.root/t35746");
           };
-        }(l, a, b, c, d, e), job_streamer.console.components.root.__GT_t30891 = function(a, b, c, d, e, g) {
+        }(l, a, b, c, d, e), job_streamer.console.components.root.__GT_t35746 = function(a, b, c, d, e, g) {
           return function(a, b, c, d, e, g, h, k, l, m, n, p) {
-            return new job_streamer.console.components.root.t30891(a, b, c, d, e, g, h, k, l, m, n, p);
+            return new job_streamer.console.components.root.t35746(a, b, c, d, e, g, h, k, l, m, n, p);
           };
-        }(l, a, b, c, d, e)), new job_streamer.console.components.root.t30891(h, k, l, e, d, g, k, h, a, c, b, null);
+        }(l, a, b, c, d, e)), new job_streamer.console.components.root.t35746(h, e, k, k, b, l, d, g, h, a, c, null);
       }
     }();
     if (cljs.core.truth_(l) && (n = e.call(null, m), cljs.core.truth_(n))) {
@@ -82367,8 +82460,8 @@ job_streamer.console.components.root.root_view = function(a, b, c, d, e) {
     }
     return m;
   };
-}(ufv___30896, output_schema30880_30897, input_schema30881_30898, input_checker30882_30899, output_checker30883_30900);
-schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.root.root_view), schema.core.make_fn_schema.call(null, output_schema30880_30897, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema30881_30898], null)));
+}(ufv___35751, output_schema35735_35752, input_schema35736_35753, input_checker35737_35754, output_checker35738_35755);
+schema.utils.declare_class_schema_BANG_.call(null, schema.utils.fn_schema_bearer.call(null, job_streamer.console.components.root.root_view), schema.core.make_fn_schema.call(null, output_schema35735_35752, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [input_schema35736_35753], null)));
 job_streamer.console.components.root.__GT_root_view = function() {
   var a = null, b = function(a) {
     return om.core.build.call(null, job_streamer.console.components.root.root_view, a);

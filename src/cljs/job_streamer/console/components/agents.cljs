@@ -25,8 +25,12 @@
         [:div.column
          [:h3.ui.header (:agent/name agent)
           [:div.sub.header (:agent/instance-id agent)]]
+         [:h4.ui.header "CPU usage"]
          [:div.image
-          [:img.ui.image {:src (api/url-for (str "/agent/" instance-id "/monitor/cpu/daily"))}]]]
+          [:img.ui.image {:src (api/url-for (str "/agent/" instance-id "/monitor/cpu/daily"))}]]
+         [:h4.ui.header "Memory usage"]
+         [:div.image
+          [:img.ui.image {:src (api/url-for (str "/agent/" instance-id "/monitor/memory/daily"))}]]]
         [:div.column]]
        [:img {:src "/img/loader.gif"}]))))
 

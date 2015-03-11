@@ -18,6 +18,15 @@
   (api/request (str "/" app-name "/job/" job-name "/executions") :POST
                {:handler (fn [response])}))
 
+(defn stop-job [job]
+  (when-let [latest-execution (:job/latest-execution job)]
+    (api/request (str "/" app-name 
+                      "/job/" (:job/name job)
+                      "/execution/" (:db/id latest-execution) "/stop")
+                 :PUT
+                 {:handler (fn [response]
+                             (om/update! latest-execution :job-execution/batch-status :batch-status/stopped))})))
+
 (defn search-execution [latest-execution job-name execution-id]
   (api/request (str "/" app-name "/job/" job-name "/execution/" execution-id)
                {:handler (fn [response]
@@ -99,7 +108,9 @@
                           "-")]
                        [:td (if (some #{:batch-status/registered :batch-status/starting :batch-status/started :batch-status/stopping}
                                       [(get-in job [:job/latest-execution :job-execution/batch-status :db/ident])])
-                              [:div.ui.circular.icon.orange.button
+                              [:button.ui.circular.icon.orange.button
+                               {:on-click (fn [e]
+                                            (stop-job job))}
                                [:i.setting.loading.icon]]
                               [:button.ui.circular.icon.green.button
                                {:on-click (fn [e]

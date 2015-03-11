@@ -12,7 +12,7 @@
 
 (defn item-component [el type]
   (when-let [block (some-> el
-                           (.select (str "block[type=" type "]"))
+                           (.select (str "> value[name=" type "] >block[type=" type "]"))
                            first)]
     {(keyword type "ref") (field-value block "ref")}))
 
@@ -26,7 +26,7 @@
 
 (defn xml->property [prop]
   (when-let [prop-block (some-> prop
-                                (.select "block[type=property]")
+                                (.select "> block[type=property]")
                                 first)]
     {(keyword (field-value prop-block "name")) (field-value prop-block "value")}))
 
@@ -37,19 +37,19 @@
                                   (map (fn [prop] (xml->property prop)))
                                   (reduce merge))}
    (when-let [batchlet (some-> step
-                               (.select "block[type=batchlet]")
+                               (.select "> value[name=step-component] block[type=batchlet]")
                                first
                                xml->batchlet)]
      {:step/batchlet batchlet})
    (when-let [chunk (some-> step
-                            (.select "block[type=chunk]")
+                            (.select "> value[name=step-component] block[type=chunk]")
                             first
                             xml->chunk)]
      {:step/chunk chunk})
    (when-let [next-step (some-> step
-                                (.select "next > block[type=step]")
+                                (.select "> next > block[type=step]")
                                 first
-                                (field-value "id"))]
+                                (field-value "name"))]
      {:step/next next-step})))
 
 (defn xml->job [xml]

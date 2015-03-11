@@ -8,8 +8,8 @@
 
 (def app-name "default")
 
-(defn delete-job [job-id]
-  (api/request (str "/" app-name "/job/" job-id) :DELETE
+(defn delete-job [job-name]
+  (api/request (str "/" app-name "/job/" job-name) :DELETE
                {:handler (fn [response]
                            (set! (.-href js/location) "#/"))}))
 
@@ -24,4 +24,4 @@
        [:button.ui.red.button
         {:type "button"
          :on-click (fn [e]
-                     (delete-job (:job-id app)))} "Delete this job"]]])))
+                     (delete-job (:job-name app)))} "Delete this job"]]])))

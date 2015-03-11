@@ -10,7 +10,8 @@
             [goog.ui.Component]
             [Blockly :as Blockly]
             [Blockly.Block :as Block]
-            [job-streamer.console.format :as fmt])
+            [job-streamer.console.format :as fmt]
+            [job-streamer.console.api :as api])
   (:use [cljs.reader :only [read-string]])
   (:import [Blockly Blocks Mutator FieldTextInput FieldCheckbox]))
 
@@ -149,12 +150,45 @@
   (doseq [[k f] mutate-behavior]
     (aset block (name k) f)))
 
-(defblock batchlet
-  :colour 316
-  :output "Batchlet"
-  :fields [{:type :text
-            :name "ref"
-            :label "Batchlet"}])
+(api/request (str "/default/batch-components") :GET
+             {:handler (fn [response]
+                         (when-let [batchlets (:batch-component/batchlet response)]
+                           (defblock batchlet
+                             :colour 316
+                             :output "Batchlet"
+                             :fields [{:type :dropdown
+                                       :name "ref"
+                                       :label "Batchlet"
+                                       :value (map #(->> (repeat %)
+                                                         (take 2)) batchlets)}]))
+                         (when-let [item-readers (:batch-component/item-reader response)]
+                           (defblock reader
+                             :colour 45
+                             :output "Reader"
+                             :fields [{:type :dropdown
+                                       :name "ref"
+                                       :label "Reader"
+                                       :value (map #(->> (repeat %)
+                                                         (take 2)) item-readers)}]))
+                         (when-let [item-writers (:batch-component/item-writer response)]
+                           (defblock writer
+                             :colour 45
+                             :output "Writer"
+                             :fields [{:type :dropdown
+                                       :name "ref"
+                                       :label "Writer"
+                                       :value (map #(->> (repeat %)
+                                                         (take 2)) item-writers)}]))
+                         (when-let [item-processors (:batch-component/item-processor response)]
+                           (defblock processor
+                             :colour 45
+                             :output "Processor"
+                             :fields [{:type :dropdown
+                                       :name "ref"
+                                       :label "Processor"
+                                       :value (map #(->> (repeat %)
+                                                         (take 2)) item-processors)}])))})
+
 
 (defblock chunk
   :colour 234
@@ -172,27 +206,6 @@
             :label "Writer"
             :acceptable ["Writer"]}])
 
-(defblock reader
-  :colour 45
-  :output "Reader"
-  :fields [{:type :text
-            :name "ref"
-            :label "Reader"}])
-
-(defblock processor
-  :colour 45
-  :output "Processor"
-  :fields [{:type :text
-            :name "ref"
-            :label "Processor"}])
-
-(defblock writer
-  :colour 45
-  :output "Writer"
-  :fields [{:type :text
-            :name "ref"
-            :label "Writer"}])
-
 (defblock property
   :colour 30
   :output "Properties"
@@ -205,6 +218,7 @@
             :label "Value"}])
 
 (defn emit-element [e]
+  (println e)
   (if (= (type e) js/String)
     e
     (str "<" (name (:tag e))
@@ -218,13 +232,13 @@
 
 (defn chunk-element->xml [chunk type]
   {:tag :value
-    :attrs {:name type}
-    :content [(when-let [el (get chunk (keyword "chunk" type))]
-                  [{:tag :block
-                    :attrs {:type type}
-                    :content [{:tag :field
-                               :attrs {:name "ref"}
-                               :content [(get el (keyword type "ref"))]}]}])]})
+   :attrs {:name type}
+   :content (when-let [el (get chunk (keyword "chunk" type))]
+              [{:tag :block
+                :attrs {:type type}
+                :content [{:tag :field
+                           :attrs {:name "ref"}
+                           :content [(get el (keyword type "ref"))]}]}])})
 
 (defn chunk->xml [chunk]
   [(chunk-element->xml chunk "reader")
@@ -253,10 +267,10 @@
                  :attrs {:name "step-component"}
                  :content [{:tag :block
                             :attrs {:type "chunk"}
-                            :content [(chunk->xml chunk)]}]}])
-             (when-let [next-step (:next step)]
+                            :content (chunk->xml chunk)}]}])
+             (when-let [next-step (:step/next step)]
                [{:tag :next
-                 :content [(step->xml (first (filter #(= (:id %) next-step) steps)) steps)]}])
+                 :content [(step->xml (first (filter #(= (:step/name %) next-step) steps)) steps)]}])
              (when-let [props (:step/properties step)]
                 (map-indexed
                  (fn [idx [k v]]
@@ -271,6 +285,7 @@
                                           :attrs {:name "value"}
                                           :content [v]}]}]})
                  props)))})
+
 (defn job->xml [job]
   (emit-element
    {:tag :block
@@ -285,7 +300,7 @@
                 [{:tag :field :attrs {:name "restartable?"} :content [restartable?]}])
               (when-let [steps (not-empty (:job/steps job))]
                 [{:tag :statement
-                  :attrs {:name "steps"} 
+                  :attrs {:name "steps"}
                   :content [(step->xml (first steps) steps)]}])
               (when-let [props (:job/properties job)]
                 (map-indexed

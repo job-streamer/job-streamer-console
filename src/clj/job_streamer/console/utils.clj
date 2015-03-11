@@ -26,7 +26,11 @@
                                  (.appendDummyInput)
                                  (.appendField (:label ~field))
                                  (.appendField (Blockly/FieldTextInput. "") (:name ~field)))
-
+                            :dropdown
+                            `(-> ~this
+                                 (.appendDummyInput)
+                                 (.appendField (:label ~field))
+                                 (.appendField (Blockly/FieldDropdown. (cljs.core/clj->js (:value ~field))) (:name ~field)))
                             :checkbox
                             `(-> ~this
                                  (.appendDummyInput)

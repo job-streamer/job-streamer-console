@@ -10,7 +10,7 @@
                  [org.clojure/clojurescript "0.0-2913"]
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
                  [sablono "0.3.1"]
-                 [prismatic/om-tools "0.3.10"]
+                 [prismatic/om-tools "0.3.11"]
                  [bouncer "0.3.2"]
                  [secretary "1.2.1"]
                  [org.omcljs/om "0.8.8"]]
