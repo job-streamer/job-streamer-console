@@ -3,16 +3,16 @@
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [hiccup "1.0.5"]
                  [garden "1.2.5"]
-                 [compojure "1.3.1"]
+                 [compojure "1.3.2"]
                  [environ "1.0.0"]
                  [org.jsoup/jsoup "1.8.1"]
 
-                 [org.clojure/clojurescript "0.0-2913"]
+                 [org.clojure/clojurescript "0.0-3165"]
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
-                 [sablono "0.3.1"]
+                 [sablono "0.3.4"]
                  [prismatic/om-tools "0.3.11"]
                  [bouncer "0.3.2"]
-                 [secretary "1.2.1"]
+                 [secretary "1.2.2"]
                  [org.omcljs/om "0.8.8"]]
   :plugins [[lein-ring "0.9.1"]
             [lein-cljsbuild "1.0.5"]
@@ -30,5 +30,7 @@
                {:id "production"
                 :source-paths ["src/cljs"]
                 :compiler {:output-to "resources/public/js/extern/job-streamer.min.js"
+                           :output-dir "resources/public/js/extern"
                            :pretty-print true
-                           :optimizations :advanced}}]})
+                           :optimizations :advanced
+                           :source-map "resources/public/js/extern/job-streamer.min.js.map"}}]})

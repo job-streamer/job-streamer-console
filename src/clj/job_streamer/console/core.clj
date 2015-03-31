@@ -19,9 +19,10 @@
     [:meta {:http-equiv "X-UA-Compatible" :content "IE=edge,chrome=1"}]
     [:meta {:name "control-bus-url" :content control-bus-url}]
     [:meta {:name "viewport" :content "width=device-width, initial-scale=1, maximum-scale=1"}]
-    (include-css "https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/1.8.0/semantic.min.css"
+    (include-css "https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/1.11.4/semantic.min.css"
                  "/css/vendors/vis.min.css"
-                 "/css/job-streamer.css")
+                 "/css/job-streamer.css"
+                 )
     (include-js  "/js/vendors/vis.min.js")
     (when (:dev env) (include-js "/react/react.js"))]
    [:body body]))

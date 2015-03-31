@@ -64,7 +64,7 @@
         (om/build system-error-view app)
         (list
          [:div.ui.fixed.inverted.teal.menu
-          [:div.title.item [:b "Job Streamer"]]
+          [:div.title.item [:img {:alt "JobStreamer" :src "img/logo.png"}]]
           (om/build right-menu-view app)]
          [:div.main.grid.content.full.height
           (case (first (:mode app))

@@ -23,6 +23,8 @@
   (:import [goog.ui.tree TreeControl]))
 
 (enable-console-print!)
+
+;; Now, app-name is static.
 (def app-name "default")
 
 (defn save-job-control-bus [job owner job-name]

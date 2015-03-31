@@ -14,6 +14,7 @@
                        :border {:left "1px solid #ddd"
                                 :right "1px solid #ddd"}}]
    [:#timeline-inner {:font-size (px 8)}]
+   [:#job-blocks-inner {:height (px 400)}]
    [:#tab-content {:padding (px 10)}]
    [:.ui.menu
     [:#agent-stats.item :#job-stats.item
@@ -40,12 +41,15 @@
           [:pre {:overflow "visible"}]]]]]]]]
 
    [:.vis.timeline
-    [:.completed {:color "#3c763d"
-                  :background {:color "#eeffe7"}
-                  :border {:color "#3c763d"}}]
-    [:.failed    {:color "#cd2929"
-                  :background {:color "#fff0f0"}
-                  :border {:color "#cd2929"}}]]])
+    [:.item.range {:color "#313131"
+                   :background {:color "#abe1fd"}
+                   :border {:color "#abe1fd"}}]
+    [:.item.range.completed {:color "#3c763d"
+                             :background {:color "#adddcf"}
+                             :border {:color "#adddcf"}}]
+    [:.item.range.failed    {:color "#cd2929"
+                             :background {:color "#fed1ab"}
+                             :border {:color "#fed1ab"}}]]])
 
 
 (defn build []
