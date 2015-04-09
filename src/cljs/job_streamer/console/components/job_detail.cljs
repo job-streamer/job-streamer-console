@@ -103,9 +103,6 @@
     (go
       (let [job (<! fetch-job-ch)
             xml (job->xml (read-string (:job/edn-notation job)))]
-        (println "==================")
-        (println xml)
-
         (om/set-state! owner :job job)
         (blockly-xml/domToWorkspace Blockly/mainWorkspace
                                     (blockly-xml/textToDom (str "<xml>" xml "</xml>")))))

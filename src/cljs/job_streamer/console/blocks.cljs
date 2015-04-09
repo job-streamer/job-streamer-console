@@ -152,16 +152,18 @@
 
 (api/request (str "/default/batch-components") :GET
              {:handler (fn [response]
-                         (when-let [batchlets (:batch-component/batchlet response)]
+                         (let [batchlets (get response :batch-component/batchlet ["No batchlet"])
+                               item-readers (get response :batch-component/item-reader ["No item reader"])
+                               item-writers (get response :batch-component/item-writer ["No item writer"])
+                               item-processors (get response :batch-component/item-processor ["No item processor"])]
                            (defblock batchlet
                              :colour 316
                              :output "Batchlet"
                              :fields [{:type :dropdown
-                                       :name "ref"
-                                       :label "Batchlet"
-                                       :value (map #(->> (repeat %)
-                                                         (take 2)) batchlets)}]))
-                         (when-let [item-readers (:batch-component/item-reader response)]
+                                          :name "ref"
+                                          :label "Batchlet"
+                                          :value (map #(->> (repeat %)
+                                                            (take 2)) batchlets)}])
                            (defblock reader
                              :colour 45
                              :output "Reader"
@@ -169,8 +171,7 @@
                                        :name "ref"
                                        :label "Reader"
                                        :value (map #(->> (repeat %)
-                                                         (take 2)) item-readers)}]))
-                         (when-let [item-writers (:batch-component/item-writer response)]
+                                                         (take 2)) item-readers)}])
                            (defblock writer
                              :colour 45
                              :output "Writer"
@@ -178,8 +179,7 @@
                                        :name "ref"
                                        :label "Writer"
                                        :value (map #(->> (repeat %)
-                                                         (take 2)) item-writers)}]))
-                         (when-let [item-processors (:batch-component/item-processor response)]
+                                                         (take 2)) item-writers)}])
                            (defblock processor
                              :colour 45
                              :output "Processor"
@@ -218,7 +218,6 @@
             :label "Value"}])
 
 (defn emit-element [e]
-  (println e)
   (if (= (type e) js/String)
     e
     (str "<" (name (:tag e))

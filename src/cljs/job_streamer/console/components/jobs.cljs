@@ -85,7 +85,7 @@
                        [:td 
                         [:a {:href (str "#/job/" job-name)} job-name]]
                        (if-let [latest-execution (:job/latest-execution job)]
-                         (if (= (get-in latest-execution [:job-execution/batch-status :db/ident]) :batch-status/registered)
+                         (if (= (get-in latest-execution [:job-execution/batch-status :db/ident]) :batch-status/queued)
                            [:td.center.aligned {:colSpan 3} "Wait for an execution..."]
                            (let [start (:job-execution/start-time latest-execution)
                                  end (:job-execution/end-time  latest-execution)]
