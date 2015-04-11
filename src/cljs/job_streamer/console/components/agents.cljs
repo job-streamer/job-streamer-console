@@ -7,11 +7,11 @@
             [clojure.browser.net :as net]
             [goog.events :as events]
             [goog.ui.Component]
-            (job-streamer.console.api :as api))
+            [job-streamer.console.api :as api]
+            [job-streamer.console.format :as fmt])
   (:use [cljs.reader :only [read-string]])
   (:import [goog.net.EventType]
-           [goog.events EventType]
-           [goog.i18n DateTimeFormat]))
+           [goog.events EventType]))
 
 (defcomponent agent-detail-view [instance-id owner]
   (will-mount [_]
@@ -21,17 +21,39 @@
   (render-state [_ {:keys [agent]}]
     (html
      (if agent
-       [:div.ui.stackable.two.column.grid
-        [:div.column
+       [:div.ui.stackable.grid
+        [:div.sixteen.wide.column
          [:h3.ui.header (:agent/name agent)
-          [:div.sub.header (:agent/instance-id agent)]]
+          [:div.sub.header (:agent/instance-id agent)]]]
+        [:div.eight.wide.column
          [:h4.ui.header "CPU usage"]
          [:div.image
           [:img.ui.image {:src (api/url-for (str "/agent/" instance-id "/monitor/cpu/daily"))}]]
          [:h4.ui.header "Memory usage"]
          [:div.image
           [:img.ui.image {:src (api/url-for (str "/agent/" instance-id "/monitor/memory/daily"))}]]]
-        [:div.column]]
+        [:div.eight.wide.column
+         [:h4.ui.header "Executions"]
+         (if-let [executions (:agent/executions agent)]
+           [:table.ui.compact.table
+            [:thead
+             [:tr
+              [:th "#"]
+              [:th "Job name"]
+              [:th "Started at"]
+              [:th "Duration"]
+              [:th "Status"]]]
+            [:tbody
+             (for [execution executions]
+               [:tr
+                [:td ""]
+                [:td (:job/name execution)]
+                [:td (fmt/date-medium (:job-execution/start-time execution))]
+                [:td (fmt/duration-between
+                      (:job-execution/start-time execution)
+                      (:job-execution/end-time execution))]
+                [:td (name (get-in execution [:job-execution/batch-status :db/ident]))]])]]
+           "No executions")]]
        [:img {:src "/img/loader.gif"}]))))
 
 (defcomponent no-agents-view [app owner]

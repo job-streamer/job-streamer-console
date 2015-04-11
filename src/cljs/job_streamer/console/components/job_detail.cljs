@@ -329,7 +329,7 @@
          [:div.ui.stackable.two.column.grid
           [:div.column
            [:div.ui.special.cards
-            [:div.card
+            [:div.job-detail.card
              [:div.dimmable.image.dimmed
               {:on-mouse-enter (fn [e]
                                  (om/set-state! owner :dimmed? true))

@@ -22,6 +22,9 @@
      [:a {:cursor "pointer"}]
      [:.ui.horiontal.statistics :.statistic {:margin {:top (em 0.2)
                                                       :bottom (em 0.2)}}]]]
+   [:.ui.cards
+    [:.job-detail.card {:width "100%"}
+     [:#job-blocks-inner {:height (px 250)}]]]
    [:#job-blocks {:min-height (px 500)}]
    [:.step-view
     [:.item
