@@ -102,6 +102,7 @@
     (api/request "/agents"
                  {:handler (fn [response]
                              (om/update! app :agents response))}))
+
   (render [_]
     (html
      [:div.ui.grid

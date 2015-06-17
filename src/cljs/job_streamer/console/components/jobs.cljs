@@ -3,20 +3,23 @@
   (:require [om.core :as om :include-macros true]
             [om-tools.core :refer-macros [defcomponent]]
             [sablono.core :as html :refer-macros [html]]
-            [cljs.core.async :refer [put! <! chan pub sub unsub-all]]
+            [cljs.core.async :refer [put! <! chan timeout]]
             (job-streamer.console.format :as fmt)
             (job-streamer.console.api :as api))
   (:use (job-streamer.console.components.timeline :only [timeline-view])
         (job-streamer.console.components.job-detail :only [job-new-view job-detail-view])
         (job-streamer.console.components.execution :only [execution-view])
+        (job-streamer.console.components.pagination :only [pagination-view])
         [job-streamer.console.search :only [search-jobs]]))
 
 (enable-console-print!)
 (def app-name "default")
 
-(defn execute-job [job-name]
+(defn execute-job [job-name parameters channel]
   (api/request (str "/" app-name "/job/" job-name "/executions") :POST
-               {:handler (fn [response])}))
+               parameters
+               {:handler (fn [response]
+                           (put! channel [:close-dialog nil]))}))
 
 (defn stop-job [job]
   (when-let [latest-execution (:job/latest-execution job)]
@@ -25,7 +28,25 @@
                       "/execution/" (:db/id latest-execution) "/stop")
                  :PUT
                  {:handler (fn [response]
-                             (om/update! latest-execution :job-execution/batch-status :batch-status/stopped))})))
+                             (om/update! latest-execution :job-execution/batch-status :batch-status/stopping))})))
+
+(defn abandon-job [job]
+  (when-let [latest-execution (:job/latest-execution job)]
+    (api/request (str "/" app-name 
+                      "/job/" (:job/name job)
+                      "/execution/" (:db/id latest-execution) "/abandon")
+                 :PUT
+                 {:handler (fn [response] ;; TODO
+                             )})))
+
+(defn restart-job [job]
+  (when-let [latest-execution (:job/latest-execution job)]
+    (api/request (str "/" app-name 
+                      "/job/" (:job/name job)
+                      "/execution/" (:db/id latest-execution) "/restart")
+                 :PUT
+                 {:handler (fn [response]
+                             (om/update! latest-execution :job-execution/batch-status :batch-status/stopping))})))
 
 (defn search-execution [latest-execution job-name execution-id]
   (api/request (str "/" app-name "/job/" job-name "/execution/" execution-id)
@@ -34,8 +55,59 @@
                              (om/transact! latest-execution
                                            #(assoc % :job-execution/step-executions steps))))}))
 
+(defcomponent job-execution-dialog [job owner]
+  (init-state [_]
+    {:params {}})
+  (render-state [_ {:keys [jobs-view-channel params]}]
+    (html
+     [:div.ui.dimmer.modals.transition.visible.active
+      [:div.ui.standard.modal.transition.visible.active.scrolling
+       [:i.close.icon {:on-click (fn [e] (put! jobs-view-channel [:close-dialog nil]))}]
+       [:div.header (:job/name job)]
+       [:div.content
+        (if-let [param-names (not-empty (:job/dynamic-parameters job))]
+          [:form.ui.form
+           [:fields
+            (for [param-name param-names]
+              [:field
+               [:label param-name]
+               [:input {:type "text"
+                        :name param-name
+                        :value (get params (keyword param-name))
+                        :on-change (fn [e] (om/update-state! owner :params
+                                                             #(assoc % (keyword param-name) (.. e -target -value))))}]])]]
+          [:div "Execute now?"])]
+       [:div.actions
+        [:button.ui.black.button
+         {:type "button"
+          :on-click (fn [e] (put! jobs-view-channel [:close-dialog nil]))} "Cancel"]
+        [:button.ui.positive.button
+         {:type "button"
+          :on-click (fn [e]
+                      (execute-job (:job/name job) params jobs-view-channel))} "Execute!"]]]])))
+
 (defcomponent job-list-view [app owner]
-  (render [_]
+  (init-state [_] {:now (js/Date.)
+                   :page 1
+                   :per 20})
+  (will-mount [_]
+    (go-loop []
+      (<! (timeout 1000))
+      (om/set-state! owner :now (js/Date.))
+      (recur)))
+
+  (did-mount [_]
+    (go-loop []
+      (<! (timeout 5000))
+      (if (->> @(get-in app [:jobs :results])
+               (filter #(#{:batch-status/started :batch-status/starting :batch-status/undispatched :batch-status/queued}
+                         (get-in % [:job/latest-execution :job-execution/batch-status :db/ident])))
+               not-empty)
+        (let [page (om/get-state owner :page)
+              per  (om/get-state owner :per)]
+          (search-jobs app {:q (:query app) :offset (inc (* (dec page) per)) :limit per})))
+      (recur)))
+  (render-state [_ {:keys [jobs-view-channel now page per]}]
     (html
      (if (empty? (:jobs app))
        [:div.ui.grid
@@ -62,7 +134,7 @@
           [:button.ui.circular.icon.button
            {:type "button"
             :on-click (fn [e]
-                        (search-jobs app ""))}
+                        (search-jobs app {:q (:query app) :offset (inc (* (dec page) per)) :limit per}))}
            [:i.refresh.icon]]]]
         [:div.row
          [:div.column
@@ -80,21 +152,25 @@
              [:th "Start"]]]
            [:tbody
             (apply concat
-                   (for [{job-name :job/name :as job} (:jobs app)]
+                   (for [{job-name :job/name :as job} (get-in app [:jobs :results])]
                      [[:tr
                        [:td 
                         [:a {:href (str "#/job/" job-name)} job-name]]
                        (if-let [latest-execution (:job/latest-execution job)]
-                         (if (= (get-in latest-execution [:job-execution/batch-status :db/ident]) :batch-status/queued)
+                         (if (#{:batch-status/undispatched :batch-status/queued} (get-in latest-execution [:job-execution/batch-status :db/ident]))
                            [:td.center.aligned {:colSpan 3} "Wait for an execution..."]
                            (let [start (:job-execution/start-time latest-execution)
-                                 end (:job-execution/end-time  latest-execution)]
+                                 end (or (:job-execution/end-time  latest-execution) now)]
                              (list
                               [:td (when start
                                      (let [id (:db/id latest-execution)]
-                                       [:a {:on-click (fn [e] (search-execution latest-execution job-name id))}
+                                       [:a {:on-click (fn [_]
+                                                        (if (not-empty (:job-execution/step-executions latest-execution))
+                                                          (om/update! latest-execution :job-execution/step-executions nil)
+                                                          (search-execution latest-execution job-name id)))}
                                         (fmt/date-medium start)]))]
-                              [:td (fmt/duration-between start end)]
+                              [:td (let [duration (fmt/duration-between start end)]
+                                     (if (> duration 0) duration "-")) ]
                               (let [status (name (get-in latest-execution [:job-execution/batch-status :db/ident]))]
                                 [:td {:class (condp = status
                                                "completed" "positive"
@@ -106,27 +182,66 @@
                         (if-let [next-execution (:job/next-execution job)]
                           (fmt/date-medium (:job-execution/start-time next-execution))
                           "-")]
-                       [:td (if (some #{:batch-status/registered :batch-status/starting :batch-status/started :batch-status/stopping}
-                                      [(get-in job [:job/latest-execution :job-execution/batch-status :db/ident])])
-                              [:button.ui.circular.icon.orange.button
-                               {:on-click (fn [e]
-                                            (stop-job job))}
-                               [:i.setting.loading.icon]]
-                              [:button.ui.circular.icon.green.button
-                               {:on-click (fn [e]
-                                            (om/update! job :job/latest-execution {:job-execution/batch-status {:db/ident :batch-status/registered}})
-                                            (execute-job job-name))}
-                               [:i.play.icon]])]]
+                       [:td (let [status (get-in job [:job/latest-execution :job-execution/batch-status :db/ident])]
+                              (cond
+                                 (#{:batch-status/undispatched :batch-status/queued :batch-status/starting :batch-status/started} status)
+                                 [:div.ui.fade.reveal
+                                  [:button.ui.circular.orange.icon.button.visible.content
+                                   {:on-click (fn [_]
+                                                (if (#{:batch-status/started} status)
+                                                  (stop-job job)
+                                                  (abandon-job job)))}
+                                   [:i.setting.loading.icon]]
+                                  [:button.ui.circular.red.icon.button.hidden.content
+                                   (if (#{:batch-status/started} status)
+                                     [:i.pause.icon]
+                                     [:i.stop.icon])]]
+
+                                 (#{:batch-status/stopping :batch-status/stopped} status)
+                                 [:div.ui.buttons
+                                  [:button.ui.button
+                                   {:on-click (fn [_]
+                                                (abandon-job job))} "Abandon"]
+                                  [:div.or {:data-text "or"}]
+                                  [:button.ui.button
+                                   {:on-click (fn [_]
+                                                (restart-job job))} "Restart"]]
+
+                                 :else
+                                 [:button.ui.circular.icon.green.button
+                                  {:on-click (fn [_]
+                                               (api/request (str "/" app-name "/job/" job-name)
+                                                            {:handler (fn [job]
+                                                                        (put! jobs-view-channel [:open-dialog job]))}))}
+                                  [:i.play.icon]]))]]
                       (when-let [step-executions (not-empty (get-in job [:job/latest-execution :job-execution/step-executions]))]
                         [:tr
                          [:td {:colSpan 8}
-                          (om/build execution-view step-executions)]])]))]]]]]))))
+                          (om/build execution-view step-executions)]])]))]]]]
+        [:div.row
+         [:div.column
+          (om/build pagination-view {:hits (get-in app [:jobs :hits])
+                                     :page page
+                                     :per per}
+                    {:init-state {:link-fn (fn [pn]
+                                             (search-jobs app {:q (:query app) :offset (inc (* (dec pn) per)) :limit per}))}})]]]))))
 
 
 (defcomponent jobs-view [app owner]
+  (init-state [_]
+    {:channel (chan)})
   (will-mount [_]
-    (search-jobs app ""))
-  (render [_]
+    (search-jobs app {:q (:query app) :p 1})
+    (go-loop []
+      (let [[cmd msg] (<! (om/get-state owner :channel))]
+        (try
+          (case cmd
+            :open-dialog  (om/set-state! owner :executing-job msg)
+            :close-dialog (do (om/set-state! owner :executing-job nil)
+                              (search-jobs app {:q (:query app)})))
+          (catch js/Error e))
+        (recur))))
+  (render-state [_ {:keys [executing-job channel]}]
     (let [mode (second (:mode app) )]
       (html
      [:div
@@ -161,4 +276,6 @@
                        :timeline timeline-view
                        ;; default
                        job-list-view)
-                     app))]]])]))))
+                       app {:init-state {:jobs-view-channel channel}}))]]
+         (when executing-job
+           (om/build job-execution-dialog executing-job {:init-state {:jobs-view-channel channel}}))])]))))

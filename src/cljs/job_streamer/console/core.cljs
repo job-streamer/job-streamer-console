@@ -2,7 +2,7 @@
   (:require [om.core :as om :include-macros true])
   (:use [job-streamer.console.components.root :only [root-view]]))
 
-(def app-state (atom {:query nil
+(def app-state (atom {:query ""
                       :jobs nil
                       :agents nil
                       :system-error nil

@@ -10,6 +10,7 @@
             [goog.string :as gstring]
             [bouncer.core :as b]
             [bouncer.validators :as v]
+            [goog.Uri.QueryData :as query-data]
             [job-streamer.console.api :as api]
             [job-streamer.console.validators :as cv]
             [job-streamer.console.format :as fmt]
@@ -19,8 +20,10 @@
         [clojure.walk :only [postwalk]]
         [job-streamer.console.blocks :only [job->xml]]
         [job-streamer.console.components.job-settings :only [job-settings-view]]
+        [job-streamer.console.components.pagination :only [pagination-view]]
         [job-streamer.console.components.execution :only [execution-view]])
-  (:import [goog.ui.tree TreeControl]))
+  (:import [goog.ui.tree TreeControl]
+           [goog Uri]))
 
 (enable-console-print!)
 
@@ -60,12 +63,17 @@
                              (save-job-control-bus response owner job-name))
                   :format :xml})))
 
+(defn search-executions [job-name query cb]
+  (let [uri (.. (Uri. (str "/" app-name "/job/" job-name "/executions"))
+                (setQueryData (query-data/createFromMap (clj->js query))))]
+    (api/request (.toString uri)
+                 {:handler cb})))
 
 (defn search-execution [owner job-name execution-id idx]
   (api/request (str "/" app-name "/job/" job-name "/execution/" execution-id)
                {:handler (fn [response]
                            (let [steps (:job-execution/step-executions response)]
-                             (om/update-state! owner [:executions idx] 
+                             (om/update-state! owner [:executions :results idx]
                                                #(assoc % :job-execution/step-executions steps))))}))
 
 (defn schedule-job [job cron-notation refresh-job-ch scheduling-ch error-ch]
@@ -188,39 +196,60 @@
            (om/build job-edit-view (:job-name app))])))
 
 (defcomponent job-history-view [{:keys [job-name]} owner]
+  (init-state [_]
+    {:page 1
+     :per 20})
   (will-mount [_]
-    (api/request (str "/" app-name "/job/" job-name "/executions")
-                 {:handler (fn [response]
-                             (om/set-state! owner :executions response))}))
-  (render-state [_ {:keys [executions]}]
+    (search-executions job-name {:offset 1 :limit (om/get-state owner :per)}
+                       (fn [response]
+                         (om/set-state! owner :executions response))))
+  (render-state [_ {:keys [executions page per]}]
     (html
-     [:table.ui.compact.table
-      [:thead
-       [:tr
-        [:th "#"]
-        [:th "Agent"]
-        [:th "Started at"]
-        [:th "Duration"]
-        [:th "Status"]]]
-      [:tbody
-       (map-indexed
-        (fn [idx {:keys [job-execution/start-time job-execution/end-time] :as execution}]
-          (list
-           [:tr
-            [:td [:a {:on-click
-                      (fn [e] (search-execution owner job-name (:db/id execution) idx))}
-                  (:db/id execution)]]
-            [:td (get-in execution [:job-execution/agent :agent/name])]
-            [:td (fmt/date-medium (:job-execution/start-time execution))]
-            [:td (fmt/duration-between
-                  (:job-execution/start-time execution)
-                  (:job-execution/end-time execution))]
-            [:td (name (get-in execution [:job-execution/batch-status :db/ident]))]]
-           (when-let [step-executions (not-empty (:job-execution/step-executions execution))]
-             [:tr
-              [:td {:colSpan 5}
-               (om/build execution-view step-executions)]])))
-        executions)]])))
+     [:div.ui.grid
+      [:div.row
+       [:div.column
+        [:table.ui.compact.table
+         [:thead
+          [:tr
+           [:th "#"]
+           [:th "Agent"]
+           [:th "Started at"]
+           [:th "Duration"]
+           [:th "Status"]]]
+         [:tbody
+          (map-indexed
+           (fn [idx {:keys [job-execution/start-time job-execution/end-time] :as execution}]
+             (list
+              [:tr
+               [:td [:a {:on-click
+                         (fn [_]
+                           (if (not-empty (:job-execution/step-executions execution))
+                             (om/set-state! owner [:executions :results idx :job-execution/step-executions] nil)
+                             (search-execution owner job-name (:db/id execution) idx)))}
+                     (:db/id execution)]]
+               [:td (get-in execution [:job-execution/agent :agent/name] "Unknown")]
+               [:td (fmt/date-medium (:job-execution/start-time execution))]
+               [:td (let [duration (fmt/duration-between
+                                    (:job-execution/start-time execution)
+                                    (:job-execution/end-time execution))]
+                      (if (= duration 0) "-" duration))]
+               [:td (name (get-in execution [:job-execution/batch-status :db/ident]))]]
+              (when-let [step-executions (not-empty (:job-execution/step-executions execution))]
+                [:tr
+                 [:td {:colSpan 5}
+                  (om/build execution-view step-executions)]])))
+           (:results executions))]]]]
+      
+      [:div.row
+       [:div.column
+        (om/build pagination-view {:hits (:hits executions)
+                                   :page page
+                                   :per per}
+                  {:init-state {:link-fn (fn [pn]
+                                           (om/set-state! owner :page pn)
+                                           (search-executions job-name {:offset (inc (* (dec pn) per)) :limit per}
+                                                                (fn [executions]
+                                                                  (om/set-state! owner :executions executions))))}})]]])))
 
 (defcomponent scheduling-view [job owner]
   (init-state [_]
@@ -384,7 +413,9 @@
                [:div.item
                 [:i.marker.icon]
                 [:div.content
-                 [:div.description (get-in exe [:job-execution/agent :agent/name])]]]])]
+                 [:div.description
+                  [:a {:href (str "#/agent/" (get-in exe [:job-execution/agent :agent/instance-id]))}
+                   (get-in exe [:job-execution/agent :agent/name])] ]]]])]
            (om/build next-execution-view job
                      {:init-state {:refresh-job-ch refresh-job-ch}})]]))))
 

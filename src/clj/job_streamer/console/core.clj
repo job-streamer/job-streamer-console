@@ -19,11 +19,12 @@
     [:meta {:http-equiv "X-UA-Compatible" :content "IE=edge,chrome=1"}]
     [:meta {:name "control-bus-url" :content control-bus-url}]
     [:meta {:name "viewport" :content "width=device-width, initial-scale=1, maximum-scale=1"}]
-    (include-css "https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/1.11.4/semantic.min.css"
+    (include-css "https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/1.12.3/semantic.min.css"
                  "/css/vendors/vis.min.css"
-                 "/css/job-streamer.css"
-                 )
-    (include-js  "/js/vendors/vis.min.js")
+                 "/css/vendors/kalendae.css"
+                 "/css/job-streamer.css")
+    (include-js  "/js/vendors/vis.min.js"
+                 "/js/vendors/kalendae.standalone.min.js")
     (when (:dev env) (include-js "/react/react.js"))]
    [:body body]))
 
@@ -31,14 +32,16 @@
   (layout
    [:div#app.ui.page]
    [:xml#job-toolbox
-           [:block {:type "job"}]
-           [:block {:type "property"}]
-           [:block {:type "step"}]
-            [:block {:type "batchlet"}]
-            [:block {:type "chunk"}]
-            [:block {:type "reader"}]
-            [:block {:type "processor"}]
-            [:block {:type "writer"}]]
+    [:category {:name "Core"}
+     [:block {:type "job"}]
+     [:block {:type "property"}]
+     [:block {:type "step"}]]
+    [:category {:name "Step components"}
+     [:block {:type "batchlet"}]
+     [:block {:type "chunk"}]
+     [:block {:type "reader"}]
+     [:block {:type "processor"}]
+     [:block {:type "writer"}]]]
    (include-js (str "/js/extern/job-streamer"
                     (when-not (:dev env) ".min") ".js"))))
 

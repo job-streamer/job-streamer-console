@@ -52,6 +52,18 @@
   (sec/defroute "/jobs/timeline" []
     (om/update! app-state :mode [:jobs :timeline]))
 
+  (sec/defroute "/calendars" []
+    (om/update! app-state :mode [:calendars]))
+
+  (sec/defroute "/calendars/new" []
+    (om/update! app-state :mode [:calendars :new]))
+  
+  (sec/defroute #"/calendar/(\w+)" [cal-name]
+    (om/transact! app-state
+                  #(assoc %
+                          :mode [:calendars :detail]
+                          :cal-name cal-name)))
+  
   (sec/defroute "/agents" []
     (om/update! app-state :mode [:agents]))
 

@@ -217,6 +217,24 @@
             :name "value"
             :label "Value"}])
 
+(defblock flow
+  :color 40
+  :previous-statement? true
+  :next-statement? true
+  :output "Flow"
+  :fields [{:type :text
+            :name "name"
+            :label "Flow"}])
+
+(defblock split
+  :color 50
+  :previous-statement? true
+  :next-statement? true
+  :output "Split"
+  :fields [{:type :text
+            :name "name"
+            :label "Split"}])
+
 (defn emit-element [e]
   (if (= (type e) js/String)
     e

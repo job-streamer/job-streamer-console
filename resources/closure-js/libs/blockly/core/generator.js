@@ -65,12 +65,15 @@ Blockly.Generator.prototype.STATEMENT_PREFIX = null;
 
 /**
  * Generate code for all blocks in the workspace to the specified language.
- * @param {Blockly.Workspace=} opt_workspace Workspace to generate code from.
- *     Defaults to main workspace.
+ * @param {Blockly.Workspace} workspace Workspace to generate code from.
  * @return {string} Generated code.
  */
-Blockly.Generator.prototype.workspaceToCode = function(opt_workspace) {
-  var workspace = opt_workspace || Blockly.mainWorkspace;
+Blockly.Generator.prototype.workspaceToCode = function(workspace) {
+  if (!workspace) {
+    // Backwards compatability from before there could be multiple workspaces.
+    console.warn('No workspace specified in workspaceToCode call.  Guessing.');
+    workspace = Blockly.getMainWorkspace();
+  }
   var code = [];
   this.init(workspace);
   var blocks = workspace.getTopBlocks(true);
@@ -209,7 +212,8 @@ Blockly.Generator.prototype.valueToCode = function(block, name, order) {
     throw 'Expecting valid order from value block "' + targetBlock.type + '".';
   }
   if (code && order <= innerOrder) {
-    if (order == innerOrder || (order == 0 || order == 99)) {
+    if (order == innerOrder && (order == 0 || order == 99)) {
+      // Don't generate parens around NONE-NONE and ATOMIC-ATOMIC pairs.
       // 0 is the atomic order, 99 is the none order.  No parentheses needed.
       // In all known languages multiple such code blocks are not order
       // sensitive.  In fact in Python ('a' 'b') 'c' would fail.

@@ -52,7 +52,8 @@
                              :border {:color "#adddcf"}}]
     [:.item.range.failed    {:color "#cd2929"
                              :background {:color "#fed1ab"}
-                             :border {:color "#fed1ab"}}]]])
+                             :border {:color "#fed1ab"}}]]
+   [:div.ui.input.block {:display "block"}]])
 
 
 (defn build []

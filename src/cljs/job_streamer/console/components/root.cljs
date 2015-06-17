@@ -6,6 +6,7 @@
             [job-streamer.console.api :as api])
   (:use [job-streamer.console.components.jobs :only [jobs-view]]
         [job-streamer.console.components.agents :only [agents-view]]
+        [job-streamer.console.components.calendars :only [calendars-view]]
         [job-streamer.console.search :only [search-jobs]]))
 
 (def app-name "default")
@@ -39,7 +40,7 @@
          [:div.value jobs-count]
          [:div.label (str "job" (when (> jobs-count 1) "s"))]]]]
       [:div#job-search.item
-       [:form {:on-submit (fn [e] (search-jobs app (.-value (.getElementById js/document "job-query"))) false)}
+       [:form {:on-submit (fn [e] (search-jobs app {:q (.-value (.getElementById js/document "job-query"))}) false)}
         [:div.ui.icon.transparent.inverted.input
          [:input#job-query {:type "text"}]
          [:i.search.icon]]]]])))
@@ -69,4 +70,5 @@
          [:div.main.grid.content.full.height
           (case (first (:mode app))
             :jobs (om/build jobs-view app {:init-state {:mode (second (:mode app))}})
-            :agents (om/build agents-view app))]))])))
+            :agents (om/build agents-view app)
+            :calendars (om/build calendars-view app))]))])))
