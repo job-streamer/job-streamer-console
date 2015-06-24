@@ -8,9 +8,10 @@
 
 (def app-name "default")
 
-(defn delete-job [job-name]
+(defn delete-job [job-name app]
   (api/request (str "/" app-name "/job/" job-name) :DELETE
                {:handler (fn [response]
+                           (om/transact! app [:jobs :results] (fn [jobs] (remove #(= (:job/name %) job-name) jobs)))
                            (set! (.-href js/location) "#/"))}))
 
 (defn save-settings [job-name method owner category obj]
@@ -160,4 +161,4 @@
         [:button.ui.red.button
          {:type "button"
           :on-click (fn [e]
-                      (delete-job (:job-name app)))} "Delete this job"]]]])))
+                      (delete-job (:job-name app) app))} "Delete this job"]]]])))

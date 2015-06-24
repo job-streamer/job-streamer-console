@@ -33,7 +33,7 @@
 (defn save-job-control-bus [job owner job-name]
   (if-let [messages (first (b/validate job
                                        :job/name [v/required [v/matches #"^[\w\-]+$"]]
-                                       :job/steps [cv/more-than-one]))]
+                                       :job/components [cv/more-than-one]))]
     (om/set-state! owner :message {:class "error"
                                    :header "Invalid job format"
                                    :body [:ul

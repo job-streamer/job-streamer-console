@@ -1,0 +1,6 @@
+#!/bin/sh
+
+version=$(cat `dirname $0`/../VERSION)
+
+java -cp dist/job-streamer-console-${version}.jar:"lib/*" clojure.main -m job-streamer.console.core
+

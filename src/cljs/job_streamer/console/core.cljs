@@ -6,6 +6,7 @@
                       :jobs nil
                       :agents nil
                       :system-error nil
+                      :stats {:jobs-count 0 :agents-count 0}
                       :mode [:jobs]}))
 
 (om/root root-view app-state

@@ -15,35 +15,36 @@
   (will-mount [_]
     (api/request (str "/" app-name "/stats")
                  {:handler (fn [response]
-                             (om/update-state! owner
-                                               #(assoc %
-                                                       :agents-count (:agents response)
-                                                       :jobs-count (:jobs response))))
+                             (om/transact! app :stats
+                                           #(assoc %
+                                                   :agents-count (:agents response)
+                                                   :jobs-count (:jobs response))))
                   :error-handler
                   {:http-error (fn [res]
                                  (om/update! app :system-error "error"))}}))
-  (render-state [_ {:keys [agents-count jobs-count control-bus-not-found?]}]
-    (html 
-     [:div.right.menu
-      [:div#agent-stats.item
-       (when (= (first (:mode app)) :agents) {:class "active"})
-       [:a.ui.tiny.horizontal.statistics
-        {:href "#/agents"}
-        [:div.ui.inverted.statistic
-         [:div.value agents-count]
-         [:div.label (str "agent" (when (> agents-count 1) "s"))]]]]
-      [:div#job-stats.item
-       (when (= (first (:mode app)) :jobs) {:class "active"})
-       [:a.ui.tiny.horizontal.statistics
-        {:href "#/"}
-        [:div.ui.inverted.statistic
-         [:div.value jobs-count]
-         [:div.label (str "job" (when (> jobs-count 1) "s"))]]]]
-      [:div#job-search.item
-       [:form {:on-submit (fn [e] (search-jobs app {:q (.-value (.getElementById js/document "job-query"))}) false)}
-        [:div.ui.icon.transparent.inverted.input
-         [:input#job-query {:type "text"}]
-         [:i.search.icon]]]]])))
+  (render-state [_ {:keys [control-bus-not-found?]}]
+    (let [{{:keys [agents-count jobs-count]} :stats}  app]
+      (html 
+       [:div.right.menu
+        [:div#agent-stats.item
+         (when (= (first (:mode app)) :agents) {:class "active"})
+         [:a.ui.tiny.horizontal.statistics
+          {:href "#/agents"}
+          [:div.ui.inverted.statistic
+           [:div.value agents-count]
+           [:div.label (str "agent" (when (> agents-count 1) "s"))]]]]
+        [:div#job-stats.item
+         (when (= (first (:mode app)) :jobs) {:class "active"})
+         [:a.ui.tiny.horizontal.statistics
+          {:href "#/"}
+          [:div.ui.inverted.statistic
+           [:div.value jobs-count]
+           [:div.label (str "job" (when (> jobs-count 1) "s"))]]]]
+        [:div#job-search.item
+         [:form {:on-submit (fn [e] (search-jobs app {:q (.-value (.getElementById js/document "job-query"))}) false)}
+          [:div.ui.icon.transparent.inverted.input
+           [:input#job-query {:type "text"}]
+           [:i.search.icon]]]]]))))
 
 (defcomponent system-error-view [app owner]
   (render [_]

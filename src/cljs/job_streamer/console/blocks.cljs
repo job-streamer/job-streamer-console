@@ -127,7 +127,7 @@
             :name "name"
             :label "Job"}
            {:type :statement
-            :name "steps"}])
+            :name "components"}])
 
 (let [block (aget Blocks "job")]
   (doseq [[k f] mutate-behavior]
@@ -144,7 +144,9 @@
            {:type :value-input
             :name "step-component"
             :label ""
-            :acceptable ["Batchlet" "Chunk"]}])
+            :acceptable ["Batchlet" "Chunk"]}
+           {:type :statement
+            :name "transitions"}])
 
 (let [block (aget Blocks "step")]
   (doseq [[k f] mutate-behavior]
@@ -218,24 +220,49 @@
             :label "Value"}])
 
 (defblock flow
-  :color 40
+  :colour 40
   :previous-statement? true
   :next-statement? true
-  :output "Flow"
   :fields [{:type :text
             :name "name"
-            :label "Flow"}])
+            :label "Flow"}
+           {:type :statement
+            :name "components"
+            :label ""
+            :acceptable ["Step"]}])
 
 (defblock split
-  :color 50
+  :colour 50
   :previous-statement? true
   :next-statement? true
-  :output "Split"
   :fields [{:type :text
             :name "name"
-            :label "Split"}])
+            :label "Split"}
+           {:type :statement
+            :name "components"
+            :label ""
+            :acceptable ["Flow"]}])
+
+(defblock decision
+  :colour 50
+  :previous-statement? true
+  :next-statement? true
+  :fields [{:type :text
+            :name "name"
+            :label "Decision"}])
+
+(defblock next
+  :colour 50
+  :previous-statement? true
+  :next-statement? true
+  :fields [{:type :text
+            :name "on"
+            :label "Next on"}
+           {:type :statement
+            :name "components"}])
 
 (defn emit-element [e]
+  (println e)
   (if (= (type e) js/String)
     e
     (str "<" (name (:tag e))
@@ -246,6 +273,8 @@
          (if-let [content (:content e)]
            (apply str ">" (reduce str (map emit-element content)) "</" (name (:tag e)) ">")
            "/>"))))
+
+(declare component->xml)
 
 (defn chunk-element->xml [chunk type]
   {:tag :value
@@ -262,7 +291,64 @@
    (chunk-element->xml chunk "processor")
    (chunk-element->xml chunk "writer")])
 
-(defn step->xml [step steps]
+(defn component-name [component]
+  (or (:step/name component)
+      (:flow/name component)
+      (:split/name component)
+      (:decision/name component)))
+
+(defn transitions->xml [transitions components]
+  (let [transition (first transitions)]
+    (cond
+      (:next/on transition) {:tag :block
+                             :attrs {:type "next"}
+                             :content (concat
+                                       (when-let [on (:next/on transition)]
+                                         [{:tag :field, :attrs {:name "on"}, :content [on]}])
+                                       (when-let [to (:next/to transition)]
+                                         [{:tag :statement
+                                           :attrs {:name "components"}
+                                           :content [(component->xml (first (filter #(= (component-name %) to) components)) components)]}])
+                                       (when-let [rest-transitions (not-empty (rest transitions))]
+                                         [{:tag :next
+                                           :content [(transitions->xml rest-transitions components)]}]))})))
+
+(defn flow->xml [flow components]
+  {:tag :block
+   :attrs {:type "flow"}
+   :content (concat
+             (when-let [flow-name (:flow/name flow)]
+               [{:tag :field
+                 :attrs {:name "name"}
+                 :content [flow-name]}])
+             (when-let [next (not-empty (:flow/next flow))]
+               [{:tag :next
+                 :content [(component->xml (first (filter #(= (component-name %) next) components)) components)]}])
+             (when-let [components (not-empty (:flow/components flow))]
+               (let [component (first components)]
+                 [{:tag :statement
+                   :attrs {:name "components"}
+                   :content [(component->xml (first (filter #(= (component-name %) (component-name component)) components)) components)]}])))})
+
+(defn split->xml [split components]
+  {:tag :block
+   :attrs {:type "split"}
+   :content (concat
+             (when-let [split-name (:split/name split)]
+               [{:tag :field
+                 :attrs {:name "name"}
+                 :content [split-name]}])
+             (when-let [next (:split/next split)]
+               [{:tag :next
+                 :content [(component->xml (first (filter #(= (component-name %) next) components)) components)]}])
+             (when-let [components (not-empty (:split/components split))]
+               (let [component (first components)]
+                 (println "components=" components)
+                 [{:tag :statement
+                   :attrs {:name "components"}
+                   :content [(component->xml (first (filter #(= (component-name %) (component-name component)) components)) components)]}])))})
+
+(defn step->xml [step components]
   {:tag :block
    :attrs {:type "step"}
    :content (concat
@@ -287,7 +373,11 @@
                             :content (chunk->xml chunk)}]}])
              (when-let [next-step (:step/next step)]
                [{:tag :next
-                 :content [(step->xml (first (filter #(= (:step/name %) next-step) steps)) steps)]}])
+                 :content [(component->xml (first (filter #(= (:step/name %) next-step) components)) components)]}])
+             (when-let [transitions (not-empty (:step/transitions step))]
+               [{:tag :statement
+                 :attrs {:name "transitions"}
+                 :content [(transitions->xml transitions components)]}])
              (when-let [props (:step/properties step)]
                 (map-indexed
                  (fn [idx [k v]]
@@ -303,6 +393,12 @@
                                           :content [v]}]}]})
                  props)))})
 
+(defn component->xml [component components]
+  (cond
+    (:step/name  component) (step->xml  component components)
+    (:flow/name  component) (flow->xml  component components)
+    (:split/name component) (split->xml component components)))
+
 (defn job->xml [job]
   (emit-element
    {:tag :block
@@ -315,10 +411,10 @@
                 [{:tag :field :attrs {:name "name"} :content [job-name]}])
               (when-let [restartable? (:job/restartable? job)]
                 [{:tag :field :attrs {:name "restartable?"} :content [restartable?]}])
-              (when-let [steps (not-empty (:job/steps job))]
+              (when-let [components (not-empty (:job/components job))]
                 [{:tag :statement
-                  :attrs {:name "steps"}
-                  :content [(step->xml (first steps) steps)]}])
+                  :attrs {:name "components"}
+                  :content [(component->xml (first components) components)]}])
               (when-let [props (:job/properties job)]
                 (map-indexed
                  (fn [idx [k v]]

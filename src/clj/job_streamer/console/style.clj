@@ -53,6 +53,9 @@
     [:.item.range.failed    {:color "#cd2929"
                              :background {:color "#fed1ab"}
                              :border {:color "#fed1ab"}}]]
+
+   [:.k-days
+    [:span {:box-sizing "initial"}]]
    [:div.ui.input.block {:display "block"}]])
 
 

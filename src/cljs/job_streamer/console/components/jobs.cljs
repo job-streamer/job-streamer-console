@@ -28,7 +28,7 @@
                       "/execution/" (:db/id latest-execution) "/stop")
                  :PUT
                  {:handler (fn [response]
-                             (om/update! latest-execution :job-execution/batch-status :batch-status/stopping))})))
+                             (om/update! latest-execution [:job-execution/batch-status :db/ident] :batch-status/stopping))})))
 
 (defn abandon-job [job]
   (when-let [latest-execution (:job/latest-execution job)]
@@ -109,7 +109,7 @@
       (recur)))
   (render-state [_ {:keys [jobs-view-channel now page per]}]
     (html
-     (if (empty? (:jobs app))
+     (if (= (get-in app [:stats :jobs-count]) 0)
        [:div.ui.grid
         [:div.ui.one.column.row
          [:div.column
@@ -170,7 +170,7 @@
                                                           (search-execution latest-execution job-name id)))}
                                         (fmt/date-medium start)]))]
                               [:td (let [duration (fmt/duration-between start end)]
-                                     (if (> duration 0) duration "-")) ]
+                                     (if (= duration 0) "-" duration)) ]
                               (let [status (name (get-in latest-execution [:job-execution/batch-status :db/ident]))]
                                 [:td {:class (condp = status
                                                "completed" "positive"

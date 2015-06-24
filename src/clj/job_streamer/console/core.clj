@@ -2,7 +2,8 @@
   (:use [hiccup.core :only [html]]
         [hiccup.page :only [html5 include-css include-js]]
         [ring.util.response :only [resource-response content-type header]]
-        [environ.core :only [env]])
+        [environ.core :only [env]]
+        [org.httpkit.server :only [run-server]])
   (:require [hiccup.middleware :refer [wrap-base-url]]
             [compojure.core :refer [defroutes GET POST]]
             [compojure.handler :as handler]
@@ -10,7 +11,7 @@
             (job-streamer.console [style :as style]
                                   [jobxml :as jobxml])))
 
-(def control-bus-url (or (env control-bus-url) "http://localhost:45102"))
+(def control-bus-url (or (:controlbus-url env) "http://localhost:45102"))
 
 (defn layout [& body]
   (html5
@@ -35,13 +36,19 @@
     [:category {:name "Core"}
      [:block {:type "job"}]
      [:block {:type "property"}]
-     [:block {:type "step"}]]
+     [:block {:type "step"}]
+     [:block {:type "flow"}]
+     [:block {:type "split"}]
+     ;; [:block {:type "decision"}] TODO will support
+     ]
     [:category {:name "Step components"}
      [:block {:type "batchlet"}]
      [:block {:type "chunk"}]
      [:block {:type "reader"}]
      [:block {:type "processor"}]
-     [:block {:type "writer"}]]]
+     [:block {:type "writer"}]]
+    [:category {:name "Transitions"}
+     [:block {:type "next"}]]]
    (include-js (str "/js/extern/job-streamer"
                     (when-not (:dev env) ".min") ".js"))))
 
@@ -62,3 +69,6 @@
 (def app
   (-> (handler/site app-routes)
       (wrap-base-url)))
+
+(defn -main [& args]
+  (run-server app  {:port (or (:console-port env) 8080)}))

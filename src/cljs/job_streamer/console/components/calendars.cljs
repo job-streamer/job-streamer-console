@@ -25,7 +25,10 @@
        [:img {:src "/img/loader.gif"}]))))
 
 (defcomponent calendar-edit-view [app owner]
-  (render [_]
+  (init-state [_]
+    {:weekly-holiday [true false false false false false true]
+     :calendar nil})
+  (render-state [_ {:keys [weekly-holiday calendar]}]
     (html
      [:form.ui.form
       [:h4.ui.dividing.header "New calendar"]
@@ -34,12 +37,36 @@
         [:label "Calendar name"]
         [:input {:type "text" :id "cal-name"}]]
        [:div.field
+        [:div.ui.buttons
+         (map-indexed
+          (fn [idx weekday]
+            [:button.ui.toggle.button
+             {:type "button"
+              :class (when (nth weekly-holiday idx) "active")
+              :on-click (fn [_]
+                          (om/update-state! owner [:weekly-holiday idx] #(not %))
+                          (set! (.-blackout calendar)
+                                (fn [d]
+                                  (nth (->> (om/get-state owner :weekly-holiday)
+                                            (map #(if % 1 0)))
+                                       (.. js/Kalendae (moment d) day))))
+                          (.draw (om/get-state owner :calendar)))}
+             weekday])
+          ["Sun" "Mon" "Tue" "Wed" "Thu" "Fri" "Stu"])]
         [:div#holiday-selector]]]
-      [:button.ui.button.submit {:type "button"} "Save"]]))
+      [:button.ui.button.submit
+       {:type "button"
+        :on-click (fn [_]
+                    (println (pr-str
+                              {:holidays (js->clj (.getSelectedAsDates (om/get-state owner :calendar))) 
+                               :weekly-holiday (om/get-state owner :weekly-holiday)})))}
+       "Save"]]))
   (did-mount [_]
-    (js/Kalendae. (clj->js {:attachTo (.getElementById js/document "holiday-selector")
-                            :months 4
-                            :mode "multiple"}))))
+    (om/set-state! owner :calendar
+                   (js/Kalendae. (clj->js {:attachTo (.getElementById js/document "holiday-selector")
+                                           :months 4
+                                           :mode "multiple"})))
+    ))
 
 (defcomponent calendar-list-view [calendars owner]
   (render [_]
