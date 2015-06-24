@@ -9,7 +9,8 @@
             [compojure.handler :as handler]
             [compojure.route :as route]
             (job-streamer.console [style :as style]
-                                  [jobxml :as jobxml])))
+                                  [jobxml :as jobxml]))
+  (:gen-class))
 
 (def control-bus-url (or (:controlbus-url env) "http://localhost:45102"))
 
