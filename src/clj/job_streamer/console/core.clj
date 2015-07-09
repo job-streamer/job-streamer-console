@@ -72,4 +72,5 @@
       (wrap-base-url)))
 
 (defn -main [& args]
-  (run-server app  {:port (or (:console-port env) 8080)}))
+  (let [port (Integer/parseInt (or (:console-port env) "8080"))]
+    (run-server app  {:port port})))
