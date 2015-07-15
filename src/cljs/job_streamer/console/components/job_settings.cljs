@@ -8,10 +8,10 @@
 
 (def app-name "default")
 
-(defn delete-job [job-name app]
-  (api/request (str "/" app-name "/job/" job-name) :DELETE
+(defn delete-job [job jobs-channel]
+  (api/request (str "/" app-name "/job/" (:job/name job)) :DELETE
                {:handler (fn [response]
-                           (om/transact! app [:jobs :results] (fn [jobs] (remove #(= (:job/name %) job-name) jobs)))
+                           (put! jobs-channel [:delete-job job])
                            (set! (.-href js/location) "#/"))}))
 
 (defn save-settings [job-name method owner category obj]
@@ -20,13 +20,13 @@
                {:handler (fn [_]
                            (om/set-state! owner [:save-status category] true))}))
 
-(defcomponent job-settings-view [app owner]
+(defcomponent job-settings-view [job owner {:keys [jobs-channel]}]
   (init-state [_]
     {:save-status {:status-notifiction false
                    :time-monitor {:duration 0 :action "" :notification-type ""}
                    :exclusive false}})
   (will-mount [_]
-    (api/request (str "/" app-name "/job/" (:job-name app) "/settings")
+    (api/request (str "/" app-name "/job/" (:job/name job) "/settings")
                  {:handler (fn [response]
                              (om/set-state! owner :settings response))}))
   (render-state [_ {:keys [settings save-status time-monitor]}]
@@ -42,7 +42,6 @@
           [:option {:value "abandoned"} "abandoned"]
           [:option {:value "completed"} "completed"]
           [:option {:value "failed"} "failed"]
-          [:option {:value "completed"} "completed"]
           [:option {:value "started"} "stated"]]
          ", send notification by "
          [:input {:id "notification-type" :type "text"}]
@@ -54,7 +53,7 @@
                                                  :status-notification/type type}]
                         (om/update-state! owner [:settings :job/status-notifications]
                                           (fn [st] (conj st status-notification)))
-                        (save-settings (:job-name app)
+                        (save-settings (:job/name job)
                                        :PUT
                                        owner
                                        :status-notification
@@ -76,7 +75,7 @@
                      {:on-click (fn [_]
                                   (om/update-state! owner [:settings :job/status-notifications]
                                                     (fn [st] (remove #(= (:db/id %) (:db/id notification)) st)))
-                                  (save-settings (:job-name app)
+                                  (save-settings (:job/name job)
                                                  :PUT
                                                  owner
                                                  :status-notification
@@ -89,9 +88,9 @@
          (merge
           {:on-click (fn [e]
                        (let [cb (.getElementById js/document "exclusive-checkbox")
-                             checked (not (.-checked cb))]
+                             checked (.-checked cb)]
                          (om/set-state! owner [:settings :job/exclusive?] checked)
-                         (save-settings (:job-name app) (if checked :PUT :DELETE)
+                         (save-settings (:job/name job) (if checked :PUT :DELETE)
                                         owner :exclusive
                                         {:job/exclusive? checked})))}
           (when (:job/exclusive? settings) {:class "checked"}))
@@ -109,7 +108,7 @@
              :action/abort (str "abort the job."))
            
            [:a {:on-click (fn [_]
-                            (save-settings (:job-name app) :DELETE
+                            (save-settings (:job/name job) :DELETE
                                            owner :time-monitor {})
                             (om/set-state! owner [:settings :job/time-monitor] nil))}
             [:i.remove.red.icon]]]
@@ -143,7 +142,7 @@
                                 (let [settings-time-monitor (->> (update-in time-monitor [:action] #(keyword "action" %))
                                                                  (map (fn [[k v]] [(keyword "time-monitor" (name k)) v]))
                                                                  (reduce (fn [m [k v]] (assoc m k v)) {}))]
-                                  (save-settings (:job-name app) :PUT
+                                  (save-settings (:job/name job) :PUT
                                                owner :time-monitor
                                                settings-time-monitor)
                                   (om/set-state! owner [:settings :job/time-monitor] settings-time-monitor)))}
@@ -161,4 +160,4 @@
         [:button.ui.red.button
          {:type "button"
           :on-click (fn [e]
-                      (delete-job (:job-name app) app))} "Delete this job"]]]])))
+                      (delete-job job jobs-channel))} "Delete this job"]]]])))

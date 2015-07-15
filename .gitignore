@@ -1,6 +1,6 @@
 target
-resources/public/js/blocks.js
-resources/public/js/jobs.js
+resources/public/js/*
+resources/public/js/extern
 .lein-*
 .nrepl-*
 /lib

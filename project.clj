@@ -33,13 +33,13 @@
   :cljsbuild {:builds
               [{:id "dev"
                 :source-paths ["src/cljs"]
-                :compiler {:output-to "resources/public/js/extern/job-streamer.js"
+                :compiler {:output-to "resources/public/js/job-streamer.js"
                            :pretty-print true
                            :optimizations :simple}}
                {:id "production"
                 :source-paths ["src/cljs"]
-                :compiler {:output-to "resources/public/js/extern/job-streamer.min.js"
-                           :output-dir "resources/public/js/extern"
+                :compiler {:output-to "resources/public/js/job-streamer.min.js"
+                           :output-dir "resources/public/js"
                            :pretty-print false
                            :optimizations :advanced
-                           :source-map "resources/public/js/extern/job-streamer.min.js.map"}}]})
+                           :source-map "resources/public/js/job-streamer.min.js.map"}}]})

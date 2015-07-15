@@ -98,6 +98,8 @@
 (defn xml->components [el]
   (loop [block (first (.select el "> statement[name=components] > block[type~=(step|flow|split|decision)]"))
          components []]
+    (when (nil? block)
+      (throw (Exception. (str (.attr el "type")  " must have one component at least."))))
     (let [component (xml->component block)]
       (if-let [next-block (first (.select block "> next > block[type~=(step|flow|split|decision)]"))]
         (recur next-block (conj components component))

@@ -227,7 +227,7 @@
                                              (search-jobs app {:q (:query app) :offset (inc (* (dec pn) per)) :limit per}))}})]]]))))
 
 
-(defcomponent jobs-view [app owner]
+(defcomponent jobs-view [app owner {:keys [stats-channel]}]
   (init-state [_]
     {:channel (chan)})
   (will-mount [_]
@@ -238,41 +238,56 @@
           (case cmd
             :open-dialog  (om/set-state! owner :executing-job msg)
             :close-dialog (do (om/set-state! owner :executing-job nil)
-                              (search-jobs app {:q (:query app)})))
+                              (search-jobs app {:q (:query app)}))
+            :refresh-jobs (do (search-jobs app {:q (:query app)})
+                              (put! stats-channel true)) 
+            :delete-job (do
+                          (om/transact! app [:jobs :results]
+                                         (fn [results]
+                                           (remove #(= % msg) results)))
+                          (put! stats-channel true)))
           (catch js/Error e))
         (recur))))
   (render-state [_ {:keys [executing-job channel]}]
-    (let [mode (second (:mode app) )]
+    (let [this-mode (second (:mode app))]
       (html
      [:div
-      [:h2.ui.purple.header
+      [:h2.ui.violet.header
        [:i.setting.icon]
        [:div.content
         "Job"
         [:div.sub.header "Edit and execute a job."]]]
-      (case mode
+      (case this-mode
         :new
-        (om/build job-new-view (select-keys app [:job-name :mode]))
+        (om/build job-new-view (get-in app [:jobs :results])
+                  {:state {:mode (:mode app)}
+                   :opts {:jobs-channel channel}})
 
         :detail
-        (om/build job-detail-view (select-keys app [:job-name :mode]))
+        (let [idx (->> (get-in app [:jobs :results])
+                       (keep-indexed #(if (= (:job/name %2) (:job-name app)) %1))
+                       first)]
+          (om/build job-detail-view (get-in app [:jobs :results idx])
+                    {:opts {:jobs-channel channel}
+                     :state {:mode (:mode app)}}))
+        
 
         ;; default
         [:div
          [:div.ui.top.attached.tabular.menu
           [:a (merge {:class "item"
                       :href "#/"}
-                     (when (= mode :list) {:class "item active"}))
+                     (when (= this-mode :list) {:class "item active"}))
            [:i.list.icon] "list"]
           [:a (merge {:class "item"
                       :href "#/jobs/timeline"}
-                     (when (= mode :timeline) {:class "item active"}))
+                     (when (= this-mode :timeline) {:class "item active"}))
            [:i.wait.icon] "timeline"]]
          [:div.ui.bottom.attached.active.tab.segment
           [:div#tab-content
            (if (nil? (:jobs app))
              [:img {:src "/img/loader.gif"}]
-             (om/build (case mode
+             (om/build (case this-mode
                        :timeline timeline-view
                        ;; default
                        job-list-view)

@@ -5,7 +5,7 @@
                                          fields output mutator] :or {fields []}}]
   (let [this (gensym "this")
         n (name block-name)]
-    `(aset Blockly/Blocks ~n
+    `(aset (.-Blocks js/Blockly) ~n
            (cljs.core/clj->js
             {:init (fn []
                      (cljs.core/this-as
@@ -17,7 +17,7 @@
                       ~(when output `(.setOutput ~this true))
                       ~(when mutator
                          `(do
-                            (.setMutator ~this (Blockly/Mutator. (cljs.core/array ~mutator)))
+                            (.setMutator ~this (js/Blockly.Mutator. (cljs.core/array ~mutator)))
                             (set! (.-itemCount ~this) 0)))
                       ~@(for [field fields]
                           (case (:type field)
@@ -25,17 +25,18 @@
                             `(-> ~this
                                  (.appendDummyInput)
                                  (.appendField (:label ~field))
-                                 (.appendField (Blockly/FieldTextInput. "") (:name ~field)))
+                                 (.appendField (js/Blockly.FieldTextInput. "") (:name ~field)))
                             :dropdown
                             `(-> ~this
                                  (.appendDummyInput)
                                  (.appendField (:label ~field))
-                                 (.appendField (Blockly/FieldDropdown. (cljs.core/clj->js (:value ~field))) (:name ~field)))
+                                 (.appendField (js/Blockly.FieldDropdown. (cljs.core/clj->js (:value ~field)))
+                                               (:name ~field)))
                             :checkbox
                             `(-> ~this
                                  (.appendDummyInput)
                                  (.appendField (:label ~field))
-                                 (.appendField (Blockly/FieldCheckbox. "TRUE") (:name ~field)))
+                                 (.appendField (js/Blockly.FieldCheckbox. "TRUE") (:name ~field)))
                             :value-input
                             `(-> ~this
                                  (.appendValueInput (:name ~field))

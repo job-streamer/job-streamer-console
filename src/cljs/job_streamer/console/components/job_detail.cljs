@@ -13,9 +13,7 @@
             [goog.Uri.QueryData :as query-data]
             [job-streamer.console.api :as api]
             [job-streamer.console.validators :as cv]
-            [job-streamer.console.format :as fmt]
-            [Blockly :as Blockly]
-            [Blockly.Xml :as blockly-xml])
+            [job-streamer.console.format :as fmt])
   (:use [cljs.reader :only [read-string]]
         [clojure.walk :only [postwalk]]
         [job-streamer.console.blocks :only [job->xml]]
@@ -30,7 +28,7 @@
 ;; Now, app-name is static.
 (def app-name "default")
 
-(defn save-job-control-bus [job owner job-name]
+(defn save-job-control-bus [job owner job-name jobs-channel]
   (if-let [messages (first (b/validate job
                                        :job/name [v/required [v/matches #"^[\w\-]+$"]]
                                        :job/components [cv/more-than-one]))]
@@ -45,22 +43,27 @@
                  (if job-name :PUT :POST)
                  job
                  {:handler (fn [response]
-                             (om/set-state! owner :message {:class "success"
-                                                            :header "Save successful"
-                                                            :body [:p "If you back to list, click a breadcrumb menu."]}))
+                             (if job-name
+                               (om/set-state! owner :message {:class "success"
+                                                              :header "Save successful"
+                                                              :body [:p "If you back to list, click a breadcrumb menu."]})
+                               (put! jobs-channel [:refresh-jobs true]
+                                     #(set! (.-href js/location) "#/"))))
                   :error-handler (fn [response]
                                    (om/set-state! owner :message {:class "error"
                                                                   :header "Save failed"
                                                                   :body [:p "Somethig is wrong."]}))})))
 
-(defn save-job [xml owner job-name]
+(defn save-job [xml owner job-name jobs-channel]
   (let [uri (goog.Uri. (.-href js/location))
         port (.getPort uri)]
     (api/request (str (.getScheme uri) "://" (.getDomain uri) (when port (str ":" port)) "/job/from-xml")
                  :POST
                  xml
                  {:handler (fn [response]
-                             (save-job-control-bus response owner job-name))
+                             (save-job-control-bus response owner job-name jobs-channel))
+                  :error-handler (fn [response]
+                                   (println response))
                   :format :xml})))
 
 (defn search-executions [job-name query cb]
@@ -76,9 +79,9 @@
                              (om/update-state! owner [:executions :results idx]
                                                #(assoc % :job-execution/step-executions steps))))}))
 
-(defn schedule-job [job cron-notation refresh-job-ch scheduling-ch error-ch]
+(defn schedule-job [job schedule refresh-job-ch scheduling-ch error-ch]
   (api/request (str "/" app-name "/job/" (:job/name job) "/schedule") :POST
-                {:job/name (:job/name job) :schedule/cron-notation cron-notation}
+                schedule
                 {:handler (fn [response]
                             (put! refresh-job-ch (:job/name job))
                             (put! scheduling-ch false))
@@ -112,13 +115,13 @@
       (let [job (<! fetch-job-ch)
             xml (job->xml (read-string (:job/edn-notation job)))]
         (om/set-state! owner :job job)
-        (blockly-xml/domToWorkspace Blockly/mainWorkspace
-                                    (blockly-xml/textToDom (str "<xml>" xml "</xml>")))))
+        (.domToWorkspace (.-Xml js/Blockly) (.-mainWorkspace js/Blockly)
+                         (.textToDom (.-Xml js/Blockly) (str "<xml>" xml "</xml>")))))
 
     (api/request (str "/" app-name "/job/" job-name)
                  {:handler (fn [response]
                              (put! fetch-job-ch response))})
-    (Blockly/inject
+    (.inject js/Blockly
              (.getElementById js/document "job-blocks-inner")
              (clj->js {:toolbox "<xml></xml>"
                        :readOnly true}))))
@@ -163,44 +166,49 @@
                     (into [:div.section.active] (rest (last res)))))))
         (repeat [:i.right.chevron.icon.divider])))])))
 
-(defcomponent job-edit-view [job owner]
+(defcomponent job-edit-view [job owner {:keys [jobs-channel]}]
   (render-state [_ {:keys [message]}]
-    (html [:div
-           (when message
+    (html [:div.ui.grid
+           [:div.row {:style {:display (if message "block" "none")}}
+            [:div.column
              [:div.ui.message {:class (:class message)}
               [:div.header (:header message)]
-              [:div (:body message)]])
-           [:div.ui.menu
-            [:div.item
-             [:div.icon.ui.buttons
-              [:button.ui.primary.button
-               {:on-click (fn [e]
-                            (let [xml (blockly-xml/workspaceToDom Blockly/mainWorkspace)]
-                              (save-job (blockly-xml/domToText xml)
-                                        owner (:job/name job))))} [:i.save.icon]]]]]
-           [:div#job-blocks-inner]]))
+              [:div (:body message)]]]]
+           [:div.row
+            [:div.column
+             [:div.ui.menu
+              [:div.item
+               [:div.icon.ui.buttons
+                [:button.ui.primary.button
+                 {:on-click (fn [e]
+                              (let [xml (.workspaceToDom (.-Xml js/Blockly) (.-mainWorkspace js/Blockly))]
+                                (save-job (.domToText (.-Xml js/Blockly) xml)
+                                          owner (:job/name job) jobs-channel)))} [:i.save.icon]]]]]]]
+           [:div.row
+            [:div.column
+             [:div#job-edit-inner]]]]))
   (did-mount [_]
-    (Blockly/inject
-             (.getElementById js/document "job-blocks-inner")
+    (.inject js/Blockly
+             (.. (om/get-node owner) (querySelector "#job-edit-inner"))
              (clj->js {:toolbox (.getElementById js/document "job-toolbox")}))
     (when job
       (let [xml (job->xml (read-string (:job/edn-notation job)))]
-        (blockly-xml/domToWorkspace
-         Blockly/mainWorkspace
-         (blockly-xml/textToDom (str "<xml>" xml "</xml>") ))))))
+        (.domToWorkspace (.-Xml js/Blockly)
+         (.-mainWorkspace js/Blockly)
+         (.textToDom (.-Xml js/Blockly) (str "<xml>" xml "</xml>") ))))))
 
-(defcomponent job-new-view [app owner]
-  (render-state [_ {:keys [message]}]
+(defcomponent job-new-view [jobs owner opts]
+  (render-state [_ {:keys [message mode]}]
     (html [:div
-           (om/build breadcrumb-view (:mode app))
-           (om/build job-edit-view (:job-name app))])))
+           (om/build breadcrumb-view mode)
+           (om/build job-edit-view nil {:opts opts})])))
 
-(defcomponent job-history-view [{:keys [job-name]} owner]
+(defcomponent job-history-view [job owner opts]
   (init-state [_]
     {:page 1
      :per 20})
   (will-mount [_]
-    (search-executions job-name {:offset 1 :limit (om/get-state owner :per)}
+    (search-executions (:job/name @job) {:offset 1 :limit (om/get-state owner :per)}
                        (fn [response]
                          (om/set-state! owner :executions response))))
   (render-state [_ {:keys [executions page per]}]
@@ -225,7 +233,7 @@
                          (fn [_]
                            (if (not-empty (:job-execution/step-executions execution))
                              (om/set-state! owner [:executions :results idx :job-execution/step-executions] nil)
-                             (search-execution owner job-name (:db/id execution) idx)))}
+                             (search-execution owner (:job/name @job) (:db/id execution) idx)))}
                      (:db/id execution)]]
                [:td (get-in execution [:job-execution/agent :agent/name] "Unknown")]
                [:td (fmt/date-medium (:job-execution/start-time execution))]
@@ -247,35 +255,52 @@
                                    :per per}
                   {:init-state {:link-fn (fn [pn]
                                            (om/set-state! owner :page pn)
-                                           (search-executions job-name {:offset (inc (* (dec pn) per)) :limit per}
+                                           (search-executions (:job/name @job) {:offset (inc (* (dec pn) per)) :limit per}
                                                                 (fn [executions]
                                                                   (om/set-state! owner :executions executions))))}})]]])))
 
 (defcomponent scheduling-view [job owner]
   (init-state [_]
     {:error-ch (chan)
-     :has-error false})
+     :has-error false
+     :schedule (:job/schedule job)})
   (will-mount [_]
     (go-loop []
       (let [{message :message} (<! (om/get-state owner :error-ch))]
-        (om/set-state! owner :has-error message))))
-  (render-state [_ {:keys [scheduling-ch refresh-job-ch error-ch has-error]}]
+        (om/set-state! owner :has-error message)))
+    (api/request "/calendars" :GET
+                 {:handler (fn [response]
+                             (om/set-state! owner :calendars response))}))
+  (render-state [_ {:keys [schedule scheduling-ch calendars refresh-job-ch error-ch has-error]}]
     (html
      [:form.ui.form 
       (merge {:on-submit (fn [e]
                            (.. e -nativeEvent preventDefault)
                            (schedule-job job
-                                         (.. js/document (getElementById "cron-notation") -value)
-                                         refresh-job-ch scheduling-ch error-ch)
-                           false)}
+                                         schedule
+                                         refresh-job-ch scheduling-ch error-ch))}
              (when has-error {:class "error"}))
       (when has-error
         [:div.ui.error.message
          [:p has-error]])
       [:div.fields
        [:div.field (when has-error {:class "error"})
+        [:label "Quartz format"]
         [:input {:id "cron-notation" :type "text" :placeholder "Quartz format"
-                 :default-value (get-in job [:job/schedule :schedule/cron-notation])}]]]
+                 :value (:schedule/cron-notation schedule)
+                 :on-change (fn [e]
+                              (let [value (.. js/document (getElementById "cron-notation") -value)]
+                                (om/set-state! owner [:schedule :schedule/cron-notation] value)))}]]
+       (when calendars
+         [:div.field
+          [:label "Calendar"]
+          [:select {:value (get-in schedule [:schedule/calendar :calendar/name])
+                    :on-change (fn [_]
+                                 (let [value (.. (om/get-node owner) (querySelector "select") -value)]
+                                   (om/set-state! owner [:schedule :schedule/calendar :calendar/name] value)))}
+           [:option {:value ""} ""]
+           (for [cal calendars]
+             [:option {:value (cal :calendar/name)} (cal :calendar/name)])]])]
       [:div.ui.buttons
         [:button.ui.button
          {:type "button"
@@ -337,22 +362,23 @@
                          (om/set-state! owner :scheduling? true))}
             "Schedule this job"]]))])))
 
-(defcomponent current-job-view [{:keys [job-name] :as app} owner]
+(defcomponent current-job-view [job owner opts]
   (init-state [_]
     {:refresh-job-ch (chan)})
   (will-mount [_]
     (go-loop []
       (let [_ (<! (om/get-state owner :refresh-job-ch))]
-        (api/request (str "/" app-name "/job/" job-name)
+        (api/request (str "/" app-name "/job/" (:job/name job))
                      {:handler (fn [response]
-                                 (om/set-state! owner :job response))})
-        (recur))))
-  (render-state [_ {:keys [job dimmed? refresh-job-ch]}]
-    (let [mode (->> app :mode (drop 3) first)]
+                                 (om/set-state! owner :job-detail response))})
+        (recur)))
+    (put! (om/get-state owner :refresh-job-ch) true))
+  (render-state [_ {:keys [job-detail dimmed? refresh-job-ch mode]}]
+    (let [this-mode (->> mode (drop 3) first)]
       (html
-       (case mode
+       (case this-mode
          :edit
-         (om/build job-edit-view job)
+         (om/build job-edit-view job-detail)
 
          ;;default
          [:div.ui.stackable.two.column.grid
@@ -370,31 +396,31 @@
                  [:button.ui.primary.button
                   {:type "button"
                    :on-click (fn [e]
-                               (set! (.-href js/location) (str "#/job/" job-name "/edit")))}
+                               (set! (.-href js/location) (str "#/job/" (:job/name @job) "/edit")))}
                   "Edit"]]]]
               [:div#job-blocks-inner.ui.big.image]]
              [:div.content
-              [:div.header (:job/name job)]
+              [:div.header (:job/name job-detail)]
               [:div.description
                [:div.ui.tiny.statistics
                 [:div.statistic
-                 [:div.value (get-in job [:job/stats :total])]
+                 [:div.value (get-in job-detail [:job/stats :total])]
                  [:div.label "Total"]]
                 [:div.statistic
-                 [:div.value (get-in job [:job/stats :success])]
+                 [:div.value (get-in job-detail [:job/stats :success])]
                  [:div.label "Success"]]
                 [:div.statistic
-                 [:div.value (get-in job [:job/stats :failure])]
+                 [:div.value (get-in job-detail [:job/stats :failure])]
                  [:div.label "Faied"]]]
                [:hr.ui.divider]
                [:div.ui.tiny.horizontal.statistics
                 [:div.statistic
-                 [:div.value (fmt/duration (get-in job [:job/stats :average]))]
+                 [:div.value (fmt/duration (get-in job-detail [:job/stats :average]))]
                  [:div.label "Average duration"]]]]]]]]
           [:div.column
            [:div.ui.raised.segment
             [:h3.ui.header "Latest"]
-            (when-let [exe (:job/latest-execution job)]
+            (when-let [exe (:job/latest-execution job-detail)]
               [:div.ui.list
                [:div.item
                 (let [status (get-in exe [:job-execution/batch-status :db/ident])]
@@ -416,38 +442,40 @@
                  [:div.description
                   [:a {:href (str "#/agent/" (get-in exe [:job-execution/agent :agent/instance-id]))}
                    (get-in exe [:job-execution/agent :agent/name])] ]]]])]
-           (om/build next-execution-view job
+           (om/build next-execution-view job-detail
                      {:init-state {:refresh-job-ch refresh-job-ch}})]]))))
 
   (did-update [_ _ _]
     (when-not (.-firstChild (.getElementById js/document "job-blocks-inner"))
-      (render-job-structure job-name owner)))
+      (render-job-structure (:job/name @job) owner)))
   (did-mount [_]
-    (render-job-structure job-name owner)))
+    (render-job-structure (:job/name @job) owner)))
 
-(defcomponent job-detail-view [{:keys [job-name] :as app} owner]
-  (render-state [_ {:keys [message breadcrumbs]}]
-    (let [mode (->> app :mode (drop 2) first)]
+(defcomponent job-detail-view [job owner opts]
+  (render-state [_ {:keys [mode message breadcrumbs]}]
+    (let [this-mode (->> mode (drop 2) first)]
       (html 
        [:div
-        (om/build breadcrumb-view (:mode app) {:init-state {:job-name job-name}})
+        (om/build breadcrumb-view mode {:init-state {:job-name (:job/name job)}})
         [:div.ui.top.attached.tabular.menu
          [:a (merge {:class "item"
-                     :href (str "#/job/" job-name)}
-                    (when (= mode :current) {:class "item active"}))
+                     :href (str "#/job/" (:job/name job))}
+                    (when (= this-mode :current) {:class "item active"}))
           [:i.tag.icon] "Current"]
          [:a (merge {:class "item"
-                     :href (str "#/job/" job-name "/history")}
-                    (when (= mode :history) {:class "item active"}))
+                     :href (str "#/job/" (:job/name job) "/history")}
+                    (when (= this-mode :history) {:class "item active"}))
           [:i.wait.icon] "History"]
          [:a (merge {:class "item"
-                     :href (str "#/job/" job-name "/settings")}
-                    (when (= mode :settings) {:class "item active"}))
+                     :href (str "#/job/" (:job/name job) "/settings")}
+                    (when (= this-mode :settings) {:class "item active"}))
           [:i.setting.icon] "Settings"]]
         [:div.ui.bottom.attached.active.tab.segment
          [:div#tab-content
-          (om/build (case mode
+          (om/build (case this-mode
                       :current current-job-view
                       :history job-history-view
                       :settings job-settings-view)
-                    app)]]]))))
+                    job
+                    {:state {:mode mode}
+                     :opts opts})]]]))))

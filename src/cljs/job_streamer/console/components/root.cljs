@@ -1,7 +1,9 @@
 (ns job-streamer.console.components.root
+  (:require-macros [cljs.core.async.macros :refer [go-loop]])
   (:require [om.core :as om :include-macros true]
             [om-tools.core :refer-macros [defcomponent]]
             [sablono.core :as html :refer-macros [html]]
+            [cljs.core.async :refer [put! <! chan]]
             [job-streamer.console.routing :as routing]
             [job-streamer.console.api :as api])
   (:use [job-streamer.console.components.jobs :only [jobs-view]]
@@ -11,9 +13,11 @@
 
 (def app-name "default")
 
-(defcomponent right-menu-view [app owner]
+(defcomponent right-menu-view [app owner {:keys [stats-channel]}]
   (will-mount [_]
-    (api/request (str "/" app-name "/stats")
+    (go-loop []
+      (let [_ (<! stats-channel)]
+        (api/request (str "/" app-name "/stats")
                  {:handler (fn [response]
                              (om/transact! app :stats
                                            #(assoc %
@@ -22,6 +26,8 @@
                   :error-handler
                   {:http-error (fn [res]
                                  (om/update! app :system-error "error"))}}))
+      (recur))
+    (put! stats-channel true))
   (render-state [_ {:keys [control-bus-not-found?]}]
     (let [{{:keys [agents-count jobs-count]} :stats}  app]
       (html 
@@ -57,19 +63,22 @@
         [:div.description [:p "Run a control bus first and reload this page."]]]]])))
 
 (defcomponent root-view [app owner]
+  (init-state [_]
+    {:stats-channel (chan)})
   (will-mount [_]
     (routing/init app owner))
-  (render [_]
+  (render-state [_ {:keys [stats-channel]}]
     (html
      [:div.ui.page
       (if-let [system-error (:system-error app)]
         (om/build system-error-view app)
         (list
          [:div.ui.fixed.inverted.teal.menu
-          [:div.title.item [:img {:alt "JobStreamer" :src "img/logo.png"}]]
-          (om/build right-menu-view app)]
+          [:div.header.item [:img.ui.image {:alt "JobStreamer" :src "img/logo.png"}]]
+          (om/build right-menu-view app {:opts {:stats-channel stats-channel}})]
          [:div.main.grid.content.full.height
           (case (first (:mode app))
-            :jobs (om/build jobs-view app {:init-state {:mode (second (:mode app))}})
+            :jobs (om/build jobs-view app {:init-state {:mode (second (:mode app))}
+                                           :opts {:stats-channel stats-channel}})
             :agents (om/build agents-view app)
             :calendars (om/build calendars-view app))]))])))

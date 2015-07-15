@@ -8,16 +8,13 @@
             [clojure.string :as string]
             [goog.events :as events]
             [goog.ui.Component]
-            [Blockly :as Blockly]
-            [Blockly.Block :as Block]
             [job-streamer.console.format :as fmt]
             [job-streamer.console.api :as api])
-  (:use [cljs.reader :only [read-string]])
-  (:import [Blockly Blocks Mutator FieldTextInput FieldCheckbox]))
+  (:use [cljs.reader :only [read-string]]))
 
 (enable-console-print!)
 
-(aset Blocks "property-container"
+(aset (.-Blocks js/Blockly) "property-container"
  (clj->js {:init (fn []
                    (this-as
                     this
@@ -27,7 +24,7 @@
                       (.appendStatementInput "STACK"))
                     (set! (.-contextMenu this) false)))}))
 
-(aset Blocks  "property-item"
+(aset (.-Blocks js/Blockly) "property-item"
  (clj->js {:init (fn []
                    (this-as
                     this
@@ -54,12 +51,12 @@
    :decompose (fn [workspace]
                 (this-as
                  this
-                 (let [container-block (Block/obtain workspace (str "property-container"))]
+                 (let [container-block (.obtain js/Block workspace (str "property-container"))]
                    (.initSvg container-block)
                    (loop [connection (.. container-block (getInput "STACK") -connection)
                           i 0]
                      (when (< i (.-itemCount this))
-                       (let [item-block (Block/obtain workspace (str "property-item"))]
+                       (let [item-block (.obtain js/Block workspace (str "property-item"))]
                          (.initSvg item-block)
                          (.connect connection (.-previousConnection item-block))
                          (recur (.-nextConnection item-block) (inc i)))))
@@ -129,7 +126,7 @@
            {:type :statement
             :name "components"}])
 
-(let [block (aget Blocks "job")]
+(let [block (aget (.-Blocks js/Blockly) "job")]
   (doseq [[k f] mutate-behavior]
     (aset block (name k) f)))
   
@@ -148,7 +145,7 @@
            {:type :statement
             :name "transitions"}])
 
-(let [block (aget Blocks "step")]
+(let [block (aget (.-Blocks js/Blockly) "step")]
   (doseq [[k f] mutate-behavior]
     (aset block (name k) f)))
 
@@ -162,10 +159,10 @@
                              :colour 316
                              :output "Batchlet"
                              :fields [{:type :dropdown
-                                          :name "ref"
-                                          :label "Batchlet"
-                                          :value (map #(->> (repeat %)
-                                                            (take 2)) batchlets)}])
+                                       :name "ref"
+                                       :label "Batchlet"
+                                       :value (map #(->> (repeat %)
+                                                  (take 2)) batchlets)}])
                            (defblock reader
                              :colour 45
                              :output "Reader"
@@ -190,7 +187,6 @@
                                        :label "Processor"
                                        :value (map #(->> (repeat %)
                                                          (take 2)) item-processors)}])))})
-
 
 (defblock chunk
   :colour 234
@@ -244,7 +240,7 @@
             :acceptable ["Flow"]}])
 
 (defblock decision
-  :colour 50
+  :colour 55
   :previous-statement? true
   :next-statement? true
   :fields [{:type :text
@@ -262,7 +258,6 @@
             :name "components"}])
 
 (defn emit-element [e]
-  (println e)
   (if (= (type e) js/String)
     e
     (str "<" (name (:tag e))
@@ -343,7 +338,6 @@
                  :content [(component->xml (first (filter #(= (component-name %) next) components)) components)]}])
              (when-let [components (not-empty (:split/components split))]
                (let [component (first components)]
-                 (println "components=" components)
                  [{:tag :statement
                    :attrs {:name "components"}
                    :content [(component->xml (first (filter #(= (component-name %) (component-name component)) components)) components)]}])))})

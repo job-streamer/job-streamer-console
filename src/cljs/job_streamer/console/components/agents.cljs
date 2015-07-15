@@ -108,7 +108,7 @@
      [:div.ui.grid
       [:div.ui.row
        [:div.ui.column
-        [:h2.ui.purple.header
+        [:h2.ui.violet.header
          [:i.laptop.icon]
          [:div.content
           "Agent"
