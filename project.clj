@@ -1,9 +1,9 @@
 (defproject net.unit8.job-streamer/job-streamer-console (clojure.string/trim-newline (slurp "VERSION"))
   :source-paths ["src/clj"]
-  :dependencies [[org.clojure/clojure "1.7.0-RC2"]
+  :dependencies [[org.clojure/clojure "1.7.0"]
                  [hiccup "1.0.5"]
                  [garden "1.2.5" :exclusions [org.clojure/clojure]]
-                 [compojure "1.3.4"]
+                 [compojure "1.4.0"]
                  [environ "1.0.0"]
                  [org.jsoup/jsoup "1.8.2"]
 
@@ -13,7 +13,7 @@
                  [prismatic/om-tools "0.3.11"]
                  [bouncer "0.3.3"]
                  [secretary "1.2.3"]
-                 [org.omcljs/om "0.8.8"]
+                 [org.omcljs/om "0.9.0"]
 
                  ;; for embedded
                  [http-kit "2.1.19"]

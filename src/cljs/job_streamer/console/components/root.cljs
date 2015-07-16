@@ -14,6 +14,8 @@
 (def app-name "default")
 
 (defcomponent right-menu-view [app owner {:keys [stats-channel]}]
+  (init-state [_]
+    {:configure-opened? false})
   (will-mount [_]
     (go-loop []
       (let [_ (<! stats-channel)]
@@ -28,7 +30,7 @@
                                  (om/update! app :system-error "error"))}}))
       (recur))
     (put! stats-channel true))
-  (render-state [_ {:keys [control-bus-not-found?]}]
+  (render-state [_ {:keys [control-bus-not-found? configure-opened?]}]
     (let [{{:keys [agents-count jobs-count]} :stats}  app]
       (html 
        [:div.right.menu
@@ -50,7 +52,22 @@
          [:form {:on-submit (fn [e] (search-jobs app {:q (.-value (.getElementById js/document "job-query"))}) false)}
           [:div.ui.icon.transparent.inverted.input
            [:input#job-query {:type "text"}]
-           [:i.search.icon]]]]]))))
+           [:i.search.icon]]]]
+        [:div.ui.dropdown.item
+         [:button.ui.basic.icon.inverted.button
+          {:on-click (fn [_]
+                       (om/set-state! owner :configure-opened? (not configure-opened?)))}
+          [:i.configure.icon]]
+         [:div.menu.transition {:class (if configure-opened? "visible" "hide")}
+          [:a.item {:on-click (fn [_]
+                                (om/set-state! owner :configure-opened? false)
+                                (set! (.-href js/location) "#/calendars"))}
+           [:i.calendar.icon] "Calendar"]
+          [:a.item {:href "#/"}
+           [:i.download.icon "Export jobs"]]
+          [:a.item {:href "#/"}
+           [:i.upload.icon   "Import jobs"]]]
+         ]]))))
 
 (defcomponent system-error-view [app owner]
   (render [_]

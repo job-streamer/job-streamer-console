@@ -8,6 +8,7 @@
             [clojure.string :as string]
             [goog.events :as events]
             [goog.ui.Component]
+            [goog.ui.Menu]
             [job-streamer.console.format :as fmt]
             [job-streamer.console.api :as api])
   (:use [cljs.reader :only [read-string]]))
@@ -51,12 +52,12 @@
    :decompose (fn [workspace]
                 (this-as
                  this
-                 (let [container-block (.obtain js/Block workspace (str "property-container"))]
+                 (let [container-block (.obtain (.-Block  js/Blockly) workspace (str "property-container"))]
                    (.initSvg container-block)
                    (loop [connection (.. container-block (getInput "STACK") -connection)
                           i 0]
                      (when (< i (.-itemCount this))
-                       (let [item-block (.obtain js/Block workspace (str "property-item"))]
+                       (let [item-block (.obtain (.-Block  js/Block) workspace (str "property-item"))]
                          (.initSvg item-block)
                          (.connect connection (.-previousConnection item-block))
                          (recur (.-nextConnection item-block) (inc i)))))

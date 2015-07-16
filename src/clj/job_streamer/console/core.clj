@@ -26,7 +26,7 @@
                  "/css/vendors/kalendae.css"
                  "/css/job-streamer.css")
     (include-js  "/js/vendors/vis.min.js"
-                 "/js/vendors/blockly_compressed.js"
+                 (if (:dev env) "/js/vendors/blockly.js" "/js/vendors/blockly_compressed.js") 
                  "/js/vendors/kalendae.standalone.min.js")
     (when (:dev env)
       (include-js "/react/react.js"))]
@@ -49,7 +49,7 @@
     [:block {:type "writer"}]
     [:block {:type "next"}]]
     
-   (include-js (str "/js/extern/job-streamer"
+   (include-js (str "/js/job-streamer"
                     (when-not (:dev env) ".min") ".js"))))
 
 (defroutes app-routes

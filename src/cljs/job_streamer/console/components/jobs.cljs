@@ -28,7 +28,9 @@
                       "/execution/" (:db/id latest-execution) "/stop")
                  :PUT
                  {:handler (fn [response]
-                             (om/update! latest-execution [:job-execution/batch-status :db/ident] :batch-status/stopping))})))
+                             (om/update! latest-execution
+                                         [:job-execution/batch-status :db/ident]
+                                         :batch-status/stopping))})))
 
 (defn abandon-job [job]
   (when-let [latest-execution (:job/latest-execution job)]
@@ -36,8 +38,10 @@
                       "/job/" (:job/name job)
                       "/execution/" (:db/id latest-execution) "/abandon")
                  :PUT
-                 {:handler (fn [response] ;; TODO
-                             )})))
+                 {:handler (fn [response] 
+                             (om/update! latest-execution
+                                         [:job-execution/batch-status :db/ident]
+                                         :batch-status/abandoned))})))
 
 (defn restart-job [job]
   (when-let [latest-execution (:job/latest-execution job)]
@@ -46,7 +50,9 @@
                       "/execution/" (:db/id latest-execution) "/restart")
                  :PUT
                  {:handler (fn [response]
-                             (om/update! latest-execution :job-execution/batch-status :batch-status/stopping))})))
+                             (om/update! latest-execution
+                                         [:job-execution/batch-status :db/ident]
+                                         :batch-status/starting))})))
 
 (defn search-execution [latest-execution job-name execution-id]
   (api/request (str "/" app-name "/job/" job-name "/execution/" execution-id)
@@ -192,23 +198,28 @@
                                                   (stop-job job)
                                                   (abandon-job job)))}
                                    [:i.setting.loading.icon]]
-                                  [:button.ui.circular.red.icon.button.hidden.content
+                                  [:button.ui.circular.red.icon.basic.button.hidden.content
                                    (if (#{:batch-status/started} status)
                                      [:i.pause.icon]
                                      [:i.stop.icon])]]
 
-                                 (#{:batch-status/stopping :batch-status/stopped} status)
-                                 [:div.ui.buttons
-                                  [:button.ui.button
+                                 (#{:batch-status/stopped} status)
+                                 [:div
+                                  [:button.ui.circular.red.icon.basic.button
                                    {:on-click (fn [_]
-                                                (abandon-job job))} "Abandon"]
-                                  [:div.or {:data-text "or"}]
-                                  [:button.ui.button
-                                   {:on-click (fn [_]
-                                                (restart-job job))} "Restart"]]
+                                                (abandon-job job))}
+                                   [:i.stop.icon]]
+                                  [:button.ui.circular.yellow.icon.basic.button
+                                   {:title "restart"
+                                    :on-click (fn [_]
+                                                (restart-job job))}
+                                   [:i.play.icon]]]
 
+                                 (#{:batch-status/stopping} status)
+                                 [:div]
+                                 
                                  :else
-                                 [:button.ui.circular.icon.green.button
+                                 [:button.ui.circular.icon.green.basic.button
                                   {:on-click (fn [_]
                                                (api/request (str "/" app-name "/job/" job-name)
                                                             {:handler (fn [job]
