@@ -57,7 +57,7 @@
    (.. (Timeline.
         (.getElementById js/document "timeline-inner")
         (om/get-state owner :data-set)
-        (clj->js {}))
+        (clj->js {:minHeight 400}))
        (on "select" (fn [e]
                       (om/set-state! owner :selected-job (-> e (aget "items") (aget 0))))))))
 

@@ -34,7 +34,7 @@
 
 (defn index []
   (layout
-   [:div#app.ui.page]
+   [:div#app.ui.full.height.page]
    [:xml#job-toolbox
     [:block {:type "job"}]
     [:block {:type "property"}]

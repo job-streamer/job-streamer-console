@@ -37,7 +37,7 @@
        [:div.content
         [:div.ui.input.block
          "When the status has been changed to "
-         [:select {:id "notification-status"}
+         [:select#notification-status.ui.selection.dropdown
           [:option {:value ""} ""]
           [:option {:value "abandoned"} "abandoned"]
           [:option {:value "completed"} "completed"]
@@ -105,7 +105,7 @@
            (:time-monitor/duration settings-time-monitor) "minutes,"
            (case (get-in settings-time-monitor [:time-monitor/action :db/ident])
              :action/alert (str "send an alert by \"" (:time-monitor/notification-type settings-time-monitor) "\"")
-             :action/abort (str "abort the job."))
+             :action/stop (str "stop the job."))
            
            [:a {:on-click (fn [_]
                             (save-settings (:job/name job) :DELETE
@@ -122,13 +122,14 @@
            [:div.ui.label "minutes"]
 
            "Action:"
-           [:select {:id "time-monitor-action"
-                     :on-change (fn [_]
-                                  (let [action (.-value (.getElementById js/document "time-monitor-action"))]
-                                    (om/update-state! owner :time-monitor #(assoc % :action action))))}
+           [:select.ui.selection.dropdown
+            {:id "time-monitor-action"
+             :on-change (fn [_]
+                          (let [action (.-value (.getElementById js/document "time-monitor-action"))]
+                            (om/update-state! owner :time-monitor #(assoc % :action action))))}
             [:option {:value ""} ""]
             [:option {:value "alert"} "Alert"]
-            [:option {:value "abort"} "Abort"]]
+            [:option {:value "stop"} "Stop"]]
            (when (= (:action time-monitor) "alert")
              [:input {:type "text" :id "time-monitor-notification-type"
                       :value (:notification-type time-monitor)
@@ -156,8 +157,15 @@
        [:div.ui.top.attached.label "Danger Zone"]
        [:div.content
         [:h4.ui.header "Delete this job"]
-        "Once you delete a job, there is no going back."
-        [:button.ui.red.button
-         {:type "button"
-          :on-click (fn [e]
-                      (delete-job job jobs-channel))} "Delete this job"]]]])))
+        [:div.ui.two.column.grid
+         [:div.column "Once you delete a job, there is no going back."]
+         [:div.right.aligned.column
+          [:button.ui.red.button
+           {:type "button"
+            :on-click (fn [e]
+                        (.preventDefault e)
+                        (put! jobs-channel [:open-dangerously-dialog
+                                            {:ok-handler (fn []
+                                                           (delete-job job jobs-channel))
+                                             :answer (:job/name job)}]))}
+           "Delete this job"]]]]]])))

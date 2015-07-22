@@ -5,31 +5,58 @@
             [sablono.core :as html :refer-macros [html]]
             [cljs.core.async :refer [put! <! chan]]
             [job-streamer.console.routing :as routing]
-            [job-streamer.console.api :as api])
-  (:use [job-streamer.console.components.jobs :only [jobs-view]]
+            [job-streamer.console.api :as api]
+            [goog.fs])
+  (:use [cljs.reader :only [read-string]]
+        [job-streamer.console.components.jobs :only [jobs-view]]
         [job-streamer.console.components.agents :only [agents-view]]
         [job-streamer.console.components.calendars :only [calendars-view]]
-        [job-streamer.console.search :only [search-jobs]]))
+        [job-streamer.console.search :only [search-jobs]]
+        [job-streamer.console.component-helper :only [make-click-outside-fn]]))
 
 (def app-name "default")
 
+(defn export-jobs []
+  (api/request (str "/" app-name "/jobs?with=notation,shcedule,settings")
+               {:handler (fn [response]
+                           (let [blob (goog.fs/getBlobWithProperties (array [(pr-str (:results response))]) "application/edn")
+                                 url (goog.fs/createObjectUrl blob)]
+                             (set! (.-href js/location) url)))}))
+
+(defn import-jobs [jobs]
+  (let [ch (chan)]
+    (go-loop []
+      (let [[job & rest-jobs]  (<! ch)]
+        (api/request (str "/" app-name "/jobs") :POST job
+                     {:handler (fn [_]
+                                 (put! ch rest-jobs))})
+        (when rest-jobs
+          (recur))))
+    (put! ch jobs)))
+
 (defcomponent right-menu-view [app owner {:keys [stats-channel]}]
   (init-state [_]
-    {:configure-opened? false})
+    :configure-opened? false
+    :click-outside-fn nil)
+
   (will-mount [_]
     (go-loop []
       (let [_ (<! stats-channel)]
         (api/request (str "/" app-name "/stats")
-                 {:handler (fn [response]
-                             (om/transact! app :stats
-                                           #(assoc %
-                                                   :agents-count (:agents response)
-                                                   :jobs-count (:jobs response))))
-                  :error-handler
-                  {:http-error (fn [res]
-                                 (om/update! app :system-error "error"))}}))
-      (recur))
-    (put! stats-channel true))
+                     {:handler (fn [response]
+                                 (om/transact! app :stats
+                                               #(assoc %
+                                                       :agents-count (:agents response)
+                                                       :jobs-count (:jobs response))))
+                      :error-handler
+                      {:http-error (fn [res]
+                                     (om/update! app :system-error "error"))}})))
+
+    (put! stats-channel true)
+
+    (when-let [on-click-outside (om/get-state owner :click-outside-fn)]
+      (.removeEventListener js/document "mousedown" on-click-outside)))
+  
   (render-state [_ {:keys [control-bus-not-found? configure-opened?]}]
     (let [{{:keys [agents-count jobs-count]} :stats}  app]
       (html 
@@ -59,15 +86,36 @@
                        (om/set-state! owner :configure-opened? (not configure-opened?)))}
           [:i.configure.icon]]
          [:div.menu.transition {:class (if configure-opened? "visible" "hide")}
-          [:a.item {:on-click (fn [_]
+          [:a.item {:on-click (fn [e]
+                                (.preventDefault e)
                                 (om/set-state! owner :configure-opened? false)
                                 (set! (.-href js/location) "#/calendars"))}
            [:i.calendar.icon] "Calendar"]
-          [:a.item {:href "#/"}
-           [:i.download.icon "Export jobs"]]
-          [:a.item {:href "#/"}
-           [:i.upload.icon   "Import jobs"]]]
-         ]]))))
+          [:a.item {:on-click (fn [e]
+                                (.preventDefault e)
+                                (om/set-state! owner :configure-opened? false)
+                                (export-jobs))}
+           [:i.download.icon] "Export jobs"]
+          [:a.item {:on-click (fn [e]
+                                (.. (om/get-node owner) (querySelector "[name='file']") click)
+                                (om/set-state! owner :configure-opened? false))}
+           [:i.upload.icon] "Import jobs"
+           [:input {:type "file" :name "file" :style {:display "none"}
+                    :on-change (fn [e]
+                                 (let [reader (js/FileReader.)]
+                                   (set! (.-onload reader)
+                                         #(import-jobs (read-string (.. % -target -result))))
+                                   (.readAsText reader (aget (.. e -target -files) 0) )))}]]]]])))
+
+  (did-mount [_]
+    (when-not (om/get-state owner :click-outside-fn)
+      (om/set-state! owner :click-outside-fn
+                   (make-click-outside-fn
+                    (.. (om/get-node owner) (querySelector "div.ui.dropdown.item"))
+                    (fn [_]
+                      (om/set-state! owner :configure-opened? false)))))
+    (.addEventListener js/document "mousedown"
+                       (om/get-state owner :click-outside-fn))))
 
 (defcomponent system-error-view [app owner]
   (render [_]
@@ -86,7 +134,7 @@
     (routing/init app owner))
   (render-state [_ {:keys [stats-channel]}]
     (html
-     [:div.ui.page
+     [:div.full.height
       (if-let [system-error (:system-error app)]
         (om/build system-error-view app)
         (list

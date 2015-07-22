@@ -3,16 +3,16 @@
         [garden.units :only [px em]]))
 
 (def styles
-  [[:.ui.page {:height "inherit"}]
+  [[:.full.height {:height "100%"}]
    [:.main.content {:min-height "100%"
-                       :max-width (px 960)
-                       :margin {:left "auto" :right "auto"}
-                       :padding {:top (px 80)
-                                 :left (em 2)
-                                 :right (em 2)}
-                       :background {:color "#fff"}
-                       :border {:left "1px solid #ddd"
-                                :right "1px solid #ddd"}}]
+                    :max-width (px 960)
+                    :margin {:left "auto" :right "auto"}
+                    :padding {:top (px 80)
+                              :left (em 2)
+                              :right (em 2)}
+                    :background {:color "#fff"}
+                    :border {:left "1px solid #ddd"
+                             :right "1px solid #ddd"}}]
    [:#timeline-inner {:font-size (px 8)}]
    [:#job-blocks-inner {:height (px 400)}]
    [:#tab-content {:padding (px 10)}]
@@ -26,6 +26,8 @@
     [:.job-detail.card {:width "100%"}
      [:#job-blocks-inner {:height (px 250)}]]]
    [:#job-blocks {:min-height (px 500)}]
+   [:td.log-link
+    [:a {:cursor "pointer"}]]
    [:.step-view
     [:.item
      [:.content
@@ -43,6 +45,9 @@
           [:span.date {:color "#dca3a3"}]
           [:pre {:overflow "visible"}]]]]]]]]
 
+   [:.kalendae
+    [:.k-days
+     [:span.k-selected.k-active {:background {:color "#d01919"}}]]]
    [:.vis.timeline
     [:.item.range {:color "#313131"
                    :background {:color "#abe1fd"}

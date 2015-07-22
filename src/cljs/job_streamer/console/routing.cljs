@@ -5,7 +5,8 @@
             [goog.events :as events]
             [goog.History]
             [goog.history.EventType :as HistoryEventType]
-            [goog.net.EventType :as EventType])
+            [goog.net.EventType :as EventType]
+            [job-streamer.console.api :as api])
   (:use [cljs.reader :only [read-string]])
   (:import [goog.History]))
 
@@ -14,6 +15,12 @@
 (def control-bus-url (.. js/document
                          (querySelector "meta[name=control-bus-url]")
                          (getAttribute "content")))
+
+(defn fetch-calendars [cb]
+  (api/request "/calendars"
+               {:handler (fn [response]
+                           (cb response))}))
+
 
 (defn- setup-routing [app-state]
   (sec/set-config! :prefix "#")
@@ -53,17 +60,48 @@
     (om/update! app-state :mode [:jobs :timeline]))
 
   (sec/defroute "/calendars" []
-    (om/update! app-state :mode [:calendars]))
+    (if (:calendars @app-state)
+      (om/update! app-state :mode [:calendars])
+      (fetch-calendars
+       (fn [response]
+         (om/transact! app-state (fn [cursor]
+                                   (assoc cursor
+                                          :calendars response
+                                          :mode [:calendars])))))))
 
   (sec/defroute "/calendars/new" []
-    (om/update! app-state :mode [:calendars :new]))
+    (if (:calendars @app-state)
+      (om/update! app-state :mode [:calendars :new])
+      (fetch-calendars
+       (fn [response]
+         (om/transact! app-state (fn [cursor]
+                                   (assoc cursor
+                                          :cal-name nil
+                                          :calendars response
+                                          :mode [:calendars :new])))))))
   
   (sec/defroute #"/calendar/(\w+)" [cal-name]
-    (om/transact! app-state
-                  #(assoc %
-                          :mode [:calendars :detail]
-                          :cal-name cal-name)))
-  
+    (if (:calendars @app-state)
+      (om/transact! app-state #(assoc % :mode [:calendars :detail] :cal-name cal-name))
+      (fetch-calendars
+       (fn [response]
+         (om/transact! app-state (fn [cursor]
+                                   (assoc cursor
+                                          :calendars response
+                                          :cal-name cal-name
+                                          :mode [:calendars :detail])))))))
+
+  (sec/defroute #"/calendar/(\w+)/edit" [cal-name]
+    (if (:calendars @app-state)
+      (om/transact! app-state #(assoc % :mode [:calendars :edit] :cal-name cal-name))
+      (fetch-calendars
+       (fn [response]
+         (om/transact! app-state (fn [cursor]
+                                   (assoc cursor
+                                          :calendars response
+                                          :cal-name cal-name
+                                          :mode [:calendars :edit])))))))
+
   (sec/defroute "/agents" []
     (om/update! app-state :mode [:agents]))
 

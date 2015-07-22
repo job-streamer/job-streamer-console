@@ -174,28 +174,33 @@
              [:div.ui.message {:class (:class message)}
               [:div.header (:header message)]
               [:div (:body message)]]]]
+           
            [:div.row
             [:div.column
-             [:div.ui.menu
-              [:div.item
+             [:div#job-edit-inner {:style {:min-height "500px"}}]]]
+           [:div.row
+            [:div.column
+             [:div.ui.grid
+              [:div.right.aligned.column
                [:div.icon.ui.buttons
-                [:button.ui.primary.button
+                [:button.ui.positive.button
                  {:on-click (fn [e]
                               (let [xml (.workspaceToDom (.-Xml js/Blockly) (.-mainWorkspace js/Blockly))]
                                 (save-job (.domToText (.-Xml js/Blockly) xml)
-                                          owner (:job/name job) jobs-channel)))} [:i.save.icon]]]]]]]
-           [:div.row
-            [:div.column
-             [:div#job-edit-inner]]]]))
+                                          owner (:job/name job) jobs-channel)))}
+                 [:i.save.icon] "Save"]]]]]]]))
+  
+  (will-receive-props [_ next-props]
+    (when-let [edn (:job/edn-notation next-props)] 
+      (let [xml (job->xml (read-string edn))]
+        (.domToWorkspace (.-Xml js/Blockly)
+         (.-mainWorkspace js/Blockly)
+         (.textToDom (.-Xml js/Blockly) (str "<xml>" xml "</xml>"))))))
+
   (did-mount [_]
     (.inject js/Blockly
              (.. (om/get-node owner) (querySelector "#job-edit-inner"))
-             (clj->js {:toolbox (.getElementById js/document "job-toolbox")}))
-    (when job
-      (let [xml (job->xml (read-string (:job/edn-notation job)))]
-        (.domToWorkspace (.-Xml js/Blockly)
-         (.-mainWorkspace js/Blockly)
-         (.textToDom (.-Xml js/Blockly) (str "<xml>" xml "</xml>") ))))))
+             (clj->js {:toolbox (.getElementById js/document "job-toolbox")}))))
 
 (defcomponent job-new-view [jobs owner opts]
   (render-state [_ {:keys [message mode]}]
@@ -229,19 +234,27 @@
            (fn [idx {:keys [job-execution/start-time job-execution/end-time] :as execution}]
              (list
               [:tr
-               [:td [:a {:on-click
-                         (fn [_]
-                           (if (not-empty (:job-execution/step-executions execution))
-                             (om/set-state! owner [:executions :results idx :job-execution/step-executions] nil)
-                             (search-execution owner (:job/name @job) (:db/id execution) idx)))}
-                     (:db/id execution)]]
+               [:td.log-link
+                [:a {:on-click
+                     (fn [_]
+                       (if (not-empty (:job-execution/step-executions execution))
+                         (om/set-state! owner [:executions :results idx :job-execution/step-executions] nil)
+                         (search-execution owner (:job/name @job) (:db/id execution) idx)))}
+                 (:db/id execution)]]
                [:td (get-in execution [:job-execution/agent :agent/name] "Unknown")]
                [:td (fmt/date-medium (:job-execution/start-time execution))]
                [:td (let [duration (fmt/duration-between
                                     (:job-execution/start-time execution)
                                     (:job-execution/end-time execution))]
                       (if (= duration 0) "-" duration))]
-               [:td (name (get-in execution [:job-execution/batch-status :db/ident]))]]
+               (let [status (name (get-in execution [:job-execution/batch-status :db/ident]))]
+                 [:td {:class (condp = status
+                                "completed" "positive"
+                                "failed" "error"
+                                "abadoned" "warning"
+                                "stopped"  "warning"
+                                "")}
+                  status])]
               (when-let [step-executions (not-empty (:job-execution/step-executions execution))]
                 [:tr
                  [:td {:colSpan 5}
@@ -411,7 +424,7 @@
                  [:div.label "Success"]]
                 [:div.statistic
                  [:div.value (get-in job-detail [:job/stats :failure])]
-                 [:div.label "Faied"]]]
+                 [:div.label "Failed"]]]
                [:hr.ui.divider]
                [:div.ui.tiny.horizontal.statistics
                 [:div.statistic

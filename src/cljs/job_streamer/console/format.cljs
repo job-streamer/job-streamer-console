@@ -3,12 +3,18 @@
             [goog.string :as gstring])
   (:import [goog.i18n DateTimeFormat]))
 
-(def date-format-s (DateTimeFormat. goog.i18n.DateTimeFormat.Format.SHORT_DATETIME
+(def date-format-dateonly (DateTimeFormat. goog.i18n.DateTimeFormat.Format.SHORT_DATE
                                     (aget goog.i18n (str "DateTimeSymbols_" (.-language js/navigator)))))
 
 (def date-format-m (DateTimeFormat. goog.i18n.DateTimeFormat.Format.MEDIUM_DATETIME
                                     (aget goog.i18n (str "DateTimeSymbols_" (.-language js/navigator)))))
 
+(def date-format-s (DateTimeFormat. goog.i18n.DateTimeFormat.Format.SHORT_DATETIME
+                                    (aget goog.i18n (str "DateTimeSymbols_" (.-language js/navigator)))))
+
+(defn date-only [d]
+  (when d
+    (.format date-format-dateonly d)))
 (defn date-short [d]
   (when d
     (.format date-format-s d)))
