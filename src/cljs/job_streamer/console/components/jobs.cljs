@@ -43,16 +43,15 @@
                                          [:job-execution/batch-status :db/ident]
                                          :batch-status/abandoned))})))
 
-(defn restart-job [job]
+(defn restart-job [job parameters channel]
   (when-let [latest-execution (:job/latest-execution job)]
     (api/request (str "/" app-name 
                       "/job/" (:job/name job)
                       "/execution/" (:db/id latest-execution) "/restart")
                  :PUT
+                 parameters
                  {:handler (fn [response]
-                             (om/update! latest-execution
-                                         [:job-execution/batch-status :db/ident]
-                                         :batch-status/starting))})))
+                             (put! channel [:close-dialog nil]))})))
 
 (defn search-execution [latest-execution job-name execution-id]
   (api/request (str "/" app-name "/job/" job-name "/execution/" execution-id)
@@ -61,7 +60,7 @@
                              (om/transact! latest-execution
                                            #(assoc % :job-execution/step-executions steps))))}))
 
-(defcomponent job-execution-dialog [job owner]
+(defcomponent job-execution-dialog [[type job] owner]
   (init-state [_]
     {:params {}})
   (render-state [_ {:keys [jobs-view-channel params]}]
@@ -82,7 +81,9 @@
                         :value (get params (keyword param-name))
                         :on-change (fn [e] (om/update-state! owner :params
                                                              #(assoc % (keyword param-name) (.. e -target -value))))}]])]]
-          [:div "Execute now?"])]
+          [:div (case type
+                  :execute "Execute now?"
+                  :restart "Restart now?")])]
        [:div.actions
         [:div.ui.two.column.grid
          [:div.left.aligned.column
@@ -93,7 +94,12 @@
           [:button.ui.positive.button
            {:type "button"
             :on-click (fn [e]
-                        (execute-job (:job/name job) params jobs-view-channel))} "Execute!"]]]]]])))
+                        (case type
+                          :execute (execute-job (:job/name job) params jobs-view-channel)
+                          :restart (restart-job job params jobs-view-channel)))}
+           (case type
+             :execute "Execute!"
+             :restart "Restart!")]]]]]])))
 
 (defcomponent job-list-view [app owner]
   (init-state [_] {:now (js/Date.)
@@ -108,7 +114,7 @@
   (did-mount [_]
     (go-loop []
       (<! (timeout 5000))
-      (if (->> @(get-in app [:jobs :results])
+      (if (->> (get-in @app [:jobs :results])
                (filter #(#{:batch-status/started :batch-status/starting :batch-status/undispatched :batch-status/queued}
                          (get-in % [:job/latest-execution :job-execution/batch-status :db/ident])))
                not-empty)
@@ -216,7 +222,9 @@
                                   [:button.ui.circular.yellow.icon.basic.button
                                    {:title "restart"
                                     :on-click (fn [_]
-                                                (restart-job job))}
+                                                (api/request (str "/" app-name "/job/" job-name)
+                                                            {:handler (fn [job]
+                                                                        (put! jobs-view-channel [:restart-dialog job]))}))}
                                    [:i.play.icon]]]
 
                                  (#{:batch-status/starting  :batch-status/stopping} status)
@@ -227,7 +235,7 @@
                                   {:on-click (fn [_]
                                                (api/request (str "/" app-name "/job/" job-name)
                                                             {:handler (fn [job]
-                                                                        (put! jobs-view-channel [:open-dialog job]))}))}
+                                                                        (put! jobs-view-channel [:execute-dialog job]))}))}
                                   [:i.play.icon]]))]]
                       (when-let [step-executions (not-empty (get-in job [:job/latest-execution :job-execution/step-executions]))]
                         [:tr
@@ -289,7 +297,8 @@
       (let [[cmd msg] (<! (om/get-state owner :channel))]
         (try
           (case cmd
-            :open-dialog  (om/set-state! owner :executing-job msg)
+            :execute-dialog  (om/set-state! owner :executing-job [:execute msg])
+            :restart-dialog  (om/set-state! owner :executing-job [:restart msg])
             :close-dialog (do (om/set-state! owner :executing-job nil)
                               (search-jobs app {:q (:query app)}))
             :refresh-jobs (do (search-jobs app {:q (:query app)})
@@ -299,9 +308,7 @@
                                          (fn [results]
                                            (remove #(= % msg) results)))
                           (put! stats-channel true))
-            :open-dangerously-dialog (do
-                                       (println "dangerously=" msg)
-                                       (om/set-state! owner :dangerously-action-data msg)))
+            :open-dangerously-dialog (om/set-state! owner :dangerously-action-data msg))
           (catch js/Error e))
         (recur))))
   (render-state [_ {:keys [executing-job channel dangerously-action-data]}]

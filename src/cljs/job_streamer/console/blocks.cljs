@@ -258,6 +258,42 @@
            {:type :statement
             :name "components"}])
 
+(defblock end
+  :colour 50
+  :previous-statement? true
+  :next-statement? true
+  :fields [{:type :text
+            :name "on"
+            :label "End on"}
+           {:type :text
+            :name "exit-status"
+            :label "exit status"}])
+
+(defblock fail
+  :colour 50
+  :previous-statement? true
+  :next-statement? true
+  :fields [{:type :text
+            :name "on"
+            :label "Fail on"}
+           {:type :text
+            :name "exit-status"
+            :label "exit status"}])
+
+(defblock stop
+  :colour 50
+  :previous-statement? true
+  :next-statement? true
+  :fields [{:type :text
+            :name "on"
+            :label "Stop on"}
+           {:type :text
+            :name "exit-status"
+            :label "exit status"}
+           {:type :text
+            :name "restart"
+            :label "restart"}])
+
 (defn emit-element [e]
   (if (= (type e) js/String)
     e
@@ -307,7 +343,40 @@
                                            :content [(component->xml (first (filter #(= (component-name %) to) components)) components)]}])
                                        (when-let [rest-transitions (not-empty (rest transitions))]
                                          [{:tag :next
-                                           :content [(transitions->xml rest-transitions components)]}]))})))
+                                           :content [(transitions->xml rest-transitions components)]}]))}
+      (:fail/on transition) {:tag :block
+                             :attrs {:type "fail"}
+                             :content (concat
+                                       (when-let [on (:fail/on transition)]
+                                         [{:tag :field :attrs {:name "on"} :content [on]}])
+                                       (when-let [exit-status (:fail/exit-status transition)]
+                                         [{:tag :field :attrs {:name "exit-status"} :content [exit-status]}])
+                                       (when-let [rest-transitions (not-empty (rest transitions))]
+                                         [{:tag :next
+                                           :content [(transitions->xml rest-transitions components)]}]))}
+      (:end/on transition) {:tag :block
+                             :attrs {:type "end"}
+                             :content (concat
+                                       (when-let [on (:end/on transition)]
+                                         [{:tag :field :attrs {:name "on"} :content [on]}])
+                                       (when-let [exit-status (:fail/end-status transition)]
+                                         [{:tag :field :attrs {:name "exit-status"} :contnt [exit-status]}])
+                                       (when-let [rest-transitions (not-empty (rest transitions))]
+                                         [{:tag :next
+                                           :content [(transitions->xml rest-transitions components)]}]))}
+      (:stop/on transition) {:tag :block
+                             :attrs {:type "stop"}
+                             :content (concat
+                                       (when-let [on (:stop/on transition)]
+                                         [{:tag :field :attrs {:name "on"} :content [on]}])
+                                       (when-let [exit-status (:stop/exit-status transition)]
+                                         [{:tag :field :attrs {:name "exit-status"} :contnt [exit-status]}])
+                                       (when-let [restart (:stop/restart transition)]
+                                         [{:tag :field :attrs {:name "restart"} :contnt [restart]}])
+                                       (when-let [rest-transitions (not-empty (rest transitions))]
+                                         [{:tag :next
+                                           :content [(transitions->xml rest-transitions components)]}]))}
+      )))
 
 (defn flow->xml [flow components]
   {:tag :block

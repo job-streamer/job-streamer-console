@@ -5,4 +5,5 @@ resources/public/js/extern
 .nrepl-*
 /lib
 /work
+hs_err_*.log
 pom.xml

@@ -106,7 +106,7 @@
 (defn render-job-structure [job-name owner]
   (let [xhrio (net/xhr-connection)
         fetch-job-ch (chan)]
-    (loop [node (.getElementById js/document "job-blocks-inner")]
+    #_(loop [node (.querySelectorAll js/document ".job-blocks-inner")]
       (when-let [first-child (.-firstChild node)]
         (.removeChild node first-child)
         (recur node))) 
@@ -122,7 +122,7 @@
                  {:handler (fn [response]
                              (put! fetch-job-ch response))})
     (.inject js/Blockly
-             (.getElementById js/document "job-blocks-inner")
+             (.querySelector js/document ".job-blocks-inner")
              (clj->js {:toolbox "<xml></xml>"
                        :readOnly true}))))
 
@@ -177,7 +177,7 @@
            
            [:div.row
             [:div.column
-             [:div#job-edit-inner {:style {:min-height "500px"}}]]]
+             [:div.job-blocks-inner {:style {:min-height "500px"}}]]]
            [:div.row
             [:div.column
              [:div.ui.grid
@@ -199,8 +199,13 @@
 
   (did-mount [_]
     (.inject js/Blockly
-             (.. (om/get-node owner) (querySelector "#job-edit-inner"))
-             (clj->js {:toolbox (.getElementById js/document "job-toolbox")}))))
+             (.. (om/get-node owner) (querySelector ".job-blocks-inner"))
+             (clj->js {:toolbox (.getElementById js/document "job-toolbox")}))
+    (when-let [edn (:job/edn-notation job)]
+      (let [xml (job->xml (read-string edn))]
+        (.domToWorkspace (.-Xml js/Blockly)
+         (.-mainWorkspace js/Blockly)
+         (.textToDom (.-Xml js/Blockly) (str "<xml>" xml "</xml>")))))))
 
 (defcomponent job-new-view [jobs owner opts]
   (render-state [_ {:keys [message mode]}]
@@ -375,6 +380,26 @@
                          (om/set-state! owner :scheduling? true))}
             "Schedule this job"]]))])))
 
+(defcomponent job-structure-view [job-name owner]
+  (render-state [_ {:keys [dimmed?]}]
+    (html
+     [:div.dimmable.image.dimmed
+              {:on-mouse-enter (fn [e]
+                                 (om/set-state! owner :dimmed? true))
+               :on-mouse-leave (fn [e]
+                                 (om/set-state! owner :dimmed? false))}
+              [:div.ui.inverted.dimmer (when dimmed? {:class "visible"}) 
+               [:div.content
+                [:div.center
+                 [:button.ui.primary.button
+                  {:type "button"
+                   :on-click (fn [e]
+                               (set! (.-href js/location) (str "#/job/" job-name "/edit")))}
+                  "Edit"]]]]
+      [:div.job-blocks-inner.ui.big.image]]))
+  (did-mount [_]
+    (render-job-structure job-name owner)))
+
 (defcomponent current-job-view [job owner opts]
   (init-state [_]
     {:refresh-job-ch (chan)})
@@ -386,7 +411,7 @@
                                  (om/set-state! owner :job-detail response))})
         (recur)))
     (put! (om/get-state owner :refresh-job-ch) true))
-  (render-state [_ {:keys [job-detail dimmed? refresh-job-ch mode]}]
+  (render-state [_ {:keys [job-detail refresh-job-ch mode]}]
     (let [this-mode (->> mode (drop 3) first)]
       (html
        (case this-mode
@@ -398,22 +423,9 @@
           [:div.column
            [:div.ui.special.cards
             [:div.job-detail.card
-             [:div.dimmable.image.dimmed
-              {:on-mouse-enter (fn [e]
-                                 (om/set-state! owner :dimmed? true))
-               :on-mouse-leave (fn [e]
-                                 (om/set-state! owner :dimmed? false))}
-              [:div.ui.inverted.dimmer (when dimmed? {:class "visible"}) 
-               [:div.content
-                [:div.center
-                 [:button.ui.primary.button
-                  {:type "button"
-                   :on-click (fn [e]
-                               (set! (.-href js/location) (str "#/job/" (:job/name @job) "/edit")))}
-                  "Edit"]]]]
-              [:div#job-blocks-inner.ui.big.image]]
+             (om/build job-structure-view (:job/name job))
              [:div.content
-              [:div.header (:job/name job-detail)]
+              [:div.header (:job/name job)]
               [:div.description
                [:div.ui.tiny.statistics
                 [:div.statistic
@@ -456,13 +468,7 @@
                   [:a {:href (str "#/agent/" (get-in exe [:job-execution/agent :agent/instance-id]))}
                    (get-in exe [:job-execution/agent :agent/name])] ]]]])]
            (om/build next-execution-view job-detail
-                     {:init-state {:refresh-job-ch refresh-job-ch}})]]))))
-
-  (did-update [_ _ _]
-    (when-not (.-firstChild (.getElementById js/document "job-blocks-inner"))
-      (render-job-structure (:job/name @job) owner)))
-  (did-mount [_]
-    (render-job-structure (:job/name @job) owner)))
+                     {:init-state {:refresh-job-ch refresh-job-ch}})]])))))
 
 (defcomponent job-detail-view [job owner opts]
   (render-state [_ {:keys [mode message breadcrumbs]}]

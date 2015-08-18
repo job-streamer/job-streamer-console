@@ -47,7 +47,10 @@
     [:block {:type "reader"}]
     [:block {:type "processor"}]
     [:block {:type "writer"}]
-    [:block {:type "next"}]]
+    [:block {:type "next"}]
+    [:block {:type "end"}]
+    [:block {:type "fail"}]
+    [:block {:type "stop"}]]
     
    (include-js (str "/js/job-streamer"
                     (when-not (:dev env) ".min") ".js"))))

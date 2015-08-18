@@ -18,8 +18,11 @@
          [:div.content
           [:div.header (get-in step-execution [:step-execution/step :step/name])]
           (fmt/date-short (:step-execution/start-time step-execution))
-          "-"
+          " - "
           (fmt/date-short (:step-execution/end-time step-execution))
+          [:span.ui.label
+           (name (get-in step-execution [:step-execution/batch-status :db/ident] :unknown))
+           " [" (:step-execution/exit-status step-execution) "]"]
           (if-let [logs (not-empty (:step-execution/logs step-execution))]
             [:div.log.list
              (for [log logs]

@@ -14,50 +14,91 @@
                            (put! jobs-channel [:delete-job job])
                            (set! (.-href js/location) "#/"))}))
 
-(defn save-settings [job-name method owner category obj]
+(defn save-settings [job-name method owner category obj & {:keys [handler]}]
   (om/set-state! owner [:save-status category] false)
   (api/request (str "/" app-name "/job/" job-name "/settings/" (name category)) method obj
-               {:handler (fn [_]
-                           (om/set-state! owner [:save-status category] true))}))
+               {:handler (fn [response]
+                           (om/set-state! owner [:save-status category] true)
+                           (when handler
+                             (handler response)))}))
 
 (defcomponent job-settings-view [job owner {:keys [jobs-channel]}]
   (init-state [_]
-    {:save-status {:status-notifiction false
+    {:save-status {:status-notification false
                    :time-monitor {:duration 0 :action "" :notification-type ""}
-                   :exclusive false}})
+                   :exclusive false}
+     :status-notification {:status-notification/type ""
+                           :status-notification/batch-status ""
+                           :status-notification/exit-status ""
+                           :status-notification/status-type :batch-status}
+     :status-notification-type :batch-status})
   (will-mount [_]
     (api/request (str "/" app-name "/job/" (:job/name job) "/settings")
                  {:handler (fn [response]
                              (om/set-state! owner :settings response))}))
-  (render-state [_ {:keys [settings save-status time-monitor]}]
+  (render-state [_ {:keys [settings save-status time-monitor status-notification]}]
     (html
      [:div
       [:div.ui.segment
        [:div.ui.top.attached.label "Notification"]
        [:div.content
         [:div.ui.input.block
-         "When the status has been changed to "
-         [:select#notification-status.ui.selection.dropdown
-          [:option {:value ""} ""]
-          [:option {:value "abandoned"} "abandoned"]
-          [:option {:value "completed"} "completed"]
-          [:option {:value "failed"} "failed"]
-          [:option {:value "started"} "stated"]]
+         "When the "
+         [:select.ui.selection.dropdown
+          {:on-change (fn [e]
+                        (om/set-state! owner [:status-notification :status-notification/status-type]
+                                      (keyword (.. e -target -value))))}
+          [:option {:value "batch-status"} "batch status"]
+          [:option {:value "exit-status"} "exit status"]]
+         " is "
+         (case (:status-notification/status-type status-notification)
+           :exit-status
+           [:input {:type "text"
+                    :value (:status-notification/exit-status status-notification)
+                    :on-change (fn [e]
+                                 (om/set-state! owner [:status-notification :status-notification/exit-status]
+                                                (.. e -target -value)))}]
+           
+           :batch-status
+           [:select.ui.selection.dropdown
+            {:value (:status-notification/batch-status status-notification)
+             :on-change (fn [e]
+                          (om/set-state! owner [:status-notification :status-notification/batch-status]
+                                         (.. e -target -value)))}
+            [:option {:value ""} ""]
+            [:option {:value "abandoned"} "abandoned"]
+            [:option {:value "completed"} "completed"]
+            [:option {:value "failed"} "failed"]
+            [:option {:value "started"} "stated"]])
+         
          ", send notification by "
-         [:input {:id "notification-type" :type "text"}]
+         [:input {:type "text"
+                  :value (:status-notification/type status-notification)
+                  :on-change (fn [e]
+                               (om/set-state! owner [:status-notification :status-notification/type]
+                                              (.. e -target -value)))}]
          [:button.ui.positive.button
           {:type "button"
-           :on-click #(let [status (.-value (.getElementById js/document "notification-status")) 
-                            type (.-value (.getElementById js/document "notification-type"))
-                            status-notification {:status-notification/batch-status (keyword "batch-status" status)
-                                                 :status-notification/type type}]
-                        (om/update-state! owner [:settings :job/status-notifications]
-                                          (fn [st] (conj st status-notification)))
-                        (save-settings (:job/name job)
-                                       :PUT
-                                       owner
-                                       :status-notification
-                                       status-notification))}
+           :on-click (fn [e]
+                       (let [status-notification (om/get-state owner :status-notification)
+                             status-notification (case (:status-notification/status-type status-notification)
+                                                   :batch-status {:status-notification/type (:status-notification/type status-notification)
+                                                                  :status-notification/batch-status
+                                                                  {:db/ident (keyword "batch-status"
+                                                                                      (:status-notification/batch-status status-notification))}}
+                                                   :exit-status  (select-keys status-notification [:status-notification/type
+                                                                                                   :status-notification/exit-status]))]
+                         (save-settings (:job/name job)
+                                        :PUT
+                                        owner
+                                        :status-notification
+                                        status-notification
+                                        :handler (fn [resp]
+                                                   (om/update-state!
+                                                    owner [:settings :job/status-notifications]
+                                                    (fn [notifications]
+                                                      (conj notifications (assoc status-notification
+                                                                                 :db/id (:db/id resp)))))))))}
           "Add"]]
         (if (not-empty (:job/status-notifications settings)) 
           [:table.ui.compact.table
@@ -66,20 +107,33 @@
              [:th "Status"]
              [:th "Notification"]
              [:th ""]]]
-           (for [notification (:job/status-notifications settings)]
-             [:tr
-              [:td (name (get-in notification [:status-notification/batch-status :db/ident] "")) ]
-              [:td (:status-notification/type notification)]
-              [:td [:a
-                    [:i.remove.red.icon
-                     {:on-click (fn [_]
-                                  (om/update-state! owner [:settings :job/status-notifications]
-                                                    (fn [st] (remove #(= (:db/id %) (:db/id notification)) st)))
-                                  (save-settings (:job/name job)
-                                                 :PUT
-                                                 owner
-                                                 :status-notification
-                                                 {:db/id (:db/id notification)}))}]]]])])]]
+           [:tbody
+            (for [notification (:job/status-notifications settings)]
+              (let [status-type (case
+                                    (:status-notification/batch-status notification) :batch-status
+                                    (:status-notification/exit-status  notification) :exit-status)]
+                [:tr
+                 (case status-type
+                   :batch-status
+                   [:td
+                    [:div.ui.orange.label "Batch status"]
+                    (name (get-in notification [:status-notification/batch-status :db/ident] ""))]
+
+                   :exit-status
+                   [:td
+                    [:div.ui.olive.label "Exit status"]
+                    (:status-notification/exit-status notification)])
+                 [:td (:status-notification/type notification)]
+                 [:td [:a
+                       [:i.remove.red.icon
+                        {:on-click (fn [_]
+                                     (om/update-state! owner [:settings :job/status-notifications]
+                                                       (fn [st] (remove #(= (:db/id %) (:db/id notification)) st)))
+                                     (save-settings (:job/name job)
+                                                    :PUT
+                                                    owner
+                                                    :status-notification
+                                                    {:db/id (:db/id notification)}))}]]]]))]])]]
       [:div.ui.segment
        [:div.ui.top.attached.label "Schedule settings"]
        [:div.content

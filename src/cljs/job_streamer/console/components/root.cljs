@@ -19,17 +19,28 @@
 (defn export-jobs []
   (api/request (str "/" app-name "/jobs?with=notation,shcedule,settings")
                {:handler (fn [response]
-                           (let [blob (goog.fs/getBlobWithProperties (array [(pr-str (:results response))]) "application/edn")
-                                 url (goog.fs/createObjectUrl blob)]
-                             (set! (.-href js/location) url)))}))
+                           (let [blob (goog.fs/getBlobWithProperties (array (pr-str (:results response))) "application/edn")
+                                 click-event (. js/document createEvent "HTMLEvents")
+                                 anchor (. js/document createElement "a")]
+                             (.initEvent click-event "click")
+                             (doto anchor
+                               (.setAttribute "href" (goog.fs/createObjectUrl blob))
+                               (.setAttribute "download" "jobs.edn"))
+                             (.dispatchEvent anchor click-event)))}))
 
-(defn import-jobs [jobs]
+(defn import-xml-job [jobxml]
+  (api/request (str "/" app-name "/jobs") :POST jobxml
+               {:format :xml}))
+
+(defn import-edn-jobs [jobs]
   (let [ch (chan)]
     (go-loop []
-      (let [[job & rest-jobs]  (<! ch)]
-        (api/request (str "/" app-name "/jobs") :POST job
-                     {:handler (fn [_]
-                                 (put! ch rest-jobs))})
+      (let [jobs (<! ch)
+            rest-jobs (not-empty (rest jobs))]
+        (if-not (empty? jobs)
+          (api/request (str "/" app-name "/jobs") :POST (:job/edn-notation (first jobs))
+                       {:handler (fn [_]
+                                   (put! ch rest-jobs))}))
         (when rest-jobs
           (recur))))
     (put! ch jobs)))
@@ -102,10 +113,20 @@
            [:i.upload.icon] "Import jobs"
            [:input {:type "file" :name "file" :style {:display "none"}
                     :on-change (fn [e]
-                                 (let [reader (js/FileReader.)]
+                                 (let [file (aget (.. e -target -files) 0)
+                                       reader (js/FileReader.)]
                                    (set! (.-onload reader)
-                                         #(import-jobs (read-string (.. % -target -result))))
-                                   (.readAsText reader (aget (.. e -target -files) 0) )))}]]]]])))
+                                         #(let [result (.. % -target -result)]
+                                            (cond
+                                              (.. file -name (endsWith ".xml"))
+                                              (import-xml-job result)
+
+                                              (.. file -name (endsWith ".edn"))
+                                              (import-edn-jobs (read-string result))
+                                              
+                                              :else
+                                              (throw (js/Error. "Unsupported file type")))))
+                                   (.readAsText reader file)))}]]]]])))
 
   (did-mount [_]
     (when-not (om/get-state owner :click-outside-fn)

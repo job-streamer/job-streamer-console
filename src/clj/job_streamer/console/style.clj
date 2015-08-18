@@ -12,7 +12,9 @@
                               :right (em 2)}
                     :background {:color "#fff"}
                     :border {:left "1px solid #ddd"
-                             :right "1px solid #ddd"}}]
+                             :right "1px solid #ddd"}}
+    [:.ui.selection.dropdown {:min-width (em 1)
+                              :padding (em 0.5)}]]
    [:#timeline-inner {:font-size (px 8)}]
    [:#job-blocks-inner {:height (px 400)}]
    [:#tab-content {:padding (px 10)}]
@@ -36,6 +38,7 @@
                    :font-family "monospace"
                    :border {:radius (px 3)}
                    :overflow {:y "auto" :x "auto"}
+                   :margin-top (px 10)
                    :max-width (px 800)
                    :max-height (px 400)}
        [:.item

@@ -39,6 +39,33 @@
                     first
                     (field-value "name"))})
 
+(defn xml->fail [fail]
+  {:fail/on (field-value fail "on")
+   :fail/exit-status (field-value fail "exit-status")})
+
+(defn xml->end [end]
+  {:end/on (field-value end "on")
+   :end/exit-status (field-value end "exit-status")})
+
+(defn xml->stop [stop]
+  {:stop/on (field-value stop "on")
+   :stop/exit-status (field-value stop "exit-status")
+   :stop/restart (field-value stop "restart")})
+
+(defn xml->transition [el]
+  (case (.attr el "type")
+    "next" (xml->next el)
+    "end"  (xml->end  el)
+    "fail" (xml->fail el)
+    "stop" (xml->stop el)))
+
+(defn xml->transitions [first-block]
+  (loop [block first-block transitions []]
+    (let [transition (xml->transition block)]
+      (if-let [next-block (first (.select block "> next > block[type~=(next|end|fail|stop)]"))]
+        (recur next-block (conj transitions transition))
+        (conj transitions transition)))))
+
 (defn xml->flow [flow]
   (merge
    {:flow/name (field-value flow "name")
@@ -58,7 +85,6 @@
                                 first
                                 (field-value "name"))]
      {:split/next next-step})))
-
 
 (defn xml->step [step]
   (merge
@@ -81,11 +107,8 @@
                                 first
                                 (field-value "name"))]
      {:step/next next-step})
-   (when-let [transitions (some->> (.select step "> statement[name=transitions] > block[type=next]")
-                                   (map xml->next)
-                                   vec
-                                   not-empty)]
-     {:step/transitions transitions})))
+   (when-let [transition (first (.select step "> statement[name=transitions] > block[type~=(next|end|fail|stop)]"))]
+     {:step/transitions (xml->transitions transition)})))
 
 (defn xml->component [el]
   (case (.attr el "type")
