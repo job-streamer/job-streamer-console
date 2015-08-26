@@ -4,6 +4,8 @@
             [om-tools.core :refer-macros [defcomponent]]
             [sablono.core :as html :refer-macros [html]]
             [cljs.core.async :refer [put! <! chan pub sub unsub-all]]
+            [bouncer.core :as b]
+            [bouncer.validators :as v]
             [job-streamer.console.api :as api]))
 
 (def app-name "default")
@@ -25,8 +27,11 @@
 (defcomponent job-settings-view [job owner {:keys [jobs-channel]}]
   (init-state [_]
     {:save-status {:status-notification false
-                   :time-monitor {:duration 0 :action "" :notification-type ""}
+                   :time-monitor false
                    :exclusive false}
+     :time-monitor {:time-monitor/duration 0
+                    :time-monitor/action ""
+                    :time-monitor/notification-type ""}
      :status-notification {:status-notification/type ""
                            :status-notification/batch-status ""
                            :status-notification/exit-status ""
@@ -78,27 +83,32 @@
                                (om/set-state! owner [:status-notification :status-notification/type]
                                               (.. e -target -value)))}]
          [:button.ui.positive.button
-          {:type "button"
-           :on-click (fn [e]
-                       (let [status-notification (om/get-state owner :status-notification)
-                             status-notification (case (:status-notification/status-type status-notification)
-                                                   :batch-status {:status-notification/type (:status-notification/type status-notification)
-                                                                  :status-notification/batch-status
-                                                                  {:db/ident (keyword "batch-status"
-                                                                                      (:status-notification/batch-status status-notification))}}
-                                                   :exit-status  (select-keys status-notification [:status-notification/type
-                                                                                                   :status-notification/exit-status]))]
-                         (save-settings (:job/name job)
-                                        :PUT
-                                        owner
-                                        :status-notification
-                                        status-notification
-                                        :handler (fn [resp]
-                                                   (om/update-state!
-                                                    owner [:settings :job/status-notifications]
-                                                    (fn [notifications]
-                                                      (conj notifications (assoc status-notification
-                                                                                 :db/id (:db/id resp)))))))))}
+          (merge
+           {:type "button"
+            :on-click (fn [e]
+                        (let [status-notification (om/get-state owner :status-notification)
+                              status-notification (case (:status-notification/status-type status-notification)
+                                                    :batch-status {:status-notification/type (:status-notification/type status-notification)
+                                                                   :status-notification/batch-status
+                                                                   (keyword "batch-status"
+                                                                            (:status-notification/batch-status status-notification))}
+                                                    :exit-status  (select-keys status-notification [:status-notification/type
+                                                                                                    :status-notification/exit-status]))]
+                          (save-settings (:job/name job)
+                                         :PUT
+                                         owner
+                                         :status-notification
+                                         status-notification
+                                         :handler (fn [resp]
+                                                    (om/update-state!
+                                                     owner [:settings :job/status-notifications]
+                                                     (fn [notifications]
+                                                       (conj notifications (assoc status-notification
+                                                                                  :db/id (:db/id resp)))))))))}
+           (when-not (b/valid? status-notification
+                               :status-notification/exit-status [[v/required :pre #(= (:status-notification/status-type %) :exit-status)]]
+                               :status-notification/type [[v/required]])
+             {:class "disabled"}) )
           "Add"]]
         (if (not-empty (:job/status-notifications settings)) 
           [:table.ui.compact.table
@@ -109,20 +119,22 @@
              [:th ""]]]
            [:tbody
             (for [notification (:job/status-notifications settings)]
-              (let [status-type (case
-                                    (:status-notification/batch-status notification) :batch-status
-                                    (:status-notification/exit-status  notification) :exit-status)]
+              (let [status-type (cond
+                                  (:status-notification/batch-status notification) :batch-status
+                                  (:status-notification/exit-status  notification) :exit-status)]
                 [:tr
                  (case status-type
                    :batch-status
                    [:td
                     [:div.ui.orange.label "Batch status"]
-                    (name (get-in notification [:status-notification/batch-status :db/ident] ""))]
+                    (name (get-in notification [:status-notification/batch-status] ""))]
 
                    :exit-status
                    [:td
                     [:div.ui.olive.label "Exit status"]
-                    (:status-notification/exit-status notification)])
+                    (:status-notification/exit-status notification)]
+                   [:td
+                    [:div.ui.label "Unknown"]])
                  [:td (:status-notification/type notification)]
                  [:td [:a
                        [:i.remove.red.icon
@@ -147,7 +159,8 @@
                          (save-settings (:job/name job) (if checked :PUT :DELETE)
                                         owner :exclusive
                                         {:job/exclusive? checked})))}
-          (when (:job/exclusive? settings) {:class "checked"}))
+          (when (:job/exclusive? settings)
+            {:class "checked"}))
          [:input {:id "exclusive-checkbox" :type "checkbox" :checked (:job/exclusive? settings)}]
          [:label "If this job should be executed exclusively, check this"
           (when (:exclusive save-status) [:i.checkmark.green.icon])]]
@@ -157,7 +170,7 @@
           [:div
            "When it's passed for "
            (:time-monitor/duration settings-time-monitor) "minutes,"
-           (case (get-in settings-time-monitor [:time-monitor/action :db/ident])
+           (case (:time-monitor/action settings-time-monitor)
              :action/alert (str "send an alert by \"" (:time-monitor/notification-type settings-time-monitor) "\"")
              :action/stop (str "stop the job."))
            
@@ -169,41 +182,42 @@
           [:div.ui.right.labeled.block.input
            [:input {:id "time-monitor-duration"
                     :type "number"
-                    :value (:duration time-monitor)
+                    :value (:time-monitor/duration time-monitor)
                     :on-change (fn [_]
                                  (let [duration (js/parseInt (.-value (.getElementById js/document "time-monitor-duration")))]
-                                   (om/update-state! owner :time-monitor #(assoc % :duration (if (> duration 0) duration 0)))))}]
+                                   (om/set-state! owner [:time-monitor :time-monitor/duration] (if (> duration 0) duration 0))))}]
            [:div.ui.label "minutes"]
 
            "Action:"
            [:select.ui.selection.dropdown
             {:id "time-monitor-action"
+             :value (if-let [action (:time-monitor/action time-monitor)]
+                      (name action) "")
              :on-change (fn [_]
                           (let [action (.-value (.getElementById js/document "time-monitor-action"))]
-                            (om/update-state! owner :time-monitor #(assoc % :action action))))}
+                            (om/set-state! owner [:time-monitor :time-monitor/action]
+                                           (keyword "action" action))))}
             [:option {:value ""} ""]
             [:option {:value "alert"} "Alert"]
             [:option {:value "stop"} "Stop"]]
-           (when (= (:action time-monitor) "alert")
+           (when (= (:time-monitor/action time-monitor) :action/alert)
              [:input {:type "text" :id "time-monitor-notification-type"
-                      :value (:notification-type time-monitor)
+                      :value (:time-monitor/notification-type time-monitor)
                       :placeholder "Notification"
                       :on-change (fn [_]
                                    (let [notification-type (.-value (.getElementById js/document "time-monitor-notification-type"))]
-                                     (om/update-state! owner :time-monitor #(assoc % :notification-type notification-type))))}])
+                                     (om/set-state! owner [:time-monitor :time-monitor/notification-type])))}])
            [:button.ui.tiny.positive.button
             (merge {:type "button"
                     :on-click (fn [_]
-                                (let [settings-time-monitor (->> (update-in time-monitor [:action] #(keyword "action" %))
-                                                                 (map (fn [[k v]] [(keyword "time-monitor" (name k)) v]))
-                                                                 (reduce (fn [m [k v]] (assoc m k v)) {}))]
-                                  (save-settings (:job/name job) :PUT
+                                (save-settings (:job/name job) :PUT
                                                owner :time-monitor
-                                               settings-time-monitor)
-                                  (om/set-state! owner [:settings :job/time-monitor] settings-time-monitor)))}
-                   (when (or (= (:duration time-monitor) 0)
-                             (empty? (:action time-monitor))
-                             (and (= (:action time-monitor) "alert") (empty? (:notification-type time-monitor))))
+                                               time-monitor)
+                                (om/set-state! owner [:settings :job/time-monitor] time-monitor))}
+                   (when (or (= (:time-monitor/duration time-monitor) 0)
+                             (not (keyword? (:time-monitor/action time-monitor)))
+                             (and (= (:time-monitor/action time-monitor) :action/alert)
+                                  (empty? (:time-monitor/notification-type time-monitor))))
                      {:class "disabled"}))
             "Save"]])]]
       

@@ -327,12 +327,15 @@
                      :opts {:jobs-channel channel}})
 
           :detail
-          (let [idx (->> (get-in app [:jobs :results])
-                         (keep-indexed #(if (= (:job/name %2) (:job-name app)) %1))
-                         first)]
-            (om/build job-detail-view (get-in app [:jobs :results idx])
-                      {:opts {:jobs-channel channel}
-                       :state {:mode (:mode app)}}))
+          (if (:jobs app)
+            (let [idx (->> (get-in app [:jobs :results])
+                           (keep-indexed #(if (= (:job/name %2) (:job-name app)) %1))
+                           first)]
+              (om/build job-detail-view (get-in app [:jobs :results idx])
+                        {:opts {:jobs-channel channel}
+                         :state {:mode (:mode app)}}))
+            [:img {:src "/img/loader.gif"}])
+          
           
 
           ;; default

@@ -12,6 +12,8 @@
     (api/request (.toString uri)
                :GET
                {:handler (fn [response]
-                           (om/update! app :jobs response)
-                           (om/update! app :query (:q query)))})))
+                           (om/transact! app
+                                         #(assoc %
+                                                 :jobs response
+                                                 :query (:q query))))})))
 

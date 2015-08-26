@@ -77,6 +77,14 @@
   (-> (handler/site app-routes)
       (wrap-base-url)))
 
+(def banner "
+    __     _   _____ _                      Console
+ __|  |___| |_|   __| |_ ___ ___ ___ _____ ___ ___
+|  |  | . | . |__   |  _|  _| -_| .'|     | -_|  _|
+|_____|___|___|_____|_| |_| |___|__,|_|_|_|___|_|
+")
+
 (defn -main [& args]
   (let [port (Integer/parseInt (or (:console-port env) "8080"))]
-    (run-server app  {:port port})))
+    (run-server app  {:port port})
+    (println banner)))
