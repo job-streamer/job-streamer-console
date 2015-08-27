@@ -28,11 +28,12 @@
                                (.setAttribute "download" "jobs.edn"))
                              (.dispatchEvent anchor click-event)))}))
 
-(defn import-xml-job [jobxml]
+(defn import-xml-job [jobxml callback]
   (api/request (str "/" app-name "/jobs") :POST jobxml
-               {:format :xml}))
+               {:format :xml
+                :handler callback}))
 
-(defn import-edn-jobs [jobs]
+(defn import-edn-jobs [jobs callback]
   (let [ch (chan)]
     (go-loop []
       (let [jobs (<! ch)
@@ -40,12 +41,14 @@
         (if-not (empty? jobs)
           (api/request (str "/" app-name "/jobs") :POST (:job/edn-notation (first jobs))
                        {:handler (fn [_]
-                                   (put! ch rest-jobs))}))
-        (when rest-jobs
-          (recur))))
+                                   (when rest-jobs
+                                     (put! ch rest-jobs)))}))
+        (if rest-jobs
+          (recur)
+          (callback))))
     (put! ch jobs)))
 
-(defcomponent right-menu-view [app owner {:keys [stats-channel]}]
+(defcomponent right-menu-view [app owner {:keys [stats-channel jobs-channel]}]
   (init-state [_]
     :configure-opened? false
     :click-outside-fn nil)
@@ -61,7 +64,8 @@
                                                        :jobs-count (:jobs response))))
                       :error-handler
                       {:http-error (fn [res]
-                                     (om/update! app :system-error "error"))}})))
+                                     (om/update! app :system-error "error"))}})
+        (recur)))
 
     (put! stats-channel true)
 
@@ -116,13 +120,16 @@
                                  (let [file (aget (.. e -target -files) 0)
                                        reader (js/FileReader.)]
                                    (set! (.-onload reader)
-                                         #(let [result (.. % -target -result)]
+                                         #(let [result (.. % -target -result)
+                                                callback-fn (fn []
+                                                              (println jobs-channel)
+                                                              (put! jobs-channel [:refresh-jobs true]))]
                                             (cond
                                               (.. file -name (endsWith ".xml"))
-                                              (import-xml-job result)
+                                              (import-xml-job result callback-fn)
 
                                               (.. file -name (endsWith ".edn"))
-                                              (import-edn-jobs (read-string result))
+                                              (import-edn-jobs (read-string result) callback-fn)
                                               
                                               :else
                                               (throw (js/Error. "Unsupported file type")))))
@@ -150,10 +157,11 @@
 
 (defcomponent root-view [app owner]
   (init-state [_]
-    {:stats-channel (chan)})
+    {:stats-channel (chan)
+     :jobs-channel  (chan)})
   (will-mount [_]
     (routing/init app owner))
-  (render-state [_ {:keys [stats-channel]}]
+  (render-state [_ {:keys [stats-channel jobs-channel]}]
     (html
      [:div.full.height
       (if-let [system-error (:system-error app)]
@@ -161,10 +169,12 @@
         (list
          [:div.ui.fixed.inverted.teal.menu
           [:div.header.item [:img.ui.image {:alt "JobStreamer" :src "img/logo.png"}]]
-          (om/build right-menu-view app {:opts {:stats-channel stats-channel}})]
+          (om/build right-menu-view app {:opts {:stats-channel stats-channel
+                                                :jobs-channel jobs-channel}})]
          [:div.main.grid.content.full.height
           (case (first (:mode app))
             :jobs (om/build jobs-view app {:init-state {:mode (second (:mode app))}
-                                           :opts {:stats-channel stats-channel}})
+                                           :opts {:stats-channel stats-channel
+                                                  :jobs-channel jobs-channel}})
             :agents (om/build agents-view app)
             :calendars (om/build calendars-view app))]))])))

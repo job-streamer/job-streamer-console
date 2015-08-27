@@ -287,14 +287,13 @@
                           (om/set-state! owner :unmatch true)))}
            "I understand the consequences, delete this job"]]]]]])))
 
-(defcomponent jobs-view [app owner {:keys [stats-channel]}]
+(defcomponent jobs-view [app owner {:keys [stats-channel jobs-channel]}]
   (init-state [_]
-    {:channel (chan)
-     :dangerously-action-data nil})
+    {:dangerously-action-data nil})
   (will-mount [_]
     (search-jobs app {:q (:query app) :p 1})
     (go-loop []
-      (let [[cmd msg] (<! (om/get-state owner :channel))]
+      (let [[cmd msg] (<! jobs-channel)]
         (try
           (case cmd
             :execute-dialog  (om/set-state! owner :executing-job [:execute msg])
@@ -305,13 +304,13 @@
                               (put! stats-channel true)) 
             :delete-job (do
                           (om/transact! app [:jobs :results]
-                                         (fn [results]
-                                           (remove #(= % msg) results)))
+                                        (fn [results]
+                                          (remove #(= % msg) results)))
                           (put! stats-channel true))
             :open-dangerously-dialog (om/set-state! owner :dangerously-action-data msg))
           (catch js/Error e))
         (recur))))
-  (render-state [_ {:keys [executing-job channel dangerously-action-data]}]
+  (render-state [_ {:keys [executing-job dangerously-action-data]}]
     (let [this-mode (second (:mode app))]
       (html
        [:div
@@ -324,7 +323,7 @@
           :new
           (om/build job-new-view (get-in app [:jobs :results])
                     {:state {:mode (:mode app)}
-                     :opts {:jobs-channel channel}})
+                     :opts {:jobs-channel jobs-channel}})
 
           :detail
           (if (:jobs app)
@@ -332,7 +331,7 @@
                            (keep-indexed #(if (= (:job/name %2) (:job-name app)) %1))
                            first)]
               (om/build job-detail-view (get-in app [:jobs :results idx])
-                        {:opts {:jobs-channel channel}
+                        {:opts {:jobs-channel jobs-channel}
                          :state {:mode (:mode app)}}))
             [:img {:src "/img/loader.gif"}])
           
@@ -357,9 +356,9 @@
                            :timeline timeline-view
                            ;; default
                            job-list-view)
-                         app {:init-state {:jobs-view-channel channel}}))]]
+                         app {:init-state {:jobs-view-channel jobs-channel}}))]]
            (when executing-job
-             (om/build job-execution-dialog executing-job {:init-state {:jobs-view-channel channel}}))])
+             (om/build job-execution-dialog executing-job {:init-state {:jobs-view-channel jobs-channel}}))])
         (when dangerously-action-data
              (om/build dangerously-action-dialog nil
                        {:opts (assoc dangerously-action-data
