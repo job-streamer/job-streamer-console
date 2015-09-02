@@ -41,14 +41,14 @@
                     (this-as
                      this
                      (let [container (.createElement js/document "mutation")]
-                       (.setAttribute container "items" (.-itemCount this))
+                       (.setAttribute container "items" (aget this "itemCount"))
                        container)))
    :domToMutation (fn [xml]
                     (this-as
                      this
-                     (set! (.-itemCount this)
+                     (aset this "itemCount"
                            (js/parseInt (.getAttribute xml "items") 10))
-                     (.updateShape this)))
+                     (.call (aget this "updateShape") this)))
    :decompose (fn [workspace]
                 (this-as
                  this
@@ -74,10 +74,11 @@
                        (aset connections i (.-valueConnection item-block))
                        (recur (some-> item-block (.-nextConnection) (.targetBlock))
                               (inc i)))
-                     (set! (.-itemCount this) i)))
-                 (.updateShape this)
+                     (aset this "itemCount" i)))
+                 (.call (aget this "updateShape") this)
+
                  (loop [i 0]
-                   (when (< i (.-itemCount this))
+                   (when (< i (aget this "itemCount"))
                      (if (aget connections i)
                        (.. this
                            (getInput (str "ADD" i))
@@ -99,18 +100,19 @@
    :updateShape (fn []
                   (this-as
                    this
+                   (println this)
                    (if (.getInput this "EMPTY")
                      (.removeInput this "EMPTY")
                      (loop [i 0]
                        (when-let [add-input (.getInput this (str "ADD" i))]
                          (.removeInput this (str "ADD" i))
                          (recur (inc i)))))
-                   (if (= (.-itemCount this) 0)
+                   (if (= (aget this "itemCount") 0)
                      (.. this
                          (appendDummyInput "EMPTY")
                          (appendField "Property"))
                      (loop [i 0]
-                       (when (< i (.-itemCount this))
+                       (when (< i (aget this "itemCount"))
                          (let [input (.appendValueInput this (str "ADD" i))]
                            (when (= i 0)
                              (.appendField input "Properties"))

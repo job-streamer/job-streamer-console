@@ -6,6 +6,7 @@
             [cljs.core.async :refer [put! <! chan]]
             [job-streamer.console.routing :as routing]
             [job-streamer.console.api :as api]
+            [goog.string :as gstring]
             [goog.fs])
   (:use [cljs.reader :only [read-string]]
         [job-streamer.console.components.jobs :only [jobs-view]]
@@ -125,10 +126,10 @@
                                                               (println jobs-channel)
                                                               (put! jobs-channel [:refresh-jobs true]))]
                                             (cond
-                                              (.. file -name (endsWith ".xml"))
+                                              (gstring/endsWith (.-name file) ".xml")
                                               (import-xml-job result callback-fn)
 
-                                              (.. file -name (endsWith ".edn"))
+                                              (gstring/endsWith (.-name file) ".edn")
                                               (import-edn-jobs (read-string result) callback-fn)
                                               
                                               :else
