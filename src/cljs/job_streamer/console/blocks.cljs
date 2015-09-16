@@ -154,10 +154,10 @@
 
 (api/request (str "/default/batch-components") :GET
              {:handler (fn [response]
-                         (let [batchlets (get response :batch-component/batchlet ["No batchlet"])
-                               item-readers (get response :batch-component/item-reader ["No item reader"])
-                               item-writers (get response :batch-component/item-writer ["No item writer"])
-                               item-processors (get response :batch-component/item-processor ["No item processor"])]
+                         (let [batchlets       (or (not-empty (:batch-component/batchlet response)) ["No batchlet"]) 
+                               item-readers    (or (not-empty (:batch-component/item-reader response)) ["No item reader"])
+                               item-writers    (or (not-empty (:batch-component/item-writer response)) ["No item writer"]) 
+                               item-processors (or (not-empty (:batch-component/item-processor response)) ["No item processor"])]
                            (defblock batchlet
                              :colour 316
                              :output "Batchlet"

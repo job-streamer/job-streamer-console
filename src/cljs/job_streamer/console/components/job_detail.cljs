@@ -331,11 +331,18 @@
 (defcomponent next-execution-view [job owner]
   (init-state [_]
     {:scheduling-ch (chan)
-     :scheduling?   false})
+     :scheduling?   false
+     :kill-ch       (chan)})
   (will-mount [_]
-    (go-loop []
-      (om/set-state! owner :scheduling? (<! (om/get-state owner :scheduling-ch)))
-      (recur)))
+    (let [kill-ch       (om/get-state owner :kill-ch)
+          scheduling-ch (om/get-state owner :scheduling-ch)]
+      (go-loop []
+        (let [[v c] (alts! [scheduling-ch kill-ch])]
+          (when-not (= c kill-ch)
+            (om/set-state! owner :scheduling? (<! scheduling-ch))
+            (recur))))))
+  (will-unmount [_]
+    (put! (om/get-state owner :kill-ch) :quit))
   (render-state [_ {:keys [refresh-job-ch scheduling-ch scheduling?]}]
     (html
      [:div.ui.raised.segment

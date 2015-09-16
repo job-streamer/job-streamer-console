@@ -307,9 +307,13 @@
                                         (fn [results]
                                           (remove #(= % msg) results)))
                           (put! stats-channel true))
-            :open-dangerously-dialog (om/set-state! owner :dangerously-action-data msg))
+            :open-dangerously-dialog (om/set-state! owner :dangerously-action-data msg)
+            nil)
           (catch js/Error e))
-        (recur))))
+        (when (not= cmd :kill)
+          (recur)))))
+  (will-unmount [_]
+    (put! jobs-channel [:kill nil]))
   (render-state [_ {:keys [executing-job dangerously-action-data]}]
     (let [this-mode (second (:mode app))]
       (html

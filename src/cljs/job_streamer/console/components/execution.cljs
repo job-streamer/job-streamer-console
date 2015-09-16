@@ -4,7 +4,7 @@
   (:require [om.core :as om :include-macros true]
             [om-tools.core :refer-macros [defcomponent]]
             [sablono.core :as html :refer-macros [html]]
-            [cljs.core.async :refer [put! <! chan pub sub unsub-all]]
+            [cljs.core.async :refer [put! <! chan]]
             [job-streamer.console.format :as fmt]))
 
 (defcomponent execution-view [step-executions owner]

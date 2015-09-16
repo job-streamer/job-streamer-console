@@ -1,5 +1,4 @@
 (ns job-streamer.console.components.agents
-  (:require-macros [cljs.core.async.macros :refer [go go-loop]])
   (:require [om.core :as om :include-macros true]
             [om-tools.core :refer-macros [defcomponent]]
             [sablono.core :as html :refer-macros [html]]
@@ -72,11 +71,11 @@
          [:h4.ui.header "Build docker container."]
          [:pre
           [:code "% cd job-streamer-agent\n"
-           "% docker build -t job-streamer/agent:0.1.0 ."]]]
+           "% docker build -t job-streamer/agent:0.3.0 ."]]]
         [:li
          [:h4.ui.header "Run docker container."]
          [:pre
-          [:code "% docker run job-streamer/agent:0.1.0"]]]]]])))
+          [:code "% docker run job-streamer/agent:0.3.0"]]]]]])))
 
 (defcomponent agent-list-view [agents owner]
   (render [_]
