@@ -293,7 +293,7 @@
     (html
      [:form.ui.form 
       (merge {:on-submit (fn [e]
-                           (.. e -nativeEvent preventDefault)
+                           (.preventDefault e)
                            (schedule-job job
                                          schedule
                                          refresh-job-ch scheduling-ch error-ch))}
