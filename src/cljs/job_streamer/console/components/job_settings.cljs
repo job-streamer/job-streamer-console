@@ -206,7 +206,7 @@
                       :placeholder "Notification"
                       :on-change (fn [_]
                                    (let [notification-type (.-value (.getElementById js/document "time-monitor-notification-type"))]
-                                     (om/set-state! owner [:time-monitor :time-monitor/notification-type])))}])
+                                     (om/set-state! owner [:time-monitor :time-monitor/notification-type] notification-type)))}])
            [:button.ui.tiny.positive.button
             (merge {:type "button"
                     :on-click (fn [_]
