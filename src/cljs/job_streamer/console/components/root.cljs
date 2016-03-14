@@ -72,10 +72,10 @@
 
     (when-let [on-click-outside (om/get-state owner :click-outside-fn)]
       (.removeEventListener js/document "mousedown" on-click-outside)))
-  
+
   (render-state [_ {:keys [control-bus-not-found? configure-opened?]}]
     (let [{{:keys [agents-count jobs-count]} :stats}  app]
-      (html 
+      (html
        [:div.right.menu
         [:div#agent-stats.item
          (when (= (first (:mode app)) :agents) {:class "active"})
@@ -131,7 +131,7 @@
 
                                               (gstring/endsWith (.-name file) ".edn")
                                               (import-edn-jobs (read-string result) callback-fn)
-                                              
+
                                               :else
                                               (throw (js/Error. "Unsupported file type")))))
                                    (.readAsText reader file)))}]]]]])))
@@ -159,10 +159,11 @@
 (defcomponent root-view [app owner]
   (init-state [_]
     {:stats-channel (chan)
-     :jobs-channel  (chan)})
+     :jobs-channel  (chan)
+     :calendars-channel  (chan)})
   (will-mount [_]
     (routing/init app owner))
-  (render-state [_ {:keys [stats-channel jobs-channel]}]
+  (render-state [_ {:keys [stats-channel jobs-channel calendars-channel]}]
     (html
      [:div.full.height
       (if-let [system-error (:system-error app)]
@@ -178,4 +179,6 @@
                                            :opts {:stats-channel stats-channel
                                                   :jobs-channel jobs-channel}})
             :agents (om/build agents-view app)
-            :calendars (om/build calendars-view app))]))])))
+            :calendars (om/build calendars-view app {:init-state {:mode (second (:mode app))}
+                                           :opts {:stats-channel stats-channel
+                                                  :calendars-channel calendars-channel}}))]))])))
