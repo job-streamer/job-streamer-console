@@ -10,6 +10,7 @@
         (job-streamer.console.components.job-detail :only [job-new-view job-detail-view])
         (job-streamer.console.components.execution :only [execution-view])
         (job-streamer.console.components.pagination :only [pagination-view])
+        (job-streamer.console.components.dialog :only[dangerously-action-dialog])
         [job-streamer.console.search :only [search-jobs]]))
 
 (enable-console-print!)
@@ -23,7 +24,7 @@
 
 (defn stop-job [job]
   (when-let [latest-execution (:job/latest-execution job)]
-    (api/request (str "/" app-name 
+    (api/request (str "/" app-name
                       "/job/" (:job/name job)
                       "/execution/" (:db/id latest-execution) "/stop")
                  :PUT
@@ -34,18 +35,18 @@
 
 (defn abandon-job [job]
   (when-let [latest-execution (:job/latest-execution job)]
-    (api/request (str "/" app-name 
+    (api/request (str "/" app-name
                       "/job/" (:job/name job)
                       "/execution/" (:db/id latest-execution) "/abandon")
                  :PUT
-                 {:handler (fn [response] 
+                 {:handler (fn [response]
                              (om/update! latest-execution
                                          [:job-execution/batch-status :db/ident]
                                          :batch-status/abandoned))})))
 
 (defn restart-job [job parameters channel]
   (when-let [latest-execution (:job/latest-execution job)]
-    (api/request (str "/" app-name 
+    (api/request (str "/" app-name
                       "/job/" (:job/name job)
                       "/execution/" (:db/id latest-execution) "/restart")
                  :PUT
@@ -169,7 +170,7 @@
             (apply concat
                    (for [{job-name :job/name :as job} (get-in app [:jobs :results])]
                      [[:tr
-                       [:td 
+                       [:td
                         [:a {:href (str "#/job/" job-name)} job-name]]
                        (if-let [latest-execution (:job/latest-execution job)]
                          (if (#{:batch-status/undispatched :batch-status/queued} (get-in latest-execution [:job-execution/batch-status :db/ident]))
@@ -191,7 +192,7 @@
                                 [:td {:class (condp = status
                                                "completed" "positive"
                                                "failed" "negative"
-                                               "")} 
+                                               "")}
                                  status]))))
                          [:td.center.aligned {:colSpan 3} "No executions"])
                        [:td
@@ -229,7 +230,7 @@
 
                                  (#{:batch-status/starting  :batch-status/stopping} status)
                                  [:div]
-                                 
+
                                  :else
                                  [:button.ui.circular.icon.green.basic.button
                                   {:on-click (fn [_]
@@ -250,43 +251,6 @@
                                              (search-jobs app {:q (:query app) :offset (inc (* (dec pn) per)) :limit per}))}})]]]))))
 
 
-(defcomponent dangerously-action-dialog [app owner {:keys [ok-handler cancel-handler answer]}]
-  (init-state [_]
-    {:typed nil
-     :unmatch false})
-  (render-state [_ {:keys [typed unmatch]}]
-    (html
-     [:div.ui.dimmer.modals.page.transition.visible.active
-      [:div.ui.modal.scrolling.transition.visible.active
-       [:div.header "Are you ABSOLUTELY sure?"]
-       [:div.ui.warning.message
-        "Unexpected bad things will happen if you don’t read this!"]
-       [:div.content
-        [:p "This action" [:strong "CANNOT"] " be undone."]
-        [:p "Please type in the name of the repository to confirm."]
-        [:div.ui.form
-         [:div.field (when unmatch {:class "error"})
-          [:input {:type "text"
-                   :value typed
-                   :on-change (fn [e]
-                                (om/update-state! owner #(assoc %
-                                                                :typed (.. e -target -value)
-                                                                :unmatch false)))}]]]]
-       [:div.actions
-        [:div.ui.two.column.grid
-         [:div.left.aligned.column
-          [:button.ui.black.deny.button
-           {:on-click (fn [e]
-                        (cancel-handler))}
-           "Cancel"]]
-         [:div.right.aligned.column
-          [:button.ui.red.danger.button
-           {:on-click (fn [e]
-                        (if (= typed answer)
-                          (ok-handler)
-                          (om/set-state! owner :unmatch true)))}
-           "I understand the consequences, delete this job"]]]]]])))
-
 (defcomponent jobs-view [app owner {:keys [stats-channel jobs-channel]}]
   (init-state [_]
     {:dangerously-action-data nil})
@@ -301,7 +265,7 @@
             :close-dialog (do (om/set-state! owner :executing-job nil)
                               (search-jobs app {:q (:query app)}))
             :refresh-jobs (do (search-jobs app {:q (:query app)})
-                              (put! stats-channel true)) 
+                              (put! stats-channel true))
             :delete-job (do
                           (om/transact! app [:jobs :results]
                                         (fn [results]
@@ -334,8 +298,8 @@
                         {:opts {:jobs-channel jobs-channel}
                          :state {:mode (:mode app)}}))
             [:img {:src "/img/loader.gif"}])
-          
-          
+
+
 
           ;; default
           [:div
@@ -365,4 +329,5 @@
                                      :ok-handler (fn []
                                                    (om/set-state! owner :dangerously-action-data nil)
                                                    ((:ok-handler dangerously-action-data)))
-                                     :cancel-handler (fn [] (om/set-state! owner :dangerously-action-data nil)))}))]))))
+                                     :cancel-handler (fn [] (om/set-state! owner :dangerously-action-data nil))
+                                     :delete-type "job")}))]))))

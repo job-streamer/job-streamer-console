@@ -14,7 +14,8 @@
             [job-streamer.console.api :as api]
             [job-streamer.console.format :as fmt])
 
-  (:use [cljs.reader :only [read-string]])
+  (:use [cljs.reader :only [read-string]]
+        (job-streamer.console.components.dialog :only[dangerously-action-dialog]))
   (:import [goog.net.EventType]
            [goog.events EventType]))
 
@@ -232,42 +233,6 @@
                                                                             (delete-calendar cal calendars-channel))
                                                               :answer (:calendar/name cal)}]))}"Delete"]]])]])]])))
 
-(defcomponent calendar-dangerously-action-dialog [app owner {:keys [ok-handler cancel-handler answer]}]
-  (init-state [_]
-              {:typed nil
-               :unmatch false})
-  (render-state [_ {:keys [typed unmatch]}]
-                (html
-                  [:div.ui.dimmer.modals.page.transition.visible.active
-                   [:div.ui.modal.scrolling.transition.visible.active
-                    [:div.header "Are you ABSOLUTELY sure?"]
-                    [:div.ui.warning.message
-                     "Unexpected bad things will happen if you don’t read this!"]
-                    [:div.content
-                     [:p "This action" [:strong "CANNOT"] " be undone."]
-                     [:p "Please type in the name of the repository to confirm."]
-                     [:div.ui.form
-                      [:div.field (when unmatch {:class "error"})
-                       [:input {:type "text"
-                                :value typed
-                                :on-change (fn [e]
-                                             (om/update-state! owner #(assoc %
-                                                                        :typed (.. e -target -value)
-                                                                        :unmatch false)))}]]]]
-                    [:div.actions
-                     [:div.ui.two.column.grid
-                      [:div.left.aligned.column
-                       [:button.ui.black.deny.button
-                        {:on-click (fn [e]
-                                     (cancel-handler))}
-                        "Cancel"]]
-                      [:div.right.aligned.column
-                       [:button.ui.red.danger.button
-                        {:on-click (fn [e]
-                                     (if (= typed answer)
-                                       (ok-handler)
-                                       (om/set-state! owner :unmatch true)))}
-                        "I understand the consequences, delete this calendar"]]]]]])))
 
 (defcomponent calendars-view [app owner {:keys [stats-channel calendars-channel]}]
   (init-state [_]
@@ -313,11 +278,12 @@
                            :default (om/build calendar-list-view (:calendars app) { :state {:mode (:mode app)}
                                                                                     :opts {:calendars-channel calendars-channel}})))
                        (when dangerously-action-data
-                         (om/build calendar-dangerously-action-dialog nil
+                         (om/build dangerously-action-dialog nil
                                    {:opts (assoc dangerously-action-data
                                             :ok-handler (fn []
                                                           (om/set-state! owner :dangerously-action-data nil)
                                                           ((:ok-handler dangerously-action-data)))
-                                            :cancel-handler (fn [] (om/set-state! owner :dangerously-action-data nil)))}))]]]
+                                            :cancel-handler (fn [] (om/set-state! owner :dangerously-action-data nil))
+                                            :delete-type "calendar")}))]]]
 
                     ))))
