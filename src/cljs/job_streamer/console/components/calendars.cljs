@@ -30,11 +30,13 @@
                    {:handler on-success
                     :error-handler on-failure}))))
 
-(defn delete-calendar [calendar calendars-channel]
+(defn delete-calendar [calendar owner calendars-channel]
   (api/request (str "/calendar/" (:calendar/name calendar)) :DELETE
                {:handler (fn [response]
                            (put! calendars-channel[:delete-calendar calendar])
-                           (set! (.-href js/location) "#/calendars"))}))
+                           (set! (.-href js/location) "#/calendars"))
+                :error-handler (fn[res error-code]
+                                 (om/set-state! owner :delete-error res))}))
 
 (def breadcrumb-elements
   {:calendars {:name "calendars" :href "#/calendars"}
@@ -194,44 +196,54 @@
                                                                            (.. js/Kalendae (moment d) day))) })))))
 
 (defcomponent calendar-list-view [calendars owner {:keys [calendars-channel]}]
-  (render [_]
-          (html
-            [:div.ui.grid
-             [:div.ui.two.column.row
-              [:div.column
-               [:button.ui.basic.green.button
-                {:type "button"
-                 :on-click #(set! (.-href js/location) "#/calendars/new")}
-                [:i.plus.icon] "New"]]]
-             [:div.row
-              (when (not-empty calendars)
-                [:table.ui.celled.striped.table
-                 [:thead
-                  [:tr
-                   [:th "Name"]
-                   [:th "Holidays"]
-                   [:th "Operations"]]]
-                 [:tbody
-                  (for [cal calendars]
-                    [:tr
-                     [:td
-                      [:a {:href (str "#/calendar/" (:calendar/name cal))}
-                       (:calendar/name cal)]]
-                     [:td (let [holidays (take 3 (:calendar/holidays cal))]
-                            (str (->> holidays
-                                      (map #(fmt/date-only %))
-                                      (clojure.string/join ","))
-                                 (when (> (count (:calendar/holidays cal)) 3)
-                                   ",...")))]
-                     [:td
-                      [:button.ui.red.button
-                       {:type "button"
-                        :on-click (fn [e]
-                                    (.preventDefault e)
-                                    (put! calendars-channel [:open-dangerously-dialog
-                                                             {:ok-handler (fn []
-                                                                            (delete-calendar cal calendars-channel))
-                                                              :answer (:calendar/name cal)}]))}"Delete"]]])]])]])))
+  (init-state [_]
+              {:delete-error nil})
+  (render-state [_ {:keys [delete-error]}]
+                (html
+                  [:div.ui.grid
+                   (let [messages (:messages delete-error)]
+                     [:div.row {:style {:display (if messages "block" "none")}}
+                      (for[message messages]
+                        [:div.column
+                         [:div.ui.message {:class "error"}
+                          [:div.header "Fail to delete calendar"]
+                          [:div.body  message]]])])
+
+                   [:div.ui.two.column.row
+                    [:div.column
+                     [:button.ui.basic.green.button
+                      {:type "button"
+                       :on-click #(set! (.-href js/location) "#/calendars/new")}
+                      [:i.plus.icon] "New"]]]
+                   [:div.row
+                    (when (not-empty calendars)
+                      [:table.ui.celled.striped.table
+                       [:thead
+                        [:tr
+                         [:th "Name"]
+                         [:th "Holidays"]
+                         [:th "Operations"]]]
+                       [:tbody
+                        (for [cal calendars]
+                          [:tr
+                           [:td
+                            [:a {:href (str "#/calendar/" (:calendar/name cal))}
+                             (:calendar/name cal)]]
+                           [:td (let [holidays (take 3 (:calendar/holidays cal))]
+                                  (str (->> holidays
+                                            (map #(fmt/date-only %))
+                                            (clojure.string/join ","))
+                                       (when (> (count (:calendar/holidays cal)) 3)
+                                         ",...")))]
+                           [:td
+                            [:button.ui.red.button
+                             {:type "button"
+                              :on-click (fn [e]
+                                          (.preventDefault e)
+                                          (put! calendars-channel [:open-dangerously-dialog
+                                                                   {:ok-handler (fn []
+                                                                                  (delete-calendar cal owner calendars-channel))
+                                                                    :answer (:calendar/name cal)}]))}"Delete"]]])]])]])))
 
 
 (defcomponent calendars-view [app owner {:keys [stats-channel calendars-channel]}]
@@ -284,6 +296,4 @@
                                                           (om/set-state! owner :dangerously-action-data nil)
                                                           ((:ok-handler dangerously-action-data)))
                                             :cancel-handler (fn [] (om/set-state! owner :dangerously-action-data nil))
-                                            :delete-type "calendar")}))]]]
-
-                    ))))
+                                            :delete-type "calendar")}))]]]))))
