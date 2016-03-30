@@ -63,7 +63,7 @@
                     :on-change (fn [e]
                                  (om/set-state! owner [:status-notification :status-notification/exit-status]
                                                 (.. e -target -value)))}]
-           
+
            :batch-status
            [:select.ui.selection.dropdown
             {:value (:status-notification/batch-status status-notification)
@@ -74,8 +74,8 @@
             [:option {:value "abandoned"} "abandoned"]
             [:option {:value "completed"} "completed"]
             [:option {:value "failed"} "failed"]
-            [:option {:value "started"} "stated"]])
-         
+            [:option {:value "started"} "started"]])
+
          ", send notification by "
          [:input {:type "text"
                   :value (:status-notification/type status-notification)
@@ -110,7 +110,7 @@
                                :status-notification/type [[v/required]])
              {:class "disabled"}) )
           "Add"]]
-        (if (not-empty (:job/status-notifications settings)) 
+        (if (not-empty (:job/status-notifications settings))
           [:table.ui.compact.table
            [:thead
             [:tr
@@ -164,7 +164,7 @@
          [:input {:id "exclusive-checkbox" :type "checkbox" :checked (:job/exclusive? settings)}]
          [:label "If this job should be executed exclusively, check this"
           (when (:exclusive save-status) [:i.checkmark.green.icon])]]
-        
+
         [:h4.ui.header "Execution constraints"]
         (if-let [settings-time-monitor (not-empty (:job/time-monitor settings))]
           [:div
@@ -173,7 +173,7 @@
            (case (:time-monitor/action settings-time-monitor)
              :action/alert (str "send an alert by \"" (:time-monitor/notification-type settings-time-monitor) "\"")
              :action/stop (str "stop the job."))
-           
+
            [:a {:on-click (fn [_]
                             (save-settings (:job/name job) :DELETE
                                            owner :time-monitor {})
@@ -220,7 +220,7 @@
                                   (empty? (:time-monitor/notification-type time-monitor))))
                      {:class "disabled"}))
             "Save"]])]]
-      
+
       [:div.ui.segment
        [:div.ui.top.attached.label "Danger Zone"]
        [:div.content
