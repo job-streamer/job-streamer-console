@@ -30,11 +30,13 @@
                    {:handler on-success
                     :error-handler on-failure}))))
 
-(defn delete-calendar [calendar calendars-channel]
+(defn delete-calendar [calendar owner calendars-channel]
   (api/request (str "/calendar/" (:calendar/name calendar)) :DELETE
                {:handler (fn [response]
                            (put! calendars-channel[:delete-calendar calendar])
-                           (set! (.-href js/location) "#/calendars"))}))
+                           (set! (.-href js/location) "#/calendars"))
+                :error-handler (fn[res error-code]
+                                 (om/set-state! owner :delete-error res))}))
 
 (def breadcrumb-elements
   {:calendars {:name "calendars" :href "#/calendars"}
@@ -194,96 +196,104 @@
                                                                            (.. js/Kalendae (moment d) day))) })))))
 
 (defcomponent calendar-list-view [calendars owner {:keys [calendars-channel]}]
-  (render [_]
-          (html
-            [:div.ui.grid
-             [:div.ui.two.column.row
-              [:div.column
-               [:button.ui.basic.green.button
-                {:type "button"
-                 :on-click #(set! (.-href js/location) "#/calendars/new")}
-                [:i.plus.icon] "New"]]]
-             [:div.row
-              (when (not-empty calendars)
-                [:table.ui.celled.striped.table
-                 [:thead
-                  [:tr
-                   [:th "Name"]
-                   [:th "Holidays"]
-                   [:th "Operations"]]]
-                 [:tbody
-                  (for [cal calendars]
-                    [:tr
-                     [:td
-                      [:a {:href (str "#/calendar/" (:calendar/name cal))}
-                       (:calendar/name cal)]]
-                     [:td (let [holidays (take 3 (:calendar/holidays cal))]
-                            (str (->> holidays
-                                      (map #(fmt/date-only %))
-                                      (clojure.string/join ","))
-                                 (when (> (count (:calendar/holidays cal)) 3)
-                                   ",...")))]
-                     [:td
-                      [:button.ui.red.button
-                       {:type "button"
-                        :on-click (fn [e]
-                                    (.preventDefault e)
-                                    (put! calendars-channel [:open-dangerously-dialog
-                                                             {:ok-handler (fn []
-                                                                            (delete-calendar cal calendars-channel))
-                                                              :answer (:calendar/name cal)}]))}"Delete"]]])]])]])))
-
-
-(defcomponent calendars-view [app owner {:keys [stats-channel calendars-channel]}]
   (init-state [_]
-              {:dangerously-action-data nil})
-  (will-mount [_]
-              (go-loop []
-                       (let [[cmd msg] (<! calendars-channel)]
-                         (try
-                           (case cmd
-                             :delete-calendar (do
-                                                (om/transact! (:calendars app)
-                                                              (fn [cals]
-                                                                (remove #(= % msg) cals)))
-                                                (put! stats-channel true))
-                             :open-dangerously-dialog (om/set-state! owner :dangerously-action-data msg))
-                           (catch js/Error e))
-                         (recur))))
-  (render-state [_ {:keys [dangerously-action-data]}]
-                (let [mode (second (:mode app))]
-                  (html
-                    [:div.ui.grid
-                     [:div.ui.row
-                      [:div.ui.column
-                       [:h2.ui.violet.header
-                        [:i.calendar.icon]
-                        [:div.content
-                         "Calendar"
-                         [:div.sub.header "Calendars"]]]]]
-                     [:div.ui.row
-                      [:div.ui.column
-                       (case mode
-                         :new (om/build calendar-edit-view (:calendars app) {:state {:mode (:mode app)}
-                                                                             :opts {:calendars-channel calendars-channel}})
-                         :detail (om/build calendar-detail-view (:cal-name app) {:state {:mode (:mode app)}
-                                                                                 :opts {:calendars-channel calendars-channel}})
-                         :edit (om/build calendar-edit-view (:calendars app)
-                                         {:opts {:cal-name (:cal-name app)
-                                                 :calendars-channel calendars-channel}
-                                          :state {:mode (:mode app)}})
-                         ;; default
-                         (cond
-                           (nil? (:calendars app)) [:img {:src "/img/loader.gif"}]
-                           :default (om/build calendar-list-view (:calendars app) { :state {:mode (:mode app)}
-                                                                                    :opts {:calendars-channel calendars-channel}})))
-                       (when dangerously-action-data
-                         (om/build dangerously-action-dialog nil
-                                   {:opts (assoc dangerously-action-data
-                                            :ok-handler (fn []
-                                                          (om/set-state! owner :dangerously-action-data nil)
-                                                          ((:ok-handler dangerously-action-data)))
-                                            :cancel-handler (fn [] (om/set-state! owner :dangerously-action-data nil))
-                                            :delete-type "calendar")}))]]]
+              {:delete-error nil})
+  (render-state [_ {:keys [delete-error]}]
+                (html
+                  [:div.ui.grid
+                   (let [messages (:messages delete-error)]
+                     [:div.row {:style {:display (if messages "block" "none")}}
+                      [:div.column
+                       [:div.ui.message {:class "error"}
+                        [:div.header "Failed to delete calendar"]
+                        [:div.body
+                         (for[message messages] message)]]]])
 
-                    ))))
+                        [:div.ui.two.column.row
+                         [:div.column
+                          [:button.ui.basic.green.button
+                           {:type "button"
+                            :on-click #(set! (.-href js/location) "#/calendars/new")}
+                           [:i.plus.icon] "New"]]]
+                        [:div.row
+                         (when (not-empty calendars)
+                           [:table.ui.celled.striped.table
+                            [:thead
+                             [:tr
+                              [:th "Name"]
+                              [:th "Holidays"]
+                              [:th "Operations"]]]
+                            [:tbody
+                             (for [cal calendars]
+                               [:tr
+                                [:td
+                                 [:a {:href (str "#/calendar/" (:calendar/name cal))}
+                                  (:calendar/name cal)]]
+                                [:td (let [holidays (take 3 (:calendar/holidays cal))]
+                                       (str (->> holidays
+                                                 (map #(fmt/date-only %))
+                                                 (clojure.string/join ","))
+                                            (when (> (count (:calendar/holidays cal)) 3)
+                                              ",...")))]
+                                [:td
+                                 [:button.ui.red.button
+                                  {:type "button"
+                                   :on-click (fn [e]
+                                               (.preventDefault e)
+                                               (put! calendars-channel [:open-dangerously-dialog
+                                                                        {:ok-handler (fn []
+                                                                                       (delete-calendar cal owner calendars-channel))
+                                                                         :answer (:calendar/name cal)}]))}"Delete"]]])]])]])))
+
+
+                       (defcomponent calendars-view [app owner {:keys [stats-channel calendars-channel]}]
+                         (init-state [_]
+                                     {:dangerously-action-data nil})
+                         (will-mount [_]
+                                     (go-loop []
+                                              (let [[cmd msg] (<! calendars-channel)]
+                                                (try
+                                                  (case cmd
+                                                    :delete-calendar (do
+                                                                       (om/transact! (:calendars app)
+                                                                                     (fn [cals]
+                                                                                       (remove #(= % msg) cals)))
+                                                                       (put! stats-channel true))
+                                                    :open-dangerously-dialog (om/set-state! owner :dangerously-action-data msg))
+                                                  (catch js/Error e))
+                                                (recur))))
+                         (render-state [_ {:keys [dangerously-action-data]}]
+                                       (let [mode (second (:mode app))]
+                                         (html
+                                           [:div.ui.grid
+                                            [:div.ui.row
+                                             [:div.ui.column
+                                              [:h2.ui.violet.header
+                                               [:i.calendar.icon]
+                                               [:div.content
+                                                "Calendar"
+                                                [:div.sub.header "Calendars"]]]]]
+                                            [:div.ui.row
+                                             [:div.ui.column
+                                              (case mode
+                                                :new (om/build calendar-edit-view (:calendars app) {:state {:mode (:mode app)}
+                                                                                                    :opts {:calendars-channel calendars-channel}})
+                                                :detail (om/build calendar-detail-view (:cal-name app) {:state {:mode (:mode app)}
+                                                                                                        :opts {:calendars-channel calendars-channel}})
+                                                :edit (om/build calendar-edit-view (:calendars app)
+                                                                {:opts {:cal-name (:cal-name app)
+                                                                        :calendars-channel calendars-channel}
+                                                                 :state {:mode (:mode app)}})
+                                                ;; default
+                                                (cond
+                                                  (nil? (:calendars app)) [:img {:src "/img/loader.gif"}]
+                                                  :default (om/build calendar-list-view (:calendars app) { :state {:mode (:mode app)}
+                                                                                                           :opts {:calendars-channel calendars-channel}})))
+                                              (when dangerously-action-data
+                                                (om/build dangerously-action-dialog nil
+                                                          {:opts (assoc dangerously-action-data
+                                                                   :ok-handler (fn []
+                                                                                 (om/set-state! owner :dangerously-action-data nil)
+                                                                                 ((:ok-handler dangerously-action-data)))
+                                                                   :cancel-handler (fn [] (om/set-state! owner :dangerously-action-data nil))
+                                                                   :delete-type "calendar")}))]]]))))

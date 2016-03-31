@@ -298,43 +298,43 @@
                            {:handler (fn [response]
                                        (om/set-state! owner :calendars response))}))
   (render-state [_ {:keys [schedule scheduling-ch calendars refresh-job-ch error-ch has-error]}]
-                (html
-                  [:form.ui.form
-                   (merge {:on-submit (fn [e]
-                                        (.preventDefault e)
-                                        (schedule-job job
-                                                      schedule
-                                                      refresh-job-ch scheduling-ch error-ch))}
-                          (when has-error {:class "error"}))
-                   (when has-error
-                     [:div.ui.error.message
-                      [:p has-error]])
-                   [:div.fields
-                    [:div.field (when has-error {:class "error"})
-                     [:label "Quartz format"]
-                     [:input {:id "cron-notation" :type "text" :placeholder "Quartz format"
-                              :value (:schedule/cron-notation schedule)
-                              :on-change (fn [e]
-                                           (let [value (.. js/document (getElementById "cron-notation") -value)]
-                                             (om/set-state! owner [:schedule :schedule/cron-notation] value)))}]]
-                    (when calendars
-                      [:div.field
-                       [:label "Calendar"]
-                       [:select {:value (get-in schedule [:schedule/calendar :calendar/name])
-                                 :on-change (fn [_]
-                                              (let [value (.. (om/get-node owner) (querySelector "select") -value)]
-                                                (om/set-state! owner [:schedule :schedule/calendar :calendar/name] value)))}
-                        [:option {:value ""} ""]
-                        (for [cal calendars]
-                          [:option {:value (cal :calendar/name)} (cal :calendar/name)])]])]
-                   [:div.ui.buttons
-                    [:button.ui.button
-                     {:type "button"
-                      :on-click (fn [e]
-                                  (put! scheduling-ch false))}
-                     "Cancel"]
-                    [:div.or]
-                    [:button.ui.positive.button {:type "submit"} "Save"]]])))
+    (html
+     [:form.ui.form
+      (merge {:on-submit (fn [e]
+                           (.preventDefault e)
+                           (schedule-job job
+                                         schedule
+                                         refresh-job-ch scheduling-ch error-ch))}
+             (when has-error {:class "error"}))
+      (when has-error
+        [:div.ui.error.message
+         [:p has-error]])
+      [:div.fields
+       [:div.field (when has-error {:class "error"})
+        [:label "Quartz format"]
+        [:input {:id "cron-notation" :type "text" :placeholder "Quartz format"
+                 :value (:schedule/cron-notation schedule)
+                 :on-change (fn [e]
+                              (let [value (.. js/document (getElementById "cron-notation") -value)]
+                                (om/set-state! owner [:schedule :schedule/cron-notation] value)))}]]
+       (when calendars
+         [:div.field
+          [:label "Calendar"]
+          [:select {:value (get-in schedule [:schedule/calendar :calendar/name])
+                    :on-change (fn [_]
+                                 (let [value (.. (om/get-node owner) (querySelector "select") -value)]
+                                   (om/set-state! owner [:schedule :schedule/calendar :calendar/name] value)))}
+           [:option {:value ""} ""]
+           (for [cal calendars]
+             [:option {:value (cal :calendar/name)} (cal :calendar/name)])]])]
+      [:div.ui.buttons
+        [:button.ui.button
+         {:type "button"
+          :on-click (fn [e]
+                      (put! scheduling-ch false))}
+         "Cancel"]
+        [:div.or]
+        [:button.ui.positive.button {:type "submit"} "Save"]]])))
 
 (defcomponent next-execution-view [job owner]
   (init-state [_]
