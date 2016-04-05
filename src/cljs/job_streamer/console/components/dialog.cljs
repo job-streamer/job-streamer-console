@@ -16,7 +16,7 @@
       [:div.ui.modal.scrolling.transition.visible.active
        [:div.header "Are you ABSOLUTELY sure?"]
        [:div.ui.warning.message
-        "Unexpected bad things will happen if you don’t read this!"]
+        "Unexpected bad things will happen if you don't read this!"]
        [:div.content
         [:p "This action" [:strong "CANNOT"] " be undone."]
         [:p "Please type in the name of the repository to confirm."]
