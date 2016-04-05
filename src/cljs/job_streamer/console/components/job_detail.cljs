@@ -40,16 +40,13 @@
                                                          (postwalk #(if (map? %) (vals %) %))
                                                          flatten)]
                                             [:li msg])]})
+
     (api/request (str "/" app-name (if job-name (str "/job/" job-name) "/jobs"))
                  (if job-name :PUT :POST)
                  job
                  {:handler (fn [response]
-                             (if job-name
-                               (om/set-state! owner :message {:class "success"
-                                                              :header "Save successful"
-                                                              :body [:p "If you back to list, click a breadcrumb menu."]})
                                (put! jobs-channel [:refresh-jobs true]
-                                     #(set! (.-href js/location) "#/"))))
+                                     #(set! (.-href js/location)  "#/")))
                   :error-handler (fn [response]
                                    (om/set-state! owner :message {:class "error"
                                                                   :header "Save failed"
@@ -424,7 +421,7 @@
                   (html
                     (case this-mode
                       :edit
-                      (om/build job-edit-view job-detail)
+                      (om/build job-edit-view job-detail {:opts opts})
 
                       ;;default
                       [:div.ui.stackable.two.column.grid
