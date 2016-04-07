@@ -19,8 +19,9 @@
   (:import [goog.net.EventType]
            [goog.events EventType]))
 
-(defn save-calendar [calendar owner]
-  (letfn [(on-success [_] (om/set-state! owner :save-status true))
+(defn save-calendar [calendar owner calendars-channel]
+  (letfn [(on-success [_] (do (om/set-state! owner :save-status true)
+                            (put! calendars-channel [:save-calendar calendar])))
           (on-failure [res error-code] (om/set-state! owner :save-error error-code))]
     (if (:new? calendar)
       (api/request "/calendars" :POST calendar
@@ -33,7 +34,7 @@
 (defn delete-calendar [calendar owner calendars-channel]
   (api/request (str "/calendar/" (:calendar/name calendar)) :DELETE
                {:handler (fn [response]
-                           (put! calendars-channel[:delete-calendar calendar])
+                           (put! calendars-channel [:delete-calendar calendar])
                            (set! (.-href js/location) "#/calendars"))
                 :error-handler (fn[res error-code]
                                  (om/set-state! owner :delete-error res))}))
@@ -103,7 +104,7 @@
                                                                                                    (.. js/Kalendae (moment d) day)))}))
                                                             :calendar response))))})))
 
-(defcomponent calendar-edit-view [calendars owner {:keys [cal-name]}]
+(defcomponent calendar-edit-view [calendars owner {:keys [cal-name calendars-channel]}]
   (init-state [_]
               {:calendar (if-let [calendar (some->> calendars
                                                     (filter #(= (:calendar/name %) cal-name))
@@ -178,7 +179,7 @@
                                            [result map] (b/validate calendar :calendar/name v/required)]
                                        (if result
                                          (om/set-state! owner :error-map (:bouncer.core/errors map))
-                                         (save-calendar calendar owner))))}
+                                         (save-calendar calendar owner calendars-channel))))}
                         [:i.save.icon] "Save"]
                        (if save-status
                          [:i.checkmark.green.icon]
@@ -254,11 +255,12 @@
                        (let [[cmd msg] (<! calendars-channel)]
                          (try
                            (case cmd
-                             :delete-calendar (do
-                                                (om/transact! (:calendars app)
-                                                              (fn [cals]
-                                                                (remove #(= % msg) cals)))
-                                                (put! stats-channel true))
+                             :delete-calendar (om/transact! (:calendars app)
+                                                            (fn [cals]
+                                                              (remove #(= % msg) cals)))
+                             :save-calendar (om/transact! (:calendars app)
+                                                          (fn [cals]
+                                                            (conj cals msg)))
                              :open-dangerously-dialog (om/set-state! owner :dangerously-action-data msg))
                            (catch js/Error e))
                          (recur))))
