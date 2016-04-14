@@ -263,7 +263,8 @@
                                                             (conj cals msg)))
                              :open-dangerously-dialog (om/set-state! owner :dangerously-action-data msg))
                            (catch js/Error e))
-                         (recur))))
+                         (when (not= cmd :close-chan-listener)
+                           (recur)))))
   (render-state [_ {:keys [dangerously-action-data]}]
                 (let [mode (second (:mode app))]
                   (html
@@ -298,4 +299,6 @@
                                                           (om/set-state! owner :dangerously-action-data nil)
                                                           ((:ok-handler dangerously-action-data)))
                                             :cancel-handler (fn [] (om/set-state! owner :dangerously-action-data nil))
-                                            :delete-type "calendar")}))]]]))))
+                                            :delete-type "calendar")}))]]])))
+  (will-unmount [_]
+                (put! jobs-channel [:close-chan-listener true])))

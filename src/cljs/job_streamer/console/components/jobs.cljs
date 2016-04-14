@@ -273,7 +273,8 @@
                              (put! jobs-channel [:refresh-jobs true]))
                            :open-dangerously-dialog (om/set-state! owner :dangerously-action-data msg))
                          (catch js/Error e))
-                       (recur))))
+                       (when (not= cmd :close-chan-listener)
+                                  (recur)))))
 (render-state [_ {:keys [executing-job dangerously-action-data]}]
               (let [this-mode (second (:mode app))]
                 (html
@@ -330,4 +331,6 @@
                                                       (om/set-state! owner :dangerously-action-data nil)
                                                       ((:ok-handler dangerously-action-data)))
                                         :cancel-handler (fn [] (om/set-state! owner :dangerously-action-data nil))
-                                        :delete-type "job")}))]))))
+                                        :delete-type "job")}))])))
+  (will-unmount [_]
+                (put! jobs-channel [:close-chan-lisetner true])))
