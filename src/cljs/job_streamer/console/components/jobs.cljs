@@ -104,7 +104,6 @@
 
 (defcomponent job-list-view [app owner]
   (init-state [_] {:now (js/Date.)
-                   :page 1
                    :per 20})
   (will-mount [_]
               (go-loop []
@@ -121,7 +120,8 @@
                                not-empty)
                         (let [page (om/get-state owner :page)
                               per  (om/get-state owner :per)]
-                          (search-jobs app {:q (:query app) :offset (inc (* (dec page) per)) :limit per})))
+                          (search-jobs app {:q (:query app) :offset (inc (* (dec page) per)) :limit per})
+                          {:page page}))
                       (recur)))
   (render-state [_ {:keys [jobs-view-channel now page per]}]
                 (html
@@ -246,14 +246,16 @@
                       [:div.column
                        (om/build pagination-view {:hits (get-in app [:jobs :hits])
                                                   :page page
-                                                  :per per}
+                                                  :per per
+                                                  :jobs-view-channel jobs-view-channel}
                                  {:init-state {:link-fn (fn [pn]
                                                           (search-jobs app {:q (:query app) :offset (inc (* (dec pn) per)) :limit per}))}})]]]))))
 
 
 (defcomponent jobs-view [app owner {:keys [stats-channel jobs-channel]}]
   (init-state [_]
-              {:dangerously-action-data nil})
+              {:dangerously-action-data nil
+               :page 1})
   (will-mount [_]
               (search-jobs app {:q (:query app) :p 1})
               (go-loop []
@@ -267,67 +269,68 @@
                              :refresh-jobs (do (search-jobs app {:q (:query app)})
                                              (put! stats-channel true))
                              :delete-job (do
-                                           (println (get-in app [:jobs :results]))
                                            (fn [results]
                                              (remove #(= % msg) results))
-                             (put! jobs-channel [:refresh-jobs true]))
-                           :open-dangerously-dialog (om/set-state! owner :dangerously-action-data msg))
-                         (catch js/Error e))
-                       (recur))))
-(render-state [_ {:keys [executing-job dangerously-action-data]}]
-              (let [this-mode (second (:mode app))]
-                (html
-                  [:div
-                   [:h2.ui.violet.header
-                    [:i.setting.icon]
-                    [:div.content
-                     "Job"
-                     [:div.sub.header "Edit and execute a job."]]]
-                   (case this-mode
-                     :new
-                     (om/build job-new-view (get-in app [:jobs :results])
-                               {:state {:mode (:mode app)}
-                                :opts {:jobs-channel jobs-channel}})
+                                           (put! jobs-channel [:refresh-jobs true]))
+                             :change-page (om/set-state! owner :page msg)
+                             :open-dangerously-dialog (om/set-state! owner :dangerously-action-data msg))
+                           (catch js/Error e))
+                         (recur))))
+  (render-state [_ {:keys [executing-job dangerously-action-data page]}]
+                (let [this-mode (second (:mode app))]
+                  (html
+                    [:div
+                     [:h2.ui.violet.header
+                      [:i.setting.icon]
+                      [:div.content
+                       "Job"
+                       [:div.sub.header "Edit and execute a job."]]]
+                     (case this-mode
+                       :new
+                       (om/build job-new-view (get-in app [:jobs :results])
+                                 {:state {:mode (:mode app)}
+                                  :opts {:jobs-channel jobs-channel}})
 
-                     :detail
-                     (if (:jobs app)
-                       (let [idx (->> (get-in app [:jobs :results])
-                                      (keep-indexed #(if (= (:job/name %2) (:job-name app)) %1))
-                                      first)]
-                         (om/build job-detail-view (get-in app [:jobs :results idx])
-                                   {:opts {:jobs-channel jobs-channel}
-                                    :state {:mode (:mode app)}}))
-                       [:img {:src "/img/loader.gif"}])
+                       :detail
+                       (if (:jobs app)
+                         (let [idx (->> (get-in app [:jobs :results])
+                                        (keep-indexed #(if (= (:job/name %2) (:job-name app)) %1))
+                                        first)]
+                           (om/build job-detail-view (get-in app [:jobs :results idx])
+                                     {:opts {:jobs-channel jobs-channel}
+                                      :state {:mode (:mode app)}}))
+                         [:img {:src "/img/loader.gif"}])
 
 
 
-                     ;; default
-                     [:div
-                      [:div.ui.top.attached.tabular.menu
-                       [:a (merge {:class "item"
-                                   :href "#/"}
-                                  (when (= this-mode :list) {:class "item active"}))
-                        [:i.list.icon] "list"]
-                       [:a (merge {:class "item"
-                                   :href "#/jobs/timeline"}
-                                  (when (= this-mode :timeline) {:class "item active"}))
-                        [:i.wait.icon] "timeline"]]
-                      [:div.ui.bottom.attached.active.tab.segment
-                       [:div#tab-content
-                        (if (nil? (:jobs app))
-                          [:img {:src "/img/loader.gif"}]
-                          (om/build (case this-mode
-                                      :timeline timeline-view
-                                      ;; default
-                                      job-list-view)
-                                    app {:init-state {:jobs-view-channel jobs-channel}}))]]
-                      (when executing-job
-                        (om/build job-execution-dialog executing-job {:init-state {:jobs-view-channel jobs-channel}}))])
-                   (when dangerously-action-data
-                     (om/build dangerously-action-dialog nil
-                               {:opts (assoc dangerously-action-data
-                                        :ok-handler (fn []
-                                                      (om/set-state! owner :dangerously-action-data nil)
-                                                      ((:ok-handler dangerously-action-data)))
-                                        :cancel-handler (fn [] (om/set-state! owner :dangerously-action-data nil))
-                                        :delete-type "job")}))]))))
+                       ;; default
+                       [:div
+                        [:div.ui.top.attached.tabular.menu
+                         [:a (merge {:class "item"
+                                     :href "#/"}
+                                    (when (= this-mode :list) {:class "item active"}))
+                          [:i.list.icon] "list"]
+                         [:a (merge {:class "item"
+                                     :href "#/jobs/timeline"}
+                                    (when (= this-mode :timeline) {:class "item active"}))
+                          [:i.wait.icon] "timeline"]]
+                        [:div.ui.bottom.attached.active.tab.segment
+                         [:div#tab-content
+                          (if (nil? (:jobs app))
+                            [:img {:src "/img/loader.gif"}]
+                            (om/build (case this-mode
+                                        :timeline timeline-view
+                                        ;; default
+                                        job-list-view)
+                                      app {:init-state {:jobs-view-channel jobs-channel}
+                                           :state {:page page}}))]]
+                        (when executing-job
+                          (om/build job-execution-dialog executing-job {:init-state {:jobs-view-channel jobs-channel}}))])
+                     (when dangerously-action-data
+                       (om/build dangerously-action-dialog nil
+                                 {:opts (assoc dangerously-action-data
+                                          :ok-handler (fn []
+                                                        (om/set-state! owner :dangerously-action-data nil)
+                                                        ((:ok-handler dangerously-action-data)))
+                                          :cancel-handler (fn [] (om/set-state! owner :dangerously-action-data nil))
+                                          :delete-type "job")}))]))))
