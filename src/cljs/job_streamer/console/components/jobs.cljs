@@ -103,22 +103,22 @@
                           :restart "Restart!")]]]]]])))
 
 (defcomponent job-list-view [app owner]
-  (init-state [ctx] {:now (js/Date.)
-                     :per 20})
+  (init-state [_] {:now (js/Date.)
+                   :per 20})
   (will-mount [_]
               (go-loop []
                        (<! (timeout 1000))
                        (om/set-state! owner :now (js/Date.))
                        (recur)))
 
-  (did-mount [ctx]
+  (did-mount [_]
              (go-loop []
                       (<! (timeout 5000))
                       (if (->> (get-in @app [:jobs :results])
                                (filter #(#{:batch-status/started :batch-status/starting :batch-status/undispatched :batch-status/queued}
                                                                  (get-in % [:job/latest-execution :job-execution/batch-status :db/ident])))
                                not-empty)
-                        (let [page ((:page ctx) 1)
+                        (let [page (om/get-state owner :page)
                               per  (om/get-state owner :per)]
                           (search-jobs app {:q (:query app) :offset (inc (* (dec page) per)) :limit per})
                           {:page page}))
@@ -245,11 +245,11 @@
                      [:div.row
                       [:div.column
                        (om/build pagination-view {:hits (get-in app [:jobs :hits])
-                                                  :page (:page ctx)
-                                                  :per per}
+                                                  :page page
+                                                  :per per
+                                                  :jobs-view-channel jobs-view-channel}
                                  {:init-state {:link-fn (fn [pn]
-                                                          (search-jobs app {:q (:query app) :offset (inc (* (dec pn) per)) :limit per}))
-                                               :jobs-view-channel jobs-view-channel}})]]]))))
+                                                          (search-jobs app {:q (:query app) :offset (inc (* (dec pn) per)) :limit per}))}})]]]))))
 
 
 (defcomponent jobs-view [app owner {:keys [stats-channel jobs-channel]}]
@@ -269,16 +269,14 @@
                              :refresh-jobs (do (search-jobs app {:q (:query app)})
                                              (put! stats-channel true))
                              :delete-job (do
-                                           (println (get-in app [:jobs :results]))
                                            (fn [results]
                                              (remove #(= % msg) results))
                                            (put! jobs-channel [:refresh-jobs true]))
-                             :change-page (do {:page msg}
-                                            (println "change page"))
+                             :change-page (om/set-state! owner :page msg)
                              :open-dangerously-dialog (om/set-state! owner :dangerously-action-data msg))
                            (catch js/Error e))
                          (recur))))
-  (render-state [_ {:keys [executing-job dangerously-action-data]}]
+  (render-state [_ {:keys [executing-job dangerously-action-data page]}]
                 (let [this-mode (second (:mode app))]
                   (html
                     [:div
@@ -324,7 +322,8 @@
                                         :timeline timeline-view
                                         ;; default
                                         job-list-view)
-                                      app {:init-state {:jobs-view-channel jobs-channel}}))]]
+                                      app {:init-state {:jobs-view-channel jobs-channel}
+                                           :state {:page page}}))]]
                         (when executing-job
                           (om/build job-execution-dialog executing-job {:init-state {:jobs-view-channel jobs-channel}}))])
                      (when dangerously-action-data
