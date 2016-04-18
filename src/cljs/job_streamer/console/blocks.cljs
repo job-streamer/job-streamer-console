@@ -302,14 +302,16 @@
 (defn emit-element [e]
   (if (= (type e) js/String)
     e
-    (str "<" (name (:tag e))
+    (if (empty? e)
+    ""
+      (str "<" (name (:tag e))
          (when-let [attrs (:attrs e)]
            (->> attrs
                 (map #(str " " (name (first %)) "='" (second %) "'"))
                 (reduce str)))
          (if-let [content (:content e)]
            (apply str ">" (reduce str (map emit-element content)) "</" (name (:tag e)) ">")
-           "/>"))))
+           "/>")))))
 
 (declare component->xml)
 
