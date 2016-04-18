@@ -123,7 +123,7 @@
                           (search-jobs app {:q (:query app) :offset (inc (* (dec page) per)) :limit per})
                           {:page page}))
                       (recur)))
-  (render-state [ctx{:keys [jobs-view-channel now page per]}]
+  (render-state [_{:keys [jobs-view-channel now page per]}]
                 (html
                   (if (= (get-in app [:stats :jobs-count]) 0)
                     [:div.ui.grid

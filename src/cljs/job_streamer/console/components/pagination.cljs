@@ -19,19 +19,16 @@
                       [:div.ui.pagination.menu
                        [:a.icon.item {:on-click (fn [_]
                                                   (when (> page 1) (do (link-fn (dec page))
-                                                                     (println page)
                                                                      (put! jobs-view-channel [:change-page (dec page)]))))}
                         [:i.left.arrow.icon]]
                        (for [p-no (range start (inc end))]
                          [:a.item (merge
                                     {:on-click (fn [_]
                                                  (link-fn p-no)
-                                                 (println p-no)
                                                  (put! jobs-view-channel [:change-page p-no]))}
                                     (when (= page p-no) {:class "active"})) p-no])
                        [:a.icon.item {:on-click (fn [_]
                                                   (when (< page total-pages) (do (link-fn (inc page))
-                                                                               (println page)
                                                                                (put! jobs-view-channel [:change-page (inc page)]))))}
                         [:i.right.arrow.icon]]])))))
 
