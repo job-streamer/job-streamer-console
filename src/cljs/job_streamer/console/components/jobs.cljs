@@ -104,233 +104,231 @@
 
 (defcomponent job-list-view [app owner]
   (init-state [_] {:now (js/Date.)
-                   :page 1
                    :per 20})
   (will-mount [_]
-              (go-loop []
-                       (<! (timeout 1000))
-                       (om/set-state! owner :now (js/Date.))
-                       (recur)))
+    (go-loop []
+      (<! (timeout 1000))
+      (om/set-state! owner :now (js/Date.))
+      (recur)))
 
   (did-mount [_]
-             (go-loop []
-                      (<! (timeout 5000))
-                      (if (->> (get-in @app [:jobs :results])
-                               (filter #(#{:batch-status/started :batch-status/starting :batch-status/undispatched :batch-status/queued}
-                                                                 (get-in % [:job/latest-execution :job-execution/batch-status :db/ident])))
-                               not-empty)
-                        (let [page (om/get-state owner :page)
-                              per  (om/get-state owner :per)]
-                          (search-jobs app {:q (:query app) :offset (inc (* (dec page) per)) :limit per})))
-                      (recur)))
+    (go-loop []
+      (<! (timeout 5000))
+      (if (->> (get-in @app [:jobs :results])
+               (filter #(#{:batch-status/started :batch-status/starting :batch-status/undispatched :batch-status/queued}
+                         (get-in % [:job/latest-execution :job-execution/batch-status :db/ident])))
+               not-empty)
+        (let [page (om/get-state owner :page)
+              per  (om/get-state owner :per)]
+          (search-jobs app {:q (:query app) :offset (inc (* (dec page) per)) :limit per})
+          {:page page}))
+      (recur)))
   (render-state [_ {:keys [jobs-view-channel now page per]}]
-                (html
-                  (if (= (get-in app [:stats :jobs-count]) 0)
-                    [:div.ui.grid
-                     [:div.ui.one.column.row
-                      [:div.column
-                       [:div.ui.icon.message
-                        [:i.child.icon]
-                        [:div.content
-                         [:div.header "Let's create a job!"]
-                         [:p [:button.ui.primary.button
-                              {:type "button"
-                               :on-click (fn [e]
-                                           (set! (.-href js/location) "#/jobs/new"))}
-                              [:i.plus.icon] "Create the first job"]]]]]]]
-                    [:div.ui.grid
-                     [:div.ui.two.column.row
-                      [:div.column
-                       [:button.ui.basic.green.button
-                        {:type "button"
-                         :on-click (fn [e]
-                                     (set! (.-href js/location) "#/jobs/new"))}
-                        [:i.plus.icon] "New"]]
-                      [:div.ui.right.aligned.column
-                       [:button.ui.circular.basic.orange.icon.button
-                        {:type "button"
-                         :on-click (fn [e]
-                                     (search-jobs app {:q (:query app) :offset (inc (* (dec page) per)) :limit per}))}
-                        [:i.refresh.icon]]]]
-                     [:div.row
-                      [:div.column
-                       [:table.ui.table
-                        [:thead
-                         [:tr
-                          [:th {:rowSpan 2} "Job name"]
-                          [:th {:colSpan 3} "Last execution"]
-                          [:th "Next execution"]
-                          [:th {:rowSpan 2} "Operations"]]
-                         [:tr
-                          [:th "Started at"]
-                          [:th "Duration"]
-                          [:th "Status"]
-                          [:th "Start"]]]
-                        [:tbody
-                         (apply concat
-                                (for [{job-name :job/name :as job} (get-in app [:jobs :results])]
-                                  [[:tr
-                                    [:td
-                                     [:a {:href (str "#/job/" job-name)} job-name]]
-                                    (if-let [latest-execution (:job/latest-execution job)]
-                                      (if (#{:batch-status/undispatched :batch-status/queued} (get-in latest-execution [:job-execution/batch-status :db/ident]))
-                                        [:td.center.aligned {:colSpan 3} "Wait for an execution..."]
-                                        (let [start (:job-execution/start-time latest-execution)
-                                              end (or (:job-execution/end-time  latest-execution) now)]
-                                          (list
-                                            [:td.log-link
-                                             (when start
-                                               (let [id (:db/id latest-execution)]
-                                                 [:a {:on-click (fn [_]
-                                                                  (if (not-empty (:job-execution/step-executions latest-execution))
-                                                                    (om/update! latest-execution :job-execution/step-executions nil)
-                                                                    (search-execution latest-execution job-name id)))}
-                                                  (fmt/date-medium start)]))]
-                                            [:td (let [duration (fmt/duration-between start end)]
-                                                   (if (= duration 0) "-" duration)) ]
-                                            (let [status (name (get-in latest-execution [:job-execution/batch-status :db/ident]))]
-                                              [:td {:class (condp = status
-                                                             "completed" "positive"
-                                                             "failed" "negative"
-                                                             "")}
-                                               status]))))
-                                      [:td.center.aligned {:colSpan 3} "No executions"])
-                                    [:td
-                                     (if-let [next-execution (:job/next-execution job)]
-                                       (fmt/date-medium (:job-execution/start-time next-execution))
-                                       "-")]
-                                    [:td (let [status (get-in job [:job/latest-execution :job-execution/batch-status :db/ident])]
-                                           (cond
-                                             (#{:batch-status/undispatched :batch-status/queued :batch-status/started} status)
-                                             [:div.ui.fade.reveal
-                                              [:button.ui.circular.orange.icon.button.visible.content
-                                               {:on-click (fn [_]
-                                                            (if (#{:batch-status/started} status)
-                                                              (stop-job job)
-                                                              (abandon-job job)))}
-                                               [:i.setting.loading.icon]]
-                                              [:button.ui.circular.red.icon.basic.button.hidden.content
+    (html
+     (if (= (get-in app [:stats :jobs-count]) 0)
+       [:div.ui.grid
+        [:div.ui.one.column.row
+         [:div.column
+          [:div.ui.icon.message
+           [:i.child.icon]
+           [:div.content
+            [:div.header "Let's create a job!"]
+            [:p [:button.ui.primary.button
+                 {:type "button"
+                  :on-click (fn [e]
+                              (set! (.-href js/location) "#/jobs/new"))}
+                 [:i.plus.icon] "Create the first job"]]]]]]]
+       [:div.ui.grid
+        [:div.ui.two.column.row
+         [:div.column
+          [:button.ui.basic.green.button
+           {:type "button"
+            :on-click (fn [e]
+                        (set! (.-href js/location) "#/jobs/new"))}
+           [:i.plus.icon] "New"]]
+         [:div.ui.right.aligned.column
+          [:button.ui.circular.basic.orange.icon.button
+           {:type "button"
+            :on-click (fn [e]
+                        (search-jobs app {:q (:query app) :offset (inc (* (dec page) per)) :limit per}))}
+           [:i.refresh.icon]]]]
+        [:div.row
+         [:div.column
+          [:table.ui.table
+           [:thead
+            [:tr
+             [:th {:rowSpan 2} "Job name"]
+             [:th {:colSpan 3} "Last execution"]
+             [:th "Next execution"]
+             [:th {:rowSpan 2} "Operations"]]
+            [:tr
+             [:th "Started at"]
+             [:th "Duration"]
+             [:th "Status"]
+             [:th "Start"]]]
+           [:tbody
+            (apply concat
+                   (for [{job-name :job/name :as job} (get-in app [:jobs :results])]
+                     [[:tr
+                       [:td
+                        [:a {:href (str "#/job/" job-name)} job-name]]
+                       (if-let [latest-execution (:job/latest-execution job)]
+                         (if (#{:batch-status/undispatched :batch-status/queued} (get-in latest-execution [:job-execution/batch-status :db/ident]))
+                           [:td.center.aligned {:colSpan 3} "Wait for an execution..."]
+                           (let [start (:job-execution/start-time latest-execution)
+                                 end (or (:job-execution/end-time  latest-execution) now)]
+                             (list
+                              [:td.log-link
+                               (when start
+                                 (let [id (:db/id latest-execution)]
+                                   [:a {:on-click (fn [_]
+                                                    (if (not-empty (:job-execution/step-executions latest-execution))
+                                                      (om/update! latest-execution :job-execution/step-executions nil)
+                                                      (search-execution latest-execution job-name id)))}
+                                    (fmt/date-medium start)]))]
+                              [:td (let [duration (fmt/duration-between start end)]
+                                     (if (= duration 0) "-" duration)) ]
+                              (let [status (name (get-in latest-execution [:job-execution/batch-status :db/ident]))]
+                                [:td {:class (condp = status
+                                               "completed" "positive"
+                                               "failed" "negative"
+                                               "")}
+                                 status]))))
+                         [:td.center.aligned {:colSpan 3} "No executions"])
+                       [:td
+                        (if-let [next-execution (:job/next-execution job)]
+                          (fmt/date-medium (:job-execution/start-time next-execution))
+                          "-")]
+                       [:td (let [status (get-in job [:job/latest-execution :job-execution/batch-status :db/ident])]
+                              (cond
+                                (#{:batch-status/undispatched :batch-status/queued :batch-status/started} status)
+                                [:div.ui.fade.reveal
+                                 [:button.ui.circular.orange.icon.button.visible.content
+                                  {:on-click (fn [_]
                                                (if (#{:batch-status/started} status)
-                                                 [:i.pause.icon]
-                                                 [:i.stop.icon])]]
+                                                 (stop-job job)
+                                                 (abandon-job job)))}
+                                  [:i.setting.loading.icon]]
+                                 [:button.ui.circular.red.icon.basic.button.hidden.content
+                                  (if (#{:batch-status/started} status)
+                                    [:i.pause.icon]
+                                    [:i.stop.icon])]]
 
-                                             (#{:batch-status/stopped :batch-status/failed} status)
-                                             [:div
-                                              [:button.ui.circular.red.icon.basic.button
-                                               {:on-click (fn [_]
-                                                            (abandon-job job))}
-                                               [:i.stop.icon]]
-                                              [:button.ui.circular.yellow.icon.basic.button
-                                               {:title "restart"
-                                                :on-click (fn [_]
-                                                            (api/request (str "/" app-name "/job/" job-name)
-                                                                         {:handler (fn [job]
-                                                                                     (put! jobs-view-channel [:restart-dialog job]))}))}
-                                               [:i.play.icon]]]
+                                (#{:batch-status/stopped :batch-status/failed} status)
+                                [:div
+                                 [:button.ui.circular.red.icon.basic.button
+                                  {:on-click (fn [_]
+                                               (abandon-job job))}
+                                  [:i.stop.icon]]
+                                 [:button.ui.circular.yellow.icon.basic.button
+                                  {:title "restart"
+                                   :on-click (fn [_]
+                                               (api/request (str "/" app-name "/job/" job-name)
+                                                            {:handler (fn [job]
+                                                                        (put! jobs-view-channel [:restart-dialog job]))}))}
+                                  [:i.play.icon]]]
 
-                                             (#{:batch-status/starting  :batch-status/stopping} status)
-                                             [:div]
+                                (#{:batch-status/starting  :batch-status/stopping} status)
+                                [:div]
 
-                                             :else
-                                             [:button.ui.circular.icon.green.basic.button
-                                              {:on-click (fn [_]
-                                                           (api/request (str "/" app-name "/job/" job-name)
-                                                                        {:handler (fn [job]
-                                                                                    (put! jobs-view-channel [:execute-dialog job]))}))}
-                                              [:i.play.icon]]))]]
-                                   (when-let [step-executions (not-empty (get-in job [:job/latest-execution :job-execution/step-executions]))]
-                                     [:tr
-                                      [:td {:colSpan 8}
-                                       (om/build execution-view step-executions)]])]))]]]]
-                     [:div.row
-                      [:div.column
-                       (om/build pagination-view {:hits (get-in app [:jobs :hits])
-                                                  :page page
-                                                  :per per}
-                                 {:init-state {:link-fn (fn [pn]
-                                                          (search-jobs app {:q (:query app) :offset (inc (* (dec pn) per)) :limit per}))}})]]]))))
+                                :else
+                                [:button.ui.circular.icon.green.basic.button
+                                 {:on-click (fn [_]
+                                              (api/request (str "/" app-name "/job/" job-name)
+                                                           {:handler (fn [job]
+                                                                       (put! jobs-view-channel [:execute-dialog job]))}))}
+                                 [:i.play.icon]]))]]
+                      (when-let [step-executions (not-empty (get-in job [:job/latest-execution :job-execution/step-executions]))]
+                        [:tr
+                         [:td {:colSpan 8}
+                          (om/build execution-view step-executions)]])]))]]]]
+        [:div.row
+         [:div.column
+          (om/build pagination-view {:hits (get-in app [:jobs :hits])
+                                     :page page
+                                     :per per
+                                     :jobs-view-channel jobs-view-channel}
+                    {:init-state {:link-fn (fn [pn]
+                                             (search-jobs app {:q (:query app) :offset (inc (* (dec pn) per)) :limit per}))}})]]]))))
 
 
 (defcomponent jobs-view [app owner {:keys [stats-channel jobs-channel]}]
   (init-state [_]
-              {:dangerously-action-data nil})
+    {:dangerously-action-data nil
+     :page 1})
   (will-mount [_]
-              (search-jobs app {:q (:query app) :p 1})
-              (go-loop []
-                       (let [[cmd msg] (<! jobs-channel)]
-                         (try
-                           (case cmd
-                             :execute-dialog  (om/set-state! owner :executing-job [:execute msg])
-                             :restart-dialog  (om/set-state! owner :executing-job [:restart msg])
-                             :close-dialog (do (om/set-state! owner :executing-job nil)
-                                             (search-jobs app {:q (:query app)}))
-                             :refresh-jobs (do (search-jobs app {:q (:query app)})
-                                             (put! stats-channel true))
-                             :delete-job (do
-                                           (println (get-in app [:jobs :results]))
-                                           (fn [results]
-                                             (remove #(= % msg) results))
-                             (put! jobs-channel [:refresh-jobs true]))
-                           :open-dangerously-dialog (om/set-state! owner :dangerously-action-data msg))
-                         (catch js/Error e))
-                       (when (not= cmd :close-chan-listener)
-                                  (recur)))))
-(render-state [_ {:keys [executing-job dangerously-action-data]}]
-              (let [this-mode (second (:mode app))]
-                (html
-                  [:div
-                   [:h2.ui.violet.header
-                    [:i.setting.icon]
-                    [:div.content
-                     "Job"
-                     [:div.sub.header "Edit and execute a job."]]]
-                   (case this-mode
-                     :new
-                     (om/build job-new-view (get-in app [:jobs :results])
-                               {:state {:mode (:mode app)}
-                                :opts {:jobs-channel jobs-channel}})
+    (search-jobs app {:q (:query app) :p 1})
+    (go-loop []
+      (let [[cmd msg] (<! jobs-channel)]
+        (try
+          (case cmd
+            :execute-dialog  (om/set-state! owner :executing-job [:execute msg])
+            :restart-dialog  (om/set-state! owner :executing-job [:restart msg])
+            :close-dialog (do (om/set-state! owner :executing-job nil)
+                              (search-jobs app {:q (:query app)}))
+            :refresh-jobs (do (search-jobs app {:q (:query app)})
+                              (put! stats-channel true))
+            :delete-job (do
+                          (fn [results]
+                            (remove #(= % msg) results))
+                          (put! jobs-channel [:refresh-jobs true]))
+            :open-dangerously-dialog (om/set-state! owner :dangerously-action-data msg))
+          (catch js/Error e))
+        (when (not= cmd :close-chan-listener)
+          (recur)))))
+  (render-state [_ {:keys [executing-job dangerously-action-data]}]
+    (let [this-mode (second (:mode app))]
+      (html
+       [:div
+        [:h2.ui.violet.header
+         [:i.setting.icon]
+         [:div.content
+          "Job"
+          [:div.sub.header "Edit and execute a job."]]]
+        (case this-mode
+          :new
+          (om/build job-new-view (get-in app [:jobs :results])
+                    {:state {:mode (:mode app)}
+                     :opts {:jobs-channel jobs-channel}})
 
-                     :detail
-                     (if (:jobs app)
-                       (let [idx (->> (get-in app [:jobs :results])
-                                      (keep-indexed #(if (= (:job/name %2) (:job-name app)) %1))
-                                      first)]
-                         (om/build job-detail-view (get-in app [:jobs :results idx])
-                                   {:opts {:jobs-channel jobs-channel}
-                                    :state {:mode (:mode app)}}))
-                       [:img {:src "/img/loader.gif"}])
+          :detail
+          (if (:jobs app)
+            (let [idx (->> (get-in app [:jobs :results])
+                           (keep-indexed #(if (= (:job/name %2) (:job-name app)) %1))
+                           first)]
+              (om/build job-detail-view (get-in app [:jobs :results idx])
+                        {:opts {:jobs-channel jobs-channel}
+                         :state {:mode (:mode app)}}))
+            [:img {:src "/img/loader.gif"}])
 
-
-
-                     ;; default
-                     [:div
-                      [:div.ui.top.attached.tabular.menu
-                       [:a (merge {:class "item"
-                                   :href "#/"}
-                                  (when (= this-mode :list) {:class "item active"}))
-                        [:i.list.icon] "list"]
-                       [:a (merge {:class "item"
-                                   :href "#/jobs/timeline"}
-                                  (when (= this-mode :timeline) {:class "item active"}))
-                        [:i.wait.icon] "timeline"]]
-                      [:div.ui.bottom.attached.active.tab.segment
-                       [:div#tab-content
-                        (if (nil? (:jobs app))
-                          [:img {:src "/img/loader.gif"}]
-                          (om/build (case this-mode
-                                      :timeline timeline-view
-                                      ;; default
-                                      job-list-view)
-                                    app {:init-state {:jobs-view-channel jobs-channel}}))]]
-                      (when executing-job
-                        (om/build job-execution-dialog executing-job {:init-state {:jobs-view-channel jobs-channel}}))])
-                   (when dangerously-action-data
-                     (om/build dangerously-action-dialog nil
-                               {:opts (assoc dangerously-action-data
-                                        :ok-handler (fn []
-                                                      (om/set-state! owner :dangerously-action-data nil)
-                                                      ((:ok-handler dangerously-action-data)))
-                                        :cancel-handler (fn [] (om/set-state! owner :dangerously-action-data nil))
-                                        :delete-type "job")}))])))
-  (will-unmount [_]
-                (put! jobs-channel [:close-chan-lisetner true])))
+          ;; default
+          [:div
+           [:div.ui.top.attached.tabular.menu
+            [:a (merge {:class "item"
+                        :href "#/"}
+                       (when (= this-mode :list) {:class "item active"}))
+             [:i.list.icon] "list"]
+            [:a (merge {:class "item"
+                        :href "#/jobs/timeline"}
+                       (when (= this-mode :timeline) {:class "item active"}))
+             [:i.wait.icon] "timeline"]]
+           [:div.ui.bottom.attached.active.tab.segment
+            [:div#tab-content
+             (if (nil? (:jobs app))
+               [:img {:src "/img/loader.gif"}]
+               (om/build (case this-mode
+                           :timeline timeline-view
+                           ;; default
+                           job-list-view)
+                         app {:init-state {:jobs-view-channel jobs-channel}
+                              :state {:page page}}))]]
+           (when executing-job
+             (om/build job-execution-dialog executing-job {:init-state {:jobs-view-channel jobs-channel}}))])
+        (when dangerously-action-data
+          (om/build dangerously-action-dialog nil
+                    {:opts (assoc dangerously-action-data
+                                  :ok-handler (fn []
+                                                (om/set-state! owner :dangerously-action-data nil)
+                                                ((:ok-handler dangerously-action-data)))
+                                  :cancel-handler (fn [] (om/set-state! owner :dangerously-action-data nil))
+                                  :delete-type "job")}))]))))
