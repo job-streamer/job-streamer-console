@@ -35,9 +35,7 @@
 
 (defn xml->next [next]
   {:next/on (field-value next "on")
-   :next/to (some-> (.select next "> statement[name=components] > block[type~=(step|flow|split|decision)]")
-                    first
-                    (field-value "name"))})
+   :next/to (xml->components next)})
 
 (defn xml->fail [fail]
   {:fail/on (field-value fail "on")

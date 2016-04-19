@@ -347,7 +347,7 @@
                                         (when-let [to (:next/to transition)]
                                           [{:tag :statement
                                             :attrs {:name "components"}
-                                            :content [(component->xml (first (filter #(= (component-name %) to) components)) components)]}])
+                                            :content [(component->xml (first to) to)]}])
                                         (when-let [rest-transitions (not-empty (rest transitions))]
                                           [{:tag :next
                                             :content [(transitions->xml rest-transitions components)]}]))}

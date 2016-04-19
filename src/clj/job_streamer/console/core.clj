@@ -26,7 +26,7 @@
                  "/css/vendors/kalendae.css"
                  "/css/job-streamer.css")
     (include-js  "/js/vendors/vis.min.js"
-                 (if (:dev env) "/js/vendors/blockly.js" "/js/vendors/blockly_compressed.js") 
+                 "/js/vendors/blockly_compressed.js"
                  "/js/vendors/kalendae.standalone.min.js")
     (when (:dev env)
       (include-js "/react/react.js"))]
