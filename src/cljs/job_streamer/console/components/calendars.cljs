@@ -15,7 +15,8 @@
             [job-streamer.console.format :as fmt])
 
   (:use [cljs.reader :only [read-string]]
-        (job-streamer.console.components.dialog :only[dangerously-action-dialog]))
+        (job-streamer.console.components.dialog :only[dangerously-action-dialog])
+        (job-streamer.console.routing :only[fetch-calendars]))
   (:import [goog.net.EventType]
            [goog.events EventType]))
 
@@ -258,9 +259,11 @@
                              :delete-calendar (om/transact! (:calendars app)
                                                             (fn [cals]
                                                               (remove #(= % msg) cals)))
-                             :save-calendar (om/transact! (:calendars app)
-                                                          (fn [cals]
-                                                            (conj cals msg)))
+                             :save-calendar (fetch-calendars
+                                              (fn [response]
+                                                (om/transact! app (fn [cursor]
+                                                                          (assoc cursor
+                                                                            :calendars response)))))
                              :open-dangerously-dialog (om/set-state! owner :dangerously-action-data msg))
                            (catch js/Error e))
                          (when (not= cmd :close-chan-listener)
