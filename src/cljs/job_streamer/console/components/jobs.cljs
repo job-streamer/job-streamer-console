@@ -272,11 +272,12 @@
                           (fn [results]
                             (remove #(= % msg) results))
                           (put! jobs-channel [:refresh-jobs true]))
+            :change-page (om/set-state! owner :page msg)
             :open-dangerously-dialog (om/set-state! owner :dangerously-action-data msg))
           (catch js/Error e))
         (when (not= cmd :close-chan-listener)
           (recur)))))
-  (render-state [_ {:keys [executing-job dangerously-action-data]}]
+  (render-state [_ {:keys [executing-job dangerously-action-data page]}]
     (let [this-mode (second (:mode app))]
       (html
        [:div
@@ -323,7 +324,8 @@
                          app {:init-state {:jobs-view-channel jobs-channel}
                               :state {:page page}}))]]
            (when executing-job
-             (om/build job-execution-dialog executing-job {:init-state {:jobs-view-channel jobs-channel}}))])
+             (om/build job-execution-dialog executing-job {:init-state {:jobs-view-channel jobs-channel}
+                                                           :state {:page page}}))])
         (when dangerously-action-data
           (om/build dangerously-action-dialog nil
                     {:opts (assoc dangerously-action-data
