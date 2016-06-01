@@ -63,7 +63,7 @@
                              :border {:color "#fed1ab"}}]]
 
    [:.k-days
-    [:span {:box-sizing "initial"}]]
+    [:span {:box-sizing "content-box"}]]
    [:div.ui.input.block {:display "block"}]])
 
 
