@@ -32,25 +32,25 @@
                   #(assoc %
                           :mode [:jobs :new])))
 
-  (sec/defroute #"/job/(\w+)" [job-name]
+  (sec/defroute #"/job/([\w\-]+)" [job-name]
     (om/transact! app-state
                   #(assoc %
                           :mode [:jobs :detail :current]
                           :job-name job-name)))
 
-  (sec/defroute #"/job/(\w+)/edit" [job-name]
+  (sec/defroute #"/job/([\w\-]+)/edit" [job-name]
     (om/transact! app-state
                   #(assoc %
                           :mode [:jobs :detail :current :edit]
                           :job-name job-name)))
 
-  (sec/defroute #"/job/(\w+)/history" [job-name]
+  (sec/defroute #"/job/([\w\-]+)/history" [job-name]
     (om/transact! app-state
                   #(assoc %
                           :mode [:jobs :detail :history]
                           :job-name job-name)))
 
-  (sec/defroute #"/job/(\w+)/settings" [job-name]
+  (sec/defroute #"/job/([\w\-]+)/settings" [job-name]
     (om/transact! app-state
                   #(assoc %
                           :mode [:jobs :detail :settings]
@@ -79,8 +79,8 @@
                                           :cal-name nil
                                           :calendars response
                                           :mode [:calendars :new])))))))
-  
-  (sec/defroute #"/calendar/(\w+)" [cal-name]
+
+  (sec/defroute #"/calendar/([\w\-]+)" [cal-name]
     (if (:calendars @app-state)
       (om/transact! app-state #(assoc % :mode [:calendars :detail] :cal-name cal-name))
       (fetch-calendars
@@ -91,7 +91,7 @@
                                           :cal-name cal-name
                                           :mode [:calendars :detail])))))))
 
-  (sec/defroute #"/calendar/(\w+)/edit" [cal-name]
+  (sec/defroute #"/calendar/([\w\-]+)/edit" [cal-name]
     (if (:calendars @app-state)
       (om/transact! app-state #(assoc % :mode [:calendars :edit] :cal-name cal-name))
       (fetch-calendars
