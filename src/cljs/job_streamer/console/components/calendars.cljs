@@ -119,20 +119,35 @@
                :kalendae nil
                :save-status false
                :save-error nil})
-  (render-state [_ {:keys [kalendae calendar error-map save-error save-status mode]}]
+  (render-state [_ {:keys [kalendae calendar error-map save-error save-status mode message]}]
                 (html
                   [:form.ui.form
                    (om/build breadcrumb-view mode {:init-state {:calendar-name cal-name}})
                    [:h4.ui.dividing.header (if (:new? calendar) "New calendar" "Edit calendar")]
                    [:div.ui.grid
+                    [:div.row {:style {:display (if message "block" "none")}}
+                     [:div.column
+                      [:div.ui.message {:class (:class message)
+                                        :style {:display (if message "block" "none")}}
+                       [:div.header (:header message)]
+                       [:div (:body message)]]]]
                     [:div.row
                      [:div.column
                       (if (:new? calendar)
                         [:div.field (when (:calendar/name error-map) {:class "error"})
                          [:label "Calendar name"]
                          [:input {:type "text" :id "cal-name" :value (:calendar/name calendar)
-                                  :on-change (fn [e] (om/set-state! owner [:calendar :calendar/name]
-                                                                    (.. js/document (getElementById "cal-name") -value)))
+                                  :on-change (fn [e] (let [editting-cal-name (.. js/document (getElementById "cal-name") -value)](om/set-state! owner [:calendar :calendar/name]
+                                                                    (.. js/document (getElementById "cal-name") -value))
+                                               (api/request (str "/calendar/" editting-cal-name) :GET
+                                                            {:handler (fn [response]
+                                                                        (om/set-state! owner :message {:class "error"
+                                                                                                       :header "This name is already used"
+                                                                                                       :body [:p "If you don't want to overrite, don't push save button."]}))
+                                                             :error-handler (fn[_]
+                                                                              (om/set-state! owner :message {:class "success"
+                                                                                                       :header "This name is unused"
+                                                                                                       :body [:p "You can push save button safely."]}))})))
                                   :on-focus (fn [e] (om/set-state! owner [:error-map :calendar/name] nil))}]
                          (when-let [msgs (:calendar/name error-map)]
                            [:div.ui.popup.transition.visible.top.left
@@ -262,8 +277,8 @@
                              :save-calendar (fetch-calendars
                                               (fn [response]
                                                 (om/transact! app (fn [cursor]
-                                                                          (assoc cursor
-                                                                            :calendars response)))))
+                                                                    (assoc cursor
+                                                                      :calendars response)))))
                              :open-dangerously-dialog (om/set-state! owner :dangerously-action-data msg))
                            (catch js/Error e))
                          (when (not= cmd :close-chan-listener)
@@ -304,4 +319,4 @@
                                             :cancel-handler (fn [] (om/set-state! owner :dangerously-action-data nil))
                                             :delete-type "calendar")}))]]])))
   (will-unmount [_]
-                (put! jobs-channel [:close-chan-listener true])))
+                (put! calendars-channel [:close-chan-listener true])))
