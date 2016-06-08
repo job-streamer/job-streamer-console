@@ -106,7 +106,9 @@
                                 (field-value "name"))]
      {:step/next next-step})
    (when-let [transition (first (.select step "> statement[name=transitions] > block[type~=(next|end|fail|stop)]"))]
-     {:step/transitions (xml->transitions transition)})))
+     {:step/transitions (xml->transitions transition)})
+   (when (first (.select step "> statement[name=transitions] > block[type~=(step|flow|split|decision)]"))
+     (throw (IllegalStateException. "[step|flow|split|decision] must not in step.")))))
 
 (defn xml->component [el]
   (case (.attr el "type")
@@ -137,5 +139,6 @@
                                   (map (fn [prop] (xml->property prop)))
                                   (reduce merge))})
       (throw (IllegalStateException. "Block must be one.")))))
+
 
 

@@ -61,7 +61,9 @@
                  {:handler (fn [response]
                              (save-job-control-bus response owner job-name jobs-channel))
                   :error-handler (fn [response]
-                                   (println response))
+                                   (om/set-state! owner :message {:class "error"
+                                                                  :header "Invalid job format"
+                                                                  :body [:p (:message response)]}))
                   :format :xml})))
 
 (defn search-executions [job-name query cb]

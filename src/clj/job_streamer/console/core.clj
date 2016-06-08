@@ -51,7 +51,7 @@
     [:block {:type "end"}]
     [:block {:type "fail"}]
     [:block {:type "stop"}]]
-    
+
    (include-js (str "/js/job-streamer"
                     (when-not (:dev env) ".min") ".js"))))
 
@@ -64,7 +64,8 @@
           {:headers {"Content-Type" "application/edn"}
            :body (pr-str (jobxml/xml->job xml))}
           (catch Exception e
-            {:headers {"Content-Type" "application/edn"}
+            {:status 400
+             :headers {"Content-Type" "application/edn"}
              :body (pr-str {:message (.getMessage e)})})))))
   (GET "/react/react.js" [] (-> (resource-response "cljsjs/development/react.inc.js")
                                 (content-type "text/javascript")))
