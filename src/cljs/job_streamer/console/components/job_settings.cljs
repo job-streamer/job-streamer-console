@@ -162,7 +162,7 @@
           (when (:job/exclusive? settings)
             {:class "checked"}))
          [:input {:id "exclusive-checkbox" :type "checkbox" :checked (:job/exclusive? settings)}]
-         [:label "If this job should be executed exclusively, check this"
+         [:label {:for "exclusive-checkbox"} "If this job should be executed exclusively, check this"
           (when (:exclusive save-status) [:i.checkmark.green.icon])]]
 
         [:h4.ui.header "Execution constraints"]
