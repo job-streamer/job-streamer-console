@@ -21,13 +21,18 @@
   (api/request (str "/" app-name "/jobs?with=notation,shcedule,settings")
                {:handler (fn [response]
                            (let [blob (goog.fs/getBlobWithProperties (array (pr-str (:results response))) "application/edn")
-                                 click-event (. js/document createEvent "HTMLEvents")
-                                 anchor (. js/document createElement "a")]
-                             (.initEvent click-event "click")
-                             (doto anchor
-                               (.setAttribute "href" (goog.fs/createObjectUrl blob))
-                               (.setAttribute "download" "jobs.edn"))
-                             (.dispatchEvent anchor click-event)))}))
+                                 anchor (. js/document createElement "a")
+                                 url (or (. js/window -URL) (. js/window -webkitURL))]
+                             (if (.. js/window -navigator -msSaveBlob)
+                               ;for IE
+                               (.msSaveBlob (. js/window -navigator)  blob "jobs.edn")
+                               ;for Firefox and Chorome
+                                 (do
+                                   (.setAttribute anchor "href" (.createObjectURL url blob))
+                                   (.setAttribute anchor "download" "jobs.edn")
+                                   (.appendChild (. js/document -body) anchor)
+                                   (.click anchor)
+                                   (.removeChild (. js/document -body) anchor)))))}))
 
 (defn import-xml-job [jobxml callback]
   (api/request (str "/" app-name "/jobs") :POST jobxml
