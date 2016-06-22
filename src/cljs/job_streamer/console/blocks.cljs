@@ -10,12 +10,13 @@
             [goog.ui.Component]
             [goog.ui.Menu]
             [job-streamer.console.format :as fmt]
-            [job-streamer.console.api :as api])
+            [job-streamer.console.api :as api]
+            [Blockly])
   (:use [cljs.reader :only [read-string]]))
 
 (enable-console-print!)
 
-(aset (.-Blocks js/Blockly) "property-container"
+(aset Blockly.Blocks "property-container"
       (clj->js {:init (fn []
                         (this-as
                           this
@@ -25,7 +26,7 @@
                             (.appendStatementInput "STACK"))
                           (set! (.-contextMenu this) false)))}))
 
-(aset (.-Blocks js/Blockly) "property-item"
+(aset Blockly.Blocks "property-item"
       (clj->js {:init (fn []
                         (this-as
                           this
@@ -52,12 +53,12 @@
    :decompose (fn [workspace]
                 (this-as
                   this
-                  (let [container-block (.obtain (.-Block  js/Blockly) workspace (str "property-container"))]
+                  (let [container-block (.obtain Blockly.Block workspace (str "property-container"))]
                     (.initSvg container-block)
                     (loop [connection (.. container-block (getInput "STACK") -connection)
                            i 0]
                       (when (< i (.-itemCount this))
-                        (let [item-block (.obtain (.-Block  js/Block) workspace (str "property-item"))]
+                        (let [item-block (.obtain Blockly.Block workspace (str "property-item"))]
                           (.initSvg item-block)
                           (.connect connection (.-previousConnection item-block))
                           (recur (.-nextConnection item-block) (inc i)))))
@@ -129,7 +130,7 @@
            {:type :statement
             :name "components"}])
 
-(let [block (aget (.-Blocks js/Blockly) "job")]
+(let [block (aget Blockly.Blocks "job")]
   (doseq [[k f] mutate-behavior]
     (aset block (name k) f)))
 
@@ -148,9 +149,16 @@
            {:type :statement
             :name "transitions"}])
 
-(let [block (aget (.-Blocks js/Blockly) "step")]
+(let [block (aget Blockly.Blocks "step")]
   (doseq [[k f] mutate-behavior]
     (aset block (name k) f)))
+
+(defn- to-dropdown-vals [vs]
+  (if-let [values (not-empty
+                   (map #(->> (repeat %)
+                              (take 2)) vs))]
+    values
+    [["" ""]]))
 
 (defn get-classes[ch]
   (api/request (str "/default/batch-components") :GET
@@ -165,32 +173,28 @@
                                :fields [{:type :dropdown
                                          :name "ref"
                                          :label "Batchlet"
-                                         :value (map #(->> (repeat %)
-                                                           (take 2)) batchlets)}])
+                                         :value (to-dropdown-vals batchlets)}])
                              (defblock reader
                                :colour 45
                                :output "Reader"
                                :fields [{:type :dropdown
                                          :name "ref"
                                          :label "Reader"
-                                         :value (map #(->> (repeat %)
-                                                           (take 2)) item-readers)}])
+                                         :value (to-dropdown-vals item-readers)}])
                              (defblock writer
                                :colour 45
                                :output "Writer"
                                :fields [{:type :dropdown
                                          :name "ref"
                                          :label "Writer"
-                                         :value (map #(->> (repeat %)
-                                                           (take 2)) item-writers)}])
+                                         :value (to-dropdown-vals item-writers)}])
                              (defblock processor
                                :colour 45
                                :output "Processor"
                                :fields [{:type :dropdown
                                          :name "ref"
                                          :label "Processor"
-                                         :value (map #(->> (repeat %)
-                                                           (take 2)) item-processors)}])
+                                         :value (to-dropdown-vals item-processors)}])
                              (if(not(nil? ch))(put! ch true))))}))
 (get-classes nil)
 

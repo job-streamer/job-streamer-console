@@ -14,7 +14,8 @@
             [job-streamer.console.api :as api]
             [job-streamer.console.validators :as cv]
             [job-streamer.console.format :as fmt]
-            [job-streamer.console.blocks :as blocks])
+            [job-streamer.console.blocks :as blocks]
+            [Blockly])
   (:use [cljs.reader :only [read-string]]
         [clojure.walk :only [postwalk]]
         [job-streamer.console.blocks :only [job->xml]]
@@ -115,15 +116,15 @@
       (let [job (<! fetch-job-ch)
             xml (job->xml (read-string (:job/edn-notation job)))]
         (om/set-state! owner :job job)
-        (.domToWorkspace (.-Xml js/Blockly) (.-mainWorkspace js/Blockly)
-                         (.textToDom (.-Xml js/Blockly) (str "<xml>" xml "</xml>")))))
+        (.domToWorkspace Blockly.Xml Blockly/mainWorkspace
+                         (.textToDom Blockly.Xml (str "<xml>" xml "</xml>")))))
 
     (api/request (str "/" app-name "/job/" job-name)
                  {:handler (fn [response]
                              (put! fetch-job-ch response))})
-    (.inject js/Blockly
-             (.querySelector js/document ".job-blocks-inner")
-             (clj->js {:toolbox "<xml></xml>"
+    (Blockly/inject
+     (.querySelector js/document ".job-blocks-inner")
+     (clj->js {:toolbox "<xml></xml>"
                        :readOnly true}))))
 
 (defn status-color [status]
@@ -146,13 +147,13 @@
 
 (defn inject-and-dom-to-workspace[job owner]
   (when-let [edn (:job/edn-notation job)]
-    (.inject js/Blockly
-             (.. (om/get-node owner) (querySelector ".job-blocks-inner"))
-             (clj->js {:toolbox (.getElementById js/document "job-toolbox")}))
+    (Blockly/inject
+     (.. (om/get-node owner) (querySelector ".job-blocks-inner"))
+     (clj->js {:toolbox (.getElementById js/document "job-toolbox")}))
     (let [xml (job->xml (read-string edn))]
-      (.domToWorkspace (.-Xml js/Blockly)
-                       (.-mainWorkspace js/Blockly)
-                       (.textToDom (.-Xml js/Blockly) (str "<xml>" xml "</xml>"))))))
+      (.domToWorkspace Blockly.Xml
+                       Blockly/mainWorkspace
+                       (.textToDom Blockly.Xml (str "<xml>" xml "</xml>"))))))
 
 (defcomponent breadcrumb-view [mode owner]
   (render-state [_ {:keys [job-name]}]
@@ -195,8 +196,8 @@
                            [:div.icon.ui.buttons
                             [:button.ui.positive.button
                              {:on-click (fn [e]
-                                          (let [xml (.workspaceToDom (.-Xml js/Blockly) (.-mainWorkspace js/Blockly))]
-                                            (save-job (.domToText (.-Xml js/Blockly) xml)
+                                          (let [xml (.workspaceToDom Blockly.Xml Blockly/mainWorkspace)]
+                                            (save-job (.domToText Blockly.Xml xml)
                                                       owner (:job/name job) jobs-channel)))}
                              [:i.save.icon] "Save"]]]]]]]))
   (did-mount [_]
@@ -214,9 +215,9 @@
              (let [ch (chan)]
                (go-loop []
                         (let [_ (<! ch)]
-                          (.inject js/Blockly
-                                   (.. (om/get-node owner) (querySelector ".job-blocks-inner"))
-                                   (clj->js {:toolbox (.getElementById js/document "job-toolbox")}))))
+                          (Blockly/inject
+                           (.. (om/get-node owner) (querySelector ".job-blocks-inner"))
+                           (clj->js {:toolbox (.getElementById js/document "job-toolbox")}))))
                (blocks/get-classes ch))))
 
 

@@ -11,7 +11,7 @@
                  [duct "0.7.0"]
                  [meta-merge "1.0.0"]
 
-                 [org.clojure/clojurescript "1.9.76"]
+                 [org.clojure/clojurescript "1.7.189"]
                  [org.clojure/core.async "0.2.374"]
                  [sablono "0.7.2"]
                  [prismatic/om-tools "0.4.0"]
@@ -25,8 +25,6 @@
   :plugins [[lein-cljsbuild "1.1.2"]
             [lein-environ "1.0.3"]]
 
-  :ring {:handler job-streamer.console.core/app}
-
   :main ^:skip-aot job-streamer.console.main
   :target-path "target/%s/"
   :resource-paths ["resources" "target/cljsbuild"]
@@ -37,6 +35,7 @@
    [{:id "dev"
      :source-paths ["src/cljs"]
      :compiler {:output-to "target/cljsbuild/job-streamer-console/public/js/job-streamer.js"
+                :libs ["resources/closure-js/libs"]
                 :pretty-print true
                 :optimizations :simple}}
     {:id "production"

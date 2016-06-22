@@ -18,11 +18,12 @@
   {:app {:middleware [wrap-stacktrace]}
    :figwheel
    {:css-dirs ["resources/job-streamer-console/public/css"]
-    :builds   [{:source-paths ["src" "dev"]
+    :builds   [{:source-paths ["src/cljs" "dev"]
                 :build-options
                 {:optimizations :none
                  :main "cljs.user"
                  :asset-path "/js"
+                 :libs ["resources/closure-js/libs"]
                  :output-to  "target/figwheel/job-streamer-console/public/js/job-streamer.js"
                  :output-dir "target/figwheel/job-streamer-console/public/js"
                  :source-map true
@@ -40,7 +41,7 @@
 (when (io/resource "dev/local.clj")
   (load "dev/local"))
 
-(gen/set-ns-prefix 'job-streamer-console)
+(gen/set-ns-prefix 'job-streamer.console)
 
 (reloaded.repl/set-init! new-system)
 
