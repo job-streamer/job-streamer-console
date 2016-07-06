@@ -139,10 +139,10 @@
                                           (api/request (str "/calendar/" editting-cal-name) :GET
                                                        {:handler (fn [response]
                                                                    (om/set-state! owner [:error-map :calendar/name]
-                                                                                  ["Name is already taken"]))})))
-                     :on-focus (fn [e] (om/update-state! owner [:error-map]
-                                                         #(dissoc % :calendar/name)))}]
-            
+                                                                                  ["Name is already taken"]))
+                                                        :error-handler(fn [e] (om/update-state! owner [:error-map]
+                                                         #(dissoc % :calendar/name)))})))}]
+
             (when-let [msgs (:calendar/name error-map)]
               [:div.ui.popup.transition.visible.top.left
                (first msgs)])]
