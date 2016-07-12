@@ -60,7 +60,6 @@
                  :POST
                  xml
                  {:handler (fn [response]
-                             (println response)
                              (if job-name
                                (save-job-control-bus response owner job-name jobs-channel)
                                (api/request (str "/" app-name "/job/" (:job/name response))
