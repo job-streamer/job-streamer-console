@@ -46,8 +46,8 @@
                  (if job-name :PUT :POST)
                  job
                  {:handler (fn [response]
-                               (put! jobs-channel [:refresh-jobs true]
-                                     #(set! (.-href js/location)  "#/")))
+                             (put! jobs-channel [:refresh-jobs true]
+                                   #(set! (.-href js/location)  "#/")))
                   :error-handler (fn [response]
                                    (om/set-state! owner :message {:class "error"
                                                                   :header "Save failed"
@@ -60,7 +60,16 @@
                  :POST
                  xml
                  {:handler (fn [response]
-                             (save-job-control-bus response owner job-name jobs-channel))
+                             (if job-name
+                               (save-job-control-bus response owner job-name jobs-channel)
+                               (api/request (str "/" app-name "/job/" (:job/name response))
+                                            {:handler (fn[_]
+                                                        (om/set-state! owner :message {:class "error"
+                                                                                       :header "Name Already Used"
+                                                                                       :body [:p "This job name is already used"]}))
+                                             :error-handler (fn[_] (save-job-control-bus response owner job-name jobs-channel))}))
+
+                             )
                   :error-handler (fn [response]
                                    (om/set-state! owner :message {:class "error"
                                                                   :header "Invalid job format"
@@ -113,11 +122,11 @@
           (recur node)))
 
     (go
-      (let [job (<! fetch-job-ch)
-            xml (job->xml (read-string (:job/edn-notation job)))]
-        (om/set-state! owner :job job)
-        (.domToWorkspace Blockly.Xml Blockly/mainWorkspace
-                         (.textToDom Blockly.Xml (str "<xml>" xml "</xml>")))))
+     (let [job (<! fetch-job-ch)
+           xml (job->xml (read-string (:job/edn-notation job)))]
+       (om/set-state! owner :job job)
+       (.domToWorkspace Blockly.Xml Blockly/mainWorkspace
+                        (.textToDom Blockly.Xml (str "<xml>" xml "</xml>")))))
 
     (api/request (str "/" app-name "/job/" job-name)
                  {:handler (fn [response]
@@ -125,7 +134,7 @@
     (Blockly/inject
      (.querySelector js/document ".job-blocks-inner")
      (clj->js {:toolbox "<xml></xml>"
-                       :readOnly true}))))
+               :readOnly true}))))
 
 (defn status-color [status]
   (case status
@@ -158,24 +167,24 @@
 (defcomponent breadcrumb-view [mode owner]
   (render-state [_ {:keys [job-name]}]
                 (html
-                  [:div.ui.breadcrumb
-                   (drop-last
-                     (interleave
-                       (loop [i 1, items []]
-                         (if (<= i (count mode))
-                           (recur (inc i)
-                                  (conj items (if-let [item (get breadcrumb-elements
-                                                                 (->> mode
-                                                                      (take i)
-                                                                      (map name)
-                                                                      (string/join ".")
-                                                                      keyword))]
-                                                [:a.section {:href (gstring/format (:href item) job-name)}
-                                                 (gstring/format (:name item) job-name)])))
-                           (let [res (keep identity items)]
-                             (conj (vec (drop-last res))
-                                   (into [:div.section.active] (rest (last res)))))))
-                       (repeat [:i.right.chevron.icon.divider])))])))
+                 [:div.ui.breadcrumb
+                  (drop-last
+                   (interleave
+                    (loop [i 1, items []]
+                      (if (<= i (count mode))
+                        (recur (inc i)
+                               (conj items (if-let [item (get breadcrumb-elements
+                                                              (->> mode
+                                                                   (take i)
+                                                                   (map name)
+                                                                   (string/join ".")
+                                                                   keyword))]
+                                             [:a.section {:href (gstring/format (:href item) job-name)}
+                                              (gstring/format (:name item) job-name)])))
+                        (let [res (keep identity items)]
+                          (conj (vec (drop-last res))
+                                (into [:div.section.active] (rest (last res)))))))
+                    (repeat [:i.right.chevron.icon.divider])))])))
 
 (defcomponent job-edit-view [job owner {:keys [jobs-channel]}]
   (render-state [_ {:keys [message]}]
@@ -231,59 +240,59 @@
                                    (om/set-state! owner :executions response))))
   (render-state [_ {:keys [executions page per]}]
                 (html
-                  [:div.ui.grid
-                   [:div.row
-                    [:div.column
-                     [:table.ui.compact.table
-                      [:thead
-                       [:tr
-                        [:th "#"]
-                        [:th "Agent"]
-                        [:th "Started at"]
-                        [:th "Duration"]
-                        [:th "Status"]]]
-                      [:tbody
-                       (map-indexed
-                         (fn [idx {:keys [job-execution/start-time job-execution/end-time] :as execution}]
-                           (list
-                             [:tr
-                              [:td.log-link
-                               [:a {:on-click
-                                    (fn [_]
-                                      (if (not-empty (:job-execution/step-executions execution))
-                                        (om/set-state! owner [:executions :results idx :job-execution/step-executions] nil)
-                                        (search-execution owner (:job/name @job) (:db/id execution) idx)))}
-                                (:db/id execution)]]
-                              [:td (get-in execution [:job-execution/agent :agent/name] "Unknown")]
-                              [:td (fmt/date-medium (:job-execution/start-time execution))]
-                              [:td (let [duration (fmt/duration-between
-                                                    (:job-execution/start-time execution)
-                                                    (:job-execution/end-time execution))]
-                                     (if (= duration 0) "-" duration))]
-                              (let [status (name (get-in execution [:job-execution/batch-status :db/ident]))]
-                                [:td {:class (condp = status
-                                               "completed" "positive"
-                                               "failed" "error"
-                                               "abadoned" "warning"
-                                               "stopped"  "warning"
-                                               "")}
-                                 status])]
-                             (when-let [step-executions (not-empty (:job-execution/step-executions execution))]
-                               [:tr
-                                [:td {:colSpan 5}
-                                 (om/build execution-view step-executions)]])))
-                         (:results executions))]]]]
+                 [:div.ui.grid
+                  [:div.row
+                   [:div.column
+                    [:table.ui.compact.table
+                     [:thead
+                      [:tr
+                       [:th "#"]
+                       [:th "Agent"]
+                       [:th "Started at"]
+                       [:th "Duration"]
+                       [:th "Status"]]]
+                     [:tbody
+                      (map-indexed
+                       (fn [idx {:keys [job-execution/start-time job-execution/end-time] :as execution}]
+                         (list
+                          [:tr
+                           [:td.log-link
+                            [:a {:on-click
+                                 (fn [_]
+                                   (if (not-empty (:job-execution/step-executions execution))
+                                     (om/set-state! owner [:executions :results idx :job-execution/step-executions] nil)
+                                     (search-execution owner (:job/name @job) (:db/id execution) idx)))}
+                             (:db/id execution)]]
+                           [:td (get-in execution [:job-execution/agent :agent/name] "Unknown")]
+                           [:td (fmt/date-medium (:job-execution/start-time execution))]
+                           [:td (let [duration (fmt/duration-between
+                                                (:job-execution/start-time execution)
+                                                (:job-execution/end-time execution))]
+                                  (if (= duration 0) "-" duration))]
+                           (let [status (name (get-in execution [:job-execution/batch-status :db/ident]))]
+                             [:td {:class (condp = status
+                                            "completed" "positive"
+                                            "failed" "error"
+                                            "abadoned" "warning"
+                                            "stopped"  "warning"
+                                            "")}
+                              status])]
+                          (when-let [step-executions (not-empty (:job-execution/step-executions execution))]
+                            [:tr
+                             [:td {:colSpan 5}
+                              (om/build execution-view step-executions)]])))
+                       (:results executions))]]]]
 
-                   [:div.row
-                    [:div.column
-                     (om/build pagination-view {:hits (:hits executions)
-                                                :page page
-                                                :per per}
-                               {:init-state {:link-fn (fn [pn]
-                                                        (om/set-state! owner :page pn)
-                                                        (search-executions (:job/name @job) {:offset (inc (* (dec pn) per)) :limit per}
-                                                                           (fn [executions]
-                                                                             (om/set-state! owner :executions executions))))}})]]])))
+                  [:div.row
+                   [:div.column
+                    (om/build pagination-view {:hits (:hits executions)
+                                               :page page
+                                               :per per}
+                              {:init-state {:link-fn (fn [pn]
+                                                       (om/set-state! owner :page pn)
+                                                       (search-executions (:job/name @job) {:offset (inc (* (dec pn) per)) :limit per}
+                                                                          (fn [executions]
+                                                                            (om/set-state! owner :executions executions))))}})]]])))
 
 (defcomponent scheduling-view [job owner]
   (init-state [_]
@@ -298,43 +307,43 @@
                            {:handler (fn [response]
                                        (om/set-state! owner :calendars response))}))
   (render-state [_ {:keys [schedule scheduling-ch calendars refresh-job-ch error-ch has-error]}]
-    (html
-     [:form.ui.form
-      (merge {:on-submit (fn [e]
-                           (.preventDefault e)
-                           (schedule-job job
-                                         schedule
-                                         refresh-job-ch scheduling-ch error-ch))}
-             (when has-error {:class "error"}))
-      (when has-error
-        [:div.ui.error.message
-         [:p has-error]])
-      [:div.fields
-       [:div.field (when has-error {:class "error"})
-        [:label "Quartz format"]
-        [:input {:id "cron-notation" :type "text" :placeholder "Quartz format"
-                 :value (:schedule/cron-notation schedule)
-                 :on-change (fn [e]
-                              (let [value (.. js/document (getElementById "cron-notation") -value)]
-                                (om/set-state! owner [:schedule :schedule/cron-notation] value)))}]]
-       (when calendars
-         [:div.field
-          [:label "Calendar"]
-          [:select {:value (get-in schedule [:schedule/calendar :calendar/name])
-                    :on-change (fn [_]
-                                 (let [value (.. (om/get-node owner) (querySelector "select") -value)]
-                                   (om/set-state! owner [:schedule :schedule/calendar :calendar/name] value)))}
-           [:option {:value ""} ""]
-           (for [cal calendars]
-             [:option {:value (cal :calendar/name)} (cal :calendar/name)])]])]
-      [:div.ui.buttons
-        [:button.ui.button
-         {:type "button"
-          :on-click (fn [e]
-                      (put! scheduling-ch false))}
-         "Cancel"]
-        [:div.or]
-        [:button.ui.positive.button {:type "submit"} "Save"]]])))
+                (html
+                 [:form.ui.form
+                  (merge {:on-submit (fn [e]
+                                       (.preventDefault e)
+                                       (schedule-job job
+                                                     schedule
+                                                     refresh-job-ch scheduling-ch error-ch))}
+                         (when has-error {:class "error"}))
+                  (when has-error
+                    [:div.ui.error.message
+                     [:p has-error]])
+                  [:div.fields
+                   [:div.field (when has-error {:class "error"})
+                    [:label "Quartz format"]
+                    [:input {:id "cron-notation" :type "text" :placeholder "Quartz format"
+                             :value (:schedule/cron-notation schedule)
+                             :on-change (fn [e]
+                                          (let [value (.. js/document (getElementById "cron-notation") -value)]
+                                            (om/set-state! owner [:schedule :schedule/cron-notation] value)))}]]
+                   (when calendars
+                     [:div.field
+                      [:label "Calendar"]
+                      [:select {:value (get-in schedule [:schedule/calendar :calendar/name])
+                                :on-change (fn [_]
+                                             (let [value (.. (om/get-node owner) (querySelector "select") -value)]
+                                               (om/set-state! owner [:schedule :schedule/calendar :calendar/name] value)))}
+                       [:option {:value ""} ""]
+                       (for [cal calendars]
+                         [:option {:value (cal :calendar/name)} (cal :calendar/name)])]])]
+                  [:div.ui.buttons
+                   [:button.ui.button
+                    {:type "button"
+                     :on-click (fn [e]
+                                 (put! scheduling-ch false))}
+                    "Cancel"]
+                   [:div.or]
+                   [:button.ui.positive.button {:type "submit"} "Save"]]])))
 
 (defcomponent next-execution-view [job owner]
   (init-state [_]
@@ -346,65 +355,65 @@
                        (recur)))
   (render-state [_ {:keys [refresh-job-ch scheduling-ch scheduling?]}]
                 (html
-                  [:div.ui.raised.segment
-                   [:h3.ui.header "Next"]
-                   (if scheduling?
-                     (om/build scheduling-view job
-                               {:init-state {:scheduling-ch scheduling-ch
-                                             :refresh-job-ch refresh-job-ch}})
-                     (if-let [schedule (:job/schedule job)]
-                       (let [exe (:job/next-execution job)]
-                         [:div
-                          [:div.ui.list
-                           (if exe
-                             [:div.item
-                              [:i.wait.icon]
-                              [:div.content
-                               [:div.description (fmt/date-medium (:job-execution/start-time exe))]]]
-                             [:div.item
-                              [:div.content
-                               [:div.header "Pausing"]
-                               [:div.description (:schedule/cron-notation schedule)]]])
-                           ]
-                          [:div.ui.labeled.icon.menu
-                           (if exe
-                             [:a.item {:on-click (fn [e]
-                                                   (pause-schedule job owner refresh-job-ch))}
-                              [:i.pause.icon] "Pause"]
-                             [:a.item {:on-click (fn [e]
-                                                   (resume-schedule job owner refresh-job-ch))}
-                              [:i.play.icon] "Resume"])
-                           [:a.item {:on-click (fn [e]
-                                                 (drop-schedule job owner refresh-job-ch))}
-                            [:i.remove.icon] "Drop"]
-                           [:a.item {:on-click (fn [e]
-                                                 (om/set-state! owner :scheduling? true))}
-                            [:i.calendar.icon] "Edit"]]])
+                 [:div.ui.raised.segment
+                  [:h3.ui.header "Next"]
+                  (if scheduling?
+                    (om/build scheduling-view job
+                              {:init-state {:scheduling-ch scheduling-ch
+                                            :refresh-job-ch refresh-job-ch}})
+                    (if-let [schedule (:job/schedule job)]
+                      (let [exe (:job/next-execution job)]
+                        [:div
+                         [:div.ui.list
+                          (if exe
+                            [:div.item
+                             [:i.wait.icon]
+                             [:div.content
+                              [:div.description (fmt/date-medium (:job-execution/start-time exe))]]]
+                            [:div.item
+                             [:div.content
+                              [:div.header "Pausing"]
+                              [:div.description (:schedule/cron-notation schedule)]]])
+                          ]
+                         [:div.ui.labeled.icon.menu
+                          (if exe
+                            [:a.item {:on-click (fn [e]
+                                                  (pause-schedule job owner refresh-job-ch))}
+                             [:i.pause.icon] "Pause"]
+                            [:a.item {:on-click (fn [e]
+                                                  (resume-schedule job owner refresh-job-ch))}
+                             [:i.play.icon] "Resume"])
+                          [:a.item {:on-click (fn [e]
+                                                (drop-schedule job owner refresh-job-ch))}
+                           [:i.remove.icon] "Drop"]
+                          [:a.item {:on-click (fn [e]
+                                                (om/set-state! owner :scheduling? true))}
+                           [:i.calendar.icon] "Edit"]]])
 
-                       [:div
-                        [:div.header "No schedule"]
-                        [:button.ui.primary.button
-                         {:on-click (fn [e]
-                                      (om/set-state! owner :scheduling? true))}
-                         "Schedule this job"]]))])))
+                      [:div
+                       [:div.header "No schedule"]
+                       [:button.ui.primary.button
+                        {:on-click (fn [e]
+                                     (om/set-state! owner :scheduling? true))}
+                        "Schedule this job"]]))])))
 
 (defcomponent job-structure-view [job-name owner]
   (render-state [_ {:keys [dimmed?]}]
                 (html
-                  [:div.dimmable.image.dimmed
-                   {:on-mouse-enter (fn [e]
-                                      (om/set-state! owner :dimmed? true))
-                    :on-mouse-leave (fn [e]
-                                      (om/set-state! owner :dimmed? false))}
-                   [:div.ui.inverted.dimmer (when dimmed? {:class "visible"})
-                    [:div.content
-                     [:div.center
-                      [:button.ui.primary.button
-                       {:type "button"
-                        :on-click (fn [e]
-                                    (set! (.-href js/location) (str "#/job/" job-name "/edit")))}
-                       "Edit"]]]]
-                   [:div.job-blocks-inner.ui.big.image]]))
+                 [:div.dimmable.image.dimmed
+                  {:on-mouse-enter (fn [e]
+                                     (om/set-state! owner :dimmed? true))
+                   :on-mouse-leave (fn [e]
+                                     (om/set-state! owner :dimmed? false))}
+                  [:div.ui.inverted.dimmer (when dimmed? {:class "visible"})
+                   [:div.content
+                    [:div.center
+                     [:button.ui.primary.button
+                      {:type "button"
+                       :on-click (fn [e]
+                                   (set! (.-href js/location) (str "#/job/" job-name "/edit")))}
+                      "Edit"]]]]
+                  [:div.job-blocks-inner.ui.big.image]]))
   (did-mount [_]
              (render-job-structure job-name owner)))
 
@@ -422,87 +431,87 @@
   (render-state [_ {:keys [job-detail refresh-job-ch mode]}]
                 (let [this-mode (->> mode (drop 3) first)]
                   (html
-                    (case this-mode
-                      :edit
-                      (om/build job-edit-view job-detail {:opts opts})
+                   (case this-mode
+                     :edit
+                     (om/build job-edit-view job-detail {:opts opts})
 
-                      ;;default
-                      [:div.ui.stackable.two.column.grid
-                       [:div.column
-                        [:div.ui.special.cards
-                         [:div.job-detail.card
-                          (om/build job-structure-view (:job/name job))
-                          [:div.content
-                           [:div.header (:job/name job)]
-                           [:div.description
-                            [:div.ui.tiny.statistics
-                             [:div.statistic
-                              [:div.value (get-in job-detail [:job/stats :total])]
-                              [:div.label "Total"]]
-                             [:div.statistic
-                              [:div.value (get-in job-detail [:job/stats :success])]
-                              [:div.label "Success"]]
-                             [:div.statistic
-                              [:div.value (get-in job-detail [:job/stats :failure])]
-                              [:div.label "Failed"]]]
-                            [:hr.ui.divider]
-                            [:div.ui.tiny.horizontal.statistics
-                             [:div.statistic
-                              [:div.value (fmt/duration (get-in job-detail [:job/stats :average]))]
-                              [:div.label "Average duration"]]]]]]]]
-                       [:div.column
-                        [:div.ui.raised.segment
-                         [:h3.ui.header "Latest"]
-                         (when-let [exe (:job/latest-execution job-detail)]
-                           [:div.ui.list
-                            [:div.item
-                             (let [status (get-in exe [:job-execution/batch-status :db/ident])]
-                               [:div.ui.huge.label {:class (status-color status)}
-                                [:i.check.circle.icon] (name status)])]
-                            [:div.item
-                             [:i.calendar.outline.icon]
-                             [:div.content
-                              [:div.description (fmt/duration-between
-                                                  (:job-execution/start-time exe)
-                                                  (:job-execution/end-time exe))]]]
-                            [:div.item
-                             [:i.wait.icon]
-                             [:div.content
-                              [:div.description (fmt/date-medium (:job-execution/start-time exe))]]]
-                            [:div.item
-                             [:i.marker.icon]
-                             [:div.content
-                              [:div.description
-                               [:a {:href (str "#/agent/" (get-in exe [:job-execution/agent :agent/instance-id]))}
-                                (get-in exe [:job-execution/agent :agent/name])] ]]]])]
-                        (om/build next-execution-view job-detail
-                                  {:init-state {:refresh-job-ch refresh-job-ch}})]])))))
+                     ;;default
+                     [:div.ui.stackable.two.column.grid
+                      [:div.column
+                       [:div.ui.special.cards
+                        [:div.job-detail.card
+                         (om/build job-structure-view (:job/name job))
+                         [:div.content
+                          [:div.header (:job/name job)]
+                          [:div.description
+                           [:div.ui.tiny.statistics
+                            [:div.statistic
+                             [:div.value (get-in job-detail [:job/stats :total])]
+                             [:div.label "Total"]]
+                            [:div.statistic
+                             [:div.value (get-in job-detail [:job/stats :success])]
+                             [:div.label "Success"]]
+                            [:div.statistic
+                             [:div.value (get-in job-detail [:job/stats :failure])]
+                             [:div.label "Failed"]]]
+                           [:hr.ui.divider]
+                           [:div.ui.tiny.horizontal.statistics
+                            [:div.statistic
+                             [:div.value (fmt/duration (get-in job-detail [:job/stats :average]))]
+                             [:div.label "Average duration"]]]]]]]]
+                      [:div.column
+                       [:div.ui.raised.segment
+                        [:h3.ui.header "Latest"]
+                        (when-let [exe (:job/latest-execution job-detail)]
+                          [:div.ui.list
+                           [:div.item
+                            (let [status (get-in exe [:job-execution/batch-status :db/ident])]
+                              [:div.ui.huge.label {:class (status-color status)}
+                               [:i.check.circle.icon] (name status)])]
+                           [:div.item
+                            [:i.calendar.outline.icon]
+                            [:div.content
+                             [:div.description (fmt/duration-between
+                                                (:job-execution/start-time exe)
+                                                (:job-execution/end-time exe))]]]
+                           [:div.item
+                            [:i.wait.icon]
+                            [:div.content
+                             [:div.description (fmt/date-medium (:job-execution/start-time exe))]]]
+                           [:div.item
+                            [:i.marker.icon]
+                            [:div.content
+                             [:div.description
+                              [:a {:href (str "#/agent/" (get-in exe [:job-execution/agent :agent/instance-id]))}
+                               (get-in exe [:job-execution/agent :agent/name])] ]]]])]
+                       (om/build next-execution-view job-detail
+                                 {:init-state {:refresh-job-ch refresh-job-ch}})]])))))
 
 (defcomponent job-detail-view [job owner opts]
   (render-state [_ {:keys [mode message breadcrumbs]}]
                 (let [this-mode (->> mode (drop 2) first)]
                   (html
-                    [:div
-                     (om/build breadcrumb-view mode {:init-state {:job-name (:job/name job)}})
-                     [:div.ui.top.attached.tabular.menu
-                      [:a (merge {:class "item"
-                                  :href (str "#/job/" (:job/name job))}
-                                 (when (= this-mode :current) {:class "item active"}))
-                       [:i.tag.icon] "Current"]
-                      [:a (merge {:class "item"
-                                  :href (str "#/job/" (:job/name job) "/history")}
-                                 (when (= this-mode :history) {:class "item active"}))
-                       [:i.wait.icon] "History"]
-                      [:a (merge {:class "item"
-                                  :href (str "#/job/" (:job/name job) "/settings")}
-                                 (when (= this-mode :settings) {:class "item active"}))
-                       [:i.setting.icon] "Settings"]]
-                     [:div.ui.bottom.attached.active.tab.segment
-                      [:div#tab-content
-                       (om/build (case this-mode
-                                   :current current-job-view
-                                   :history job-history-view
-                                   :settings job-settings-view)
-                                 job
-                                 {:state {:mode mode}
-                                  :opts opts})]]]))))
+                   [:div
+                    (om/build breadcrumb-view mode {:init-state {:job-name (:job/name job)}})
+                    [:div.ui.top.attached.tabular.menu
+                     [:a (merge {:class "item"
+                                 :href (str "#/job/" (:job/name job))}
+                                (when (= this-mode :current) {:class "item active"}))
+                      [:i.tag.icon] "Current"]
+                     [:a (merge {:class "item"
+                                 :href (str "#/job/" (:job/name job) "/history")}
+                                (when (= this-mode :history) {:class "item active"}))
+                      [:i.wait.icon] "History"]
+                     [:a (merge {:class "item"
+                                 :href (str "#/job/" (:job/name job) "/settings")}
+                                (when (= this-mode :settings) {:class "item active"}))
+                      [:i.setting.icon] "Settings"]]
+                    [:div.ui.bottom.attached.active.tab.segment
+                     [:div#tab-content
+                      (om/build (case this-mode
+                                  :current current-job-view
+                                  :history job-history-view
+                                  :settings job-settings-view)
+                                job
+                                {:state {:mode mode}
+                                 :opts opts})]]]))))
