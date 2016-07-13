@@ -24,7 +24,7 @@
        [:div.ui.stackable.grid
         [:div.sixteen.wide.column
          [:h3.ui.header (:agent/name agent)
-          [:div.sub.header (->> agent :agent/instance-id .toString)]]]
+          [:div.sub.header instance-id]]]
         [:div.eight.wide.column
          [:h4.ui.header "CPU usage"]
          [:div.image
