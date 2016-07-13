@@ -333,4 +333,6 @@
                                                 (om/set-state! owner :dangerously-action-data nil)
                                                 ((:ok-handler dangerously-action-data)))
                                   :cancel-handler (fn [] (om/set-state! owner :dangerously-action-data nil))
-                                  :delete-type "job")}))]))))
+                                  :delete-type "job")}))])))
+  (will-unmount [_]
+    (put! jobs-channel [:close-chan-listener true])))
