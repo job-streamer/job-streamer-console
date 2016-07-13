@@ -218,8 +218,9 @@
 (defcomponent job-new-view [jobs owner opts]
   (render-state [_ {:keys [message mode]}]
                 (html [:div
-                       (om/build breadcrumb-view mode)
-                       (om/build job-edit-view nil {:opts opts})]))
+                       (om/build breadcrumb-view mode{:react-key "job-new-breadcrumb"})
+                       (om/build job-edit-view nil {:opts opts
+                                                    :react-key "job-new"})]))
   (will-mount[_]
              (let [ch (chan)]
                (go-loop []
@@ -280,7 +281,7 @@
                           (when-let [step-executions (not-empty (:job-execution/step-executions execution))]
                             [:tr
                              [:td {:colSpan 5}
-                              (om/build execution-view step-executions)]])))
+                              (om/build execution-view step-executions {:react-key "job-histry-execution"})]])))
                        (:results executions))]]]]
 
                   [:div.row
@@ -292,7 +293,8 @@
                                                        (om/set-state! owner :page pn)
                                                        (search-executions (:job/name @job) {:offset (inc (* (dec pn) per)) :limit per}
                                                                           (fn [executions]
-                                                                            (om/set-state! owner :executions executions))))}})]]])))
+                                                                            (om/set-state! owner :executions executions))))}
+                               :react-key "job-histry-pagination"})]]])))
 
 (defcomponent scheduling-view [job owner]
   (init-state [_]
@@ -360,7 +362,8 @@
                   (if scheduling?
                     (om/build scheduling-view job
                               {:init-state {:scheduling-ch scheduling-ch
-                                            :refresh-job-ch refresh-job-ch}})
+                                            :refresh-job-ch refresh-job-ch}
+                               :react-key "job-detail-scheduling"})
                     (if-let [schedule (:job/schedule job)]
                       (let [exe (:job/next-execution job)]
                         [:div
@@ -433,14 +436,15 @@
                   (html
                    (case this-mode
                      :edit
-                     (om/build job-edit-view job-detail {:opts opts})
+                     (om/build job-edit-view job-detail {:opts opts
+                                                         :react-key "job-current-edit"})
 
                      ;;default
                      [:div.ui.stackable.two.column.grid
                       [:div.column
                        [:div.ui.special.cards
                         [:div.job-detail.card
-                         (om/build job-structure-view (:job/name job))
+                         (om/build job-structure-view (:job/name job) {:react-key "job-structure"})
                          [:div.content
                           [:div.header (:job/name job)]
                           [:div.description
@@ -485,14 +489,16 @@
                               [:a {:href (str "#/agent/" (get-in exe [:job-execution/agent :agent/instance-id]))}
                                (get-in exe [:job-execution/agent :agent/name])] ]]]])]
                        (om/build next-execution-view job-detail
-                                 {:init-state {:refresh-job-ch refresh-job-ch}})]])))))
+                                 {:init-state {:refresh-job-ch refresh-job-ch}
+                                  :react-key "job-current-next-execution"})]])))))
 
 (defcomponent job-detail-view [job owner opts]
   (render-state [_ {:keys [mode message breadcrumbs]}]
                 (let [this-mode (->> mode (drop 2) first)]
                   (html
                    [:div
-                    (om/build breadcrumb-view mode {:init-state {:job-name (:job/name job)}})
+                    (om/build breadcrumb-view mode {:init-state {:job-name (:job/name job)}
+                                                    :react-key "job-detail-breadcrumb"})
                     [:div.ui.top.attached.tabular.menu
                      [:a (merge {:class "item"
                                  :href (str "#/job/" (:job/name job))}
@@ -514,4 +520,5 @@
                                   :settings job-settings-view)
                                 job
                                 {:state {:mode mode}
-                                 :opts opts})]]]))))
+                                 :opts opts
+                                 :react-key "job-detail-mode"})]]]))))
