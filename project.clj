@@ -75,4 +75,4 @@
                                   :timeout 180000}
                    :env {:dev true
                          :port "3000"}}
-   :project/test  {}})
+   :project/test  {:prep-tasks ^:replace [["javac"] ["compile"]]}})
