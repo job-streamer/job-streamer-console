@@ -15,7 +15,7 @@
 
 (defcomponent agent-detail-view [instance-id owner]
   (will-mount [_]
-    (api/request (str "/agent/" instance-id) 
+    (api/request (str "/agent/" instance-id)
                  {:handler (fn [response]
                              (om/set-state! owner :agent response))}))
   (render-state [_ {:keys [agent]}]
@@ -24,7 +24,7 @@
        [:div.ui.stackable.grid
         [:div.sixteen.wide.column
          [:h3.ui.header (:agent/name agent)
-          [:div.sub.header (:agent/instance-id agent)]]]
+          [:div.sub.header instance-id]]]
         [:div.eight.wide.column
          [:h4.ui.header "CPU usage"]
          [:div.image
@@ -117,10 +117,10 @@
        [:div.ui.column
         (let [mode (second (:mode app))]
           (case mode
-            :detail (om/build agent-detail-view (:agent/instance-id app))
+            :detail (om/build agent-detail-view (:agent/instance-id app) {:react-key "agent-detail"})
             ;; default
             (cond
               (nil? (:agents app)) [:img {:src "/img/loader.gif"}]
-              (empty? (:agents app)) (om/build no-agents-view app)
-              :default (om/build agent-list-view (:agents app)))))]]])))
+              (empty? (:agents app)) (om/build no-agents-view app {:react-key "no-agent"})
+              :default (om/build agent-list-view (:agents app) {:react-key "agent-list"}))))]]])))
 

@@ -29,7 +29,7 @@
   :target-path "target/%s/"
   :resource-paths ["resources" "target/cljsbuild"]
   :prep-tasks [["javac"] ["cljsbuild" "once"] ["compile"]]
-  
+
   :cljsbuild
   {:builds
    [{:id "dev"
@@ -46,7 +46,7 @@
 
   :aliases {"run-task" ["with-profile" "+repl" "run" "-m"]
             "setup"    ["run-task" "dev.tasks/setup"]}
-  
+
   :pom-plugins [[org.apache.maven.plugins/maven-assembly-plugin "2.5.5"
                  {:configuration [:descriptors [:descriptor "src/assembly/dist.xml"]]}]]
 
@@ -71,7 +71,8 @@
                                   [figwheel "0.5.0-6"]]
                    :source-paths ["dev"]
                    :repl-options {:init-ns user
-                                  :nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
+                                  :nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]
+                                  :timeout 180000}
                    :env {:dev true
                          :port "3000"}}
    :project/test  {}})

@@ -172,18 +172,21 @@
     (html
      [:div.full.height
       (if-let [system-error (:system-error app)]
-        (om/build system-error-view app)
+        (om/build system-error-view app {:react-key "error"})
         (list
          [:div.ui.fixed.inverted.teal.menu
           [:div.header.item [:img.ui.image {:alt "JobStreamer" :src "img/logo.png"}]]
           (om/build right-menu-view app {:opts {:stats-channel stats-channel
-                                                :jobs-channel jobs-channel}})]
+                                                :jobs-channel jobs-channel
+                                                :react-key "menu"}})]
          [:div.main.grid.content.full.height
           (case (first (:mode app))
             :jobs (om/build jobs-view app {:init-state {:mode (second (:mode app))}
                                            :opts {:stats-channel stats-channel
-                                                  :jobs-channel jobs-channel}})
+                                                  :jobs-channel jobs-channel}
+                                           :react-key "jobs"})
             :agents (om/build agents-view app)
             :calendars (om/build calendars-view app {:init-state {:mode (second (:mode app))}
                                            :opts {:stats-channel stats-channel
-                                                  :calendars-channel calendars-channel}}))]))])))
+                                                  :calendars-channel calendars-channel
+                                                  :react-key "calendar"}}))]))])))

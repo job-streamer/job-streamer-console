@@ -241,7 +241,7 @@
                       (when-let [step-executions (not-empty (get-in job [:job/latest-execution :job-execution/step-executions]))]
                         [:tr
                          [:td {:colSpan 8}
-                          (om/build execution-view step-executions)]])]))]]]]
+                          (om/build execution-view step-executions {:react-key "job-execution"})]])]))]]]]
         [:div.row
          [:div.column
           (om/build pagination-view {:hits (get-in app [:jobs :hits])
@@ -249,7 +249,8 @@
                                      :per per
                                      :jobs-view-channel jobs-view-channel}
                     {:init-state {:link-fn (fn [pn]
-                                             (search-jobs app {:q (:query app) :offset (inc (* (dec pn) per)) :limit per}))}})]]]))))
+                                             (search-jobs app {:q (:query app) :offset (inc (* (dec pn) per)) :limit per}))}
+                     :react-key "job-pagination"})]]]))))
 
 
 (defcomponent jobs-view [app owner {:keys [stats-channel jobs-channel]}]
@@ -290,7 +291,8 @@
           :new
           (om/build job-new-view (get-in app [:jobs :results])
                     {:state {:mode (:mode app)}
-                     :opts {:jobs-channel jobs-channel}})
+                     :opts {:jobs-channel jobs-channel}
+                     :react-key "job-new"})
 
           :detail
           (if (:jobs app)
@@ -299,7 +301,8 @@
                            first)]
               (om/build job-detail-view (get-in app [:jobs :results idx])
                         {:opts {:jobs-channel jobs-channel}
-                         :state {:mode (:mode app)}}))
+                         :state {:mode (:mode app)}
+                         :react-key "job-detail"}))
             [:img {:src "/img/loader.gif"}])
 
           ;; default
@@ -322,10 +325,12 @@
                            ;; default
                            job-list-view)
                          app {:init-state {:jobs-view-channel jobs-channel}
-                              :state {:page page}}))]]
+                              :state {:page page}
+                              :react-key "job-mode"}))]]
            (when executing-job
              (om/build job-execution-dialog executing-job {:init-state {:jobs-view-channel jobs-channel}
-                                                           :state {:page page}}))])
+                                                           :state {:page page}
+                                                           :react-key "job-execution-dialog"}))])
         (when dangerously-action-data
           (om/build dangerously-action-dialog nil
                     {:opts (assoc dangerously-action-data
@@ -333,6 +338,7 @@
                                                 (om/set-state! owner :dangerously-action-data nil)
                                                 ((:ok-handler dangerously-action-data)))
                                   :cancel-handler (fn [] (om/set-state! owner :dangerously-action-data nil))
-                                  :delete-type "job")}))])))
+                                  :delete-type "job")
+                     :react-key "job-dialog"}))])))
   (will-unmount [_]
     (put! jobs-channel [:close-chan-listener true])))

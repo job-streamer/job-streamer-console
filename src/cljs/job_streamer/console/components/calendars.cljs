@@ -72,7 +72,8 @@
   (render-state [_ {:keys [calendar mode]}]
                 (html
                   [:div
-                   (om/build breadcrumb-view mode {:init-state {:calendar-name cal-name}})
+                   (om/build breadcrumb-view mode {:init-state {:calendar-name cal-name}
+                                                   :react-key "calendar-detail-breadcrumb"})
                    [:div.ui.grid
                     [:div.row
                      [:div.column
@@ -122,7 +123,8 @@
   (render-state [_ {:keys [kalendae calendar error-map save-error save-status mode]}]
     (html
      [:form.ui.form
-      (om/build breadcrumb-view mode {:init-state {:calendar-name cal-name}})
+      (om/build breadcrumb-view mode {:init-state {:calendar-name cal-name}
+                                      :react-key "calendar-edit-breadcrumb"})
       [:h4.ui.dividing.header (if (:new? calendar) "New calendar" "Edit calendar")]
       [:div.ui.grid
        [:div.row
@@ -293,18 +295,22 @@
          [:div.ui.column
           (case mode
             :new (om/build calendar-edit-view (:calendars app) {:state {:mode (:mode app)}
-                                                                :opts {:calendars-channel calendars-channel}})
+                                                                :opts {:calendars-channel calendars-channel}
+                                                                :react-key "calendar-new"})
             :detail (om/build calendar-detail-view (:cal-name app) {:state {:mode (:mode app)}
-                                                                    :opts {:calendars-channel calendars-channel}})
+                                                                    :opts {:calendars-channel calendars-channel}
+                                                                    :react-key "calendar-detail"})
             :edit (om/build calendar-edit-view (:calendars app)
                             {:opts {:cal-name (:cal-name app)
                                     :calendars-channel calendars-channel}
-                             :state {:mode (:mode app)}})
+                             :state {:mode (:mode app)}
+                             :react-key "calendar-edit"})
             ;; default
             (cond
               (nil? (:calendars app)) [:img {:src "/img/loader.gif"}]
-              :default (om/build calendar-list-view (:calendars app) { :state {:mode (:mode app)}
-                                                                      :opts {:calendars-channel calendars-channel}})))
+              :default (om/build calendar-list-view (:calendars app) {:state {:mode (:mode app)}
+                                                                      :opts {:calendars-channel calendars-channel}
+                                                                      :react-key "calendar-list"})))
           (when dangerously-action-data
             (om/build dangerously-action-dialog nil
                       {:opts (assoc dangerously-action-data
@@ -312,6 +318,7 @@
                                                   (om/set-state! owner :dangerously-action-data nil)
                                                   ((:ok-handler dangerously-action-data)))
                                     :cancel-handler (fn [] (om/set-state! owner :dangerously-action-data nil))
-                                    :delete-type "calendar")}))]]])))
+                                    :delete-type "calendar")
+                       :react-key "calendar-dialog"}))]]])))
   (will-unmount [_]
     (put! calendars-channel [:close-chan-listener true])))
