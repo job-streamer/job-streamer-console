@@ -14,7 +14,7 @@
       <source>VERSION</source>
     </file>
     <file>
-      <source>target/${project.build.finalName}.jar</source>
+      <source>target/uberjar/${project.build.finalName}.jar</source>
       <outputDirectory>dist</outputDirectory>
     </file>
   </files>
