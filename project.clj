@@ -41,6 +41,7 @@
     {:id "production"
      :source-paths ["src/cljs"]
      :compiler {:output-to "resources/job-streamer-console/public/js/job-streamer.min.js"
+                :libs ["resources/clojure-js/libs"]
                 :pretty-print false
                 :optimizations :advanced}}]}
 
