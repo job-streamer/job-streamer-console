@@ -7,5 +7,5 @@
 
 (def environ
   {:http {:port (some-> env :console-port Integer.)}
-   :console {:control-bus-url (some-> env :control-bus-url)}})
+   :console {:control-bus-url (:control-bus-url env)}})
 
