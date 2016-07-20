@@ -3,7 +3,7 @@
   (:require [om.core :as om :include-macros true]
             [om-tools.core :refer-macros [defcomponent]]
             [sablono.core :as html :refer-macros [html]]
-            [cljs.core.async :refer [put! <! chan timeout]]
+            [cljs.core.async :refer [put! <! chan timeout close!]]
             (job-streamer.console.format :as fmt)
             (job-streamer.console.api :as api))
   (:use (job-streamer.console.components.timeline :only [timeline-view])
@@ -106,23 +106,42 @@
   (init-state [_] {:now (js/Date.)
                    :per 20})
   (will-mount [_]
-    (go-loop []
-      (<! (timeout 1000))
-      (om/set-state! owner :now (js/Date.))
-      (recur)))
+    (let [ch (chan)]
+      (om/set-state! owner :now-timer ch)
+      (go-loop []
+        (when-let [_ (<! ch)]
+          (<! (timeout 1000))
+          (om/set-state! owner :now (js/Date.))
+          (put! ch :continue)
+          (recur)))
+      (put! ch :start)))
 
   (did-mount [_]
-    (go-loop []
-      (<! (timeout 5000))
-      (if (->> (get-in @app [:jobs :results])
-               (filter #(#{:batch-status/started :batch-status/starting :batch-status/undispatched :batch-status/queued}
-                         (get-in % [:job/latest-execution :job-execution/batch-status :db/ident])))
-               not-empty)
-        (let [page (om/get-state owner :page)
-              per  (om/get-state owner :per)]
-          (search-jobs app {:q (:query app) :offset (inc (* (dec page) per)) :limit per})
-          {:page page}))
-      (recur)))
+    (let [ch (chan)]
+      (om/set-state! owner :refresh-timer ch)
+      (go-loop []
+        (when-let [_ (<! ch)]
+          (<! (timeout 5000))
+          (if (->> (get-in @app [:jobs :results])
+                 (filter #(#{:batch-status/started :batch-status/starting
+                             :batch-status/undispatched :batch-status/queued
+                             :batch-status/unrestarted}
+                           (get-in % [:job/latest-execution :job-execution/batch-status :db/ident])))
+                 not-empty)
+          (let [page (om/get-state owner :page)
+                per  (om/get-state owner :per)]
+            (search-jobs app {:q (:query app) :offset (inc (* (dec page) per)) :limit per})
+            {:page page}))
+          (put! ch :continue)
+          (recur)))
+      (put! ch :start)))
+
+  (will-unmount [_]
+    (when-let [now-timer (om/get-state owner :now-timer)]
+      (close! now-timer))
+    (when-let [refresh-timer (om/get-state owner :refresh-timer)]
+      (close! refresh-timer)))
+
   (render-state [_ {:keys [jobs-view-channel now page per]}]
     (html
      (if (= (get-in app [:stats :jobs-count]) 0)
@@ -173,7 +192,8 @@
                        [:td
                         [:a {:href (str "#/job/" job-name)} job-name]]
                        (if-let [latest-execution (:job/latest-execution job)]
-                         (if (#{:batch-status/undispatched :batch-status/queued} (get-in latest-execution [:job-execution/batch-status :db/ident]))
+                         (if (#{:batch-status/undispatched :batch-status/unrestarted :batch-status/queued}
+                              (get-in latest-execution [:job-execution/batch-status :db/ident]))
                            [:td.center.aligned {:colSpan 3} "Wait for an execution..."]
                            (let [start (:job-execution/start-time latest-execution)
                                  end (or (:job-execution/end-time  latest-execution) now)]
@@ -201,7 +221,7 @@
                           "-")]
                        [:td (let [status (get-in job [:job/latest-execution :job-execution/batch-status :db/ident])]
                               (cond
-                                (#{:batch-status/undispatched :batch-status/queued :batch-status/started} status)
+                                (#{:batch-status/undispatched :batch-status/unrestarted :batch-status/queued :batch-status/started} status)
                                 [:div.ui.fade.reveal
                                  [:button.ui.circular.orange.icon.button.visible.content
                                   {:on-click (fn [_]

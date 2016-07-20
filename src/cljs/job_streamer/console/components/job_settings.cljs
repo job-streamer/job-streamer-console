@@ -1,9 +1,8 @@
 (ns job-streamer.console.components.job-settings
-  (:require-macros [cljs.core.async.macros :refer [go go-loop]])
   (:require [om.core :as om :include-macros true]
             [om-tools.core :refer-macros [defcomponent]]
             [sablono.core :as html :refer-macros [html]]
-            [cljs.core.async :refer [put! <! chan pub sub unsub-all]]
+            [cljs.core.async :refer [put! <! chan]]
             [bouncer.core :as b]
             [bouncer.validators :as v]
             [job-streamer.console.api :as api]))

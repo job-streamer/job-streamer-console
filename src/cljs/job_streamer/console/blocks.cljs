@@ -160,7 +160,7 @@
     values
     [["" ""]]))
 
-(defn get-classes[ch]
+(defn get-classes [ch]
   (api/request (str "/default/batch-components") :GET
                {:handler (fn [response]
                            (let [batchlets (get response :batch-component/batchlet ["No batchlet"])
@@ -195,7 +195,8 @@
                                          :name "ref"
                                          :label "Processor"
                                          :value (to-dropdown-vals item-processors)}])
-                             (if(not(nil? ch))(put! ch true))))}))
+                             (when ch
+                               (put! ch true))))}))
 (get-classes nil)
 
 (defblock chunk
@@ -504,4 +505,3 @@
                                              :attrs {:name "value"}
                                              :content [v]}]}]})
                     props)))}))
-

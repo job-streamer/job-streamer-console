@@ -4,7 +4,7 @@
   (:require [om.core :as om :include-macros true]
             [om-tools.core :refer-macros [defcomponent]]
             [sablono.core :as html :refer-macros [html]]
-            [cljs.core.async :refer [put! <! chan pub sub unsub-all]]
+            [cljs.core.async :refer [put! <! chan close! pub sub unsub-all]]
             [clojure.browser.net :as net]
             [clojure.string :as string]
             [goog.string :as gstring]
@@ -217,18 +217,18 @@
 
 (defcomponent job-new-view [jobs owner opts]
   (render-state [_ {:keys [message mode]}]
-                (html [:div
-                       (om/build breadcrumb-view mode{:react-key "job-new-breadcrumb"})
-                       (om/build job-edit-view nil {:opts opts
-                                                    :react-key "job-new"})]))
+    (html [:div
+           (om/build breadcrumb-view mode{:react-key "job-new-breadcrumb"})
+           (om/build job-edit-view nil {:opts opts
+                                        :react-key "job-new"})]))
   (will-mount[_]
-             (let [ch (chan)]
-               (go-loop []
-                        (let [_ (<! ch)]
-                          (Blockly/inject
-                           (.. (om/get-node owner) (querySelector ".job-blocks-inner"))
-                           (clj->js {:toolbox (.getElementById js/document "job-toolbox")}))))
-               (blocks/get-classes ch))))
+    (let [ch (chan)]
+      (go
+        (let [_ (<! ch)]
+          (Blockly/inject
+           (.. (om/get-node owner) (querySelector ".job-blocks-inner"))
+           (clj->js {:toolbox (.getElementById js/document "job-toolbox")}))))
+      (blocks/get-classes ch))))
 
 
 (defcomponent job-history-view [job owner opts]
@@ -298,127 +298,140 @@
 
 (defcomponent scheduling-view [job owner]
   (init-state [_]
-              {:error-ch (chan)
-               :has-error false
-               :schedule (:job/schedule job)})
+    {:error-ch (chan)
+     :has-error false
+     :schedule (:job/schedule job)})
+
   (will-mount [_]
-              (go-loop []
-                       (let [{message :message} (<! (om/get-state owner :error-ch))]
-                         (om/set-state! owner :has-error message)))
-              (api/request "/calendars" :GET
-                           {:handler (fn [response]
-                                       (om/set-state! owner :calendars response))}))
+    (go
+      (let [{message :message} (<! (om/get-state owner :error-ch))]
+        (om/set-state! owner :has-error message)))
+    (api/request "/calendars" :GET
+                 {:handler (fn [response]
+                             (om/set-state! owner :calendars response))}))
+
   (render-state [_ {:keys [schedule scheduling-ch calendars refresh-job-ch error-ch has-error]}]
-                (html
-                 [:form.ui.form
-                  (merge {:on-submit (fn [e]
-                                       (.preventDefault e)
-                                       (schedule-job job
-                                                     schedule
-                                                     refresh-job-ch scheduling-ch error-ch))}
-                         (when has-error {:class "error"}))
-                  (when has-error
-                    [:div.ui.error.message
-                     [:p has-error]])
-                  [:div.fields
-                   [:div.field (when has-error {:class "error"})
-                    [:label "Quartz format"]
-                    [:input {:id "cron-notation" :type "text" :placeholder "Quartz format"
-                             :value (:schedule/cron-notation schedule)
-                             :on-change (fn [e]
-                                          (let [value (.. js/document (getElementById "cron-notation") -value)]
-                                            (om/set-state! owner [:schedule :schedule/cron-notation] value)))}]]
-                   (when calendars
-                     [:div.field
-                      [:label "Calendar"]
-                      [:select {:value (get-in schedule [:schedule/calendar :calendar/name])
-                                :on-change (fn [_]
-                                             (let [value (.. (om/get-node owner) (querySelector "select") -value)]
-                                               (om/set-state! owner [:schedule :schedule/calendar :calendar/name] value)))}
-                       [:option {:value ""} ""]
-                       (for [cal calendars]
-                         [:option {:value (cal :calendar/name)} (cal :calendar/name)])]])]
-                  [:div.ui.buttons
-                   [:button.ui.button
-                    {:type "button"
-                     :on-click (fn [e]
-                                 (put! scheduling-ch false))}
-                    "Cancel"]
-                   [:div.or]
-                   [:button.ui.positive.button {:type "submit"} "Save"]]])))
+    (html
+     [:form.ui.form
+      (merge {:on-submit (fn [e]
+                           (.preventDefault e)
+                           (schedule-job job
+                                         schedule
+                                         refresh-job-ch scheduling-ch error-ch))}
+             (when has-error {:class "error"}))
+      (when has-error
+        [:div.ui.error.message
+         [:p has-error]])
+      [:div.fields
+       [:div.field (when has-error {:class "error"})
+        [:label "Quartz format"]
+        [:input {:id "cron-notation" :type "text" :placeholder "Quartz format"
+                 :value (:schedule/cron-notation schedule)
+                 :on-change (fn [e]
+                              (let [value (.. js/document (getElementById "cron-notation") -value)]
+                                (om/set-state! owner [:schedule :schedule/cron-notation] value)))}]]
+       (when calendars
+         [:div.field
+          [:label "Calendar"]
+          [:select {:value (get-in schedule [:schedule/calendar :calendar/name])
+                    :on-change (fn [_]
+                                 (let [value (.. (om/get-node owner) (querySelector "select") -value)]
+                                   (om/set-state! owner [:schedule :schedule/calendar :calendar/name] value)))}
+           [:option {:value ""} ""]
+           (for [cal calendars]
+             [:option {:value (cal :calendar/name)} (cal :calendar/name)])]])]
+      [:div.ui.buttons
+       [:button.ui.button
+        {:type "button"
+         :on-click (fn [e]
+                     (put! scheduling-ch false))}
+        "Cancel"]
+       [:div.or]
+       [:button.ui.positive.button {:type "submit"} "Save"]]])))
 
 (defcomponent next-execution-view [job owner]
   (init-state [_]
-              {:scheduling-ch (chan)
-               :scheduling?   false})
-  (will-mount [_]
-              (go-loop []
-                       (om/set-state! owner :scheduling? (<! (om/get-state owner :scheduling-ch)))
-                       (recur)))
-  (render-state [_ {:keys [refresh-job-ch scheduling-ch scheduling?]}]
-                (html
-                 [:div.ui.raised.segment
-                  [:h3.ui.header "Next"]
-                  (if scheduling?
-                    (om/build scheduling-view job
-                              {:init-state {:scheduling-ch scheduling-ch
-                                            :refresh-job-ch refresh-job-ch}
-                               :react-key "job-detail-scheduling"})
-                    (if-let [schedule (:job/schedule job)]
-                      (let [exe (:job/next-execution job)]
-                        [:div
-                         [:div.ui.list
-                          (if exe
-                            [:div.item
-                             [:i.wait.icon]
-                             [:div.content
-                              [:div.description (fmt/date-medium (:job-execution/start-time exe))]]]
-                            [:div.item
-                             [:div.content
-                              [:div.header "Pausing"]
-                              [:div.description (:schedule/cron-notation schedule)]]])
-                          ]
-                         [:div.ui.labeled.icon.menu
-                          (if exe
-                            [:a.item {:on-click (fn [e]
-                                                  (pause-schedule job owner refresh-job-ch))}
-                             [:i.pause.icon] "Pause"]
-                            [:a.item {:on-click (fn [e]
-                                                  (resume-schedule job owner refresh-job-ch))}
-                             [:i.play.icon] "Resume"])
-                          [:a.item {:on-click (fn [e]
-                                                (drop-schedule job owner refresh-job-ch))}
-                           [:i.remove.icon] "Drop"]
-                          [:a.item {:on-click (fn [e]
-                                                (om/set-state! owner :scheduling? true))}
-                           [:i.calendar.icon] "Edit"]]])
+    {:scheduling-ch (chan)
+     :scheduling?   false})
 
-                      [:div
-                       [:div.header "No schedule"]
-                       [:button.ui.primary.button
-                        {:on-click (fn [e]
-                                     (om/set-state! owner :scheduling? true))}
-                        "Schedule this job"]]))])))
+  (will-mount [_]
+    (let [ch (chan)]
+      (om/set-state! owner :scheduling-monitor ch)
+      (go-loop []
+        (when-let [_ (<! ch)]
+          (om/set-state! owner :scheduling? (<! (om/get-state owner :scheduling-ch)))
+          (put! ch :continue)
+          (recur)))
+      (put! ch :start)))
+
+  (will-unmount [_]
+    (when-let [scheduling-monitor (om/get-state owner :scheduling-monitor)]
+      (close! scheduling-monitor)))
+
+  (render-state [_ {:keys [refresh-job-ch scheduling-ch scheduling?]}]
+    (html
+     [:div.ui.raised.segment
+      [:h3.ui.header "Next"]
+      (if scheduling?
+        (om/build scheduling-view job
+                  {:init-state {:scheduling-ch scheduling-ch
+                                :refresh-job-ch refresh-job-ch}
+                   :react-key "job-detail-scheduling"})
+        (if-let [schedule (:job/schedule job)]
+          (let [exe (:job/next-execution job)]
+            [:div
+             [:div.ui.list
+              (if exe
+                [:div.item
+                 [:i.wait.icon]
+                 [:div.content
+                  [:div.description (fmt/date-medium (:job-execution/start-time exe))]]]
+                [:div.item
+                 [:div.content
+                  [:div.header "Pausing"]
+                  [:div.description (:schedule/cron-notation schedule)]]])
+              ]
+             [:div.ui.labeled.icon.menu
+              (if exe
+                [:a.item {:on-click (fn [e]
+                                      (pause-schedule job owner refresh-job-ch))}
+                 [:i.pause.icon] "Pause"]
+                [:a.item {:on-click (fn [e]
+                                      (resume-schedule job owner refresh-job-ch))}
+                 [:i.play.icon] "Resume"])
+              [:a.item {:on-click (fn [e]
+                                    (drop-schedule job owner refresh-job-ch))}
+               [:i.remove.icon] "Drop"]
+              [:a.item {:on-click (fn [e]
+                                    (om/set-state! owner :scheduling? true))}
+               [:i.calendar.icon] "Edit"]]])
+
+          [:div
+           [:div.header "No schedule"]
+           [:button.ui.primary.button
+            {:on-click (fn [e]
+                         (om/set-state! owner :scheduling? true))}
+            "Schedule this job"]]))])))
 
 (defcomponent job-structure-view [job-name owner]
   (render-state [_ {:keys [dimmed?]}]
-                (html
-                 [:div.dimmable.image.dimmed
-                  {:on-mouse-enter (fn [e]
-                                     (om/set-state! owner :dimmed? true))
-                   :on-mouse-leave (fn [e]
-                                     (om/set-state! owner :dimmed? false))}
-                  [:div.ui.inverted.dimmer (when dimmed? {:class "visible"})
-                   [:div.content
-                    [:div.center
-                     [:button.ui.primary.button
-                      {:type "button"
-                       :on-click (fn [e]
-                                   (set! (.-href js/location) (str "#/job/" job-name "/edit")))}
-                      "Edit"]]]]
-                  [:div.job-blocks-inner.ui.big.image]]))
+    (html
+     [:div.dimmable.image.dimmed
+      {:on-mouse-enter (fn [e]
+                         (om/set-state! owner :dimmed? true))
+       :on-mouse-leave (fn [e]
+                         (om/set-state! owner :dimmed? false))}
+      [:div.ui.inverted.dimmer (when dimmed? {:class "visible"})
+       [:div.content
+        [:div.center
+         [:button.ui.primary.button
+          {:type "button"
+           :on-click (fn [e]
+                       (set! (.-href js/location) (str "#/job/" job-name "/edit")))}
+          "Edit"]]]]
+      [:div.job-blocks-inner.ui.big.image]]))
   (did-mount [_]
-             (render-job-structure job-name owner)))
+    (render-job-structure job-name owner)))
 
 (defcomponent current-job-view [job owner opts]
   (init-state [_]

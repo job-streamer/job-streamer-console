@@ -1,6 +1,4 @@
 (ns job-streamer.console.components.execution
-  (:require-macros [cljs.core.async.macros :refer [go go-loop]]
-                   [job-streamer.console.utils :refer [defblock]])
   (:require [om.core :as om :include-macros true]
             [om-tools.core :refer-macros [defcomponent]]
             [sablono.core :as html :refer-macros [html]]
