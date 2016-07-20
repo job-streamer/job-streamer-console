@@ -6,5 +6,6 @@
    :console {:control-bus-url "http://localhost:45102"}})
 
 (def environ
-  {:http {:port (some-> env :port Integer.)}})
+  {:http {:port (some-> env :console-port Integer.)}
+   :console {:control-bus-url (:control-bus-url env)}})
 
