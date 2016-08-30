@@ -63,44 +63,44 @@
 
 (defcomponent job-execution-dialog [[type job] owner]
   (init-state [_]
-              {:params {}})
+    {:params {}})
   (render-state [_ {:keys [jobs-view-channel params]}]
-                (html
-                  [:div.ui.dimmer.modals.transition.visible.active
-                   [:div.ui.standard.modal.transition.visible.active.scrolling
-                    [:i.close.icon {:on-click (fn [e] (put! jobs-view-channel [:close-dialog nil]))}]
-                    [:div.header (:job/name job)]
-                    [:div.content
-                     (if-let [param-names (not-empty (:job/dynamic-parameters job))]
-                       [:form.ui.form
-                        [:fields
-                         (for [param-name param-names]
-                           [:field
-                            [:label param-name]
-                            [:input {:type "text"
-                                     :name param-name
-                                     :value (get params (keyword param-name))
-                                     :on-change (fn [e] (om/update-state! owner :params
-                                                                          #(assoc % (keyword param-name) (.. e -target -value))))}]])]]
-                       [:div (case type
-                               :execute "Execute now?"
-                               :restart "Restart now?")])]
-                    [:div.actions
-                     [:div.ui.two.column.grid
-                      [:div.left.aligned.column
-                       [:button.ui.black.button
-                        {:type "button"
-                         :on-click (fn [e] (put! jobs-view-channel [:close-dialog nil]))} "Cancel"]]
-                      [:div.right.aligned.column
-                       [:button.ui.positive.button
-                        {:type "button"
-                         :on-click (fn [e]
-                                     (case type
-                                       :execute (execute-job (:job/name job) params jobs-view-channel)
-                                       :restart (restart-job job params jobs-view-channel)))}
+    (html
+     [:div.ui.dimmer.modals.page.transition.visible.active
+      [:div.ui.modal.scrolling.transition.visible.active
+       [:i.close.icon {:on-click (fn [e] (put! jobs-view-channel [:close-dialog nil]))}]
+       [:div.header (:job/name job)]
+       [:div.content
+        (if-let [param-names (not-empty (:job/dynamic-parameters job))]
+          [:form.ui.form
+           [:fields
+            (for [param-name param-names]
+              [:field
+               [:label param-name]
+               [:input {:type "text"
+                        :name param-name
+                        :value (get params (keyword param-name))
+                        :on-change (fn [e] (om/update-state! owner :params
+                                                             #(assoc % (keyword param-name) (.. e -target -value))))}]])]]
+          [:div (case type
+                  :execute "Execute now?"
+                  :restart "Restart now?")])]
+       [:div.actions
+        [:div.ui.two.column.grid
+         [:div.left.aligned.column
+          [:button.ui.black.button
+           {:type "button"
+            :on-click (fn [e] (put! jobs-view-channel [:close-dialog nil]))} "Cancel"]]
+         [:div.right.aligned.column
+          [:button.ui.positive.button
+           {:type "button"
+            :on-click (fn [e]
                         (case type
-                          :execute "Execute!"
-                          :restart "Restart!")]]]]]])))
+                          :execute (execute-job (:job/name job) params jobs-view-channel)
+                          :restart (restart-job job params jobs-view-channel)))}
+           (case type
+             :execute "Execute!"
+             :restart "Restart!")]]]]]])))
 
 (defcomponent job-list-view [app owner]
   (init-state [_] {:now (js/Date.)
@@ -123,15 +123,15 @@
         (when-let [_ (<! ch)]
           (<! (timeout 5000))
           (if (->> (get-in @app [:jobs :results])
-                 (filter #(#{:batch-status/started :batch-status/starting
-                             :batch-status/undispatched :batch-status/queued
-                             :batch-status/unrestarted}
-                           (get-in % [:job/latest-execution :job-execution/batch-status :db/ident])))
-                 not-empty)
-          (let [page (om/get-state owner :page)
-                per  (om/get-state owner :per)]
-            (search-jobs app {:q (:query app) :offset (inc (* (dec page) per)) :limit per})
-            {:page page}))
+                   (filter #(#{:batch-status/started :batch-status/starting
+                               :batch-status/undispatched :batch-status/queued
+                               :batch-status/unrestarted}
+                             (get-in % [:job/latest-execution :job-execution/batch-status :db/ident])))
+                   not-empty)
+            (let [page (om/get-state owner :page)
+                  per  (om/get-state owner :per)]
+              (search-jobs app {:q (:query app) :offset (inc (* (dec page) per)) :limit per})
+              {:page page}))
           (put! ch :continue)
           (recur)))
       (put! ch :start)))
