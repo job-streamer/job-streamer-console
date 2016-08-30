@@ -101,7 +101,6 @@
    :updateShape (fn []
                   (this-as
                     this
-                    (println this)
                     (if (.getInput this "EMPTY")
                       (.removeInput this "EMPTY")
                       (loop [i 0]
