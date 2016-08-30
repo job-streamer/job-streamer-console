@@ -1,5 +1,6 @@
 (ns job-streamer.console.components.root
-  (:require-macros [cljs.core.async.macros :refer [go-loop]])
+  (:require-macros [cljs.core.async.macros :refer [go-loop]]
+                   [fence.core :refer [+++]])
   (:require [om.core :as om :include-macros true]
             [om-tools.core :refer-macros [defcomponent]]
             [sablono.core :as html :refer-macros [html]]
@@ -23,7 +24,7 @@
                            (let [blob (goog.fs/getBlobWithProperties (array (pr-str (:results response))) "application/edn")
                                  anchor (. js/document createElement "a")
                                  url (or (. js/window -URL) (. js/window -webkitURL))]
-                             (if (.. js/window -navigator -msSaveBlob)
+                             (+++ (if (.. js/window -navigator -msSaveBlob)
                                ;for IE
                                (.msSaveBlob (. js/window -navigator)  blob "jobs.edn")
                                ;for Firefox and Chorome
@@ -32,7 +33,7 @@
                                    (.setAttribute anchor "download" "jobs.edn")
                                    (.appendChild (. js/document -body) anchor)
                                    (.click anchor)
-                                   (.removeChild (. js/document -body) anchor)))))}))
+                                   (.removeChild (. js/document -body) anchor))))))}))
 
 (defn import-xml-job [jobxml callback]
   (api/request (str "/" app-name "/jobs") :POST jobxml

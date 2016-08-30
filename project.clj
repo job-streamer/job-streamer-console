@@ -18,6 +18,7 @@
                  [bouncer "1.0.0"]
                  [secretary "1.2.3"]
                  [org.omcljs/om "1.0.0-alpha36"]
+                 [fence "0.2.0"]
 
                  [ring "1.4.0"]
                  [ring/ring-defaults "0.2.0"]
