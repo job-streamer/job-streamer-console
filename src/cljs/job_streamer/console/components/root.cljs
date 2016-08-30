@@ -176,7 +176,7 @@
         (om/build system-error-view app {:react-key "error"})
         (list
          [:div.ui.fixed.inverted.teal.menu
-          [:div.header.item [:img.ui.image {:alt "JobStreamer" :src "img/logo.png"}]]
+          [:div.header.item [:a {:href "#/" } [:img.ui.image {:alt "JobStreamer" :src "img/logo.png"}]]]
           (om/build right-menu-view app {:opts {:stats-channel stats-channel
                                                 :jobs-channel jobs-channel
                                                 :react-key "menu"}})]

@@ -11,6 +11,10 @@
       <outputDirectory>bin</outputDirectory>
     </file>
     <file>
+      <source>bin/console.bat</source>
+      <outputDirectory>bin</outputDirectory>
+    </file>
+    <file>
       <source>VERSION</source>
     </file>
     <file>
