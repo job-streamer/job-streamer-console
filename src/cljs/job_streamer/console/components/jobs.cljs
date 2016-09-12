@@ -4,6 +4,7 @@
             [om-tools.core :refer-macros [defcomponent]]
             [sablono.core :as html :refer-macros [html]]
             [cljs.core.async :refer [put! <! chan timeout close!]]
+            [dommy.core :refer-macros [sel sel1]]
             (job-streamer.console.format :as fmt)
             (job-streamer.console.api :as api))
   (:use (job-streamer.console.components.timeline :only [timeline-view])
@@ -134,7 +135,10 @@
               {:page page}))
           (put! ch :continue)
           (recur)))
-      (put! ch :start)))
+      (put! ch :start))
+    ;To delete dust input of Blockly
+    (when-let [blockly (sel1 ".blocklyWidgetDiv")]
+      (.removeChild (. blockly -parentNode)  blockly)))
 
   (will-unmount [_]
     (when-let [now-timer (om/get-state owner :now-timer)]
