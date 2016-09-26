@@ -7,7 +7,8 @@
                       :agents nil
                       :system-error nil
                       :stats {:jobs-count 0 :agents-count 0}
-                      :mode [:jobs]}))
+                      :mode [:jobs]}
+                      :version {:console-version 0 :control-bus-version 0}))
 
 (om/root root-view app-state
          {:target (.getElementById js/document "app")})

@@ -55,15 +55,46 @@
           (callback))))
     (put! ch jobs)))
 
-(defcomponent right-menu-view [app owner {:keys [stats-channel jobs-channel]}]
+(defcomponent version-dialog [app owner {:keys [header-channel]}]
+  (will-mount [_]
+    (let [uri (goog.Uri. (.-href js/location))
+              port (.getPort uri)]
+          (api/request (str (.getScheme uri) "://" (.getDomain uri) (when port (str ":" port)) "/version")
+                       {:handler (fn [response]
+                                   (om/transact! app :version
+                                                 #(assoc %
+                                                    :console-version response)))}))
+        (api/request "/version"
+                     {:handler (fn [response]
+                                 (om/transact! app :version
+                                               #(assoc %
+                                                       :control-bus-version response)))}))
+
+  (render [_]
+   (let [{{:keys [console-version control-bus-version]} :version}  app]
+    (html
+     [:div.ui.dimmer.modals.page.transition.visible.active
+      [:div.ui.modal.scrolling.transition.visible.active
+       [:i.close.icon {:on-click (fn [e] (put! header-channel [:close-dialog true]))}]
+       [:div.header "version"]
+       [:div.content
+        [:p "console version: " console-version]
+        [:p "control-bus verion: " control-bus-version]
+        [:div.ui.center.aligned.column.grid
+          [:button.ui.black.button
+           {:type "button"
+            :on-click (fn [e] (put! header-channel [:close-dialog true]))} "Close"]]]]]))))
+
+(defcomponent right-menu-view [app owner {:keys [header-channel jobs-channel]}]
   (init-state [_]
     :configure-opened? false
     :click-outside-fn nil)
 
   (will-mount [_]
     (go-loop []
-      (let [_ (<! stats-channel)]
-        (api/request (str "/" app-name "/stats")
+      (let [[cmd msg] (<! header-channel)]
+        (case cmd
+          :refresh-stats (api/request (str "/" app-name "/stats")
                      {:handler (fn [response]
                                  (om/transact! app :stats
                                                #(assoc %
@@ -72,14 +103,17 @@
                       :error-handler
                       {:http-error (fn [res]
                                      (om/update! app :system-error "error"))}})
-        (recur)))
+          :version-dialog  (om/set-state! owner :open-version-dialog true)
+          :close-dialog (om/set-state! owner :open-version-dialog false))
 
-    (put! stats-channel true)
+             (recur)))
+
+    (put! header-channel [:refresh-stats true])
 
     (when-let [on-click-outside (om/get-state owner :click-outside-fn)]
       (.removeEventListener js/document "mousedown" on-click-outside)))
 
-  (render-state [_ {:keys [control-bus-not-found? configure-opened?]}]
+  (render-state [_ {:keys [control-bus-not-found? configure-opened? open-version-dialog]}]
     (let [{{:keys [agents-count jobs-count]} :stats}  app]
       (html
        [:div.right.menu
@@ -131,7 +165,6 @@
                                    (set! (.-onload reader)
                                          #(let [result (.. % -target -result)
                                                 callback-fn (fn []
-                                                              (println jobs-channel)
                                                               (put! jobs-channel [:refresh-jobs true]))]
                                             (cond
                                               (gstring/endsWith (.-name file) ".xml")
@@ -142,7 +175,14 @@
 
                                               :else
                                               (throw (js/Error. "Unsupported file type")))))
-                                   (.readAsText reader file)))}]]]]])))
+                                   (.readAsText reader file)))}]]
+          [:a.item {:on-click (fn[e]
+                                (put! header-channel [:version-dialog true]))}
+          [:i.circle.help.icon] "version"]]]
+        (when open-version-dialog
+          (om/build version-dialog app
+                    {:opts {:header-channel header-channel}
+                     :react-key "version-dialog"}))])))
 
   (did-mount [_]
     (when-not (om/get-state owner :click-outside-fn)
@@ -166,12 +206,12 @@
 
 (defcomponent root-view [app owner]
   (init-state [_]
-    {:stats-channel (chan)
+    {:header-channel (chan)
      :jobs-channel  (chan)
      :calendars-channel  (chan)})
   (will-mount [_]
     (routing/init app owner))
-  (render-state [_ {:keys [stats-channel jobs-channel calendars-channel]}]
+  (render-state [_ {:keys [header-channel jobs-channel calendars-channel]}]
     (html
      [:div.full.height
       (if-let [system-error (:system-error app)]
@@ -179,17 +219,16 @@
         (list
          [:div.ui.fixed.inverted.teal.menu
           [:div.header.item [:a {:href "#/" } [:img.ui.image {:alt "JobStreamer" :src "img/logo.png"}]]]
-          (om/build right-menu-view app {:opts {:stats-channel stats-channel
+          (om/build right-menu-view app {:opts {:header-channel header-channel
                                                 :jobs-channel jobs-channel
                                                 :react-key "menu"}})]
          [:div.main.grid.content.full.height
           (case (first (:mode app))
             :jobs (om/build jobs-view app {:init-state {:mode (second (:mode app))}
-                                           :opts {:stats-channel stats-channel
+                                           :opts {:header-channel header-channel
                                                   :jobs-channel jobs-channel}
                                            :react-key "jobs"})
             :agents (om/build agents-view app)
             :calendars (om/build calendars-view app {:init-state {:mode (second (:mode app))}
-                                           :opts {:stats-channel stats-channel
-                                                  :calendars-channel calendars-channel
+                                           :opts {:calendars-channel calendars-channel
                                                   :react-key "calendar"}}))]))])))

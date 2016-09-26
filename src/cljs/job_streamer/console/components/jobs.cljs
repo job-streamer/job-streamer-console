@@ -273,7 +273,7 @@
                      :react-key "job-pagination"})]]]))))
 
 
-(defcomponent jobs-view [app owner {:keys [stats-channel jobs-channel]}]
+(defcomponent jobs-view [app owner {:keys [header-channel jobs-channel]}]
   (init-state [_]
     {:dangerously-action-data nil
      :page 1})
@@ -288,7 +288,7 @@
             :close-dialog (do (om/set-state! owner :executing-job nil)
                               (search-jobs app {:q (:query app)}))
             :refresh-jobs (do (search-jobs app {:q (:query app)})
-                              (put! stats-channel true))
+                              (put! header-channel [:refresh-stats true]))
             :delete-job (do
                           (fn [results]
                             (remove #(= % msg) results))

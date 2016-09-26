@@ -260,7 +260,7 @@
                                                        :answer (:calendar/name cal)}]))}"Delete"]]])]])]])))
 
 
-(defcomponent calendars-view [app owner {:keys [stats-channel calendars-channel]}]
+(defcomponent calendars-view [app owner {:keys [calendars-channel]}]
   (init-state [_]
     {:dangerously-action-data nil})
   (will-mount [_]

@@ -65,5 +65,7 @@
                                  (content-type "text/javascript")))
    (GET "/react/react.min.js" [] (resource-response "cljsjs/production/react.min.inc.js"))
    (GET "/css/job-streamer.css" [] (-> {:body (style/build)}
-                                       (content-type "text/css")))))
+                                       (content-type "text/css")))
+   (GET "/version" [] (-> {:body  (clojure.string/replace (str "\"" (slurp "VERSION") "\"") "\n" "")}
+                                       (content-type "text/plain")))))
 
