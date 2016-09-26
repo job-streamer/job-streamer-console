@@ -98,7 +98,9 @@
            [:div.value jobs-count]
            [:div.label (str "job" (when (> jobs-count 1) "s"))]]]]
         [:div#job-search.item
-         [:form {:on-submit (fn [e] (search-jobs app {:q (.-value (.getElementById js/document "job-query"))}) false)}
+         [:form {:on-submit (fn [e]
+                              (.preventDefault e)
+                              (search-jobs app {:q (.-value (.getElementById js/document "job-query"))}) false)}
           [:div.ui.icon.transparent.inverted.input
            [:input#job-query {:type "text"}]
            [:i.search.icon]]]]
