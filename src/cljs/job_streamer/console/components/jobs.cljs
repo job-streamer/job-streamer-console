@@ -11,7 +11,8 @@
         (job-streamer.console.components.execution :only [execution-view])
         (job-streamer.console.components.pagination :only [pagination-view])
         (job-streamer.console.components.dialog :only[dangerously-action-dialog])
-        [job-streamer.console.search :only [search-jobs]]))
+        [job-streamer.console.search :only [search-jobs]]
+        [job-streamer.console.name-util :only [split-name]]))
 
 (enable-console-print!)
 (def app-name "default")
@@ -190,7 +191,7 @@
                    (for [{job-name :job/name :as job} (get-in app [:jobs :results])]
                      [[:tr
                        [:td
-                        [:a {:href (str "#/job/" job-name)} job-name]]
+                        [:a {:href (str "#/job/" job-name)} (split-name job-name 15)]]
                        (if-let [latest-execution (:job/latest-execution job)]
                          (if (#{:batch-status/undispatched :batch-status/unrestarted :batch-status/queued}
                               (get-in latest-execution [:job-execution/batch-status :db/ident]))

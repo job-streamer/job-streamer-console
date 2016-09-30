@@ -21,7 +21,8 @@
         [job-streamer.console.blocks :only [job->xml]]
         [job-streamer.console.components.job-settings :only [job-settings-view]]
         [job-streamer.console.components.pagination :only [pagination-view]]
-        [job-streamer.console.components.execution :only [execution-view]])
+        [job-streamer.console.components.execution :only [execution-view]]
+        [job-streamer.console.name-util :only [split-name]])
   (:import [goog.ui.tree TreeControl]
            [goog Uri]))
 
@@ -180,7 +181,7 @@
                                                                    (string/join ".")
                                                                    keyword))]
                                              [:a.section {:href (gstring/format (:href item) job-name)}
-                                              (gstring/format (:name item) job-name)])))
+                                              (gstring/format (:name item) (split-name job-name 40))])))
                         (let [res (keep identity items)]
                           (conj (vec (drop-last res))
                                 (into [:div.section.active] (rest (last res)))))))
@@ -459,7 +460,7 @@
                         [:div.job-detail.card
                          (om/build job-structure-view (:job/name job) {:react-key "job-structure"})
                          [:div.content
-                          [:div.header (:job/name job)]
+                          [:div.header (split-name (:job/name job) 30)]
                           [:div.description
                            [:div.ui.tiny.statistics
                             [:div.statistic
