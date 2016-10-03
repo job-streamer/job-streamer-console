@@ -22,7 +22,7 @@
 
 (defn save-calendar [calendar owner calendars-channel]
   (letfn [(on-success [_] (do (om/set-state! owner :save-status true)
-                            (put! calendars-channel [:save-calendar calendar])))
+                            (put! calendars-channel [:save-calendar calendar] #(set! (.-href js/location)  "#/calendars"))))
           (on-failure [res error-code] (om/set-state! owner :save-error error-code))]
     (if (:new? calendar)
       (api/request "/calendars" :POST calendar
@@ -275,7 +275,8 @@
                             (fn [response]
                               (om/transact! app (fn [cursor]
                                                   (assoc cursor
-                                                         :calendars response)))))
+                                                         :calendars response)))
+                              (println  response)))
             :open-dangerously-dialog (om/set-state! owner :dangerously-action-data msg))
           (catch js/Error e))
         (when (not= cmd :close-chan-listener)
