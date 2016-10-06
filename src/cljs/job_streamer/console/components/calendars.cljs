@@ -23,8 +23,7 @@
 (defn save-calendar [calendar owner calendars-channel]
   (letfn [(on-success [_] (do (om/set-state! owner :save-status true)
                             (put! calendars-channel [:save-calendar calendar]
-                                  #(set! (.-href js/location)  "#/calendars")
-                                  )))
+                                  #(set! (.-href js/location)  "#/calendars"))))
           (on-failure [res error-code] (om/set-state! owner :save-error error-code))]
     (if (:new? calendar)
       (api/request "/calendars" :POST calendar
@@ -38,8 +37,7 @@
   (api/request (str "/calendar/" (:calendar/name calendar)) :DELETE
                {:handler (fn [response]
                            (put! calendars-channel [:delete-calendar calendar])
-                           (set! (.-href js/location) "#/calendars")
-                           )
+                           (set! (.-href js/location) "#/calendars"))
                 :error-handler (fn[res error-code]
                                  (om/set-state! owner :delete-error res))}))
 
