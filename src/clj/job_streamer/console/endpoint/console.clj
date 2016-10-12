@@ -17,6 +17,7 @@
     (include-css "//cdn.jsdelivr.net/semantic-ui/2.0.3/semantic.min.css"
                  "/css/vendors/vis.min.css"
                  "/css/vendors/kalendae.css"
+                 "/css/vendors/dropzone.css"
                  "/css/job-streamer.css")
     (include-js  "/js/vendors/vis.min.js"
                  "/js/vendors/kalendae.standalone.min.js"

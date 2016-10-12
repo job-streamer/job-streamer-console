@@ -20,24 +20,22 @@
   (will-mount [_])
   (did-mount [_]
              (set! (.-autoDiscover js/Dropzone) false)
-             (set! (.-myAwesomeDropzone (.-options js/Dropzone))
-                   (js-obj ))
-             (js/Dropzone. ".drag-and-drop-area" (js-obj "url"
-                                                         (fn [files]
-                                                           (println (str "Upload File : " (.-name (first files))))
-                                                           "#"))))
+             (js/Dropzone. ".dropzone" (js-obj "url" (api/url-for "/default/batch-components")
+                                               "maxFiles" 1
+                                               "accept" (fn [file done]
+                                                          (if (clojure.string/ends-with? (.-name file) ".jar")
+                                                            (done)
+                                                            (throw (js/Error. "Unsupported file type.")))))))
   (render-state [_ {:keys [agent]}]
                 (html
                   [:div
-                   [:h2 app-name]
-                   [:div.drag-and-drop-area {:style {:color "#ccc"
-                                                     :height "200px"
-                                                     :margin "30px 0 20px"
-                                                     :border-style "dashed"
-                                                     :border-width "2px"
-                                                     :line-height "200px"
-                                                     :text-align "center"
-                                                     :cursor "pointer"}}]])))
+                   [:div {:class "dropzone"
+                          :style {:color "#ccc"
+                                  :margin "30px 0 20px"
+                                  :border-style "dashed"
+                                  :border-width "2px"
+                                  :line-height "200px"
+                                  :cursor "pointer"}}]])))
 
 (defcomponent apps-view [app owner]
   (render [_]
@@ -46,10 +44,10 @@
              [:div.ui.row
               [:div.ui.column
                [:h2.ui.violet.header
-                [:i.laptop.icon]
+                [:i.browser.icon]
                 [:div.content
-                 "Apps"
-                 [:div.sub.header "Applications."]]]]]
+                 "Application"
+                 [:div.sub.header (:application/name app)]]]]]
              [:div.ui.row
               [:div.ui.column
                (let [mode (second (:mode app))]
