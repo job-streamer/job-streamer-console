@@ -109,7 +109,13 @@
     (om/transact! app-state
                   #(assoc %
                           :mode [:agents :detail]
-                          :agent/instance-id instance-id))))
+                          :agent/instance-id instance-id)))
+
+  (sec/defroute #"/app/([\w\-]+)" [app-name]
+    (om/transact! app-state
+                  #(assoc %
+                          :mode [:apps :edit]
+                          :application/name app-name))))
 
 (defn- setup-history [owner]
   (let [history (goog.History.)
