@@ -181,7 +181,7 @@
                                 (.preventDefault e)
                                 (om/set-state! owner :configure-opened? false)
                                 (set! (.-href js/location) "#/app/default"))}
-           [:i.browser.icon] "Upload Jar"]
+           [:i.browser.icon] "Upload batch components"]
           [:a.item {:on-click (fn[e]
                                 (put! header-channel [:version-dialog true]))}
           [:i.circle.help.icon] "version"]]]

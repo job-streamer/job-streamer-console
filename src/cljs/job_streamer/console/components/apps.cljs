@@ -21,20 +21,35 @@
   (did-mount [_]
              (set! (.-autoDiscover js/Dropzone) false)
              (js/Dropzone. ".dropzone" (js-obj "url" (api/url-for "/default/batch-components")
+                                               "headers" (js-obj "Cache-Control" "" "X-Requested-With" "")
                                                "maxFiles" 1
                                                "accept" (fn [file done]
                                                           (if (clojure.string/ends-with? (.-name file) ".jar")
                                                             (done)
-                                                            (throw (js/Error. "Unsupported file type.")))))))
+                                                            (done "Unsupported file type."))))))
   (render-state [_ {:keys [agent]}]
                 (html
                   [:div
+                   [:div.ui.icon.message
+                    [:i.child.icon]
+                    [:div.content
+                     [:div.header "Let's create batch components!"]
+                     [:ol.ui.list
+                      [:li
+                       [:h4.ui.header "Clone repository."]
+                       [:pre
+                        [:code "% git clone https://github.com/job-streamer/job-streamer-examples.git"]]]
+                      [:li
+                       [:h4.ui.header "Create a jar file with dependencies."]
+                       [:pre
+                        [:code "% cd job-streamer-examples\n"
+                         "% mvn clean compile assembly:single"]]]
+                      [:li
+                       [:h4.ui.header "Upload the jar file to the following form."]
+                       [:pre "target/job-streamer-examples-X.Y.Z-SNAPSHOT.jar"]]]]]
                    [:div {:class "dropzone"
-                          :style {:color "#ccc"
-                                  :margin "30px 0 20px"
-                                  :border-style "dashed"
+                          :style {:border-style "dashed"
                                   :border-width "2px"
-                                  :line-height "200px"
                                   :cursor "pointer"}}]])))
 
 (defcomponent apps-view [app owner]
