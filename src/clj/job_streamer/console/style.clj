@@ -15,6 +15,16 @@
                              :right "1px solid #ddd"}}
     [:.ui.selection.dropdown {:min-width (em 1)
                               :padding (em 0.5)}]]
+   [:table.job-list
+    [:td.job-name {:max-width (px 280)}
+     [:div {:overflow "hidden"
+            :text-overflow "ellipsis"}]]]
+   [:div.breadcrumb
+    [:div.section {:max-width (px 320)
+                   :white-space "nowrap"
+                   :text-overflow "ellipsis"
+                   :overflow "hidden"}]]
+   [:div.content {:overflow "hidden"}]
    [:#timeline-inner {:font-size (px 8)}]
    [:#job-blocks-inner {:height (px 400)}]
    [:#tab-content {:padding (px 10)}]

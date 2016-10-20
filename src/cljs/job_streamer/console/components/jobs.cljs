@@ -11,8 +11,7 @@
         (job-streamer.console.components.execution :only [execution-view])
         (job-streamer.console.components.pagination :only [pagination-view])
         (job-streamer.console.components.dialog :only[dangerously-action-dialog])
-        [job-streamer.console.search :only [search-jobs]]
-        [job-streamer.console.name-util :only [split-name]]))
+        [job-streamer.console.search :only [search-jobs]]))
 
 (enable-console-print!)
 (def app-name "default")
@@ -174,10 +173,10 @@
            [:i.refresh.icon]]]]
         [:div.row
          [:div.column
-          [:table.ui.table
+          [:table.ui.table.job-list
            [:thead
             [:tr
-             [:th {:rowSpan 2} "Job name"]
+             [:th.job-name {:rowSpan 2} "Job name"]
              [:th {:colSpan 3} "Last execution"]
              [:th "Next execution"]
              [:th {:rowSpan 2} "Operations"]]
@@ -190,8 +189,10 @@
             (apply concat
                    (for [{job-name :job/name :as job} (get-in app [:jobs :results])]
                      [[:tr
-                       [:td
-                        [:a {:href (str "#/job/" job-name)} (split-name job-name 15)]]
+                       [:td.job-name
+                        [:div
+                         [:a {:href (str "#/job/" job-name)
+                              :title job-name} job-name]]]
                        (if-let [latest-execution (:job/latest-execution job)]
                          (if (#{:batch-status/undispatched :batch-status/unrestarted :batch-status/queued}
                               (get-in latest-execution [:job-execution/batch-status :db/ident]))
