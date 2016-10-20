@@ -13,7 +13,7 @@
         [job-streamer.console.components.jobs :only [jobs-view]]
         [job-streamer.console.components.agents :only [agents-view]]
         [job-streamer.console.components.calendars :only [calendars-view]]
-        [job-streamer.console.search :only [search-jobs]]
+        [job-streamer.console.search :only [search-jobs parse-sort-order]]
         [job-streamer.console.component-helper :only [make-click-outside-fn]]))
 
 (def app-name "default")
@@ -134,7 +134,7 @@
         [:div#job-search.item
          [:form {:on-submit (fn [e]
                               (.preventDefault e)
-                              (search-jobs app {:q (.-value (.getElementById js/document "job-query"))}) false)}
+                              (search-jobs app {:q (.-value (.getElementById js/document "job-query")) :sort-by (-> app :job-sort-order parse-sort-order)}) false)}
           [:div.ui.icon.transparent.inverted.input
            [:input#job-query {:type "text"}]
            [:i.search.icon]]]]

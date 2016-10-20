@@ -64,7 +64,10 @@
 
    [:.k-days
     [:span {:box-sizing "content-box"}]]
-   [:div.ui.input.block {:display "block"}]])
+   [:div.ui.input.block {:display "block"}]
+   [:table.ui.table
+   [:th.can-sort {:cursor "pointer"}]]]
+)
 
 
 (defn build []
