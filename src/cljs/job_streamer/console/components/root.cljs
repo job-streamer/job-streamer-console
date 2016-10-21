@@ -19,7 +19,7 @@
 (def app-name "default")
 
 (defn export-jobs []
-  (api/download (str "/" app-name "/jobs/download?with=notation,shcedule,settings")))
+  (api/download (str "/" app-name "/jobs/download?with=notation,schedule,settings")))
 
 (defn import-xml-job [jobxml callback]
   (api/request (str "/" app-name "/jobs") :POST jobxml
