@@ -21,12 +21,15 @@
     path))
 
 (defn handle-each-type [handler response xhrio]
-  (if (fn? handler) 
+  (if (fn? handler)
     (handler response)
     (.error js/console
             (str (goog.net.ErrorCode/getDebugMessage (.getLastErrorCode xhrio))
                  " from "
                  (.getLastUri xhrio)))))
+
+(defn download[path]
+  (set! (.-href js/location) (url-for path)))
 
 (defn request
   ([path]
