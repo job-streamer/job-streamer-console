@@ -24,7 +24,7 @@
                    :white-space "nowrap"
                    :text-overflow "ellipsis"
                    :overflow "hidden"}]]
-   [:div.content {:overflow "hidden"}]
+   [:div.name {:overflow "hidden"}]
    [:#timeline-inner {:font-size (px 8)}]
    [:#job-blocks-inner {:height (px 400)}]
    [:#tab-content {:padding (px 10)}]

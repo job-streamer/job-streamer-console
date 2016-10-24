@@ -461,7 +461,7 @@
                         [:div.job-detail.card
                          (om/build job-structure-view (:job/name job) {:react-key "job-structure"})
                          [:div.content
-                          [:div.header (:job/name job)]
+                          [:div.header.name (:job/name job)]
                           [:div.description
                            [:div.ui.tiny.statistics
                             [:div.statistic
