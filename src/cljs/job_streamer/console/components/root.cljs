@@ -13,6 +13,7 @@
         [job-streamer.console.components.jobs :only [jobs-view]]
         [job-streamer.console.components.agents :only [agents-view]]
         [job-streamer.console.components.calendars :only [calendars-view]]
+        [job-streamer.console.components.apps :only [apps-view]]
         [job-streamer.console.search :only [search-jobs]]
         [job-streamer.console.component-helper :only [make-click-outside-fn]]))
 
@@ -162,6 +163,11 @@
                                               :else
                                               (throw (js/Error. "Unsupported file type")))))
                                    (.readAsText reader file)))}]]
+          [:a.item {:on-click (fn [e]
+                                (.preventDefault e)
+                                (om/set-state! owner :configure-opened? false)
+                                (set! (.-href js/location) "#/app/default"))}
+           [:i.browser.icon] "Upload batch components"]
           [:a.item {:on-click (fn[e]
                                 (put! header-channel [:version-dialog true]))}
           [:i.circle.help.icon] "version"]]]
@@ -217,4 +223,5 @@
             :agents (om/build agents-view app)
             :calendars (om/build calendars-view app {:init-state {:mode (second (:mode app))}
                                            :opts {:calendars-channel calendars-channel
-                                                  :react-key "calendar"}}))]))])))
+                                                  :react-key "calendar"}})
+            :apps (om/build apps-view app))]))])))
