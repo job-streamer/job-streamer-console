@@ -296,7 +296,9 @@
                                              (remove #(= % msg) cals)))
             :save-calendar (om/transact! (:calendars app)
                                            (fn [cals]
-                                             (cons msg cals)))
+                                             (->> cals
+                                             (remove #(= (:calendar/name %) (:calendar/name msg)))
+                                             (cons msg))))
             :open-dangerously-dialog (om/set-state! owner :dangerously-action-data msg))
           (catch js/Error e))
         (when (not= cmd :close-chan-listener)
