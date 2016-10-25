@@ -27,11 +27,11 @@
 
 
 (defn toggle-sort-order[sort-order keyfn]
-  (if sort-order
-    (if (= :asc (keyfn sort-order))
-      (-> sort-order (dissoc keyfn) (assoc keyfn :desc))
-      (-> sort-order (dissoc keyfn) (assoc keyfn :asc)))
-    (into (linked/map) [[keyfn :asc]])))
+  (case (keyfn sort-order)
+    :asc (assoc sort-order keyfn :desc)
+    :desc (dissoc sort-order keyfn)
+    ;now sort key must be one
+    {keyfn :asc}))
 
 
 
