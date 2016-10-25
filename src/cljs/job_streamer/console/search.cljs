@@ -1,7 +1,9 @@
 (ns job-streamer.console.search
   (:require [om.core :as om :include-macros true]
             (job-streamer.console.api :as api)
-            [goog.Uri.QueryData :as query-data])
+            [goog.Uri.QueryData :as query-data]
+            [clojure.string :as string]
+            [linked.core :as linked])
   (:import [goog Uri]))
 
 (def app-name "default")
@@ -15,5 +17,21 @@
                            (om/transact! app
                                          #(assoc %
                                                  :jobs response
-                                                 :query (:q query))))})))
+                                            :query (:q query))))})))
+
+(defn parse-sort-order [sort-order]
+ (->> sort-order
+      reverse
+      (map (fn[m] (str (-> m first name) ":" (-> m second name))))
+      (string/join ",")))
+
+
+(defn toggle-sort-order[sort-order keyfn]
+  (case (keyfn sort-order)
+    :asc (assoc sort-order keyfn :desc)
+    :desc (dissoc sort-order keyfn)
+    ;now sort key must be one
+    {keyfn :asc}))
+
+
 

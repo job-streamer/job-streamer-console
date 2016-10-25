@@ -179,11 +179,13 @@
                                                                    (map name)
                                                                    (string/join ".")
                                                                    keyword))]
-                                             [:a.section {:href (gstring/format (:href item) job-name)}
-                                              (gstring/format (:name item) job-name)])))
+                                             [:div.section
+                                              [:a {:href (gstring/format (:href item) job-name)
+                                                   :title job-name}
+                                               (gstring/format (:name item) job-name)]])))
                         (let [res (keep identity items)]
                           (conj (vec (drop-last res))
-                                (into [:div.section.active] (rest (last res)))))))
+                                (into [:div.section.active] (-> res last (get-in [1 2])))))))
                     (repeat [:i.right.chevron.icon.divider])))])))
 
 (defcomponent job-edit-view [job owner {:keys [jobs-channel]}]
@@ -459,7 +461,7 @@
                         [:div.job-detail.card
                          (om/build job-structure-view (:job/name job) {:react-key "job-structure"})
                          [:div.content
-                          [:div.header (:job/name job)]
+                          [:div.header.name (:job/name job)]
                           [:div.description
                            [:div.ui.tiny.statistics
                             [:div.statistic

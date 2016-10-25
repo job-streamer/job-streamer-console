@@ -26,6 +26,8 @@
          [:h3.ui.header (:agent/name agent)
           [:div.sub.header instance-id]]]
         [:div.eight.wide.column
+         [:h4.ui.header "Agent Version"]
+         (:agent/agent-version agent)
          [:h4.ui.header "CPU usage"]
          [:div.image
           [:img.ui.image {:src (api/url-for (str "/agent/" instance-id "/monitor/cpu/daily"))}]]

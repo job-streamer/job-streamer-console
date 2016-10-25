@@ -8,6 +8,7 @@
             [clojure.string :as string]
             [goog.events :as events]
             [goog.ui.Component]
+            [goog.Uri.QueryData :as query-data]
             [goog.string :as gstring]
             [bouncer.core :as b]
             [bouncer.validators :as v]
@@ -16,13 +17,16 @@
 
   (:use [cljs.reader :only [read-string]]
         (job-streamer.console.components.dialog :only[dangerously-action-dialog])
-        (job-streamer.console.routing :only[fetch-calendars]))
+        (job-streamer.console.routing :only[fetch-calendars])
+        [job-streamer.console.search :only [parse-sort-order toggle-sort-order]])
   (:import [goog.net.EventType]
-           [goog.events EventType]))
+           [goog.events EventType]
+           [goog Uri]))
 
 (defn save-calendar [calendar owner calendars-channel]
   (letfn [(on-success [_] (do (om/set-state! owner :save-status true)
-                            (put! calendars-channel [:save-calendar calendar])))
+                            (put! calendars-channel [:save-calendar calendar]
+                                  #(set! (.-href js/location)  "#/calendars"))))
           (on-failure [res error-code] (om/set-state! owner :save-error error-code))]
     (if (:new? calendar)
       (api/request "/calendars" :POST calendar
@@ -209,7 +213,7 @@
                                                                        (map #(if % 1 0)))
                                                                   (.. js/Kalendae (moment d) day))) })))))
 
-(defcomponent calendar-list-view [calendars owner {:keys [calendars-channel]}]
+(defcomponent calendar-list-view [app owner {:keys [calendars-channel]}]
   (init-state [_]
     {:delete-error nil})
   (render-state [_ {:keys [delete-error]}]
@@ -230,11 +234,30 @@
           :on-click #(set! (.-href js/location) "#/calendars/new")}
          [:i.plus.icon] "New"]]]
       [:div.row
-       (when (not-empty calendars)
+       (when-let [calendars (not-empty (:calendars app))]
          [:table.ui.celled.striped.table
           [:thead
            [:tr
-            [:th "Name"]
+            [:th.can-sort
+             {:on-click (fn [e]
+                          (let [uri (.. (Uri. "/calendars")
+                                        (setQueryData (query-data/createFromMap
+                                                        (clj->js {:sort-by (-> app
+                                                                               :calendar-sort-order
+                                                                               (toggle-sort-order :name)
+                                                                               parse-sort-order)}))))]
+                            (api/request (.toString uri) :GET
+                                         {:handler (fn [response]
+                                                     (om/transact! app
+                                                                   #(assoc %
+                                                                      :calendars response)))}))
+                            (om/transact! app :calendar-sort-order #(toggle-sort-order % :name)))}
+             "Name"
+             [:i.sort.icon
+                          {:class (when-let [sort-order (get-in app [:calendar-sort-order :name])]
+                                    (if (= sort-order :asc)
+                                      "ascending"
+                                      "descending"))}]]
             [:th "Holidays"]
             [:th "Operations"]]]
           [:tbody
@@ -271,11 +294,9 @@
             :delete-calendar (om/transact! (:calendars app)
                                            (fn [cals]
                                              (remove #(= % msg) cals)))
-            :save-calendar (fetch-calendars
-                            (fn [response]
-                              (om/transact! app (fn [cursor]
-                                                  (assoc cursor
-                                                         :calendars response)))))
+            :save-calendar (om/transact! (:calendars app)
+                                           (fn [cals]
+                                             (cons msg cals)))
             :open-dangerously-dialog (om/set-state! owner :dangerously-action-data msg))
           (catch js/Error e))
         (when (not= cmd :close-chan-listener)
@@ -308,7 +329,7 @@
             ;; default
             (cond
               (nil? (:calendars app)) [:img {:src "/img/loader.gif"}]
-              :default (om/build calendar-list-view (:calendars app) {:state {:mode (:mode app)}
+              :default (om/build calendar-list-view app {:state {:mode (:mode app)}
                                                                       :opts {:calendars-channel calendars-channel}
                                                                       :react-key "calendar-list"})))
           (when dangerously-action-data

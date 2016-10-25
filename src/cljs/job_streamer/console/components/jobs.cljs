@@ -11,7 +11,7 @@
         (job-streamer.console.components.execution :only [execution-view])
         (job-streamer.console.components.pagination :only [pagination-view])
         (job-streamer.console.components.dialog :only[dangerously-action-dialog])
-        [job-streamer.console.search :only [search-jobs]]))
+        [job-streamer.console.search :only [search-jobs parse-sort-order toggle-sort-order]]))
 
 (enable-console-print!)
 (def app-name "default")
@@ -130,7 +130,7 @@
                    not-empty)
             (let [page (om/get-state owner :page)
                   per  (om/get-state owner :per)]
-              (search-jobs app {:q (:query app) :offset (inc (* (dec page) per)) :limit per})
+              (search-jobs app {:q (:query app) :sort-by (-> app :job-sort-order parse-sort-order) :offset (inc (* (dec page) per)) :limit per})
               {:page page}))
           (put! ch :continue)
           (recur)))
@@ -169,28 +169,93 @@
           [:button.ui.circular.basic.orange.icon.button
            {:type "button"
             :on-click (fn [e]
-                        (search-jobs app {:q (:query app) :offset (inc (* (dec page) per)) :limit per}))}
+                        (search-jobs app {:q (:query app) :sort-by (-> app :job-sort-order parse-sort-order) :offset (inc (* (dec page) per)) :limit per}))}
            [:i.refresh.icon]]]]
         [:div.row
          [:div.column
-          [:table.ui.table
+          [:table.ui.table.job-list
            [:thead
             [:tr
-             [:th {:rowSpan 2} "Job name"]
+             [:th.can-sort
+              {:rowSpan 2
+               :on-click (fn [e]
+                           (search-jobs app {:q (:query app)
+                                             :sort-by (-> app :job-sort-order (toggle-sort-order :name) parse-sort-order)
+                                             :offset (inc (* (dec page) per))
+                                             :limit per})
+                           (om/transact! app :job-sort-order #(toggle-sort-order % :name)))}
+              "Job name"
+              [:i.sort.icon
+                          {:class (when-let [sort-order (get-in app [:job-sort-order :name])]
+                                    (if (= sort-order :asc)
+                                      "ascending"
+                                      "descending"))}]]
              [:th {:colSpan 3} "Last execution"]
              [:th "Next execution"]
              [:th {:rowSpan 2} "Operations"]]
             [:tr
-             [:th "Started at"]
-             [:th "Duration"]
-             [:th "Status"]
-             [:th "Start"]]]
+             [:th.can-sort
+              {
+                :on-click (fn [e]
+                           (search-jobs app {:q (:query app)
+                                             :sort-by (-> app :job-sort-order (toggle-sort-order :last-execution-started) parse-sort-order)
+                                             :offset (inc (* (dec page) per))
+                                             :limit per})
+                           (om/transact! app :job-sort-order #(toggle-sort-order % :last-execution-started)))}
+              "Started at"
+              [:i.sort.icon
+                          {:class (when-let [sort-order (get-in app [:job-sort-order :last-execution-started])]
+                                    (if (= sort-order :asc)
+                                      "ascending"
+                                      "descending"))}]]
+             [:th.can-sort
+              {:on-click (fn [e]
+                           (search-jobs app {:q (:query app)
+                                             :sort-by (-> app :job-sort-order (toggle-sort-order :last-execution-duration) parse-sort-order)
+                                             :offset (inc (* (dec page) per))
+                                             :with "execution"
+                                             :limit per})
+                           (om/transact! app :job-sort-order #(toggle-sort-order % :last-execution-duration)))}
+              "Duration"
+              [:i.sort.icon
+                          {:class (when-let [sort-order (get-in app [:job-sort-order :last-execution-duration])]
+                                    (if (= sort-order :asc)
+                                      "ascending"
+                                      "descending"))}]]
+             [:th.can-sort
+              {:on-click (fn [e]
+                           (search-jobs app {:q (:query app)
+                                             :sort-by (-> app :job-sort-order (toggle-sort-order :last-execution-status) parse-sort-order)
+                                             :offset (inc (* (dec page) per))
+                                             :limit per})
+                           (om/transact! app :job-sort-order #(toggle-sort-order % :last-execution-status)))}
+              "Status"
+              [:i.sort.icon
+                          {:class (when-let [sort-order (get-in app [:job-sort-order :last-execution-status])]
+                                    (if (= sort-order :asc)
+                                      "ascending"
+                                      "descending"))}]]
+             [:th.can-sort
+              {:on-click (fn [e]
+                           (search-jobs app {:q (:query app)
+                                             :sort-by (-> app :job-sort-order (toggle-sort-order :next-execution-start) parse-sort-order)
+                                             :offset (inc (* (dec page) per))
+                                             :limit per})
+                           (om/transact! app :job-sort-order #(toggle-sort-order % :next-execution-start)))}
+              "Start"
+              [:i.sort.icon
+                          {:class (when-let [sort-order (get-in app [:job-sort-order :next-execution-start])]
+                                    (if (= sort-order :asc)
+                                      "ascending"
+                                      "descending"))}]]]]
            [:tbody
             (apply concat
                    (for [{job-name :job/name :as job} (get-in app [:jobs :results])]
                      [[:tr
-                       [:td
-                        [:a {:href (str "#/job/" job-name)} job-name]]
+                       [:td.job-name
+                        [:div
+                         [:a {:href (str "#/job/" job-name)
+                              :title job-name} job-name]]]
                        (if-let [latest-execution (:job/latest-execution job)]
                          (if (#{:batch-status/undispatched :batch-status/unrestarted :batch-status/queued}
                               (get-in latest-execution [:job-execution/batch-status :db/ident]))
@@ -269,7 +334,10 @@
                                      :per per
                                      :jobs-view-channel jobs-view-channel}
                     {:init-state {:link-fn (fn [pn]
-                                             (search-jobs app {:q (:query app) :offset (inc (* (dec pn) per)) :limit per}))}
+                                             (search-jobs app {:q (:query app)
+                                                               :sort-by (-> app :job-sort-order parse-sort-order)
+                                                               :offset (inc (* (dec pn) per))
+                                                               :limit per}))}
                      :react-key "job-pagination"})]]]))))
 
 
@@ -278,7 +346,7 @@
     {:dangerously-action-data nil
      :page 1})
   (will-mount [_]
-    (search-jobs app {:q (:query app) :p 1})
+    (search-jobs app {:q (:query app) :sort-by (-> app :job-sort-order parse-sort-order) :p 1})
     (go-loop []
       (let [[cmd msg] (<! jobs-channel)]
         (try
@@ -286,8 +354,8 @@
             :execute-dialog  (om/set-state! owner :executing-job [:execute msg])
             :restart-dialog  (om/set-state! owner :executing-job [:restart msg])
             :close-dialog (do (om/set-state! owner :executing-job nil)
-                              (search-jobs app {:q (:query app)}))
-            :refresh-jobs (do (search-jobs app {:q (:query app)})
+                              (search-jobs app {:q (:query app) :sort-by (-> app :job-sort-order parse-sort-order) }))
+            :refresh-jobs (do (search-jobs app {:q (:query app) :sort-by (-> app :job-sort-order parse-sort-order) })
                               (put! header-channel [:refresh-stats true]))
             :delete-job (do
                           (fn [results]
