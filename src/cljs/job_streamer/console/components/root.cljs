@@ -22,6 +22,9 @@
 (defn export-jobs []
   (api/download (str "/" app-name "/jobs/download?with=notation,schedule,settings")))
 
+(defn export-calendars []
+  (api/download "/calendars/download"))
+
 (defn import-xml-job [jobxml callback]
   (api/request (str "/" app-name "/jobs") :POST jobxml
                {:format :xml
@@ -32,8 +35,13 @@
     (go-loop []
       (let [jobs (<! ch)
             rest-jobs (not-empty (rest jobs))]
-        (if-not (empty? jobs)
-          (api/request (str "/" app-name "/jobs") :POST (:job/edn-notation (first jobs))
+        (when-let [job (first jobs)]
+          (api/request (str "/" app-name "/jobs") :POST
+                       (merge (read-string (:job/edn-notation job))
+                              (select-keys job [:job/schedule
+                                                :job/exclusive?
+                                                :job/time-monitor
+                                                :job/status-notifications]))
                        {:handler (fn [_]
                                    (when rest-jobs
                                      (put! ch rest-jobs)))}))
@@ -41,6 +49,36 @@
           (recur)
           (callback))))
     (put! ch jobs)))
+
+(defn import-edn-calendars [calendars callback]
+  (let [ch (chan)]
+    (go-loop []
+      (let [calendars (<! ch)
+            rest-calendars (not-empty (rest calendars))]
+        (when-let [calendar (first calendars)]
+          (api/request "/calendars" :POST
+                       calendar
+                       {:handler (fn [_]
+                                   (when rest-calendars
+                                     (put! ch rest-calendars)))}))
+        (if rest-calendars
+          (recur)
+          (callback))))
+    (put! ch calendars)))
+
+(defn upload-dialog [el-name upload-fn callback-fn]
+  [:input
+   {:type "file"
+    :name el-name
+    :style {:display "none"}
+    :on-change
+    (fn [e]
+      (let [file (aget (.. e -target -files) 0)
+            reader (js/FileReader.)]
+        (set! (.-onload reader)
+              #(let [result (.. % -target -result)]
+                 (upload-fn file result callback-fn)))
+        (.readAsText reader file)))}])
 
 (defcomponent version-dialog [app owner {:keys [header-channel]}]
   (will-mount [_]
@@ -75,6 +113,8 @@
 (defcomponent right-menu-view [app owner {:keys [header-channel jobs-channel]}]
   (init-state [_]
     :configure-opened? false
+    :export-opened? false
+    :import-opened? false
     :click-outside-fn nil)
 
   (will-mount [_]
@@ -100,7 +140,8 @@
     (when-let [on-click-outside (om/get-state owner :click-outside-fn)]
       (.removeEventListener js/document "mousedown" on-click-outside)))
 
-  (render-state [_ {:keys [control-bus-not-found? configure-opened? open-version-dialog]}]
+  (render-state [_ {:keys [control-bus-not-found? configure-opened? open-version-dialog
+                           export-opened? import-opened?]}]
     (let [{{:keys [agents-count jobs-count]} :stats}  app]
       (html
        [:div.right.menu
@@ -136,33 +177,65 @@
                                 (om/set-state! owner :configure-opened? false)
                                 (set! (.-href js/location) "#/calendars"))}
            [:i.calendar.icon] "Calendar"]
-          [:a.item {:on-click (fn [e]
-                                (.preventDefault e)
-                                (om/set-state! owner :configure-opened? false)
-                                (export-jobs))}
-           [:i.download.icon] "Export jobs"]
-          [:a.item {:on-click (fn [e]
-                                (.. (om/get-node owner) (querySelector "[name='file']") click)
-                                (om/set-state! owner :configure-opened? false))}
-           [:i.upload.icon] "Import jobs"
-           [:input {:type "file" :name "file" :style {:display "none"}
-                    :on-change (fn [e]
-                                 (let [file (aget (.. e -target -files) 0)
-                                       reader (js/FileReader.)]
-                                   (set! (.-onload reader)
-                                         #(let [result (.. % -target -result)
-                                                callback-fn (fn []
-                                                              (put! jobs-channel [:refresh-jobs true]))]
-                                            (cond
-                                              (gstring/endsWith (.-name file) ".xml")
-                                              (import-xml-job result callback-fn)
+          [:div.ui.dropdown.item
+           {:on-mouse-over (fn [_]
+                             (om/set-state! owner :export-opened? true))
+            :on-mouse-out  (fn [_]
+                             (om/set-state! owner :export-opened? false))}
+           [:i.download.icon]
+           "Export"
+           [:div.menu.left.transition
+            {:class (if export-opened? "visible" "hidden")}
+            [:a.item {:on-click (fn [e]
+                                  (.preventDefault e)
+                                  (om/set-state! owner :configure-opened? false)
+                                  (export-jobs))}
+             "Export jobs"]
+            [:a.item {:on-click (fn [e]
+                                  (.preventDefault e)
+                                  (om/set-state! owner :configure-opened? false)
+                                  (export-calendars))}
+             "Export calendars"]]]
 
-                                              (gstring/endsWith (.-name file) ".edn")
-                                              (import-edn-jobs (read-string result) callback-fn)
+          [:div.ui.dropdown.item
+           {:on-mouse-over (fn [_]
+                             (om/set-state! owner :import-opened? true))
+            :on-mouse-out  (fn [_]
+                             (om/set-state! owner :import-opened? false))}
+           [:i.upload.icon] "Import"
+           [:div.menu.left.transition
+            {:class (if import-opened? "visible" "hidden")}
+            [:a.item {:on-click (fn [e]
+                                  (.. (om/get-node owner)
+                                      (querySelector "[name='file-jobs']")
+                                      click)
+                                  (om/set-state! owner :configure-opened? false))}
+             (upload-dialog
+              "file-jobs"
+              (fn [file result callback-fn]
+                (cond
+                   (gstring/endsWith (.-name file) ".xml")
+                   (import-xml-job result callback-fn)
 
-                                              :else
-                                              (throw (js/Error. "Unsupported file type")))))
-                                   (.readAsText reader file)))}]]
+                   (gstring/endsWith (.-name file) ".edn")
+                   (import-edn-jobs (read-string result) callback-fn)
+
+                   :else
+                   (throw (js/Error. "Unsupported file type"))))
+              (fn [] (put! jobs-channel [:refresh-jobs true])))
+             "Import jobs"]
+            [:a.item {:on-click (fn [e]
+                                  (.. (om/get-node owner)
+                                      (querySelector "[name='file-calendars']")
+                                      click)
+                                  (om/set-state! owner :configure-opened? false))}
+             (upload-dialog
+              "file-calendars"
+              (fn [file result callback-fn]
+                (import-edn-calendars (read-string result) callback-fn))
+              (fn [] ))
+             "Import calendars"]]]
+
           [:a.item {:on-click (fn [e]
                                 (.preventDefault e)
                                 (om/set-state! owner :configure-opened? false)
@@ -182,7 +255,9 @@
                    (make-click-outside-fn
                     (.. (om/get-node owner) (querySelector "div.ui.dropdown.item"))
                     (fn [_]
-                      (om/set-state! owner :configure-opened? false)))))
+                      (om/set-state! owner :configure-opened? false)
+                      (om/set-state! owner :import-opened? false)
+                      (om/set-state! owner :export-opened? false)))))
     (.addEventListener js/document "mousedown"
                        (om/get-state owner :click-outside-fn))))
 
