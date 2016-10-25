@@ -21,7 +21,6 @@
                  [fence "0.2.0"]
                  [cljsjs/dropzone "4.3.0-0"]
                  [cljsjs/jquery "2.2.4-0"]
-                 [frankiesardo/linked "1.2.9"]
 
                  [ring "1.4.0"]
                  [ring/ring-defaults "0.2.0"]
