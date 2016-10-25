@@ -2,8 +2,7 @@
   (:require [om.core :as om :include-macros true]
             (job-streamer.console.api :as api)
             [goog.Uri.QueryData :as query-data]
-            [clojure.string :as string]
-            [linked.core :as linked])
+            [clojure.string :as string])
   (:import [goog Uri]))
 
 (def app-name "default")
