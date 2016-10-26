@@ -1,10 +1,10 @@
 (ns job-streamer.console.components.root
-  (:require-macros [cljs.core.async.macros :refer [go-loop]]
+  (:require-macros [cljs.core.async.macros :refer [go go-loop]]
                    [fence.core :refer [+++]])
   (:require [om.core :as om :include-macros true]
             [om-tools.core :refer-macros [defcomponent]]
             [sablono.core :as html :refer-macros [html]]
-            [cljs.core.async :refer [put! <! chan]]
+            [cljs.core.async :refer [put! <! chan timeout]]
             [job-streamer.console.routing :as routing]
             [job-streamer.console.api :as api]
             [goog.string :as gstring]
@@ -32,7 +32,7 @@
 
 (defn import-edn-jobs [jobs callback]
   (let [ch (chan)]
-    (go-loop []
+    (go-loop [cnt 1]
       (let [jobs (<! ch)
             rest-jobs (not-empty (rest jobs))]
         (when-let [job (first jobs)]
@@ -46,13 +46,13 @@
                                    (when rest-jobs
                                      (put! ch rest-jobs)))}))
         (if rest-jobs
-          (recur)
-          (callback))))
+          (recur (inc cnt))
+          (callback cnt))))
     (put! ch jobs)))
 
 (defn import-edn-calendars [calendars callback]
   (let [ch (chan)]
-    (go-loop []
+    (go-loop [cnt 1]
       (let [calendars (<! ch)
             rest-calendars (not-empty (rest calendars))]
         (when-let [calendar (first calendars)]
@@ -62,8 +62,8 @@
                                    (when rest-calendars
                                      (put! ch rest-calendars)))}))
         (if rest-calendars
-          (recur)
-          (callback))))
+          (recur (inc cnt))
+          (callback cnt))))
     (put! ch calendars)))
 
 (defn upload-dialog [el-name upload-fn callback-fn]
@@ -110,7 +110,7 @@
            {:type "button"
             :on-click (fn [e] (put! header-channel [:close-dialog true]))} "Close"]]]]]))))
 
-(defcomponent right-menu-view [app owner {:keys [header-channel jobs-channel]}]
+(defcomponent right-menu-view [app owner {:keys [header-channel jobs-channel message-channel]}]
   (init-state [_]
     :configure-opened? false
     :export-opened? false
@@ -189,7 +189,8 @@
             [:a.item {:on-click (fn [e]
                                   (.preventDefault e)
                                   (om/set-state! owner :configure-opened? false)
-                                  (export-jobs))}
+                                  (export-jobs)
+                                  )}
              "Export jobs"]
             [:a.item {:on-click (fn [e]
                                   (.preventDefault e)
@@ -221,8 +222,12 @@
                    (import-edn-jobs (read-string result) callback-fn)
 
                    :else
-                   (throw (js/Error. "Unsupported file type"))))
-              (fn [] (put! jobs-channel [:refresh-jobs true])))
+                   (put! message-channel {:type "error"
+                                          :body "Cannot import. Unsupported file type."})))
+              (fn [cnt]
+                (put! jobs-channel [:refresh-jobs true])
+                (put! message-channel {:type "success"
+                                       :body (str "Imported " cnt " jobs!")})))
              "Import jobs"]
             [:a.item {:on-click (fn [e]
                                   (.. (om/get-node owner)
@@ -233,7 +238,9 @@
               "file-calendars"
               (fn [file result callback-fn]
                 (import-edn-calendars (read-string result) callback-fn))
-              (fn [] ))
+              (fn [cnt]
+                (put! message-channel {:type "success"
+                                       :body (str "Imported " cnt " calendars!")})))
              "Import calendars"]]]
 
           [:a.item {:on-click (fn [e]
@@ -273,12 +280,22 @@
 
 (defcomponent root-view [app owner]
   (init-state [_]
-    {:header-channel (chan)
-     :jobs-channel  (chan)
-     :calendars-channel  (chan)})
+    {:header-channel    (chan)
+     :jobs-channel      (chan)
+     :calendars-channel (chan)
+     :message-channel   (chan)
+     :message nil})
   (will-mount [_]
-    (routing/init app owner))
-  (render-state [_ {:keys [header-channel jobs-channel calendars-channel]}]
+    (routing/init app owner)
+    (go-loop []
+      (when-let [msg (<! (om/get-state owner :message-channel))]
+        (om/set-state! owner :message msg)
+        (go (<! (timeout 5000))
+          (om/set-state! owner :message nil))
+        (recur))))
+  (render-state [_ {:keys [header-channel jobs-channel
+                           calendars-channel message-channel
+                           message]}]
     (html
      [:div.full.height
       (if-let [system-error (:system-error app)]
@@ -286,10 +303,17 @@
         (list
          [:div.ui.fixed.inverted.teal.menu
           [:div.header.item [:a {:href "#/" } [:img.ui.image {:alt "JobStreamer" :src "img/logo.png"}]]]
-          (om/build right-menu-view app {:opts {:header-channel header-channel
-                                                :jobs-channel jobs-channel
+          (om/build right-menu-view app {:opts {:header-channel  header-channel
+                                                :jobs-channel    jobs-channel
+                                                :message-channel message-channel
                                                 :react-key "menu"}})]
          [:div.main.grid.content.full.height
+          [:div#message.ui.floating.message
+           {:style {:float "right"}
+            :class (if message
+                     (str (:type message) " visible")
+                     "hidden")}
+           (:body message)]
           (case (first (:mode app))
             :jobs (om/build jobs-view app {:init-state {:mode (second (:mode app))}
                                            :opts {:header-channel header-channel
