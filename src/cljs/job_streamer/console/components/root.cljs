@@ -109,7 +109,7 @@
            {:type "button"
             :on-click (fn [e] (put! header-channel [:close-dialog true]))} "Close"]]]]]))))
 
-(defcomponent right-menu-view [app owner {:keys [header-channel jobs-channel message-channelcalendars-channel]}]
+(defcomponent right-menu-view [app owner {:keys [header-channel jobs-channel message-channel calendars-channel]}]
   (init-state [_]
     :configure-opened? false
     :export-opened? false
