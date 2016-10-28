@@ -24,7 +24,8 @@
            [goog Uri]))
 
 (defn save-calendar [calendar owner calendars-channel]
-  (letfn [(on-success [_] (do (om/set-state! owner :save-status true)
+  (letfn [(on-success [_] (do
+                            (om/set-state! owner :save-status true)
                             (put! calendars-channel [:save-calendar calendar]
                                   #(set! (.-href js/location)  "#/calendars"))))
           (on-failure [res error-code] (om/set-state! owner :save-error error-code))]
@@ -183,7 +184,8 @@
         [:div.right.aligned.column
          [:div.field
           [:button.ui.black.deny.button
-           {:on-click (fn [_]
+           {:type "button"
+            :on-click (fn [e]
                         (set! (.-href js/location) "#/calendars"))}
            "Cancel"]
           [:button.ui.positive.button.submit
@@ -264,7 +266,7 @@
            (for [cal calendars]
              [:tr
               [:td
-               [:a {:href (str "#/calendar/" (:calendar/name cal))}
+               [:a {:href (str "#/calendar/" (js/encodeURIComponent (:calendar/name cal)))}
                 (:calendar/name cal)]]
               [:td (let [holidays (take 3 (:calendar/holidays cal))]
                      (str (->> holidays
@@ -299,6 +301,11 @@
                                              (->> cals
                                              (remove #(= (:calendar/name %) (:calendar/name msg)))
                                              (cons msg))))
+            :fetch-calendar (fetch-calendars
+                              (fn [response]
+                                (om/transact! app (fn [cursor]
+                                                          (assoc cursor
+                                                            :calendars response)))))
             :open-dangerously-dialog (om/set-state! owner :dangerously-action-data msg))
           (catch js/Error e))
         (when (not= cmd :close-chan-listener)
