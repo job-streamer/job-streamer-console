@@ -370,8 +370,8 @@
                             :content (concat
                                        (when-let [on (:end/on transition)]
                                          [{:tag :field :attrs {:name "on"} :content [on]}])
-                                       (when-let [exit-status (:fail/end-status transition)]
-                                         [{:tag :field :attrs {:name "exit-status"} :contnt [exit-status]}])
+                                       (when-let [exit-status (:end/exit-status transition)]
+                                         [{:tag :field :attrs {:name "exit-status"} :content [exit-status]}])
                                        (when-let [rest-transitions (not-empty (rest transitions))]
                                          [{:tag :next
                                            :content [(transitions->xml rest-transitions components)]}]))}
@@ -381,9 +381,9 @@
                                         (when-let [on (:stop/on transition)]
                                           [{:tag :field :attrs {:name "on"} :content [on]}])
                                         (when-let [exit-status (:stop/exit-status transition)]
-                                          [{:tag :field :attrs {:name "exit-status"} :contnt [exit-status]}])
+                                          [{:tag :field :attrs {:name "exit-status"} :content [exit-status]}])
                                         (when-let [restart (:stop/restart transition)]
-                                          [{:tag :field :attrs {:name "restart"} :contnt [restart]}])
+                                          [{:tag :field :attrs {:name "restart"} :content [restart]}])
                                         (when-let [rest-transitions (not-empty (rest transitions))]
                                           [{:tag :next
                                             :content [(transitions->xml rest-transitions components)]}]))}
