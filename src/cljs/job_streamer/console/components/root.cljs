@@ -15,8 +15,7 @@
         [job-streamer.console.components.calendars :only [calendars-view]]
         [job-streamer.console.components.apps :only [apps-view]]
         [job-streamer.console.search :only [search-jobs parse-sort-order]]
-        [job-streamer.console.component-helper :only [make-click-outside-fn]]
-        [job-streamer.console.routing :only[fetch-calendars]]))
+        [job-streamer.console.component-helper :only [make-click-outside-fn]]))
 
 (def app-name "default")
 

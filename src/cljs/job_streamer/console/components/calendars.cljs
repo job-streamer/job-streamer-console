@@ -46,13 +46,8 @@
                                  (om/set-state! owner :delete-error res))}))
 
 (defn hh:MM? [hh:MM-string]
- (let [hhMM-string (gstring/remove hh:MM-string ":")
-       hhMM (js/Number hhMM-string)
-       hh (quot  hhMM 100)
-       MM (mod hhMM 100)]
-   (if (or (< hh 0) (>= hh 24) (< MM 0) (>= MM 60) (nil? (re-find #"^$|^\d{2}:\d{2}$" hh:MM-string)))
-     false
-     true)))
+ (let [[hh MM] (-> hh:MM-string (string/split #":") (#(map read-string %)))]
+   (and (<= 0 hh 23)  (<= 0 MM 59)  (re-find #"^$|^\d{2}:\d{2}$" hh:MM-string))))
 
 (def breadcrumb-elements
   {:calendars {:name "calendars" :href "#/calendars"}
