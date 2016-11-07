@@ -45,6 +45,15 @@
                 :error-handler (fn[res error-code]
                                  (om/set-state! owner :delete-error res))}))
 
+(defn hh:MM? [hh:MM-string]
+ (let [hhMM-string (gstring/remove hh:MM-string ":")
+       hhMM (js/Number hhMM-string)
+       hh (quot  hhMM 100)
+       MM (mod hhMM 100)]
+   (if (or (< hh 0) (>= hh 24) (< MM 0) (>= MM 60) (nil? (re-find #"^$|^\d{2}:\d{2}$" hh:MM-string)))
+     false
+     true)))
+
 (def breadcrumb-elements
   {:calendars {:name "calendars" :href "#/calendars"}
    :calendars.new {:name "New" :href "#/calendars/new"}
@@ -120,6 +129,7 @@
                  {:calendar/name nil
                   :calendar/weekly-holiday [true false false false false false true]
                   :calendar/holidays []
+                  :calendar/day-start "00:00"
                   :new? true})
 
      :kalendae nil
@@ -142,7 +152,7 @@
                      :value (:calendar/name calendar)
                      :on-change (fn [e] (let [editting-cal-name (.. js/document (getElementById "cal-name") -value)]
                                           (om/set-state! owner [:calendar :calendar/name]
-                                                         (.. js/document (getElementById "cal-name") -value))
+                                                         editting-cal-name)
                                           (api/request (str "/calendar/" editting-cal-name) :GET
                                                        {:handler (fn [response]
                                                                    (om/set-state! owner [:error-map :calendar/name]
@@ -175,6 +185,23 @@
                             (.draw (om/get-state owner :kalendae)))}
                weekday])
             ["Sun" "Mon" "Tue" "Wed" "Thu" "Fri" "Stu"])]]]]
+       [:div.row
+        [:div.column
+         [:div.field (if (:calendar/day-start error-map) {:class "error"} {})
+          [:label "Day start"]
+          [:input {:id "day-start"
+                   :type "text"
+                   :value (:calendar/day-start calendar)
+                   :on-change (fn [e]
+                                (let [day-start (.. js/document (getElementById "day-start") -value)]
+                                  (om/set-state! owner [:calendar :calendar/day-start] day-start)
+                                  (if (hh:MM? day-start)
+                                    (om/update-state! owner [:error-map] #(dissoc % :calendar/day-start))
+                                    (om/set-state! owner [:error-map :calendar/day-start]
+                                                   ["Invalid hh:MM format"]))))}]
+          (when-let [msgs (:calendar/day-start error-map)]
+            [:div.ui.popup.transition.visible.top.left
+             (first msgs)])]]]
        [:div.row
         [:div.column
          [:div.field
@@ -261,6 +288,7 @@
                                       "ascending"
                                       "descending"))}]]
             [:th "Holidays"]
+            [:th "Day start"]
             [:th "Operations"]]]
           [:tbody
            (for [cal calendars]
@@ -274,6 +302,7 @@
                                (clojure.string/join ","))
                           (when (> (count (:calendar/holidays cal)) 3)
                             ",...")))]
+              [:td (:calendar/day-start cal)]
               [:td
                [:button.ui.red.button
                 {:type "button"
