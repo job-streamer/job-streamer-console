@@ -76,7 +76,8 @@
     [:span {:box-sizing "content-box"}]]
    [:div.ui.input.block {:display "block"}]
    [:table.ui.table
-   [:th.can-sort {:cursor "pointer"}]]]
+   [:th.can-sort {:cursor "pointer"}]]
+   [:#job-search.item [:i.search.icon {:cursor "pointer"}]]]
 )
 
 

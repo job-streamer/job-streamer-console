@@ -72,8 +72,7 @@
             [:option {:value ""} ""]
             [:option {:value "abandoned"} "abandoned"]
             [:option {:value "completed"} "completed"]
-            [:option {:value "failed"} "failed"]
-            [:option {:value "started"} "started"]])
+            [:option {:value "failed"} "failed"]])
 
          ", send notification by "
          [:input {:type "text"

@@ -164,8 +164,11 @@
                               (.preventDefault e)
                               (search-jobs app {:q (.-value (.getElementById js/document "job-query")) :sort-by (-> app :job-sort-order parse-sort-order)}) false)}
           [:div.ui.icon.transparent.inverted.input
-           [:input#job-query {:type "text"}]
-           [:i.search.icon]]]]
+           [:input#job-query {:type "text"}]]
+          [:i.search.icon {:on-click (fn [e]
+                                        (.preventDefault e)
+                                        (println "aaa")
+                                        (search-jobs app {:q (.-value (.getElementById js/document "job-query")) :sort-by (-> app :job-sort-order parse-sort-order)}) false)}]]]
         [:div.ui.dropdown.item
          [:button.ui.basic.icon.inverted.button
           {:on-click (fn [_]
