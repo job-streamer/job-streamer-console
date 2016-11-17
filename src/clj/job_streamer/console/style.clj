@@ -19,6 +19,11 @@
     [:td.job-name {:max-width (px 280)}
      [:div {:overflow "hidden"
             :text-overflow "ellipsis"}]]]
+   [:table.ui.compact.table
+    [:td.job-name {:max-width (px 110)}
+     [:div {:overflow "hidden"
+            :white-space "nowrap"
+            :text-overflow "ellipsis"}]]]
    [:div.breadcrumb
     [:div.section {:max-width (px 320)
                    :white-space "nowrap"
