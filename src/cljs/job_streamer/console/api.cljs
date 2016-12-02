@@ -28,7 +28,7 @@
                  " from "
                  (.getLastUri xhrio)))))
 
-(defn download[path]
+(defn download [path]
   (set! (.-href js/location) (url-for path)))
 
 (defn request
@@ -49,21 +49,23 @@
      (when error-handler
        (events/listen xhrio EventType.ERROR
                       (fn [e]
-                        (let [res (read-string (.getResponseText xhrio))]
-                          (cond
-                            (fn? error-handler)
-                            (error-handler res (.getLastErrorCode xhrio))
+                        (if (= (.getStatus xhrio) 401)
+                          (set! (.-pathname js/window.location) "/login")
+                          (let [res (read-string (.getResponseText xhrio))]
+                            (cond
+                              (fn? error-handler)
+                              (error-handler res (.getLastErrorCode xhrio))
 
-                            (map? error-handler)
-                            (condp = (.getLastErrorCode xhrio)
-                              goog.net.ErrorCode/ACCESS_DENIED  (handle-each-type (:access-denied error-handler) res xhrio)
-                              goog.net.ErrorCode/FILE_NOT_FOUND (handle-each-type (:file-not-found error-handler) res xhrio)
-                              goog.net.ErrorCode/CUSTOM_ERROR   (handle-each-type (:custom-error error-handler) res xhrio)
-                              goog.net.ErrorCode/EXCEPTION      (handle-each-type (:exception error-handler) res xhrio)
-                              goog.net.ErrorCode/HTTP_ERROR     (handle-each-type (:http-error error-handler) res xhrio)
-                              goog.net.ErrorCode/ABORT          (handle-each-type (:abort error-handler) res xhrio)
-                              goog.net.ErrorCode/TIMEOUT        (handle-each-type (:timeout error-handler) res xhrio)
-                              goog.net.ErrorCode/OFFLINE        (handle-each-type (:offline error-handler) res xhrio)))))))
+                              (map? error-handler)
+                              (condp = (.getLastErrorCode xhrio)
+                                goog.net.ErrorCode/ACCESS_DENIED  (handle-each-type (:access-denied error-handler) res xhrio)
+                                goog.net.ErrorCode/FILE_NOT_FOUND (handle-each-type (:file-not-found error-handler) res xhrio)
+                                goog.net.ErrorCode/CUSTOM_ERROR   (handle-each-type (:custom-error error-handler) res xhrio)
+                                goog.net.ErrorCode/EXCEPTION      (handle-each-type (:exception error-handler) res xhrio)
+                                goog.net.ErrorCode/HTTP_ERROR     (handle-each-type (:http-error error-handler) res xhrio)
+                                goog.net.ErrorCode/ABORT          (handle-each-type (:abort error-handler) res xhrio)
+                                goog.net.ErrorCode/TIMEOUT        (handle-each-type (:timeout error-handler) res xhrio))))))))
+     (.setWithCredentials xhrio true)
      (.send xhrio (url-for path) (.toLowerCase (name method))
             body
             (case format

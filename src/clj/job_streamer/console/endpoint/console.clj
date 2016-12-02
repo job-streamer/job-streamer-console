@@ -49,8 +49,34 @@
    (include-js (str "/js/job-streamer"
                     (when-not (:dev env) ".min") ".js"))))
 
+(defn login [config]
+  (layout config
+    [:div.ui.middle.aligned.center.aligned.login.grid
+     [:div.column
+      [:h2.ui.header
+       [:div.content
+        [:img.ui.image {:src "/img/logo.png"}]]]
+      [:form.ui.large.login.form
+       (merge {:method "post" :action (str "http://localhost:45102/login?next=" "http://localhost:3000")}
+              (when (= (:request-method config) :post)
+                {:class "error"}))
+       [:div.ui.stacked.segment
+        [:div.ui.error.message
+         [:p "User name or password is wrong."]]
+        [:div.field
+         [:div.ui.left.icon.input
+          [:i.user.icon]
+          [:input {:type "text" :name "username" :placeholder "User name"}]]]
+        [:div.field
+         [:div.ui.left.icon.input
+          [:i.lock.icon]
+          [:input {:type "password" :name "password" :placeholder "Password"}]]]
+        [:button.ui.fluid.large.teal.submit.button {:type "submit"} "Login"]]]]]))
+
 (defn console-endpoint [config]
   (routes
+   (GET "/login" config (login config))
+
    (GET "/" [] (index config))
    (POST "/job/from-xml" [:as request]
      (when-let [body (:body request)]
