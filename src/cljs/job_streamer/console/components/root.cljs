@@ -43,11 +43,10 @@
                                                 :job/time-monitor
                                                 :job/status-notifications]))
                        {:handler (fn [_]
-                                   (when rest-jobs
-                                     (put! ch rest-jobs)))}))
-        (if rest-jobs
-          (recur (inc cnt))
-          (callback cnt))))
+                                   (if rest-jobs
+                                     (put! ch rest-jobs)
+                                     (callback cnt)))})
+          (recur (inc cnt)))))
     (put! ch jobs)))
 
 (defn import-edn-calendars [calendars callback]
@@ -59,11 +58,10 @@
           (api/request "/calendars" :POST
                        calendar
                        {:handler (fn [_]
-                                   (when rest-calendars
-                                     (put! ch rest-calendars)))}))
-        (if rest-calendars
-          (recur (inc cnt))
-          (callback cnt))))
+                                   (if rest-calendars
+                                     (put! ch rest-calendars)
+                                     (callback cnt)))})
+          (recur (inc cnt)))))
     (put! ch calendars)))
 
 (defn upload-dialog [el-name upload-fn callback-fn]
@@ -110,7 +108,7 @@
            {:type "button"
             :on-click (fn [e] (put! header-channel [:close-dialog true]))} "Close"]]]]]))))
 
-(defcomponent right-menu-view [app owner {:keys [header-channel jobs-channel message-channel]}]
+(defcomponent right-menu-view [app owner {:keys [header-channel jobs-channel message-channel calendars-channel]}]
   (init-state [_]
     :configure-opened? false
     :export-opened? false
@@ -242,7 +240,8 @@
                 (import-edn-calendars (read-string result) callback-fn))
               (fn [cnt]
                 (put! message-channel {:type "success"
-                                       :body (str "Imported " cnt " calendars!")})))
+                                       :body (str "Imported " cnt " calendars!")})
+                (put! calendars-channel [:fetch-calendar true])))
              "Import calendars"]]]
 
           [:a.item {:on-click (fn [e]
@@ -307,6 +306,7 @@
           [:div.header.item [:a {:href "#/" } [:img.ui.image {:alt "JobStreamer" :src "img/logo.png"}]]]
           (om/build right-menu-view app {:opts {:header-channel  header-channel
                                                 :jobs-channel    jobs-channel
+                                                :calendars-channel calendars-channel
                                                 :message-channel message-channel
                                                 :react-key "menu"}})]
          [:div.main.grid.content.full.height

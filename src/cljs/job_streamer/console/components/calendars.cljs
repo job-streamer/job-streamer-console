@@ -24,7 +24,8 @@
            [goog Uri]))
 
 (defn save-calendar [calendar owner calendars-channel]
-  (letfn [(on-success [_] (do (om/set-state! owner :save-status true)
+  (letfn [(on-success [_] (do
+                            (om/set-state! owner :save-status true)
                             (put! calendars-channel [:save-calendar calendar]
                                   #(set! (.-href js/location)  "#/calendars"))))
           (on-failure [res error-code] (om/set-state! owner :save-error error-code))]
@@ -43,6 +44,10 @@
                            (set! (.-href js/location) "#/calendars"))
                 :error-handler (fn[res error-code]
                                  (om/set-state! owner :delete-error res))}))
+
+(defn hh:MM? [hh:MM-string]
+ (let [[hh MM] (-> hh:MM-string (string/split #":") (#(map read-string %)))]
+   (and (<= 0 hh 23)  (<= 0 MM 59)  (re-find #"^$|^\d{2}:\d{2}$" hh:MM-string))))
 
 (def breadcrumb-elements
   {:calendars {:name "calendars" :href "#/calendars"}
@@ -119,6 +124,7 @@
                  {:calendar/name nil
                   :calendar/weekly-holiday [true false false false false false true]
                   :calendar/holidays []
+                  :calendar/day-start "00:00"
                   :new? true})
 
      :kalendae nil
@@ -141,7 +147,7 @@
                      :value (:calendar/name calendar)
                      :on-change (fn [e] (let [editting-cal-name (.. js/document (getElementById "cal-name") -value)]
                                           (om/set-state! owner [:calendar :calendar/name]
-                                                         (.. js/document (getElementById "cal-name") -value))
+                                                         editting-cal-name)
                                           (api/request (str "/calendar/" editting-cal-name) :GET
                                                        {:handler (fn [response]
                                                                    (om/set-state! owner [:error-map :calendar/name]
@@ -176,6 +182,23 @@
             ["Sun" "Mon" "Tue" "Wed" "Thu" "Fri" "Stu"])]]]]
        [:div.row
         [:div.column
+         [:div.field (if (:calendar/day-start error-map) {:class "error"} {})
+          [:label "Day start"]
+          [:input {:id "day-start"
+                   :type "text"
+                   :value (:calendar/day-start calendar)
+                   :on-change (fn [e]
+                                (let [day-start (.. js/document (getElementById "day-start") -value)]
+                                  (om/set-state! owner [:calendar :calendar/day-start] day-start)
+                                  (if (hh:MM? day-start)
+                                    (om/update-state! owner [:error-map] #(dissoc % :calendar/day-start))
+                                    (om/set-state! owner [:error-map :calendar/day-start]
+                                                   ["Invalid hh:MM format"]))))}]
+          (when-let [msgs (:calendar/day-start error-map)]
+            [:div.ui.popup.transition.visible.top.left
+             (first msgs)])]]]
+       [:div.row
+        [:div.column
          [:div.field
           [:label "Holidays"]
           [:div#holiday-selector]]]]
@@ -183,7 +206,8 @@
         [:div.right.aligned.column
          [:div.field
           [:button.ui.black.deny.button
-           {:on-click (fn [_]
+           {:type "button"
+            :on-click (fn [e]
                         (set! (.-href js/location) "#/calendars"))}
            "Cancel"]
           [:button.ui.positive.button.submit
@@ -259,12 +283,13 @@
                                       "ascending"
                                       "descending"))}]]
             [:th "Holidays"]
+            [:th "Day start"]
             [:th "Operations"]]]
           [:tbody
            (for [cal calendars]
              [:tr
               [:td
-               [:a {:href (str "#/calendar/" (:calendar/name cal))}
+               [:a {:href (str "#/calendar/" (js/encodeURIComponent (:calendar/name cal)))}
                 (:calendar/name cal)]]
               [:td (let [holidays (take 3 (:calendar/holidays cal))]
                      (str (->> holidays
@@ -272,6 +297,7 @@
                                (clojure.string/join ","))
                           (when (> (count (:calendar/holidays cal)) 3)
                             ",...")))]
+              [:td (:calendar/day-start cal)]
               [:td
                [:button.ui.red.button
                 {:type "button"
@@ -299,6 +325,11 @@
                                              (->> cals
                                              (remove #(= (:calendar/name %) (:calendar/name msg)))
                                              (cons msg))))
+            :fetch-calendar (fetch-calendars
+                              (fn [response]
+                                (om/transact! app (fn [cursor]
+                                                          (assoc cursor
+                                                            :calendars response)))))
             :open-dangerously-dialog (om/set-state! owner :dangerously-action-data msg))
           (catch js/Error e))
         (when (not= cmd :close-chan-listener)
