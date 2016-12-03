@@ -49,7 +49,8 @@
              (for [execution executions]
                [:tr
                 [:td ""]
-                [:td (:job/name execution)]
+                [:td.job-name
+                 [:div (:job/name execution)]]
                 [:td (fmt/date-medium (:job-execution/start-time execution))]
                 [:td (fmt/duration-between
                       (:job-execution/start-time execution)
