@@ -57,8 +57,11 @@
        [:div.content
         [:img.ui.image {:src "/img/logo.png"}]]]
       [:form.ui.large.login.form
-       (merge {:method "post" :action (str "http://localhost:45102/login?next=" "http://localhost:3000")}
-              (when (= (:request-method config) :post)
+       (merge {:method "post" :action (let [scheme (:scheme config)
+                                            host (get-in config [:headers "host"])
+                                            url (str (or (name scheme) "http") "://" host)]
+                                        (str url "/login?next=" url "&back=" url "/login"))}
+              (when (get-in config [:params :error])
                 {:class "error"}))
        [:div.ui.stacked.segment
         [:div.ui.error.message
