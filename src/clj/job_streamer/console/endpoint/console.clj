@@ -49,19 +49,19 @@
    (include-js (str "/js/job-streamer"
                     (when-not (:dev env) ".min") ".js"))))
 
-(defn login [config]
-  (layout config
+(defn login [{:keys [control-bus-url]} request]
+  (layout request
     [:div.ui.middle.aligned.center.aligned.login.grid
      [:div.column
       [:h2.ui.header
        [:div.content
         [:img.ui.image {:src "/img/logo.png"}]]]
       [:form.ui.large.login.form
-       (merge {:method "post" :action (let [scheme (:scheme config)
-                                            host (get-in config [:headers "host"])
+       (merge {:method "post" :action (let [scheme (:scheme request)
+                                            host (get-in request [:headers "host"])
                                             url (str (or (name scheme) "http") "://" host)]
-                                        (str url "/login?next=" url "&back=" url "/login"))}
-              (when (get-in config [:params :error])
+                                        (str control-bus-url "/login?next=" url "&back=" url "/login"))}
+              (when (get-in request [:params :error])
                 {:class "error"}))
        [:div.ui.stacked.segment
         [:div.ui.error.message
@@ -78,7 +78,7 @@
 
 (defn console-endpoint [config]
   (routes
-   (GET "/login" config (login config))
+   (GET "/login" [:as request] (login config request))
 
    (GET "/" [] (index config))
    (POST "/job/from-xml" [:as request]
