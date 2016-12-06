@@ -49,7 +49,7 @@
    (include-js (str "/js/job-streamer"
                     (when-not (:dev env) ".min") ".js"))))
 
-(defn login [{:keys [control-bus-url]} request]
+(defn login [{:keys [control-bus-url]} app-name request]
   (layout request
     [:div.ui.middle.aligned.center.aligned.login.grid
      [:div.column
@@ -60,7 +60,7 @@
        (merge {:method "post" :action (let [scheme (:scheme request)
                                             host (get-in request [:headers "host"])
                                             url (str (or (name scheme) "http") "://" host)]
-                                        (str control-bus-url "/login?next=" url "&back=" url "/login"))}
+                                        (str control-bus-url "/" app-name "/login?next=" url "&back=" url "/" app-name "/login"))}
               (when (get-in request [:params :error])
                 {:class "error"}))
        [:div.ui.stacked.segment
@@ -78,7 +78,7 @@
 
 (defn console-endpoint [config]
   (routes
-   (GET "/login" [:as request] (login config request))
+   (GET "/:app-name/login" [app-name :as request] (login config app-name request))
 
    (GET "/" [] (index config))
    (POST "/job/from-xml" [:as request]

@@ -50,7 +50,7 @@
        (events/listen xhrio EventType.ERROR
                       (fn [e]
                         (if (= (.getStatus xhrio) 401)
-                          (set! (.-pathname js/window.location) "/login")
+                          (set! (.-pathname js/window.location) "/default/login")
                           (let [res (read-string (.getResponseText xhrio))]
                             (cond
                               (fn? error-handler)
