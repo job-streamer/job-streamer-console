@@ -80,9 +80,9 @@
                                           :calendars response
                                           :mode [:calendars :new])))))))
 
-  (sec/defroute #"/calendar/([\w\-]+)" [cal-name]
+  (sec/defroute #"/calendar/([^/]+)" [cal-name]
     (if (:calendars @app-state)
-      (om/transact! app-state #(assoc % :mode [:calendars :detail] :cal-name cal-name))
+      (om/transact! app-state #(assoc % :mode [:calendars :detail] :cal-name (js/decodeURIComponent cal-name)))
       (fetch-calendars
        (fn [response]
          (om/transact! app-state (fn [cursor]
@@ -91,9 +91,9 @@
                                           :cal-name cal-name
                                           :mode [:calendars :detail])))))))
 
-  (sec/defroute #"/calendar/([\w\-]+)/edit" [cal-name]
+  (sec/defroute #"/calendar/([^/]+)/edit" [cal-name]
     (if (:calendars @app-state)
-      (om/transact! app-state #(assoc % :mode [:calendars :edit] :cal-name cal-name))
+      (om/transact! app-state #(assoc % :mode [:calendars :edit] :cal-name (js/decodeURIComponent cal-name)))
       (fetch-calendars
        (fn [response]
          (om/transact! app-state (fn [cursor]
