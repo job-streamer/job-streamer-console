@@ -6,7 +6,8 @@
             [goog.string :as gstring]
             [goog.ui.Component]
             [goog.net.ErrorCode]
-            [goog.net.EventType])
+            [goog.net.EventType]
+            [job-streamer.console.core :refer [app-name]])
   (:use [cljs.reader :only [read-string]])
   (:import [goog.events KeyCodes]
            [goog.net EventType]))
@@ -38,7 +39,7 @@
    (request path :GET nil options))
   ([path method options]
    (request path method nil options))
-  ([path method body {:keys [handler error-handler format]}]
+  ([path method body {:keys [handler error-handler format forbidden-handler]}]
    (let [xhrio (net/xhr-connection)]
 
      (when handler
@@ -46,25 +47,33 @@
                       (fn [e]
                         (let [res (read-string (.getResponseText xhrio))]
                           (handler res)))))
-     (when error-handler
-       (events/listen xhrio EventType.ERROR
-                      (fn [e]
-                        (if (= (.getStatus xhrio) 401)
-                          (set! (.-pathname js/window.location) "/default/login")
-                          (let [res (read-string (.getResponseText xhrio))]
-                            (cond
-                              (fn? error-handler)
-                              (error-handler res (.getLastErrorCode xhrio))
+     (events/listen xhrio EventType.ERROR
+                    (fn [e]
+                      (let [res (read-string (.getResponseText xhrio))]
+                        (cond
+                          ;; Unahthorized
+                          (= (.getStatus xhrio) 401)
+                          ;; TODO: Manage application name.
+                          (set! (.-pathname js/window.location) (str "/" app-name "/login"))
 
-                              (map? error-handler)
-                              (condp = (.getLastErrorCode xhrio)
-                                goog.net.ErrorCode/ACCESS_DENIED  (handle-each-type (:access-denied error-handler) res xhrio)
-                                goog.net.ErrorCode/FILE_NOT_FOUND (handle-each-type (:file-not-found error-handler) res xhrio)
-                                goog.net.ErrorCode/CUSTOM_ERROR   (handle-each-type (:custom-error error-handler) res xhrio)
-                                goog.net.ErrorCode/EXCEPTION      (handle-each-type (:exception error-handler) res xhrio)
-                                goog.net.ErrorCode/HTTP_ERROR     (handle-each-type (:http-error error-handler) res xhrio)
-                                goog.net.ErrorCode/ABORT          (handle-each-type (:abort error-handler) res xhrio)
-                                goog.net.ErrorCode/TIMEOUT        (handle-each-type (:timeout error-handler) res xhrio))))))))
+                          ;; Forbidden
+                          (and (= (.getStatus xhrio) 403) (fn? forbidden-handler))
+                          (forbidden-handler res (.getLastErrorCode xhrio))
+
+                          :else
+                          (cond
+                            (fn? error-handler)
+                            (error-handler res (.getLastErrorCode xhrio))
+
+                            (map? error-handler)
+                            (condp = (.getLastErrorCode xhrio)
+                              goog.net.ErrorCode/ACCESS_DENIED  (handle-each-type (:access-denied error-handler) res xhrio)
+                              goog.net.ErrorCode/FILE_NOT_FOUND (handle-each-type (:file-not-found error-handler) res xhrio)
+                              goog.net.ErrorCode/CUSTOM_ERROR   (handle-each-type (:custom-error error-handler) res xhrio)
+                              goog.net.ErrorCode/EXCEPTION      (handle-each-type (:exception error-handler) res xhrio)
+                              goog.net.ErrorCode/HTTP_ERROR     (handle-each-type (:http-error error-handler) res xhrio)
+                              goog.net.ErrorCode/ABORT          (handle-each-type (:abort error-handler) res xhrio)
+                              goog.net.ErrorCode/TIMEOUT        (handle-each-type (:timeout error-handler) res xhrio)))))))
      (.setWithCredentials xhrio true)
      (.send xhrio (url-for path) (.toLowerCase (name method))
             body

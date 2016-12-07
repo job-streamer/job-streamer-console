@@ -2,12 +2,15 @@
   (:require [om.core :as om :include-macros true]
             (job-streamer.console.api :as api)
             [goog.Uri.QueryData :as query-data]
-            [clojure.string :as string])
+            [clojure.string :as string]
+            [cljs.core.async :refer [put! <! chan timeout]]
+            [job-streamer.console.core :refer [app-name]])
   (:import [goog Uri]))
 
-(def app-name "default")
-
-(defn search-jobs [app query]
+(defn search-jobs
+  ([app query]
+   (search-jobs app query nil))
+  ([app query message-channel]
   (let [uri (.. (Uri. (str "/" app-name "/jobs"))
                 (setQueryData (query-data/createFromMap (clj->js query))))]
     (api/request (.toString uri)
@@ -16,7 +19,14 @@
                            (om/transact! app
                                          #(assoc %
                                                  :jobs response
-                                            :query (:q query))))})))
+                                                 :query (:q query))))
+                :forbidden-handler (fn [response status]
+                                     (when message-channel
+                                       (put! message-channel {:type "error" :body "You are unauthorized to read jobs."}))
+                                     (om/transact! app
+                                         #(assoc %
+                                                 :jobs []
+                                                 :query (:q query))))}))))
 
 (defn parse-sort-order [sort-order]
  (->> sort-order

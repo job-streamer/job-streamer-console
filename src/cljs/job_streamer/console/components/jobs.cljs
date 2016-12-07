@@ -102,7 +102,7 @@
              :execute "Execute!"
              :restart "Restart!")]]]]]])))
 
-(defcomponent job-list-view [app owner]
+(defcomponent job-list-view [app owner {:keys [message-channel]}]
   (init-state [_] {:now (js/Date.)
                    :per 20})
   (will-mount [_]
@@ -130,7 +130,7 @@
                    not-empty)
             (let [page (om/get-state owner :page)
                   per  (om/get-state owner :per)]
-              (search-jobs app {:q (:query app) :sort-by (-> app :job-sort-order parse-sort-order) :offset (inc (* (dec page) per)) :limit per})
+              (search-jobs app {:q (:query app) :sort-by (-> app :job-sort-order parse-sort-order) :offset (inc (* (dec page) per)) :limit per} message-channel)
               {:page page}))
           (put! ch :continue)
           (recur)))
@@ -169,7 +169,7 @@
           [:button.ui.circular.basic.orange.icon.button
            {:type "button"
             :on-click (fn [e]
-                        (search-jobs app {:q (:query app) :sort-by (-> app :job-sort-order parse-sort-order) :offset (inc (* (dec page) per)) :limit per}))}
+                        (search-jobs app {:q (:query app) :sort-by (-> app :job-sort-order parse-sort-order) :offset (inc (* (dec page) per)) :limit per} message-channel))}
            [:i.refresh.icon]]]]
         [:div.row
          [:div.column
@@ -182,7 +182,7 @@
                            (search-jobs app {:q (:query app)
                                              :sort-by (-> app :job-sort-order (toggle-sort-order :name) parse-sort-order)
                                              :offset (inc (* (dec page) per))
-                                             :limit per})
+                                             :limit per} message-channel)
                            (om/transact! app :job-sort-order #(toggle-sort-order % :name)))}
               "Job name"
               [:i.sort.icon
@@ -200,7 +200,7 @@
                            (search-jobs app {:q (:query app)
                                              :sort-by (-> app :job-sort-order (toggle-sort-order :last-execution-started) parse-sort-order)
                                              :offset (inc (* (dec page) per))
-                                             :limit per})
+                                             :limit per} message-channel)
                            (om/transact! app :job-sort-order #(toggle-sort-order % :last-execution-started)))}
               "Started at"
               [:i.sort.icon
@@ -214,7 +214,7 @@
                                              :sort-by (-> app :job-sort-order (toggle-sort-order :last-execution-duration) parse-sort-order)
                                              :offset (inc (* (dec page) per))
                                              :with "execution"
-                                             :limit per})
+                                             :limit per} message-channel)
                            (om/transact! app :job-sort-order #(toggle-sort-order % :last-execution-duration)))}
               "Duration"
               [:i.sort.icon
@@ -227,7 +227,7 @@
                            (search-jobs app {:q (:query app)
                                              :sort-by (-> app :job-sort-order (toggle-sort-order :last-execution-status) parse-sort-order)
                                              :offset (inc (* (dec page) per))
-                                             :limit per})
+                                             :limit per} message-channel)
                            (om/transact! app :job-sort-order #(toggle-sort-order % :last-execution-status)))}
               "Status"
               [:i.sort.icon
@@ -240,7 +240,7 @@
                            (search-jobs app {:q (:query app)
                                              :sort-by (-> app :job-sort-order (toggle-sort-order :next-execution-start) parse-sort-order)
                                              :offset (inc (* (dec page) per))
-                                             :limit per})
+                                             :limit per} message-channel)
                            (om/transact! app :job-sort-order #(toggle-sort-order % :next-execution-start)))}
               "Start"
               [:i.sort.icon
@@ -337,16 +337,16 @@
                                              (search-jobs app {:q (:query app)
                                                                :sort-by (-> app :job-sort-order parse-sort-order)
                                                                :offset (inc (* (dec pn) per))
-                                                               :limit per}))}
+                                                               :limit per} message-channel))}
                      :react-key "job-pagination"})]]]))))
 
 
-(defcomponent jobs-view [app owner {:keys [header-channel jobs-channel]}]
+(defcomponent jobs-view [app owner {:keys [header-channel jobs-channel message-channel]}]
   (init-state [_]
     {:dangerously-action-data nil
      :page 1})
   (will-mount [_]
-    (search-jobs app {:q (:query app) :sort-by (-> app :job-sort-order parse-sort-order) :p 1})
+    (search-jobs app {:q (:query app) :sort-by (-> app :job-sort-order parse-sort-order) :p 1} message-channel)
     (go-loop []
       (let [[cmd msg] (<! jobs-channel)]
         (try
@@ -354,8 +354,8 @@
             :execute-dialog  (om/set-state! owner :executing-job [:execute msg])
             :restart-dialog  (om/set-state! owner :executing-job [:restart msg])
             :close-dialog (do (om/set-state! owner :executing-job nil)
-                              (search-jobs app {:q (:query app) :sort-by (-> app :job-sort-order parse-sort-order) }))
-            :refresh-jobs (do (search-jobs app {:q (:query app) :sort-by (-> app :job-sort-order parse-sort-order) })
+                              (search-jobs app {:q (:query app) :sort-by (-> app :job-sort-order parse-sort-order) } message-channel))
+            :refresh-jobs (do (search-jobs app {:q (:query app) :sort-by (-> app :job-sort-order parse-sort-order) } message-channel)
                               (put! header-channel [:refresh-stats true]))
             :delete-job (do
                           (fn [results]
@@ -412,7 +412,8 @@
                            :timeline timeline-view
                            ;; default
                            job-list-view)
-                         app {:init-state {:jobs-view-channel jobs-channel}
+                         app {:init-state {:jobs-view-channel jobs-channel
+                                           :message-channel message-channel}
                               :state {:page page}
                               :react-key "job-mode"}))]]
            (when executing-job

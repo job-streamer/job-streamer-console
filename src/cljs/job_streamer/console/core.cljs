@@ -2,6 +2,8 @@
   (:require [om.core :as om :include-macros true])
   (:use [job-streamer.console.components.root :only [root-view]]))
 
+(def app-name "default")
+
 (def app-state (atom {:query ""
                       :job-sort-order nil
                       :calendar-sort-order nil

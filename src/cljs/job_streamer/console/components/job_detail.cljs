@@ -48,6 +48,10 @@
                  {:handler (fn [response]
                              (put! jobs-channel [:refresh-jobs true]
                                    #(set! (.-href js/location)  "#/")))
+                  :forbidden-handler (fn [response]
+                                       (om/set-state! owner :message {:class "error"
+                                                                      :header "Save failed"
+                                                                      :body [:p "You are unauthorized save job."]}))
                   :error-handler (fn [response]
                                    (om/set-state! owner :message {:class "error"
                                                                   :header "Save failed"
