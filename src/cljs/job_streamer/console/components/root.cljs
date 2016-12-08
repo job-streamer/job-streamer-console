@@ -248,10 +248,12 @@
                                 (.preventDefault e)
                                 (om/set-state! owner :configure-opened? false)
                                 (set! (.-href js/location) "#/app/default"))}
-           [:i.browser.icon] "Upload batch components"]
+            [:i.browser.icon] "Upload batch components"]
           [:a.item {:on-click (fn[e]
                                 (put! header-channel [:version-dialog true]))}
-          [:i.circle.help.icon] "version"]]]
+            [:i.circle.help.icon] "version"]
+          [:a.item {:href (api/url-for (str "/" app-name "/logout?next=" (.-origin js/window.location) "/" app-name "/login"))}
+            [:i.sign.out.icon] "Logout"]]]
         (when open-version-dialog
           (om/build version-dialog app
                     {:opts {:header-channel header-channel}

@@ -51,30 +51,33 @@
 
 (defn login [{:keys [control-bus-url]} app-name request]
   (layout request
-    [:div.ui.middle.aligned.center.aligned.login.grid
-     [:div.column
-      [:h2.ui.header
-       [:div.content
-        [:img.ui.image {:src "/img/logo.png"}]]]
-      [:form.ui.large.login.form
-       (merge {:method "post" :action (let [scheme (:scheme request)
-                                            host (get-in request [:headers "host"])
-                                            url (str (or (name scheme) "http") "://" host)]
-                                        (str control-bus-url "/" app-name "/login?next=" url "&back=" url "/" app-name "/login"))}
-              (when (get-in request [:params :error])
-                {:class "error"}))
-       [:div.ui.stacked.segment
-        [:div.ui.error.message
-         [:p "User name or password is wrong."]]
-        [:div.field
-         [:div.ui.left.icon.input
-          [:i.user.icon]
-          [:input {:type "text" :name "username" :placeholder "User name"}]]]
-        [:div.field
-         [:div.ui.left.icon.input
-          [:i.lock.icon]
-          [:input {:type "password" :name "password" :placeholder "Password"}]]]
-        [:button.ui.fluid.large.teal.submit.button {:type "submit"} "Login"]]]]]))
+    [:div.ui.fixed.inverted.teal.menu
+      [:div.header.item [:img.ui.image {:alt "JobStreamer" :src "/img/logo.png"}]]]
+    [:div.main.grid.content.full.height
+      [:div.ui.middle.aligned.center.aligned.login.grid
+       [:div.column
+        [:h2.ui.header
+         [:div.content
+          [:img.ui.image {:src "/img/logo.png"}]]]
+        [:form.ui.large.login.form
+         (merge {:method "post" :action (let [scheme (:scheme request)
+                                              host (get-in request [:headers "host"])
+                                              url (str (or (name scheme) "http") "://" host)]
+                                          (str control-bus-url "/" app-name "/login?next=" url "&back=" url "/" app-name "/login"))}
+                (when (get-in request [:params :error])
+                  {:class "error"}))
+         [:div.ui.stacked.segment
+          [:div.ui.error.message
+           [:p "User name or password is wrong."]]
+          [:div.field
+           [:div.ui.left.icon.input
+            [:i.user.icon]
+            [:input {:type "text" :name "username" :placeholder "User name"}]]]
+          [:div.field
+           [:div.ui.left.icon.input
+            [:i.lock.icon]
+            [:input {:type "password" :name "password" :placeholder "Password"}]]]
+          [:button.ui.fluid.large.teal.submit.button {:type "submit"} "Login"]]]]]]))
 
 (defn console-endpoint [config]
   (routes
