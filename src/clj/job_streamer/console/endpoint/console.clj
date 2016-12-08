@@ -52,7 +52,7 @@
 (defn login [{:keys [control-bus-url]} app-name request]
   (layout request
     [:div.ui.fixed.inverted.teal.menu
-      [:div.header.item [:img.ui.image {:alt "JobStreamer" :src "img/logo.png"}]]]
+      [:div.header.item [:img.ui.image {:alt "JobStreamer" :src "/img/logo.png"}]]]
     [:div.main.grid.content.full.height
       [:div.ui.middle.aligned.center.aligned.login.grid
        [:div.column
