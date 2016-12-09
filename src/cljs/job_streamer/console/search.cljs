@@ -4,7 +4,7 @@
             [goog.Uri.QueryData :as query-data]
             [clojure.string :as string]
             [cljs.core.async :refer [put! <! chan timeout]]
-            [job-streamer.console.core :refer [app-name]])
+            [job-streamer.console.common :refer [app-name]])
   (:import [goog Uri]))
 
 (defn search-jobs

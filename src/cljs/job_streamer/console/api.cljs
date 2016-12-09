@@ -7,7 +7,7 @@
             [goog.ui.Component]
             [goog.net.ErrorCode]
             [goog.net.EventType]
-            [job-streamer.console.core :refer [app-name]])
+            [job-streamer.console.common :refer [app-name]])
   (:use [cljs.reader :only [read-string]])
   (:import [goog.events KeyCodes]
            [goog.net EventType]))
