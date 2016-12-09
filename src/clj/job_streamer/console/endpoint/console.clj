@@ -49,7 +49,7 @@
    (include-js (str "/js/job-streamer"
                     (when-not (:dev env) ".min") ".js"))))
 
-(defn login [{:keys [control-bus-url]} app-name request]
+(defn login [{:keys [control-bus-url]} request]
   (layout request
     [:div.ui.fixed.inverted.teal.menu
       [:div.header.item [:img.ui.image {:alt "JobStreamer" :src "/img/logo.png"}]]]
@@ -63,9 +63,10 @@
          (merge {:method "post" :action (let [scheme (:scheme request)
                                               host (get-in request [:headers "host"])
                                               url (str (or (name scheme) "http") "://" host)]
-                                          (str control-bus-url "/" app-name "/login?next=" url "&back=" url "/" app-name "/login"))}
+                                          (str control-bus-url "/login?next=" url "&back=" url "/login"))}
                 (when (get-in request [:params :error])
                   {:class "error"}))
+         [:input {:type "hidden" :name "appname" :value "default"}]
          [:div.ui.stacked.segment
           [:div.ui.error.message
            [:p "User name or password is wrong."]]
@@ -81,7 +82,7 @@
 
 (defn console-endpoint [config]
   (routes
-   (GET "/:app-name/login" [app-name :as request] (login config app-name request))
+   (GET "/login" request (login config request))
 
    (GET "/" [] (index config))
    (POST "/job/from-xml" [:as request]

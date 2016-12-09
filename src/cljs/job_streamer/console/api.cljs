@@ -6,8 +6,7 @@
             [goog.string :as gstring]
             [goog.ui.Component]
             [goog.net.ErrorCode]
-            [goog.net.EventType]
-            [job-streamer.console.common :refer [app-name]])
+            [goog.net.EventType])
   (:use [cljs.reader :only [read-string]])
   (:import [goog.events KeyCodes]
            [goog.net EventType]))
@@ -54,7 +53,7 @@
                           ;; Unahthorized
                           (= (.getStatus xhrio) 401)
                           ;; TODO: Manage application name.
-                          (set! (.-pathname js/window.location) (str "/" app-name "/login"))
+                          (set! (.-pathname js/window.location) "/login")
 
                           ;; Forbidden
                           (and (= (.getStatus xhrio) 403) (fn? forbidden-handler))
