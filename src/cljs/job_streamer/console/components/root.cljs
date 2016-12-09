@@ -252,7 +252,7 @@
           [:a.item {:on-click (fn[e]
                                 (put! header-channel [:version-dialog true]))}
             [:i.circle.help.icon] "version"]
-          [:a.item {:href (api/url-for (str "/" app-name "/logout?next=" (.-origin js/window.location) "/" app-name "/login"))}
+          [:a.item {:href (api/url-for (str "/logout?next=" (.-origin js/window.location) "/login"))}
             [:i.sign.out.icon] "Logout"]]]
         (when open-version-dialog
           (om/build version-dialog app
