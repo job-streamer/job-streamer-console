@@ -477,7 +477,13 @@
                            [:div.ui.tiny.horizontal.statistics
                             [:div.statistic
                              [:div.value (fmt/duration (get-in job-detail [:job/stats :average]))]
-                             [:div.label "Average duration"]]]]]]]]
+                             [:div.label "Average duration"]]]]]]]
+
+                      [:button.ui.circular.icon.green.basic.button
+                                 {:on-click (fn [_]
+                                              (put! (:jobs-channel opts) [:execute-dialog {:job job-detail :backto (.-href js/location)}])
+                                              (set! (.-href js/location) "#"))}
+                                 [:i.play.icon]]]
                       [:div.column
                        [:div.ui.raised.segment
                         [:h3.ui.header "Latest"]
