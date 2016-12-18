@@ -45,9 +45,8 @@
                 :error-handler (fn[res error-code]
                                  (om/set-state! owner :delete-error res))}))
 
-(defn hh:MM? [hh:MM-string]
- (let [[hh MM] (-> hh:MM-string (string/split #":") (#(map read-string %)))]
-   (and (<= 0 hh 23)  (<= 0 MM 59)  (re-find #"^$|^\d{2}:\d{2}$" hh:MM-string))))
+(defn hh:mm? [hh:mm-string]
+  (re-find #"^([01]?[0-9]|2[0-3]):([0-5][0-9])$" hh:mm-string))
 
 (def breadcrumb-elements
   {:calendars {:name "calendars" :href "#/calendars"}
@@ -190,10 +189,10 @@
                    :on-change (fn [e]
                                 (let [day-start (.. js/document (getElementById "day-start") -value)]
                                   (om/set-state! owner [:calendar :calendar/day-start] day-start)
-                                  (if (hh:MM? day-start)
+                                  (if (hh:mm? day-start)
                                     (om/update-state! owner [:error-map] #(dissoc % :calendar/day-start))
                                     (om/set-state! owner [:error-map :calendar/day-start]
-                                                   ["Invalid hh:MM format"]))))}]
+                                                   ["Invalid hh:mm format"]))))}]
           (when-let [msgs (:calendar/day-start error-map)]
             [:div.ui.popup.transition.visible.top.left
              (first msgs)])]]]
