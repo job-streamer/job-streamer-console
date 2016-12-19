@@ -9,19 +9,27 @@
 
 (def app-name "default")
 
-(defn delete-job [job jobs-channel]
+(defn delete-job [job jobs-channel owner]
   (api/request (str "/" app-name "/job/" (:job/name job)) :DELETE
                {:handler (fn [response]
                            (put! jobs-channel [:delete-job job])
-                           (set! (.-href js/location) "#/"))}))
+                           (set! (.-href js/location) "#/"))
+                :forbidden-handler (fn [response]
+                                     (om/set-state! owner :message {:class "error"
+                                                                    :header "Save failed"
+                                                                    :body [:p "You are unauthorized to delete job."]}))}))
 
-(defn save-settings [job-name method owner category obj & {:keys [handler]}]
+(defn save-settings [job-name method owner category obj & {:keys [handler forbidden-handler]}]
   (om/set-state! owner [:save-status category] false)
   (api/request (str "/" app-name "/job/" job-name "/settings/" (name category)) method obj
                {:handler (fn [response]
                            (om/set-state! owner [:save-status category] true)
                            (when handler
-                             (handler response)))}))
+                             (handler response)))
+                :forbidden-handler (fn [response]
+                                     (om/set-state! owner [:save-status category] false)
+                                     (when forbidden-handler
+                                       (forbidden-handler response)))}))
 
 (defcomponent job-settings-view [job owner {:keys [jobs-channel]}]
   (init-state [_]
@@ -40,9 +48,14 @@
     (api/request (str "/" app-name "/job/" (:job/name job) "/settings")
                  {:handler (fn [response]
                              (om/set-state! owner :settings response))}))
-  (render-state [_ {:keys [settings save-status time-monitor status-notification]}]
+  (render-state [_ {:keys [settings save-status time-monitor status-notification message]}]
     (html
      [:div
+      [:div.row {:style {:display (if message "block" "none")}}
+       [:div.column
+        [:div.ui.message {:class (:class message)}
+         [:div.header (:header message)]
+         [:div (:body message)]]]]
       [:div.ui.segment
        [:div.ui.top.attached.label "Notification"]
        [:div.content
@@ -102,7 +115,11 @@
                                                      owner [:settings :job/status-notifications]
                                                      (fn [notifications]
                                                        (conj notifications (assoc status-notification
-                                                                                  :db/id (:db/id resp)))))))))}
+                                                                                  :db/id (:db/id resp))))))
+                                         :forbidden-handler (fn [resp]
+                                                              (om/set-state! owner :message {:class "error"
+                                                                                   :header "Save failed"
+                                                                                   :body [:p "You are unauthorized to chnange job setting."]})))))}
            (when-not (b/valid? status-notification
                                :status-notification/exit-status [[v/required :pre #(= (:status-notification/status-type %) :exit-status)]]
                                :status-notification/type [[v/required]])
@@ -156,7 +173,12 @@
                          (om/set-state! owner [:settings :job/exclusive?] checked)
                          (save-settings (:job/name job) (if checked :PUT :DELETE)
                                         owner :exclusive
-                                        {:job/exclusive? checked})))}
+                                        {:job/exclusive? checked}
+                                         :forbidden-handler (fn [resp]
+                                                              (om/set-state! owner [:settings :job/exclusive?] (not checked))
+                                                              (om/set-state! owner :message {:class "error"
+                                                                                   :header "Save failed"
+                                                                                   :body [:p "You are unauthorized to chnange job setting."]})))))}
           (when (:job/exclusive? settings)
             {:class "checked"}))
          [:input {:id "exclusive-checkbox" :type "checkbox" :checked (:job/exclusive? settings)}]
@@ -174,7 +196,11 @@
 
            [:a {:on-click (fn [_]
                             (save-settings (:job/name job) :DELETE
-                                           owner :time-monitor {})
+                                           owner :time-monitor {}
+                                           :forbidden-handler (fn [response]
+                                                                (om/set-state! owner :message {:class "error"
+                                                                                               :header "Save failed"
+                                                                                               :body [:p "You are unauthorized save job."]})))
                             (om/set-state! owner [:settings :job/time-monitor] nil))}
             [:i.remove.red.icon]]]
           [:div.ui.right.labeled.block.input
@@ -210,7 +236,11 @@
                     :on-click (fn [_]
                                 (save-settings (:job/name job) :PUT
                                                owner :time-monitor
-                                               time-monitor)
+                                               time-monitor
+                                               :forbidden-handler (fn [response]
+                                                                    (om/set-state! owner :message {:class "error"
+                                                                                         :header "Save failed"
+                                                                                         :body [:p "You are unauthorized save job."]})))
                                 (om/set-state! owner [:settings :job/time-monitor] time-monitor))}
                    (when (or (= (:time-monitor/duration time-monitor) 0)
                              (not (keyword? (:time-monitor/action time-monitor)))
@@ -232,6 +262,6 @@
                         (.preventDefault e)
                         (put! jobs-channel [:open-dangerously-dialog
                                             {:ok-handler (fn []
-                                                           (delete-job job jobs-channel))
+                                                           (delete-job job jobs-channel owner))
                                              :answer (:job/name job)}]))}
            "Delete this job"]]]]]])))
