@@ -46,7 +46,9 @@
                                  (om/set-state! owner :delete-error res))}))
 
 (defn hh:mm? [hh:mm-string]
-  (re-find #"^([01]?[0-9]|2[0-3]):([0-5][0-9])$" hh:mm-string))
+  (if hh:mm-string
+    (re-find #"^([01]?[0-9]|2[0-3]):([0-5][0-9])$" hh:mm-string)
+    false))
 
 (def breadcrumb-elements
   {:calendars {:name "calendars" :href "#/calendars"}
