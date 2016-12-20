@@ -116,7 +116,7 @@
                                                      (fn [notifications]
                                                        (conj notifications (assoc status-notification
                                                                                   :db/id (:db/id resp))))))
-                                         :forbidden-handler (fn [resp]
+                                         :forbidden-handler (fn [_]
                                                               (om/set-state! owner :message {:class "error"
                                                                                    :header "Save failed"
                                                                                    :body [:p "You are unauthorized to chnange job setting."]})))))}
@@ -154,13 +154,18 @@
                  [:td [:a
                        [:i.remove.red.icon
                         {:on-click (fn [_]
-                                     (om/update-state! owner [:settings :job/status-notifications]
-                                                       (fn [st] (remove #(= (:db/id %) (:db/id notification)) st)))
                                      (save-settings (:job/name job)
                                                     :PUT
                                                     owner
                                                     :status-notification
-                                                    {:db/id (:db/id notification)}))}]]]]))]])]]
+                                                    {:db/id (:db/id notification)}
+                                                    :handler (fn [_]
+                                                               (om/update-state! owner [:settings :job/status-notifications]
+                                                                                 (fn [st] (remove #(= (:db/id %) (:db/id notification)) st))))
+                                                    :forbidden-handler (fn [_]
+                                                                         (om/set-state! owner :message {:class "error"
+                                                                                                        :header "Save failed"
+                                                                                                        :body [:p "You are unauthorized to chnange job setting."]}))))}]]]]))]])]]
       [:div.ui.segment
        [:div.ui.top.attached.label "Schedule settings"]
        [:div.content
@@ -170,15 +175,14 @@
           {:on-click (fn [e]
                        (let [cb (.getElementById js/document "exclusive-checkbox")
                              checked (.-checked cb)]
-                         (om/set-state! owner [:settings :job/exclusive?] checked)
                          (save-settings (:job/name job) (if checked :PUT :DELETE)
                                         owner :exclusive
                                         {:job/exclusive? checked}
-                                         :forbidden-handler (fn [resp]
-                                                              (om/set-state! owner [:settings :job/exclusive?] (not checked))
-                                                              (om/set-state! owner :message {:class "error"
-                                                                                   :header "Save failed"
-                                                                                   :body [:p "You are unauthorized to chnange job setting."]})))))}
+                                        :handler (fn [_] (om/set-state! owner [:settings :job/exclusive?] checked))
+                                        :forbidden-handler (fn [_]
+                                                             (om/set-state! owner :message {:class "error"
+                                                                                  :header "Save failed"
+                                                                                  :body [:p "You are unauthorized to chnange job setting."]})))))}
           (when (:job/exclusive? settings)
             {:class "checked"}))
          [:input {:id "exclusive-checkbox" :type "checkbox" :checked (:job/exclusive? settings)}]
@@ -197,12 +201,12 @@
            [:a {:on-click (fn [_]
                             (save-settings (:job/name job) :DELETE
                                            owner :time-monitor {}
-                                           :handler (fn [response]
+                                           :handler (fn [_]
                                                       (om/set-state! owner [:settings :job/time-monitor] nil))
-                                           :forbidden-handler (fn [response]
+                                           :forbidden-handler (fn [_]
                                                                 (om/set-state! owner :message {:class "error"
                                                                                                :header "Save failed"
-                                                                                               :body [:p "You are unauthorized save job."]}))))}
+                                                                                               :body [:p "You are unauthorized to chnange job setting."]}))))}
             [:i.remove.red.icon]]]
 
           [:div.ui.right.labeled.block.input
@@ -239,9 +243,9 @@
                                 (save-settings (:job/name job) :PUT
                                                owner :time-monitor
                                                time-monitor
-                                               :handler (fn [response]
+                                               :handler (fn [_]
                                                           (om/set-state! owner [:settings :job/time-monitor] time-monitor))
-                                               :forbidden-handler (fn [response]
+                                               :forbidden-handler (fn [_]
                                                                     (om/set-state! owner :message {:class "error"
                                                                                          :header "Save failed"
                                                                                          :body [:p "You are unauthorized save job."]}))))}
