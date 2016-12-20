@@ -22,6 +22,7 @@
              (set! (.-autoDiscover js/Dropzone) false)
              (js/Dropzone. ".dropzone" (js-obj "url" (api/url-for "/default/batch-components")
                                                "headers" (js-obj "Cache-Control" "" "X-Requested-With" "")
+                                               "withCredentials" true
                                                "maxFiles" 1
                                                "accept" (fn [file done]
                                                           (if (clojure.string/ends-with? (.-name file) ".jar")

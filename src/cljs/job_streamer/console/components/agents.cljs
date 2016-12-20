@@ -30,10 +30,10 @@
          (:agent/agent-version agent)
          [:h4.ui.header "CPU usage"]
          [:div.image
-          [:img.ui.image {:src (api/url-for (str "/agent/" instance-id "/monitor/cpu/daily"))}]]
+          [:img.ui.image {:src (api/url-for (str "/agent/" instance-id "/monitor/cpu/daily")) :crossorigin "use-credentials"}]]
          [:h4.ui.header "Memory usage"]
          [:div.image
-          [:img.ui.image {:src (api/url-for (str "/agent/" instance-id "/monitor/memory/daily"))}]]]
+          [:img.ui.image {:src (api/url-for (str "/agent/" instance-id "/monitor/memory/daily")) :crossorigin "use-credentials"}]]]
         [:div.eight.wide.column
          [:h4.ui.header "Executions"]
          (if-let [executions (:agent/executions agent)]
