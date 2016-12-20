@@ -16,13 +16,17 @@
 (enable-console-print!)
 (def app-name "default")
 
-(defn execute-job [job-name parameters channel]
+(defn execute-job [job-name parameters channel message-channel]
   (api/request (str "/" app-name "/job/" job-name "/executions") :POST
                parameters
                {:handler (fn [response]
-                           (put! channel [:close-dialog nil]))}))
+                           (put! channel [:close-dialog nil]))
+                :forbidden-handler (fn [response]
+                                     (when message-channel
+                                       (put! message-channel {:type "error" :body "You are unauthorized to execute job."}))
+                                     (put! channel [:close-dialog nil]))}))
 
-(defn stop-job [job]
+(defn stop-job [job message-channel]
   (when-let [latest-execution (:job/latest-execution job)]
     (api/request (str "/" app-name
                       "/job/" (:job/name job)
@@ -31,9 +35,12 @@
                  {:handler (fn [response]
                              (om/update! latest-execution
                                          [:job-execution/batch-status :db/ident]
-                                         :batch-status/stopping))})))
+                                         :batch-status/stopping))
+                  :forbidden-handler (fn [response]
+                                       (when message-channel
+                                         (put! message-channel {:type "error" :body "You are unauthorized to stop execution job."})))})))
 
-(defn abandon-job [job]
+(defn abandon-job [job message-channel]
   (when-let [latest-execution (:job/latest-execution job)]
     (api/request (str "/" app-name
                       "/job/" (:job/name job)
@@ -42,9 +49,12 @@
                  {:handler (fn [response]
                              (om/update! latest-execution
                                          [:job-execution/batch-status :db/ident]
-                                         :batch-status/abandoned))})))
+                                         :batch-status/abandoned))
+                  :forbidden-handler (fn [response]
+                                       (when message-channel
+                                         (put! message-channel {:type "error" :body "You are unauthorized to abandon execution job."})))})))
 
-(defn restart-job [job parameters channel]
+(defn restart-job [job parameters channel message-channel]
   (when-let [latest-execution (:job/latest-execution job)]
     (api/request (str "/" app-name
                       "/job/" (:job/name job)
@@ -52,7 +62,11 @@
                  :PUT
                  parameters
                  {:handler (fn [response]
-                             (put! channel [:close-dialog nil]))})))
+                             (put! channel [:close-dialog nil]))
+                  :forbidden-handler (fn [response]
+                                       (when message-channel
+                                         (put! message-channel {:type "error" :body "You are unauthorized to restart execution job."}))
+                                       (put! channel [:close-dialog nil]))})))
 
 (defn search-execution [latest-execution job-name execution-id]
   (api/request (str "/" app-name "/job/" job-name "/execution/" execution-id)
@@ -64,7 +78,7 @@
 (defcomponent job-execution-dialog [[type job] owner]
   (init-state [_]
     {:params {}})
-  (render-state [_ {:keys [jobs-view-channel params]}]
+  (render-state [_ {:keys [jobs-view-channel params message-channel] :as owner}]
     (html
      [:div.ui.dimmer.modals.page.transition.visible.active
       [:div.ui.modal.scrolling.transition.visible.active
@@ -96,8 +110,8 @@
            {:type "button"
             :on-click (fn [e]
                         (case type
-                          :execute (execute-job (:job/name job) params jobs-view-channel)
-                          :restart (restart-job job params jobs-view-channel)))}
+                          :execute (execute-job (:job/name job) params jobs-view-channel message-channel)
+                          :restart (restart-job job params jobs-view-channel message-channel)))}
            (case type
              :execute "Execute!"
              :restart "Restart!")]]]]]])))
@@ -142,7 +156,7 @@
     (when-let [refresh-timer (om/get-state owner :refresh-timer)]
       (close! refresh-timer)))
 
-  (render-state [_ {:keys [jobs-view-channel now page per]}]
+  (render-state [_ {:keys [jobs-view-channel now page per message-channel]}]
     (html
      (if (= (get-in app [:stats :jobs-count]) 0)
        [:div.ui.grid
@@ -291,8 +305,8 @@
                                  [:button.ui.circular.orange.icon.button.visible.content
                                   {:on-click (fn [_]
                                                (if (#{:batch-status/started} status)
-                                                 (stop-job job)
-                                                 (abandon-job job)))}
+                                                 (stop-job job message-channel)
+                                                 (abandon-job job message-channel)))}
                                   [:i.setting.loading.icon]]
                                  [:button.ui.circular.red.icon.basic.button.hidden.content
                                   (if (#{:batch-status/started} status)
@@ -303,7 +317,7 @@
                                 [:div
                                  [:button.ui.circular.red.icon.basic.button
                                   {:on-click (fn [_]
-                                               (abandon-job job))}
+                                               (abandon-job job message-channel))}
                                   [:i.stop.icon]]
                                  [:button.ui.circular.yellow.icon.basic.button
                                   {:title "restart"
@@ -417,7 +431,8 @@
                               :state {:page page}
                               :react-key "job-mode"}))]]
            (when executing-job
-             (om/build job-execution-dialog executing-job {:init-state {:jobs-view-channel jobs-channel}
+             (om/build job-execution-dialog executing-job {:init-state {:jobs-view-channel jobs-channel
+                                                                        :message-channel message-channel}
                                                            :state {:page page}
                                                            :react-key "job-execution-dialog"}))])
         (when dangerously-action-data
