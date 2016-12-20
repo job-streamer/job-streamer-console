@@ -197,12 +197,14 @@
            [:a {:on-click (fn [_]
                             (save-settings (:job/name job) :DELETE
                                            owner :time-monitor {}
+                                           :handler (fn [response]
+                                                      (om/set-state! owner [:settings :job/time-monitor] nil))
                                            :forbidden-handler (fn [response]
                                                                 (om/set-state! owner :message {:class "error"
                                                                                                :header "Save failed"
-                                                                                               :body [:p "You are unauthorized save job."]})))
-                            (om/set-state! owner [:settings :job/time-monitor] nil))}
+                                                                                               :body [:p "You are unauthorized save job."]}))))}
             [:i.remove.red.icon]]]
+
           [:div.ui.right.labeled.block.input
            [:input {:id "time-monitor-duration"
                     :type "number"
@@ -237,11 +239,12 @@
                                 (save-settings (:job/name job) :PUT
                                                owner :time-monitor
                                                time-monitor
+                                               :handler (fn [response]
+                                                          (om/set-state! owner [:settings :job/time-monitor] time-monitor))
                                                :forbidden-handler (fn [response]
                                                                     (om/set-state! owner :message {:class "error"
                                                                                          :header "Save failed"
-                                                                                         :body [:p "You are unauthorized save job."]})))
-                                (om/set-state! owner [:settings :job/time-monitor] time-monitor))}
+                                                                                         :body [:p "You are unauthorized save job."]}))))}
                    (when (or (= (:time-monitor/duration time-monitor) 0)
                              (not (keyword? (:time-monitor/action time-monitor)))
                              (and (= (:time-monitor/action time-monitor) :action/alert)
