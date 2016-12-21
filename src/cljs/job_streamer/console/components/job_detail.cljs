@@ -473,11 +473,14 @@
                             [:div.statistic
                              [:div.value (get-in job-detail [:job/stats :failure])]
                              [:div.label "Failed"]]
-                            [:button.ui.circular.icon.green.basic.button
-                              {:on-click (fn  [_]
-                                           (put! (:jobs-channel opts) [:execute-dialog {:job job-detail :backto (.-href js/location)}])
-                                           (set! (.-href js/location) "#"))}
-                              [:i.play.icon]]]
+                            (let [batch-status (get-in job [:job/latest-execution :job-execution/batch-status :db/ident])]
+                              (if (or (#{:batch-status/abandoned :batch-status/completed nil} batch-status) (nil? batch-status))
+                                [:button.ui.circular.icon.green.basic.button
+                                  {:on-click (fn  [_]
+                                              (put! (:jobs-channel opts) [:execute-dialog {:job job-detail :backto (.-href js/location)}])
+                                              (set! (.-href js/location) "#"))}
+                                  [:i.play.icon]]
+                                [:div]))]
                            [:hr.ui.divider]
                            [:div.ui.tiny.horizontal.statistics
                             [:div.statistic
