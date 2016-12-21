@@ -472,18 +472,17 @@
                              [:div.label "Success"]]
                             [:div.statistic
                              [:div.value (get-in job-detail [:job/stats :failure])]
-                             [:div.label "Failed"]]]
+                             [:div.label "Failed"]]
+                            [:button.ui.circular.icon.green.basic.button
+                              {:on-click (fn  [_]
+                                           (put! (:jobs-channel opts) [:execute-dialog {:job job-detail :backto (.-href js/location)}])
+                                           (set! (.-href js/location) "#"))}
+                              [:i.play.icon]]]
                            [:hr.ui.divider]
                            [:div.ui.tiny.horizontal.statistics
                             [:div.statistic
                              [:div.value (fmt/duration (get-in job-detail [:job/stats :average]))]
-                             [:div.label "Average duration"]]]]]]]
-
-                      [:button.ui.circular.icon.green.basic.button
-                                 {:on-click (fn [_]
-                                              (put! (:jobs-channel opts) [:execute-dialog {:job job-detail :backto (.-href js/location)}])
-                                              (set! (.-href js/location) "#"))}
-                                 [:i.play.icon]]]
+                             [:div.label "Average duration"]]]]]]]]
                       [:div.column
                        [:div.ui.raised.segment
                         [:h3.ui.header "Latest"]

@@ -68,7 +68,9 @@
     (html
      [:div.ui.dimmer.modals.page.transition.visible.active
       [:div.ui.modal.scrolling.transition.visible.active
-       [:i.close.icon {:on-click (fn [e] (put! jobs-view-channel [:close-dialog nil]))}]
+       [:i.close.icon {:on-click (fn [e]
+                                   (when backto (set! (.-href js/location) backto))
+                                   (put! jobs-view-channel [:close-dialog nil]))}]
        [:div.header (:job/name job)]
        [:div.content
         (if-let [param-names (not-empty (:job/dynamic-parameters job))]
