@@ -13,7 +13,8 @@
   (api/request (str "/" app-name "/job/" (:job/name job)) :DELETE
                {:handler (fn [response]
                            (put! jobs-channel [:delete-job job])
-                           (set! (.-href js/location) "#/"))}))
+                           (set! (.-href js/location) "#/")
+                           (set! (.-href js/location) "/"))}))
 
 (defn save-settings [job-name method owner category obj & {:keys [handler]}]
   (om/set-state! owner [:save-status category] false)

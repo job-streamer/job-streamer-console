@@ -47,7 +47,15 @@
                  job
                  {:handler (fn [response]
                              (put! jobs-channel [:refresh-jobs true]
-                                   #(set! (.-href js/location)  "#/")))
+                                   #(if (== (.-hash js/location) "#/jobs/new")
+                                        (do
+                                          (set! (.-href js/location) "#/")
+                                          (set! (.-href js/location) "/")
+                                          )
+                                        (set! (.-href js/location) "#/")
+
+
+                                     )))
                   :error-handler (fn [response]
                                    (om/set-state! owner :message {:class "error"
                                                                   :header "Save failed"
