@@ -156,7 +156,7 @@
     (when-let [refresh-timer (om/get-state owner :refresh-timer)]
       (close! refresh-timer)))
 
-  (render-state [_ {:keys [jobs-view-channel now page per message-channel]}]
+  (render-state [_ {:keys [jobs-view-channel now page per]}]
     (html
      (if (= (get-in app [:stats :jobs-count]) 0)
        [:div.ui.grid
