@@ -119,7 +119,10 @@
   (init-state [_]
     {:calendar (if-let [calendar (some->> calendars
                                           (filter #(= (:calendar/name %) cal-name))
-                                          first)]
+                                          first
+                                          ;;Temporary solution: this value has sometimes wrong type, om.core/MapCursor.
+                                          om/value
+                                          )]
                  calendar
                  {:calendar/name nil
                   :calendar/weekly-holiday [true false false false false false true]
