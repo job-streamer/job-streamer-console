@@ -412,7 +412,7 @@
                  [:div.content
                   [:div.header "Pausing"]
                   [:div.description (:schedule/cron-notation schedule)]]])
-              ]
+             ]
              [:div.ui.labeled.icon.menu
               (if exe
                 [:a.item {:on-click (fn [e]
@@ -449,7 +449,9 @@
          [:button.ui.primary.button
           {:type "button"
            :on-click (fn [e]
-                       (set! (.-href js/location) (str "#/job/" job-name "/edit")))}
+                       ;;(set! (.-href js/location) (str "#/job/" job-name "/edit"))
+                       (js/window.open "/default/job/test/edit" "window_name" "width=800,height=600,scrollbars=yes")
+                       )}
           "Edit"]]]]
       [:div.job-blocks-inner.ui.big.image]]))
   (did-mount [_]

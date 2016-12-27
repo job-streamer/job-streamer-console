@@ -82,7 +82,7 @@
               [:input {:type "password" :name "password" :placeholder "Password"}]]]
             [:button.ui.fluid.large.teal.submit.button {:type "submit"} "Login"]]]]]])))
 
-(defn bpmn [_ request]
+(defn bpmn [_ _]
   (html5
     [:head
     [:meta {:charset "utf-8"}]
@@ -113,13 +113,16 @@
      [:li "download"]
      [:li [:a#js-download-diagram {:title "download BPMN diagram"} "BPMN diagram"]]
      [:li [:a#js-download-svg {:title "download as SVG image"} "SVG image"]]]
+    [:script "var test=true;"]
     [:script {:src "http://localhost:9013/app.js"}]]))
 
 (defn console-endpoint [config]
   (routes
    (GET "/login" request (login config request))
 
-   (GET "/bpmn" request (bpmn config request))
+   (GET ["/:app-name/job/:job-name/edit" :app-name #".*" :job-name #".*"]
+        [app-name job-name]
+        (bpmn config job-name))
 
    (GET "/" [] (index config))
    (POST "/job/from-xml" [:as request]
