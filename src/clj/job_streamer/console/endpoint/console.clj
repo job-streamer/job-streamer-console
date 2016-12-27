@@ -82,9 +82,44 @@
               [:input {:type "password" :name "password" :placeholder "Password"}]]]
             [:button.ui.fluid.large.teal.submit.button {:type "submit"} "Login"]]]]]])))
 
+(defn bpmn [_ request]
+  (html5
+    [:head
+    [:meta {:charset "utf-8"}]
+    [:meta {:http-equiv "X-UA-Compatible" :content "IE=edge,chrome=1"}]
+    [:meta {:name "viewport" :content "width=device-width, initial-scale=1, maximum-scale=1"}]
+    (include-css
+      "http://localhost:9013/css/diagram-js.css"
+      "http://localhost:9013/vendor/bpmn-font/css/bpmn.css"
+      "http://localhost:9013/vendor/bpmn-font/css/bpmn-embedded.css"
+      "http://localhost:9013/css/app.css")]
+    [:style "
+    html, body, #canvas, #canvas > div {
+      height: 100%;
+    }
+
+    .icon-custom-fail {
+      background: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" stroke-width=\"8\" stroke=\"#48a\" fill=\"none\" viewBox=\"0 0 120 120\"><circle cx=\"60\" cy=\"60\" r=\"40\"/></svg>');
+    }
+
+    .icon-custom-stop {
+      background: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" stroke-width=\"8\" stroke=\"#48a\" fill=\"none\" viewBox=\"0 0 120 120\"><circle cx=\"60\" cy=\"60\" r=\"40\"/></svg>');
+    }"]
+   [:body
+    [:h1 "Custom Elements"]
+    [:div#canvas]
+    [:div#js-properties-panel]
+    [:ul.buttons
+     [:li "download"]
+     [:li [:a#js-download-diagram {:title "download BPMN diagram"} "BPMN diagram"]]
+     [:li [:a#js-download-svg {:title "download as SVG image"} "SVG image"]]]
+    [:script {:src "http://localhost:9013/app.js"}]]))
+
 (defn console-endpoint [config]
   (routes
    (GET "/login" request (login config request))
+
+   (GET "/bpmn" request (bpmn config request))
 
    (GET "/" [] (index config))
    (POST "/job/from-xml" [:as request]
