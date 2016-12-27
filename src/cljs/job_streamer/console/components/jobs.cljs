@@ -75,14 +75,16 @@
                              (om/transact! latest-execution
                                            #(assoc % :job-execution/step-executions steps))))}))
 
-(defcomponent job-execution-dialog [[type job] owner]
+(defcomponent job-execution-dialog [[type {:keys [job backto]}] owner opts]
   (init-state [_]
     {:params {}})
   (render-state [_ {:keys [jobs-view-channel params message-channel] :as owner}]
     (html
      [:div.ui.dimmer.modals.page.transition.visible.active
       [:div.ui.modal.scrolling.transition.visible.active
-       [:i.close.icon {:on-click (fn [e] (put! jobs-view-channel [:close-dialog nil]))}]
+       [:i.close.icon {:on-click (fn [e]
+                                   (when backto (set! (.-href js/location) backto))
+                                   (put! jobs-view-channel [:close-dialog nil]))}]
        [:div.header (:job/name job)]
        [:div.content
         (if-let [param-names (not-empty (:job/dynamic-parameters job))]
@@ -104,7 +106,9 @@
          [:div.left.aligned.column
           [:button.ui.black.button
            {:type "button"
-            :on-click (fn [e] (put! jobs-view-channel [:close-dialog nil]))} "Cancel"]]
+            :on-click (fn [e]
+                        (when backto (set! (.-href js/location) backto))
+                        (put! jobs-view-channel [:close-dialog nil]))} "Cancel"]]
          [:div.right.aligned.column
           [:button.ui.positive.button
            {:type "button"
@@ -324,7 +328,7 @@
                                    :on-click (fn [_]
                                                (api/request (str "/" app-name "/job/" job-name)
                                                             {:handler (fn [job]
-                                                                        (put! jobs-view-channel [:restart-dialog job]))}))}
+                                                                        (put! jobs-view-channel [:restart-dialog {:job job}]))}))}
                                   [:i.play.icon]]]
 
                                 (#{:batch-status/starting  :batch-status/stopping} status)
@@ -335,7 +339,7 @@
                                  {:on-click (fn [_]
                                               (api/request (str "/" app-name "/job/" job-name)
                                                            {:handler (fn [job]
-                                                                       (put! jobs-view-channel [:execute-dialog job]))}))}
+                                                                       (put! jobs-view-channel [:execute-dialog {:job job}]))}))}
                                  [:i.play.icon]]))]]
                       (when-let [step-executions (not-empty (get-in job [:job/latest-execution :job-execution/step-executions]))]
                         [:tr
