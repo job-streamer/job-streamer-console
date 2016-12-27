@@ -1,5 +1,6 @@
 (ns job-streamer.console.core
-  (:require [om.core :as om :include-macros true])
+  (:require [om.core :as om :include-macros true]
+            [job-streamer.console.common :refer [app-name]])
   (:use [job-streamer.console.components.root :only [root-view]]))
 
 (def app-state (atom {:query ""

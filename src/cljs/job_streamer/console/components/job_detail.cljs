@@ -47,11 +47,15 @@
                  job
                  {:handler (fn [response]
                              (put! jobs-channel [:refresh-jobs true]
-                                   #(if (== (.-hash js/location) "#/jobs/new")
+                                   #(if (= (.-hash js/location) "#/jobs/new")
                                         (do
                                           (set! (.-href js/location) "#/")
                                           (set! (.-href js/location) "/"))
                                         (set! (.-href js/location) "#/"))))
+                  :forbidden-handler (fn [response]
+                                       (om/set-state! owner :message {:class "error"
+                                                                      :header "Save failed"
+                                                                      :body [:p "You are unauthorized save job."]}))
                   :error-handler (fn [response]
                                    (om/set-state! owner :message {:class "error"
                                                                   :header "Save failed"
@@ -99,23 +103,31 @@
                {:handler (fn [response]
                            (put! refresh-job-ch (:job/name job))
                            (put! scheduling-ch false))
+                :forbidden-handler (fn [response]
+                                     (put! error-ch {:message "You are unauthorized to change schedule."}))
                 :error-handler (fn [response]
                                  (put! error-ch response))}))
 
-(defn pause-schedule [job owner success-ch]
+(defn pause-schedule [job owner success-ch error-ch]
   (api/request (str "/" app-name "/job/" (:job/name job) "/schedule/pause") :PUT
                {:handler (fn [response]
-                           (put! success-ch (:job/name job)))}))
+                           (put! success-ch (:job/name job)))
+                :forbidden-handler (fn [response]
+                                     (put! error-ch {:message "You are unauthorized to pause schedule."}))}))
 
-(defn resume-schedule [job owner success-ch]
+(defn resume-schedule [job owner success-ch error-ch]
   (api/request (str "/" app-name "/job/" (:job/name job) "/schedule/resume") :PUT
                {:handler (fn [response]
-                           (put! success-ch (:job/name job)))}))
+                           (put! success-ch (:job/name job)))
+                :forbidden-handler (fn [response]
+                                     (put! error-ch {:message "You are unauthorized to redume schedule."}))}))
 
-(defn drop-schedule [job owner success-ch]
+(defn drop-schedule [job owner success-ch error-ch]
   (api/request (str "/" app-name "/job/" (:job/name job) "/schedule") :DELETE
                {:handler (fn [response]
-                           (put! success-ch (:job/name job)))}))
+                           (put! success-ch (:job/name job)))
+                :forbidden-handler (fn [response]
+                                     (put! error-ch {:message "You are unauthorized to drop schedule."}))}))
 
 (defn render-job-structure [job-name owner]
   (let [xhrio (net/xhr-connection)
@@ -358,6 +370,8 @@
 (defcomponent next-execution-view [job owner]
   (init-state [_]
     {:scheduling-ch (chan)
+     :has-error false
+     :error-ch (chan)
      :scheduling?   false})
 
   (will-mount [_]
@@ -368,16 +382,22 @@
           (om/set-state! owner :scheduling? (<! (om/get-state owner :scheduling-ch)))
           (put! ch :continue)
           (recur)))
-      (put! ch :start)))
+      (put! ch :start))
+    (go
+      (let [{message :message} (<! (om/get-state owner :error-ch))]
+        (om/set-state! owner :has-error message))))
 
   (will-unmount [_]
     (when-let [scheduling-monitor (om/get-state owner :scheduling-monitor)]
       (close! scheduling-monitor)))
 
-  (render-state [_ {:keys [refresh-job-ch scheduling-ch scheduling?]}]
+  (render-state [_ {:keys [refresh-job-ch scheduling-ch scheduling? error-ch has-error]}]
     (html
-     [:div.ui.raised.segment
+     [:div.ui.raised.segment (when has-error {:class "error"})
       [:h3.ui.header "Next"]
+      (when has-error
+        [:div.ui.error.message
+         [:p has-error]])
       (if scheduling?
         (om/build scheduling-view job
                   {:init-state {:scheduling-ch scheduling-ch
@@ -400,13 +420,13 @@
              [:div.ui.labeled.icon.menu
               (if exe
                 [:a.item {:on-click (fn [e]
-                                      (pause-schedule job owner refresh-job-ch))}
+                                      (pause-schedule job owner refresh-job-ch error-ch))}
                  [:i.pause.icon] "Pause"]
                 [:a.item {:on-click (fn [e]
-                                      (resume-schedule job owner refresh-job-ch))}
+                                      (resume-schedule job owner refresh-job-ch error-ch))}
                  [:i.play.icon] "Resume"])
               [:a.item {:on-click (fn [e]
-                                    (drop-schedule job owner refresh-job-ch))}
+                                    (drop-schedule job owner refresh-job-ch error-ch))}
                [:i.remove.icon] "Drop"]
               [:a.item {:on-click (fn [e]
                                     (om/set-state! owner :scheduling? true))}
@@ -476,7 +496,15 @@
                              [:div.label "Success"]]
                             [:div.statistic
                              [:div.value (get-in job-detail [:job/stats :failure])]
-                             [:div.label "Failed"]]]
+                             [:div.label "Failed"]]
+                            (let [batch-status (get-in job [:job/latest-execution :job-execution/batch-status :db/ident])]
+                              (if (or (#{:batch-status/abandoned :batch-status/completed nil} batch-status) (nil? batch-status))
+                                [:button.ui.circular.icon.green.basic.button
+                                  {:on-click (fn  [_]
+                                              (put! (:jobs-channel opts) [:execute-dialog {:job job-detail :backto (.-href js/location)}])
+                                              (set! (.-href js/location) "#"))}
+                                  [:i.play.icon]]
+                                [:div]))]
                            [:hr.ui.divider]
                            [:div.ui.tiny.horizontal.statistics
                             [:div.statistic

@@ -28,7 +28,7 @@
                  " from "
                  (.getLastUri xhrio)))))
 
-(defn download[path]
+(defn download [path]
   (set! (.-href js/location) (url-for path)))
 
 (defn request
@@ -38,7 +38,7 @@
    (request path :GET nil options))
   ([path method options]
    (request path method nil options))
-  ([path method body {:keys [handler error-handler format]}]
+  ([path method body {:keys [handler error-handler format forbidden-handler]}]
    (let [xhrio (net/xhr-connection)]
 
      (when handler
@@ -46,10 +46,20 @@
                       (fn [e]
                         (let [res (read-string (.getResponseText xhrio))]
                           (handler res)))))
-     (when error-handler
-       (events/listen xhrio EventType.ERROR
-                      (fn [e]
-                        (let [res (read-string (.getResponseText xhrio))]
+     (events/listen xhrio EventType.ERROR
+                    (fn [e]
+                      (let [res (read-string (.getResponseText xhrio))]
+                        (cond
+                          ;; Unahthorized
+                          (= (.getStatus xhrio) 401)
+                          ;; TODO: Manage application name.
+                          (set! (.-pathname js/window.location) "/login")
+
+                          ;; Forbidden
+                          (and (= (.getStatus xhrio) 403) (fn? forbidden-handler))
+                          (forbidden-handler res (.getLastErrorCode xhrio))
+
+                          :else
                           (cond
                             (fn? error-handler)
                             (error-handler res (.getLastErrorCode xhrio))
@@ -62,8 +72,8 @@
                               goog.net.ErrorCode/EXCEPTION      (handle-each-type (:exception error-handler) res xhrio)
                               goog.net.ErrorCode/HTTP_ERROR     (handle-each-type (:http-error error-handler) res xhrio)
                               goog.net.ErrorCode/ABORT          (handle-each-type (:abort error-handler) res xhrio)
-                              goog.net.ErrorCode/TIMEOUT        (handle-each-type (:timeout error-handler) res xhrio)
-                              goog.net.ErrorCode/OFFLINE        (handle-each-type (:offline error-handler) res xhrio)))))))
+                              goog.net.ErrorCode/TIMEOUT        (handle-each-type (:timeout error-handler) res xhrio)))))))
+     (.setWithCredentials xhrio true)
      (.send xhrio (url-for path) (.toLowerCase (name method))
             body
             (case format
