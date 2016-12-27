@@ -3,7 +3,11 @@
         [garden.units :only [px em]]))
 
 (def styles
-  [[:.full.height {:height "100%"}]
+  [[:body
+    [:.emoji {:height "1.2em"}]
+    [:.login.grid {:height "50%"}
+     [:.column {:max-width (px 450)}]]]
+   [:.full.height {:height "100%"}]
    [:.main.content {:min-height "100%"
                     :max-width (px 960)
                     :margin {:left "auto" :right "auto"}

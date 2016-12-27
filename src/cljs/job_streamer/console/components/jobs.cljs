@@ -16,13 +16,17 @@
 (enable-console-print!)
 (def app-name "default")
 
-(defn execute-job [job-name parameters channel]
+(defn execute-job [job-name parameters channel message-channel]
   (api/request (str "/" app-name "/job/" job-name "/executions") :POST
                parameters
                {:handler (fn [response]
-                           (put! channel [:close-dialog nil]))}))
+                           (put! channel [:close-dialog nil]))
+                :forbidden-handler (fn [response]
+                                     (when message-channel
+                                       (put! message-channel {:type "error" :body "You are unauthorized to execute job."}))
+                                     (put! channel [:close-dialog nil]))}))
 
-(defn stop-job [job]
+(defn stop-job [job message-channel]
   (when-let [latest-execution (:job/latest-execution job)]
     (api/request (str "/" app-name
                       "/job/" (:job/name job)
@@ -31,9 +35,12 @@
                  {:handler (fn [response]
                              (om/update! latest-execution
                                          [:job-execution/batch-status :db/ident]
-                                         :batch-status/stopping))})))
+                                         :batch-status/stopping))
+                  :forbidden-handler (fn [response]
+                                       (when message-channel
+                                         (put! message-channel {:type "error" :body "You are unauthorized to stop execution job."})))})))
 
-(defn abandon-job [job]
+(defn abandon-job [job message-channel]
   (when-let [latest-execution (:job/latest-execution job)]
     (api/request (str "/" app-name
                       "/job/" (:job/name job)
@@ -42,9 +49,12 @@
                  {:handler (fn [response]
                              (om/update! latest-execution
                                          [:job-execution/batch-status :db/ident]
-                                         :batch-status/abandoned))})))
+                                         :batch-status/abandoned))
+                  :forbidden-handler (fn [response]
+                                       (when message-channel
+                                         (put! message-channel {:type "error" :body "You are unauthorized to abandon execution job."})))})))
 
-(defn restart-job [job parameters channel]
+(defn restart-job [job parameters channel message-channel]
   (when-let [latest-execution (:job/latest-execution job)]
     (api/request (str "/" app-name
                       "/job/" (:job/name job)
@@ -52,7 +62,11 @@
                  :PUT
                  parameters
                  {:handler (fn [response]
-                             (put! channel [:close-dialog nil]))})))
+                             (put! channel [:close-dialog nil]))
+                  :forbidden-handler (fn [response]
+                                       (when message-channel
+                                         (put! message-channel {:type "error" :body "You are unauthorized to restart execution job."}))
+                                       (put! channel [:close-dialog nil]))})))
 
 (defn search-execution [latest-execution job-name execution-id]
   (api/request (str "/" app-name "/job/" job-name "/execution/" execution-id)
@@ -64,7 +78,7 @@
 (defcomponent job-execution-dialog [[type job] owner]
   (init-state [_]
     {:params {}})
-  (render-state [_ {:keys [jobs-view-channel params]}]
+  (render-state [_ {:keys [jobs-view-channel params message-channel] :as owner}]
     (html
      [:div.ui.dimmer.modals.page.transition.visible.active
       [:div.ui.modal.scrolling.transition.visible.active
@@ -96,13 +110,13 @@
            {:type "button"
             :on-click (fn [e]
                         (case type
-                          :execute (execute-job (:job/name job) params jobs-view-channel)
-                          :restart (restart-job job params jobs-view-channel)))}
+                          :execute (execute-job (:job/name job) params jobs-view-channel message-channel)
+                          :restart (restart-job job params jobs-view-channel message-channel)))}
            (case type
              :execute "Execute!"
              :restart "Restart!")]]]]]])))
 
-(defcomponent job-list-view [app owner]
+(defcomponent job-list-view [app owner {:keys [message-channel]}]
   (init-state [_] {:now (js/Date.)
                    :per 20})
   (will-mount [_]
@@ -130,7 +144,7 @@
                    not-empty)
             (let [page (om/get-state owner :page)
                   per  (om/get-state owner :per)]
-              (search-jobs app {:q (:query app) :sort-by (-> app :job-sort-order parse-sort-order) :offset (inc (* (dec page) per)) :limit per})
+              (search-jobs app {:q (:query app) :sort-by (-> app :job-sort-order parse-sort-order) :offset (inc (* (dec page) per)) :limit per} message-channel)
               {:page page}))
           (put! ch :continue)
           (recur)))
@@ -169,7 +183,7 @@
           [:button.ui.circular.basic.orange.icon.button
            {:type "button"
             :on-click (fn [e]
-                        (search-jobs app {:q (:query app) :sort-by (-> app :job-sort-order parse-sort-order) :offset (inc (* (dec page) per)) :limit per}))}
+                        (search-jobs app {:q (:query app) :sort-by (-> app :job-sort-order parse-sort-order) :offset (inc (* (dec page) per)) :limit per} message-channel))}
            [:i.refresh.icon]]]]
         [:div.row
          [:div.column
@@ -182,7 +196,7 @@
                            (search-jobs app {:q (:query app)
                                              :sort-by (-> app :job-sort-order (toggle-sort-order :name) parse-sort-order)
                                              :offset (inc (* (dec page) per))
-                                             :limit per})
+                                             :limit per} message-channel)
                            (om/transact! app :job-sort-order #(toggle-sort-order % :name)))}
               "Job name"
               [:i.sort.icon
@@ -200,7 +214,7 @@
                            (search-jobs app {:q (:query app)
                                              :sort-by (-> app :job-sort-order (toggle-sort-order :last-execution-started) parse-sort-order)
                                              :offset (inc (* (dec page) per))
-                                             :limit per})
+                                             :limit per} message-channel)
                            (om/transact! app :job-sort-order #(toggle-sort-order % :last-execution-started)))}
               "Started at"
               [:i.sort.icon
@@ -214,7 +228,7 @@
                                              :sort-by (-> app :job-sort-order (toggle-sort-order :last-execution-duration) parse-sort-order)
                                              :offset (inc (* (dec page) per))
                                              :with "execution"
-                                             :limit per})
+                                             :limit per} message-channel)
                            (om/transact! app :job-sort-order #(toggle-sort-order % :last-execution-duration)))}
               "Duration"
               [:i.sort.icon
@@ -227,7 +241,7 @@
                            (search-jobs app {:q (:query app)
                                              :sort-by (-> app :job-sort-order (toggle-sort-order :last-execution-status) parse-sort-order)
                                              :offset (inc (* (dec page) per))
-                                             :limit per})
+                                             :limit per} message-channel)
                            (om/transact! app :job-sort-order #(toggle-sort-order % :last-execution-status)))}
               "Status"
               [:i.sort.icon
@@ -240,7 +254,7 @@
                            (search-jobs app {:q (:query app)
                                              :sort-by (-> app :job-sort-order (toggle-sort-order :next-execution-start) parse-sort-order)
                                              :offset (inc (* (dec page) per))
-                                             :limit per})
+                                             :limit per} message-channel)
                            (om/transact! app :job-sort-order #(toggle-sort-order % :next-execution-start)))}
               "Start"
               [:i.sort.icon
@@ -291,8 +305,8 @@
                                  [:button.ui.circular.orange.icon.button.visible.content
                                   {:on-click (fn [_]
                                                (if (#{:batch-status/started} status)
-                                                 (stop-job job)
-                                                 (abandon-job job)))}
+                                                 (stop-job job message-channel)
+                                                 (abandon-job job message-channel)))}
                                   [:i.setting.loading.icon]]
                                  [:button.ui.circular.red.icon.basic.button.hidden.content
                                   (if (#{:batch-status/started} status)
@@ -303,7 +317,7 @@
                                 [:div
                                  [:button.ui.circular.red.icon.basic.button
                                   {:on-click (fn [_]
-                                               (abandon-job job))}
+                                               (abandon-job job message-channel))}
                                   [:i.stop.icon]]
                                  [:button.ui.circular.yellow.icon.basic.button
                                   {:title "restart"
@@ -337,16 +351,16 @@
                                              (search-jobs app {:q (:query app)
                                                                :sort-by (-> app :job-sort-order parse-sort-order)
                                                                :offset (inc (* (dec pn) per))
-                                                               :limit per}))}
+                                                               :limit per} message-channel))}
                      :react-key "job-pagination"})]]]))))
 
 
-(defcomponent jobs-view [app owner {:keys [header-channel jobs-channel]}]
+(defcomponent jobs-view [app owner {:keys [header-channel jobs-channel message-channel]}]
   (init-state [_]
     {:dangerously-action-data nil
      :page 1})
   (will-mount [_]
-    (search-jobs app {:q (:query app) :sort-by (-> app :job-sort-order parse-sort-order) :p 1})
+    (search-jobs app {:q (:query app) :sort-by (-> app :job-sort-order parse-sort-order) :p 1} message-channel)
     (go-loop []
       (let [[cmd msg] (<! jobs-channel)]
         (try
@@ -354,8 +368,8 @@
             :execute-dialog  (om/set-state! owner :executing-job [:execute msg])
             :restart-dialog  (om/set-state! owner :executing-job [:restart msg])
             :close-dialog (do (om/set-state! owner :executing-job nil)
-                              (search-jobs app {:q (:query app) :sort-by (-> app :job-sort-order parse-sort-order) }))
-            :refresh-jobs (do (search-jobs app {:q (:query app) :sort-by (-> app :job-sort-order parse-sort-order) })
+                              (search-jobs app {:q (:query app) :sort-by (-> app :job-sort-order parse-sort-order) } message-channel))
+            :refresh-jobs (do (search-jobs app {:q (:query app) :sort-by (-> app :job-sort-order parse-sort-order) } message-channel)
                               (put! header-channel [:refresh-stats true]))
             :delete-job (do
                           (fn [results]
@@ -412,11 +426,13 @@
                            :timeline timeline-view
                            ;; default
                            job-list-view)
-                         app {:init-state {:jobs-view-channel jobs-channel}
+                         app {:init-state {:jobs-view-channel jobs-channel
+                                           :message-channel message-channel}
                               :state {:page page}
                               :react-key "job-mode"}))]]
            (when executing-job
-             (om/build job-execution-dialog executing-job {:init-state {:jobs-view-channel jobs-channel}
+             (om/build job-execution-dialog executing-job {:init-state {:jobs-view-channel jobs-channel
+                                                                        :message-channel message-channel}
                                                            :state {:page page}
                                                            :react-key "job-execution-dialog"}))])
         (when dangerously-action-data

@@ -160,12 +160,12 @@
         [:div#job-search.item
          [:form {:on-submit (fn [e]
                               (.preventDefault e)
-                              (search-jobs app {:q (.-value (.getElementById js/document "job-query")) :sort-by (-> app :job-sort-order parse-sort-order)}) false)}
+                              (search-jobs app {:q (.-value (.getElementById js/document "job-query")) :sort-by (-> app :job-sort-order parse-sort-order)} message-channel) false)}
           [:div.ui.icon.transparent.inverted.input
            [:input#job-query {:type "text"}]]
           [:i.search.icon {:on-click (fn [e]
                                         (.preventDefault e)
-                                        (search-jobs app {:q (.-value (.getElementById js/document "job-query")) :sort-by (-> app :job-sort-order parse-sort-order)}) false)}]]]
+                                        (search-jobs app {:q (.-value (.getElementById js/document "job-query")) :sort-by (-> app :job-sort-order parse-sort-order)} message-channel) false)}]]]
         [:div.ui.dropdown.item
          [:button.ui.basic.icon.inverted.button
           {:on-click (fn [_]
@@ -248,10 +248,12 @@
                                 (.preventDefault e)
                                 (om/set-state! owner :configure-opened? false)
                                 (set! (.-href js/location) "#/app/default"))}
-           [:i.browser.icon] "Upload batch components"]
+            [:i.browser.icon] "Upload batch components"]
           [:a.item {:on-click (fn[e]
                                 (put! header-channel [:version-dialog true]))}
-          [:i.circle.help.icon] "version"]]]
+            [:i.circle.help.icon] "version"]
+          [:a.item {:href (api/url-for (str "/logout?next=" (.-origin js/window.location) "/login"))}
+            [:i.sign.out.icon] "Logout"]]]
         (when open-version-dialog
           (om/build version-dialog app
                     {:opts {:header-channel header-channel}
@@ -319,7 +321,8 @@
           (case (first (:mode app))
             :jobs (om/build jobs-view app {:init-state {:mode (second (:mode app))}
                                            :opts {:header-channel header-channel
-                                                  :jobs-channel jobs-channel}
+                                                  :jobs-channel jobs-channel
+                                                  :message-channel message-channel}
                                            :react-key "jobs"})
             :agents (om/build agents-view app)
             :calendars (om/build calendars-view app {:init-state {:mode (second (:mode app))}
