@@ -25,12 +25,15 @@
 (defn export-calendars []
   (api/download "/calendars/download"))
 
-(defn import-xml-job [jobxml callback]
+(defn import-xml-job [jobxml callback message-channel]
   (api/request (str "/" app-name "/jobs") :POST jobxml
                {:format :xml
-                :handler callback}))
+                :handler callback
+                :forbidden-handler (fn [response]
+                                     (put! message-channel {:type "error"
+                                                            :body "Cannot import. Unauthorized."}))}))
 
-(defn import-edn-jobs [jobs callback]
+(defn import-edn-jobs [jobs callback message-channel]
   (let [ch (chan)]
     (go-loop [cnt 1]
       (let [jobs (<! ch)
@@ -45,7 +48,10 @@
                        {:handler (fn [_]
                                    (if rest-jobs
                                      (put! ch rest-jobs)
-                                     (callback cnt)))})
+                                     (callback cnt)))
+                        :forbidden-handler (fn [response]
+                                             (put! message-channel {:type "error"
+                                                                    :body "Cannot import. Unauthorized."}))})
           (recur (inc cnt)))))
     (put! ch jobs)))
 
@@ -216,10 +222,10 @@
               (fn [file result callback-fn]
                 (cond
                    (gstring/endsWith (.-name file) ".xml")
-                   (import-xml-job result callback-fn)
+                   (import-xml-job result callback-fn message-channel)
 
                    (gstring/endsWith (.-name file) ".edn")
-                   (import-edn-jobs (read-string result) callback-fn)
+                   (import-edn-jobs (read-string result) callback-fn message-channel)
 
                    :else
                    (put! message-channel {:type "error"
