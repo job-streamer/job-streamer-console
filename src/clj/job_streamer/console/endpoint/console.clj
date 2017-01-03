@@ -97,11 +97,9 @@
     html, body, #canvas, #canvas > div {
       height: 100%;
     }
-
     .icon-custom-fail {
       background: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" stroke-width=\"8\" stroke=\"#48a\" fill=\"none\" viewBox=\"0 0 120 120\"><circle cx=\"60\" cy=\"60\" r=\"40\"/></svg>');
     }
-
     .icon-custom-stop {
       background: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" stroke-width=\"8\" stroke=\"#48a\" fill=\"none\" viewBox=\"0 0 120 120\"><circle cx=\"60\" cy=\"60\" r=\"40\"/></svg>');
     }"]
@@ -113,7 +111,6 @@
      [:li "download"]
      [:li [:a#js-download-diagram {:title "download BPMN diagram"} "BPMN diagram"]]
      [:li [:a#js-download-svg {:title "download as SVG image"} "SVG image"]]]
-    [:script "var test=true;"]
     [:script {:src "http://localhost:9013/app.js"}]]))
 
 (defn console-endpoint [config]

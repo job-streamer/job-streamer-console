@@ -435,7 +435,7 @@
                          (om/set-state! owner :scheduling? true))}
             "Schedule this job"]]))])))
 
-(defcomponent job-structure-view [job-name owner]
+(defcomponent job-structure-view [{:keys [job/name job/svg-notation] :as job-detail} owner]
   (render-state [_ {:keys [dimmed?]}]
     (html
      [:div.dimmable.image.dimmed
@@ -449,13 +449,13 @@
          [:button.ui.primary.button
           {:type "button"
            :on-click (fn [e]
-                       ;;(set! (.-href js/location) (str "#/job/" job-name "/edit"))
-                       (js/window.open "/default/job/test/edit" "window_name" "width=800,height=600,scrollbars=yes")
-                       )}
+                       (js/window.open "/default/job/test/edit" "window_name" "width=800,height=600,scrollbars=yes"))}
           "Edit"]]]]
-      [:div.job-blocks-inner.ui.big.image]]))
-  (did-mount [_]
-    (render-job-structure job-name owner)))
+      [:div {:style {:height "500px"
+                     :width "100%"
+                     :background-image (str "url(\"data:image/svg+xml;utf8," (js/window.btoa svg-notation) "\")")}}]])))
+  ; (did-mount [_]
+  ;   (render-job-structure job-name owner)))
 
 (defcomponent current-job-view [job owner opts]
   (init-state [_]
@@ -481,7 +481,8 @@
                       [:div.column
                        [:div.ui.special.cards
                         [:div.job-detail.card
-                         (om/build job-structure-view (:job/name job) {:react-key "job-structure"})
+                         (when job-detail
+                           (om/build job-structure-view job-detail {:react-key "job-structure"}))
                          [:div.content
                           [:div.header.name (:job/name job)]
                           [:div.description
