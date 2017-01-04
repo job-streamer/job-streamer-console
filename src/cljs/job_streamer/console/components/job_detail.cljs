@@ -440,7 +440,7 @@
             "Schedule this job"]]))])))
 
 (defcomponent job-structure-view [{:keys [job/name job/svg-notation] :as job-detail} owner]
-  (render-state [_ {:keys [dimmed?]}]
+  (render-state [_ {:keys [refresh-job-ch dimmed?]}]
     (html
      [:div.dimmable.image.dimmed
       {:on-mouse-enter (fn [e]
@@ -453,7 +453,8 @@
          [:button.ui.primary.button
           {:type "button"
            :on-click (fn [e]
-                       (js/window.open (str "/" app-name "/job/" name "/edit") name "width=800,height=600,scrollbars=yes"))}
+                       (let [w (js/window.open (str "/" app-name "/job/" name "/edit") name "width=800,height=600,scrollbars=yes")]
+                         (.addEventListener w "unload" (fn [] (js/setTimeout (fn [] (put! refresh-job-ch true))) 10))))}
           "Edit"]]]]
       [:div {:style {:height "200px"
                      :width "100%"
@@ -486,7 +487,8 @@
                        [:div.ui.special.cards
                         [:div.job-detail.card
                          (when job-detail
-                           (om/build job-structure-view job-detail {:react-key "job-structure"}))
+                           (om/build job-structure-view job-detail {:init-state {:refresh-job-ch refresh-job-ch}
+                                                                    :react-key "job-structure"}))
                          [:div.content
                           [:div.header.name (:job/name job)]
                           [:div.description
