@@ -453,13 +453,13 @@
          [:button.ui.primary.button
           {:type "button"
            :on-click (fn [e]
-                       (js/window.open "/default/job/test/edit" "window_name" "width=800,height=600,scrollbars=yes"))}
+                       (js/window.open (str "/" app-name "/job/" name "/edit") name "width=800,height=600,scrollbars=yes"))}
           "Edit"]]]]
-      [:div {:style {:height "500px"
+      [:div {:style {:height "200px"
                      :width "100%"
-                     :background-image (str "url(\"data:image/svg+xml;utf8," (js/window.btoa svg-notation) "\")")}}]])))
-  ; (did-mount [_]
-  ;   (render-job-structure job-name owner)))
+                     :background-repeat "no-repeat"
+                     :background-size "contain"
+                     :background-image (str "url(\"data:image/svg+xml;base64," (js/window.btoa svg-notation) "\")")}}]])))
 
 (defcomponent current-job-view [job owner opts]
   (init-state [_]
