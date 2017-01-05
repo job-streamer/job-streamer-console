@@ -117,6 +117,7 @@
   (routes
    (GET "/login" request (login config request))
 
+   (GET "/jobs/new" [] (bpmn config nil))
    (GET ["/:app-name/job/:job-name/edit" :app-name #".*" :job-name #".*"]
         [app-name job-name]
         (bpmn config job-name))

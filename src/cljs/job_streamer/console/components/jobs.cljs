@@ -181,7 +181,8 @@
           [:button.ui.basic.green.button
            {:type "button"
             :on-click (fn [e]
-                        (set! (.-href js/location) "#/jobs/new"))}
+                        (let [w (js/window.open "/jobs/new" "New" "width=800,height=600,scrollbars=yes")]
+                          (.addEventListener w "unload" (fn [] (js/setTimeout (fn [] (set! (.-href js/location) "/"))) 10))))}
            [:i.plus.icon] "New"]]
          [:div.ui.right.aligned.column
           [:button.ui.circular.basic.orange.icon.button
