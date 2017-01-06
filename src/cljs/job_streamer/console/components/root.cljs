@@ -258,9 +258,9 @@
           [:a.item {:on-click (fn[e]
                                 (put! header-channel [:version-dialog true]))}
             [:i.circle.help.icon] "version"]
-          [:a.item {:on-click (api/request (api/url-for "/auth") :DELETE
-                                           {:handler (fn [response]
-                                                       (set! (.-href js/location) "/login"))})}
+          [:a.item {:on-click #(api/request (api/url-for "/auth") :DELETE
+                                            {:handler (fn [response]
+                                                        (set! (.-href js/location) "/login"))})}
             [:i.sign.out.icon] "Logout"]]]
         (when open-version-dialog
           (om/build version-dialog app
