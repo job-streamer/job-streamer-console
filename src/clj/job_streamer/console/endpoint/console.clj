@@ -2,8 +2,9 @@
   (:require [compojure.core :refer :all]
             [hiccup.core :refer [html]]
             [hiccup.page :refer [html5 include-css include-js]]
-            [ring.util.response :refer [resource-response content-type header]]
+            [ring.util.response :refer [resource-response content-type header redirect]]
             [environ.core :refer [env]]
+            [clj-http.client :as client]
             (job-streamer.console [style :as style]
                                   [jobxml :as jobxml])))
 
@@ -49,42 +50,56 @@
    (include-js (str "/js/job-streamer"
                     (when-not (:dev env) ".min") ".js"))))
 
-(defn login [{:keys [control-bus-url]} request]
-  (let [scheme (:scheme request)
-        host   (get-in request [:headers "host"])
-        url    (str (or (name scheme) "http") "://" host)]
-    (layout request
-      [:div.ui.fixed.inverted.teal.menu
-        [:div.header.item [:img.ui.image {:alt "JobStreamer" :src "/img/logo.png"}]]]
-      [:div.main.grid.content.full.height
-        [:div.ui.middle.aligned.center.aligned.login.grid
-         [:div.column
-          [:h2.ui.header
-           [:div.content
-            [:img.ui.image {:src "/img/logo.png"}]]]
-          [:form.ui.large.login.form
-           (merge {:method "post" :action (str control-bus-url "/login")}
-                  (when (get-in request [:params :error])
-                    {:class "error"}))
-           [:input {:type "hidden" :name "appname" :value "default"}]
-           [:input {:type "hidden" :name "next" :value url}]
-           [:input {:type "hidden" :name "back" :value (str url "/login")}]
-           [:div.ui.stacked.segment
-            [:div.ui.error.message
-             [:p "User name or password is wrong."]]
-            [:div.field
-             [:div.ui.left.icon.input
-              [:i.user.icon]
-              [:input {:type "text" :name "username" :placeholder "User name"}]]]
-            [:div.field
-             [:div.ui.left.icon.input
-              [:i.lock.icon]
-              [:input {:type "password" :name "password" :placeholder "Password"}]]]
-            [:button.ui.fluid.large.teal.submit.button {:type "submit"} "Login"]]]]]])))
+(defn login-view [_ request]
+  (layout request
+    [:div.ui.fixed.inverted.teal.menu
+      [:div.header.item [:img.ui.image {:alt "JobStreamer" :src "/img/logo.png"}]]]
+    [:div.main.grid.content.full.height
+      [:div.ui.middle.aligned.center.aligned.login.grid
+       [:div.column
+        [:h2.ui.header
+         [:div.content
+          [:img.ui.image {:src "/img/logo.png"}]]]
+        [:form.ui.large.login.form
+         (merge {:method "post" :action "/login"}
+                (when (get-in request [:params :error])
+                  {:class "error"}))
+         [:input {:type "hidden" :name "appname" :value "default"}]
+         [:div.ui.stacked.segment
+          [:div.ui.error.message
+           [:p "User name or password is wrong."]]
+          [:div.field
+           [:div.ui.left.icon.input
+            [:i.user.icon]
+            [:input {:type "text" :name "username" :placeholder "User name"}]]]
+          [:div.field
+           [:div.ui.left.icon.input
+            [:i.lock.icon]
+            [:input {:type "password" :name "password" :placeholder "Password"}]]]
+          [:button.ui.fluid.large.teal.submit.button {:type "submit"} "Login"]]]]]]))
+
+(defn login [{:keys [control-bus-url]} username password appname]
+  ;; TODO: Change auth api
+  (let [{:keys [body cookies] :as res} (client/post (str control-bus-url "/auth")
+                                            {:content-type :edn
+                                             :body (pr-str {:user/id username
+                                                    :user/password password
+                                                    :user/app-name appname})})]
+    (println res)
+    ;; TODO: logging token
+    (when-let  [token (:token (read-string body))]
+      (-> cookies
+          (select-keys ["ring-session"])
+          (update "ring-session" #(select-keys % [:value :domain :path :secure :http-only :max-age :expires]))))))
 
 (defn console-endpoint [config]
   (routes
-   (GET "/login" request (login config request))
+   (GET "/login" request (login-view config request))
+   (POST "/login" {{:keys [username password appname]} :params :as request}
+     (if-let [cookies (login config username password appname)]
+       (-> (redirect (get-in request [:query-params "next"] "/"))
+           (assoc :cookies cookies))
+       (login-view config (assoc-in request [:params :error] true))))
 
    (GET "/" [] (index config))
    (POST "/job/from-xml" [:as request]
