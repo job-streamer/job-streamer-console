@@ -64,7 +64,6 @@
          (merge {:method "post" :action "/login"}
                 (when (get-in request [:params :error])
                   {:class "error"}))
-         [:input {:type "hidden" :name "appname" :value "default"}]
          [:div.ui.stacked.segment
           [:div.ui.error.message
            [:p "User name or password is wrong."]]
@@ -78,15 +77,11 @@
             [:input {:type "password" :name "password" :placeholder "Password"}]]]
           [:button.ui.fluid.large.teal.submit.button {:type "submit"} "Login"]]]]]]))
 
-(defn login [{:keys [control-bus-url]} username password appname]
-  ;; TODO: Change auth api
+(defn login [{:keys [control-bus-url]} username password]
   (let [{:keys [body cookies] :as res} (client/post (str control-bus-url "/auth")
                                             {:content-type :edn
                                              :body (pr-str {:user/id username
-                                                    :user/password password
-                                                    :user/app-name appname})})]
-    (println res)
-    ;; TODO: logging token
+                                                    :user/password password})})]
     (when-let  [token (:token (read-string body))]
       (-> cookies
           (select-keys ["ring-session"])
@@ -96,7 +91,7 @@
   (routes
    (GET "/login" request (login-view config request))
    (POST "/login" {{:keys [username password appname]} :params :as request}
-     (if-let [cookies (login config username password appname)]
+     (if-let [cookies (login config username password)]
        (-> (redirect (get-in request [:query-params "next"] "/"))
            (assoc :cookies cookies))
        (login-view config (assoc-in request [:params :error] true))))
