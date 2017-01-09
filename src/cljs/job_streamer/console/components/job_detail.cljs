@@ -318,7 +318,8 @@
   (init-state [_]
     {:error-ch (chan)
      :has-error false
-     :schedule (:job/schedule job)})
+     :schedule (:job/schedule job)
+     :scheduling-type ""})
 
   (will-mount [_]
     (go
@@ -328,7 +329,7 @@
                  {:handler (fn [response]
                              (om/set-state! owner :calendars response))}))
 
-  (render-state [_ {:keys [schedule scheduling-ch calendars refresh-job-ch error-ch has-error]}]
+  (render-state [_ {:keys [schedule scheduling-ch calendars refresh-job-ch error-ch has-error scheduling-type]}]
     (html
      [:form.ui.form
       (merge {:on-submit (fn [e]
@@ -341,11 +342,13 @@
         [:div.ui.error.message
          [:p has-error]])
       [:div.fields
-       (let [value (some-> (.getElementById js/document "cron-notation") (. -value))
-             scheduling-type (some-> (.getElementById js/document "scheduling-type") (. -value))]
+       (let [value (some-> (.getElementById js/document "cron-notation") (. -value))]
          [:div.field (when has-error {:class "error"})
           [:label "Easy Scheduling"]
-          [:select {:id "scheduling-type"}
+          [:select {:id "scheduling-type"
+                    :value (or scheduling-type "")
+                    :on-change (fn [e]
+                                (om/set-state! owner :scheduling-type (.. js/document (getElementById "scheduling-type") -value)))}
            [:option {:value ""} ""]
            [:option {:value "Daily"} "Daily"]
            [:option {:value "Weekly"} "Weekly"]
@@ -354,7 +357,7 @@
           [:input
            {:type "text"
             :id "scheduling-date"
-            :on-change (om/set-state! owner :scheduling-date (.. js/document (getElementById "scheduling-date") -value))}])
+            :on-change (fn [e] (om/set-state! owner :scheduling-date (.. js/document (getElementById "scheduling-date") -value)))}])
           [:label "Quartz format"]
           [:input {:id "cron-notation" :type "text" :placeholder "Quartz format"
                    :value (or (:schedule/cron-notation schedule) "")
