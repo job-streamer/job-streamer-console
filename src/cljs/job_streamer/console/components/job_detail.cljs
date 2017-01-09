@@ -341,17 +341,29 @@
         [:div.ui.error.message
          [:p has-error]])
       [:div.fields
-       [:div.field (when has-error {:class "error"})
-        [:label "Quartz format"]
-        [:input {:id "cron-notation" :type "text" :placeholder "Quartz format"
-                 :value (:schedule/cron-notation schedule)
-                 :on-change (fn [e]
-                              (let [value (.. js/document (getElementById "cron-notation") -value)]
-                                (om/set-state! owner [:schedule :schedule/cron-notation] value)))}]]
+       (let [value (some-> (.getElementById js/document "cron-notation") (. -value))
+             scheduling-type (some-> (.getElementById js/document "scheduling-type") (. -value))]
+         [:div.field (when has-error {:class "error"})
+          [:label "Easy Scheduling"]
+          [:select {:id "scheduling-type"}
+           [:option {:value ""} ""]
+           [:option {:value "Daily"} "Daily"]
+           [:option {:value "Weekly"} "Weekly"]
+           [:option {:value "Monthly"} "Monthly"]]
+          (when (= scheduling-type "Daily")
+          [:input
+           {:type "text"
+            :id "scheduling-date"
+            :on-change (om/set-state! owner :scheduling-date (.. js/document (getElementById "scheduling-date") -value))}])
+          [:label "Quartz format"]
+          [:input {:id "cron-notation" :type "text" :placeholder "Quartz format"
+                   :value (or (:schedule/cron-notation schedule) "")
+                   :on-change (fn [e]
+                                (om/set-state! owner [:schedule :schedule/cron-notation] value))}]])
        (when calendars
          [:div.field
           [:label "Calendar"]
-          [:select {:value (get-in schedule [:schedule/calendar :calendar/name])
+          [:select {:value (or (get-in schedule [:schedule/calendar :calendar/name]) "")
                     :on-change (fn [_]
                                  (let [value (.. (om/get-node owner) (querySelector "select") -value)]
                                    (om/set-state! owner [:schedule :schedule/calendar :calendar/name] value)))}
