@@ -29,23 +29,6 @@
 (defn index [config]
   (layout config
    [:div#app.ui.full.height.page]
-   [:xml#job-toolbox
-    [:block {:type "job"}]
-    [:block {:type "property"}]
-    [:block {:type "step"}]
-    [:block {:type "flow"}]
-    [:block {:type "split"}]
-    ;; [:block {:type "decision"}] TODO will support
-    [:block {:type "batchlet"}]
-    [:block {:type "chunk"}]
-    [:block {:type "reader"}]
-    [:block {:type "processor"}]
-    [:block {:type "writer"}]
-    [:block {:type "next"}]
-    [:block {:type "end"}]
-    [:block {:type "fail"}]
-    [:block {:type "stop"}]]
-
    (include-js (str "/js/job-streamer"
                     (when-not (:dev env) ".min") ".js"))))
 
@@ -91,27 +74,28 @@
      [:meta {:name "control-bus-url" :content control-bus-url}]
      [:meta {:name "job-name" :content job-name}]
      (include-css
-       "http://localhost:9013/css/diagram-js.css"
-       "http://localhost:9013/vendor/bpmn-font/css/bpmn.css"
-       "http://localhost:9013/vendor/bpmn-font/css/bpmn-embedded.css"
-       "http://localhost:9013/css/app.css")]
-     [:style "
-     html, body, #canvas, #canvas > div {
-       height: 100%;
-     }
-     .icon-custom-fail {
-       background: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" stroke-width=\"8\" stroke=\"#48a\" fill=\"none\" viewBox=\"0 0 120 120\"><circle cx=\"60\" cy=\"60\" r=\"40\"/></svg>');
-     }
-     .icon-custom-stop {
-       background: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" stroke-width=\"8\" stroke=\"#48a\" fill=\"none\" viewBox=\"0 0 120 120\"><circle cx=\"60\" cy=\"60\" r=\"40\"/></svg>');
-     }"]
+       "/css/diagram-js.css"
+       "/vendor/bpmn-font/css/bpmn.css"
+       "/vendor/bpmn-font/css/bpmn-embedded.css"
+       "/css/app.css")]
+     [:style "html, body, #canvas, #canvas > div {
+               height: 100%;
+             }
+             .icon-custom-fail {
+               background: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" stroke-width=\"8\" stroke=\"#48a\" fill=\"none\" viewBox=\"0 0 120 120\"><circle cx=\"60\" cy=\"60\" r=\"40\"/></svg>');
+             }
+             .icon-custom-stop {
+               background: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" stroke-width=\"8\" stroke=\"#48a\" fill=\"none\" viewBox=\"0 0 120 120\"><circle cx=\"60\" cy=\"60\" r=\"40\"/></svg>');
+             }"]
    [:body
     [:h1 job-name]
     [:div#canvas]
     [:div#js-properties-panel]
     [:ul.buttons
      [:li [:a#save-job {:title "Save Job"} "Save"]]]
-    [:script {:src "http://localhost:9013/app.js"}]]))
+    [:script {:src "/js/jsr-352.js"}]
+    (include-js (str "/js/flowchart"
+                     (when-not (:dev env) ".min") ".js"))]))
 
 (defn console-endpoint [config]
   (routes
