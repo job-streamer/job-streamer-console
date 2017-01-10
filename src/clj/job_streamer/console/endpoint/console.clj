@@ -79,14 +79,23 @@
        "/vendor/bpmn-font/css/bpmn-embedded.css"
        "/css/app.css")]
      [:style "html, body, #canvas, #canvas > div {
-               height: 100%;
-             }
-             .icon-custom-fail {
-               background: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" stroke-width=\"8\" stroke=\"#48a\" fill=\"none\" viewBox=\"0 0 120 120\"><circle cx=\"60\" cy=\"60\" r=\"40\"/></svg>');
-             }
-             .icon-custom-stop {
-               background: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" stroke-width=\"8\" stroke=\"#48a\" fill=\"none\" viewBox=\"0 0 120 120\"><circle cx=\"60\" cy=\"60\" r=\"40\"/></svg>');
-             }"]
+                height: 100%;
+              }
+
+              .icon-jsr352-batchlet-step {
+                background: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" stroke-width=\"8\" stroke=\"#48a\" fill=\"none\" viewBox=\"0 0 120 120\"><rect width=\"100\" height=\"80\" rx=\"10\" ry=\"10\" x=\"5\" y=\"10\"/><g font-family=\"sans-serif\" font-size=\"3\" font-weight=\"normal\"><text x=\"10\" y=\"50\" stroke=\"none\" fill=\"black\">Batchlet</text></g></svg>');
+              }
+
+              .icon-jsr352-chunk-step {
+                background: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" stroke-width=\"8\" stroke=\"#48a\" fill=\"none\" viewBox=\"0 0 120 120\"><rect width=\"100\" height=\"80\" rx=\"10\" ry=\"10\" x=\"5\" y=\"10\"/><g font-family=\"sans-serif\" font-size=\"3\" font-weight=\"normal\"><text x=\"10\" y=\"50\" stroke=\"none\" fill=\"black\">Chunk</text></g></svg>');
+              }
+
+              .icon-jsr352-flow {
+                background: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" stroke-width=\"8\" stroke=\"#48a\" fill=\"none\" viewBox=\"0 0 120 120\"><rect width=\"100\" height=\"80\" rx=\"10\" ry=\"10\" x=\"5\" y=\"10\"/><g font-family=\"sans-serif\" font-size=\"3\" font-weight=\"normal\"><text x=\"10\" y=\"50\" stroke=\"none\" fill=\"black\">Flow</text></g></svg>');
+              }
+              .icon-jsr352-split {
+                background: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" stroke-width=\"8\" stroke=\"#48a\" fill=\"none\" viewBox=\"0 0 120 120\"><rect width=\"100\" height=\"80\" rx=\"0\" ry=\"0\" x=\"5\" y=\"10\"/><g font-family=\"sans-serif\" font-size=\"3\" font-weight=\"normal\"><text x=\"10\" y=\"50\" stroke=\"none\" fill=\"black\">Split</text></g></svg>');
+              }"]
    [:body
     [:h1 job-name]
     [:div#canvas]
