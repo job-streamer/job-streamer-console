@@ -173,7 +173,8 @@
             [:p [:button.ui.primary.button
                  {:type "button"
                   :on-click (fn [e]
-                              (set! (.-href js/location) "#/jobs/new"))}
+                              (let [w (js/window.open (str "/jobs/new") "New" "width=800,height=600,scrollbars=yes")]
+                                (.addEventListener w "unload" (fn [] (js/setTimeout (fn [] (set! (.-href js/location) "/"))) 10))))}
                  [:i.plus.icon] "Create the first job"]]]]]]]
        [:div.ui.grid
         [:div.ui.two.column.row

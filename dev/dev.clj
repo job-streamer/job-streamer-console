@@ -33,6 +33,7 @@
                 {:optimizations :none
                  :main "cljs.flowchart"
                  :asset-path "/js"
+                 :libs ["resources/closure-js/libs"]
                  :output-to  "target/figwheel/job-streamer-console/public/js/flowchart.js"
                  :output-dir "target/figwheel/job-streamer-console/public/js"
                  :source-map true
