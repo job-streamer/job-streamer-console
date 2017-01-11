@@ -319,7 +319,10 @@
     {:error-ch (chan)
      :has-error false
      :schedule (:job/schedule job)
-     :scheduling-type ""})
+     :scheduling-type ""
+     :scheduling-date ""
+     :scheduling-week ""
+     :scheduling-month ""})
 
   (will-mount [_]
     (go
@@ -329,7 +332,7 @@
                  {:handler (fn [response]
                              (om/set-state! owner :calendars response))}))
 
-  (render-state [_ {:keys [schedule scheduling-ch calendars refresh-job-ch error-ch has-error scheduling-type]}]
+  (render-state [_ {:keys [schedule scheduling-ch calendars refresh-job-ch error-ch has-error scheduling-type scheduling-date scheduling-week scheduling-month]}]
     (html
      [:form.ui.form
       (merge {:on-submit (fn [e]
@@ -342,7 +345,6 @@
         [:div.ui.error.message
          [:p has-error]])
       [:div.fields
-       (let [value (some-> (.getElementById js/document "cron-notation") (. -value))]
          [:div.field (when has-error {:class "error"})
           [:label "Easy Scheduling"]
           [:select {:id "scheduling-type"
@@ -357,18 +359,22 @@
           [:input
            {:type "text"
             :id "scheduling-date"
+            :value (or scheduling-date "")
             :on-change (fn [e] (om/set-state! owner :scheduling-date (.. js/document (getElementById "scheduling-date") -value)))}])
           [:label "Quartz format"]
           [:input {:id "cron-notation" :type "text" :placeholder "Quartz format"
                    :value (or (:schedule/cron-notation schedule) "")
                    :on-change (fn [e]
-                                (om/set-state! owner [:schedule :schedule/cron-notation] value))}]])
+                                (let [value (some-> (.getElementById js/document "cron-notation") (. -value))]
+                                  (om/set-state! owner [:schedule :schedule/cron-notation] value)))}]]
        (when calendars
          [:div.field
           [:label "Calendar"]
+          (println "now cal" (get-in schedule [:schedule/calendar :calendar/name]))
           [:select {:value (or (get-in schedule [:schedule/calendar :calendar/name]) "")
+                    :id "scheduling-calendar"
                     :on-change (fn [_]
-                                 (let [value (.. (om/get-node owner) (querySelector "select") -value)]
+                                 (let [value (some-> (.getElementById js/document "scheduling-calendar") (. -value))]
                                    (om/set-state! owner [:schedule :schedule/calendar :calendar/name] value)))}
            [:option {:value ""} ""]
            (for [cal calendars]
