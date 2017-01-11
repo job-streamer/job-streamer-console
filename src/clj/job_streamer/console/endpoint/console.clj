@@ -71,7 +71,7 @@
                         :throw-exceptions false})]
       (if (== status 201)
         (let [token (:token (read-string body))]
-          (log/info "")
+          (log/infof "Authentificated with token: %s." token)
           (as-> cookies c
                 (select-keys c ["ring-session"])
                 (update c "ring-session" #(select-keys % [:value :domain :path :secure :http-only :max-age :expires]))
