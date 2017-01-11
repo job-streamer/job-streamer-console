@@ -1,4 +1,5 @@
 # job-streamer-console
+TEST
 
 This is a management console for job-streamer. It has the following features:
 
