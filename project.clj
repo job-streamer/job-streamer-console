@@ -7,6 +7,7 @@
                  [environ "1.0.3"]
                  [org.jsoup/jsoup "1.9.2"]
                  [clj-http "2.3.0"]
+                 [org.clojure/tools.logging "0.3.1"]
 
                  [com.stuartsierra/component "0.3.1"]
                  [duct "0.7.0"]
@@ -77,7 +78,7 @@
                    :source-paths ["dev"]
                    :repl-options {:init-ns user
                                   :nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]
-                                  :timeout 180000}
+                                  :timeout 360000}
                    :env {:dev true
                          :port "3000"}}
    :project/test  {:prep-tasks ^:replace [["javac"] ["compile"]]}})
