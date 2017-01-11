@@ -78,7 +78,7 @@
                    :source-paths ["dev"]
                    :repl-options {:init-ns user
                                   :nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]
-                                  :timeout 360000}
+                                  :timeout 180000}
                    :env {:dev true
                          :port "3000"}}
    :project/test  {:prep-tasks ^:replace [["javac"] ["compile"]]}})
