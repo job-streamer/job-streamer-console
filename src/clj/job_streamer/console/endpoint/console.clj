@@ -30,23 +30,6 @@
 (defn index [config]
   (layout config
    [:div#app.ui.full.height.page]
-   [:xml#job-toolbox
-    [:block {:type "job"}]
-    [:block {:type "property"}]
-    [:block {:type "step"}]
-    [:block {:type "flow"}]
-    [:block {:type "split"}]
-    ;; [:block {:type "decision"}] TODO will support
-    [:block {:type "batchlet"}]
-    [:block {:type "chunk"}]
-    [:block {:type "reader"}]
-    [:block {:type "processor"}]
-    [:block {:type "writer"}]
-    [:block {:type "next"}]
-    [:block {:type "end"}]
-    [:block {:type "fail"}]
-    [:block {:type "stop"}]]
-
    (include-js (str "/js/job-streamer"
                     (when-not (:dev env) ".min") ".js"))))
 
@@ -87,6 +70,47 @@
           (select-keys ["ring-session"])
           (update "ring-session" #(select-keys % [:value :domain :path :secure :http-only :max-age :expires]))))))
 
+(defn bpmn [{:keys [control-bus-url]} job-name]
+  (html5
+    [:head
+     [:meta {:charset "utf-8"}]
+     [:meta {:http-equiv "X-UA-Compatible" :content "IE=edge,chrome=1"}]
+     [:meta {:name "viewport" :content "width=device-width, initial-scale=1, maximum-scale=1"}]
+     [:meta {:name "control-bus-url" :content control-bus-url}]
+     [:meta {:name "job-name" :content job-name}]
+     (include-css
+       "/css/diagram-js.css"
+       "/vendor/bpmn-font/css/bpmn.css"
+       "/vendor/bpmn-font/css/bpmn-embedded.css"
+       "/css/app.css")]
+     [:style "html, body, #canvas, #canvas > div {
+                height: 100%;
+              }
+
+              .icon-jsr352-batchlet-step {
+                background: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" stroke-width=\"8\" stroke=\"#48a\" fill=\"none\" viewBox=\"0 0 120 120\"><rect width=\"100\" height=\"80\" rx=\"10\" ry=\"10\" x=\"5\" y=\"10\"/><g font-family=\"sans-serif\" font-size=\"3\" font-weight=\"normal\"><text x=\"10\" y=\"50\" stroke=\"none\" fill=\"black\">Batchlet</text></g></svg>');
+              }
+
+              .icon-jsr352-chunk-step {
+                background: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" stroke-width=\"8\" stroke=\"#48a\" fill=\"none\" viewBox=\"0 0 120 120\"><rect width=\"100\" height=\"80\" rx=\"10\" ry=\"10\" x=\"5\" y=\"10\"/><g font-family=\"sans-serif\" font-size=\"3\" font-weight=\"normal\"><text x=\"10\" y=\"50\" stroke=\"none\" fill=\"black\">Chunk</text></g></svg>');
+              }
+
+              .icon-jsr352-flow {
+                background: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" stroke-width=\"8\" stroke=\"#48a\" fill=\"none\" viewBox=\"0 0 120 120\"><rect width=\"100\" height=\"80\" rx=\"10\" ry=\"10\" x=\"5\" y=\"10\"/><g font-family=\"sans-serif\" font-size=\"3\" font-weight=\"normal\"><text x=\"10\" y=\"50\" stroke=\"none\" fill=\"black\">Flow</text></g></svg>');
+              }
+              .icon-jsr352-split {
+                background: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" stroke-width=\"8\" stroke=\"#48a\" fill=\"none\" viewBox=\"0 0 120 120\"><rect width=\"100\" height=\"80\" rx=\"0\" ry=\"0\" x=\"5\" y=\"10\"/><g font-family=\"sans-serif\" font-size=\"3\" font-weight=\"normal\"><text x=\"10\" y=\"50\" stroke=\"none\" fill=\"black\">Split</text></g></svg>');
+              }"]
+   [:body
+    [:h1 job-name]
+    [:div#canvas]
+    [:div#js-properties-panel]
+    [:ul.buttons
+     [:li [:a#save-job {:title "Save Job"} "Save"]]]
+    [:script {:src "/js/jsr-352.js"}]
+    (include-js (str "/js/flowchart"
+                     (when-not (:dev env) ".min") ".js"))]))
+
 (defn console-endpoint [config]
   (routes
    (GET "/login" request (login-view config request))
@@ -95,6 +119,11 @@
        (-> (redirect (get-in request [:query-params "next"] "/"))
            (assoc :cookies cookies))
        (login-view config (assoc-in request [:params :error] true))))
+
+   (GET "/jobs/new" [] (bpmn config nil))
+   (GET ["/:app-name/job/:job-name/edit" :app-name #".*" :job-name #".*"]
+        [app-name job-name]
+        (bpmn config job-name))
 
    (GET "/" [] (index config))
    (POST "/job/from-xml" [:as request]

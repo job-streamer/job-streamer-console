@@ -416,7 +416,7 @@
                  [:div.content
                   [:div.header "Pausing"]
                   [:div.description (:schedule/cron-notation schedule)]]])
-              ]
+             ]
              [:div.ui.labeled.icon.menu
               (if exe
                 [:a.item {:on-click (fn [e]
@@ -439,8 +439,8 @@
                          (om/set-state! owner :scheduling? true))}
             "Schedule this job"]]))])))
 
-(defcomponent job-structure-view [job-name owner]
-  (render-state [_ {:keys [dimmed?]}]
+(defcomponent job-structure-view [{:keys [job/name job/svg-notation] :as job-detail} owner]
+  (render-state [_ {:keys [refresh-job-ch dimmed?]}]
     (html
      [:div.dimmable.image.dimmed
       {:on-mouse-enter (fn [e]
@@ -453,11 +453,14 @@
          [:button.ui.primary.button
           {:type "button"
            :on-click (fn [e]
-                       (set! (.-href js/location) (str "#/job/" job-name "/edit")))}
+                       (let [w (js/window.open (str "/" app-name "/job/" name "/edit") name "width=800,height=600,scrollbars=yes")]
+                         (.addEventListener w "unload" (fn [] (js/setTimeout (fn [] (put! refresh-job-ch true))) 10))))}
           "Edit"]]]]
-      [:div.job-blocks-inner.ui.big.image]]))
-  (did-mount [_]
-    (render-job-structure job-name owner)))
+      [:div {:style {:height "200px"
+                     :width "100%"
+                     :background-repeat "no-repeat"
+                     :background-size "contain"
+                     :background-image (str "url(\"data:image/svg+xml;base64," (js/window.btoa svg-notation) "\")")}}]])))
 
 (defcomponent current-job-view [job owner opts]
   (init-state [_]
@@ -483,7 +486,9 @@
                       [:div.column
                        [:div.ui.special.cards
                         [:div.job-detail.card
-                         (om/build job-structure-view (:job/name job) {:react-key "job-structure"})
+                         (when job-detail
+                           (om/build job-structure-view job-detail {:init-state {:refresh-job-ch refresh-job-ch}
+                                                                    :react-key "job-structure"}))
                          [:div.content
                           [:div.header.name (:job/name job)]
                           [:div.description

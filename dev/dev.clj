@@ -27,6 +27,16 @@
                  :output-to  "target/figwheel/job-streamer-console/public/js/job-streamer.js"
                  :output-dir "target/figwheel/job-streamer-console/public/js"
                  :source-map true
+                 :source-map-path "/js"}}
+               {:source-paths ["src/cljs" "dev"]
+                :build-options
+                {:optimizations :none
+                 :main "cljs.flowchart"
+                 :asset-path "/js"
+                 :libs ["resources/closure-js/libs"]
+                 :output-to  "target/figwheel/job-streamer-console/public/js/flowchart.js"
+                 :output-dir "target/figwheel/job-streamer-console/public/js"
+                 :source-map true
                  :source-map-path "/js"}}]}})
 
 (def config
