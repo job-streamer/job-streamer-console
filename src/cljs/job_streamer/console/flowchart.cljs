@@ -1,5 +1,8 @@
 (ns job-streamer.console.flowchart
-  (:require [job-streamer.console.api :as api]))
+  (:require [job-streamer.console.api :as api]
+            [bouncer.core :as b]
+            [bouncer.validators :as v])
+  (:import [goog Uri]))
 
 (def control-bus-url (.. js/document
                          (querySelector "meta[name=control-bus-url]")
@@ -28,22 +31,71 @@
          "</bpmndi:BPMNDiagram>"
        "</bpmn:definitions>"))
 
-(defn- save-job-control-bus [job-name xml svg]
-  (let [job {:job/name (or job-name (str (random-uuid))) ;; TODO: Name job uuid temporary.
-             :job/bpmn-xml-notation xml
-             :job/svg-notation svg}]
+(defn save-job-control-bus [job job-name]
+  (if-let [messages (first (b/validate job :job/name [v/required [v/matches #"^[\w\-]+$"]]))]
+    ;; TODO: Handler error.
+    (.error js/console (str messages))
+    ;; (om/set-state! owner :message {:class "error"
+    ;;                                :header "Invalid job format"
+    ;;                                :body [:ul
+    ;;                                       (for [msg (->> messages
+    ;;                                                      (postwalk #(if (map? %) (vals %) %))
+    ;;                                                      flatten)]
+    ;;                                         [:li msg])]})
     (api/request (str "/" app-name (if job-name (str "/job/" job-name) "/jobs"))
                  (if job-name :PUT :POST)
                  job
+                 {:handler (fn [_] (.close js/window))
+                  :forbidden-handler (fn [response]
+                                       (.error js/console "Forbidden.")
+                                       ;; TODO: Handler error.
+                                       ;; (om/set-state! owner :message {:class "error"
+                                       ;;                                :header "Save failed"
+                                       ;;                                :body [:p "You are unauthorized save job."]})
+                                       )
+                  :error-handler (fn [response]
+                                   (.error js/console "Something wrong.")
+                                   ;; TODO: Handler error.
+                                   ;; (om/set-state! owner :message {:class "error"
+                                   ;;                                :header "Save failed"
+                                   ;;                                :body [:p "Somethig is wrong."]})
+                                   )})))
+
+(defn save-job [job-name xml svg]
+  (let [uri (goog.Uri. (.-href js/location))
+        port (.getPort uri)]
+    (api/request (str (.getScheme uri) "://" (.getDomain uri) (when port (str ":" port)) "/job/from-xml")
+                 :POST
+                 xml
                  {:handler (fn [response]
-                             (.close js/window))
-                  :error-handler #(.error js/console (str "something went wrong with save job:" %))})))
+                             (if job-name
+                               (save-job-control-bus (assoc response
+                                                       :job/bpmn-xml-notation xml
+                                                       :job/svg-notation svg) job-name)
+                               (api/request (str "/" app-name "/job/" (:job/name response))
+                                            {:handler (fn[_]
+                                                        (.error js/console (str "Job name:" (:job/name response) " is already used."))
+                                                        ;; TODO: Display error message.
+                                                        ;; (om/set-state! owner :message {:class "error"
+                                                        ;;                                :header "Name Already Used"
+                                                        ;;                                :body [:p "This job name is already used"]})
+                                                        )
+                                             :error-handler (fn[_] (save-job-control-bus (assoc response
+                                                                                           :job/bpmn-xml-notation xml
+                                                                                           :job/svg-notation svg) job-name))})))
+                  :error-handler (fn [response]
+                                   ;; TODO: Display error message.
+                                   ;; (om/set-state! owner :message {:class "error"
+                                   ;;                                :header "Invalid job format"
+                                   ;;                                :body [:p (:message response)]})
+                                   )
+                  :format :xml})))
 
 (defn render []
   (let [modeler js/window.bpmnjs ;; Get via global scope.
         job-name (.. js/document
-                    (querySelector "meta[name=job-name]")
-                    (getAttribute "content"))
+                     (querySelector "meta[name=job-name]")
+                     (getAttribute "content"))
         import-xml-cb (fn [err]
                         (if err
                           (.error js/console (str "something went wrong:" err))
@@ -58,7 +110,7 @@
                                        (.saveXML modeler
                                                  #js {:format true}
                                                  (fn [err xml]
-                                                   (save-job-control-bus job-name xml svg))))))]
+                                                   (save-job job-name xml svg))))))]
     ;; Get bpmn-xml from control-bus and import to modeler.
     (if job-name
       (api/request (str "/" app-name "/job/" job-name)

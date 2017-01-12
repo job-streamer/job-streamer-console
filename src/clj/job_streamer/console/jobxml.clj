@@ -1,7 +1,8 @@
 (ns job-streamer.console.jobxml
   (:require [clojure.java.io :as io]
             [clojure.xml :as xml])
-  (:import [org.jsoup Jsoup]))
+  (:import [org.jsoup Jsoup]
+           [java.io ByteArrayInputStream]))
 
 (defn field-value [el field-name]
   (some-> el
@@ -129,16 +130,13 @@
         (conj components component)))))
 
 (defn xml->job [xml]
-  (let [doc (Jsoup/parse xml)
-        job-els (. doc select "xml > block[type=job]")]
+  (let [doc (xml/parse (ByteArrayInputStream. (.getBytes xml)))
+        job-els (->> doc
+                     :content
+                     (filter #(= (:tag %) :jsr352:job)))]
     (if (= (count job-els) 1)
-      (let [job (first job-els)]
-        {:job/name (field-value job "name")
-         :job/components (xml->components job)
-         :job/properties (some->> (.select job "> value[name^=ADD]")
-                                  (map (fn [prop] (xml->property prop)))
-                                  (reduce merge))})
+      (let [job-name (-> job-els
+                         first
+                         (get-in [:attrs :id]))]
+        {:job/name job-name})
       (throw (IllegalStateException. "Block must be one.")))))
-
-
-
