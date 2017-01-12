@@ -158,6 +158,21 @@
     :batch-status/failed "red"
     ""))
 
+(defn to-cron-expression-daily [hour]
+  (if hour
+    (str "0 0 " hour " * * ?")
+    ""))
+
+(defn to-cron-expression-weekly [hour day-of-week]
+  (if (and hour day-of-week)
+    (str "0 0 " hour " ? * " day-of-week)
+    ""))
+
+(defn to-cron-expression-monthly[hour day]
+  (if (and hour day)
+    (str "0 0 " hour " " day " * ?")
+  ""))
+
 ;;;
 ;;; Om view components
 ;;;
@@ -350,17 +365,24 @@
           [:select {:id "scheduling-type"
                     :value (or scheduling-type "")
                     :on-change (fn [e]
-                                (om/set-state! owner :scheduling-type (.. js/document (getElementById "scheduling-type") -value)))}
+                                 (let [value (.. js/document (getElementById "scheduling-type") -value)]
+                                   (om/set-state! owner :scheduling-type value)))}
            [:option {:value ""} ""]
            [:option {:value "Daily"} "Daily"]
            [:option {:value "Weekly"} "Weekly"]
            [:option {:value "Monthly"} "Monthly"]]
           (when (= scheduling-type "Daily")
-          [:input
-           {:type "text"
-            :id "scheduling-date"
-            :value (or scheduling-date "")
-            :on-change (fn [e] (om/set-state! owner :scheduling-date (.. js/document (getElementById "scheduling-date") -value)))}])
+            [:div
+             "Fire at"
+             [:input
+              {:type "text"
+               :id "scheduling-date"
+               :value (or scheduling-date "")
+               :on-change (fn [e]
+                            (let [value (.. js/document (getElementById "scheduling-date") -value)]
+                              (om/set-state! owner :scheduling-date value)
+                              (om/set-state! owner [:schedule :schedule/cron-notation] (to-cron-expression-daily value))))}]
+             "o'clock every day"])
           [:label "Quartz format"]
           [:input {:id "cron-notation" :type "text" :placeholder "Quartz format"
                    :value (or (:schedule/cron-notation schedule) "")
@@ -370,7 +392,6 @@
        (when calendars
          [:div.field
           [:label "Calendar"]
-          (println "now cal" (get-in schedule [:schedule/calendar :calendar/name]))
           [:select {:value (or (get-in schedule [:schedule/calendar :calendar/name]) "")
                     :id "scheduling-calendar"
                     :on-change (fn [_]
@@ -393,7 +414,7 @@
     {:scheduling-ch (chan)
      :has-error false
      :error-ch (chan)
-     :scheduling?   false})
+     :scheduling? false})
 
   (will-mount [_]
     (let [ch (chan)]
