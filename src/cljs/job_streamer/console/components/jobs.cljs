@@ -320,6 +320,7 @@
                                     [:i.stop.icon])]]
 
                                 (#{:batch-status/stopped :batch-status/failed} status)
+                                (when (not (false? (:job/restartable? job)))
                                 [:div
                                  [:button.ui.circular.red.icon.basic.button
                                   {:on-click (fn [_]
@@ -331,7 +332,7 @@
                                                (api/request (str "/" app-name "/job/" job-name)
                                                             {:handler (fn [job]
                                                                         (put! jobs-view-channel [:restart-dialog {:job job}]))}))}
-                                  [:i.play.icon]]]
+                                  [:i.play.icon]]])
 
                                 (#{:batch-status/starting  :batch-status/stopping} status)
                                 [:div]
