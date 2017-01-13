@@ -5,7 +5,6 @@
                  [garden "1.3.2" :exclusions [org.clojure/clojure]]
                  [compojure "1.5.1"]
                  [environ "1.0.3"]
-                 [org.jsoup/jsoup "1.9.2"]
                  [clj-http "2.3.0"]
 
                  [com.stuartsierra/component "0.3.1"]
