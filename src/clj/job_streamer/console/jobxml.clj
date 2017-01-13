@@ -137,6 +137,6 @@
     (if (= (count job-els) 1)
       (let [job-name (-> job-els
                          first
-                         (get-in [:attrs :id]))]
+                         (get-in [:attrs :bpmn:name]))]
         {:job/name job-name})
       (throw (IllegalStateException. "Block must be one.")))))
