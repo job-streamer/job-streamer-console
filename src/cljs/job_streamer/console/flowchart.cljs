@@ -1,7 +1,10 @@
 (ns job-streamer.console.flowchart
+  (:require-macros [cljs.core.async.macros :refer [go go-loop]])
   (:require [job-streamer.console.api :as api]
             [bouncer.core :as b]
-            [bouncer.validators :as v])
+            [bouncer.validators :as v]
+            [cljs.core.async :refer [put! <! chan timeout]]
+            [clojure.walk :refer [postwalk]])
   (:import [goog Uri]))
 
 (def control-bus-url (.. js/document
@@ -31,35 +34,62 @@
          "</bpmndi:BPMNDiagram>"
        "</bpmn:definitions>"))
 
+(defonce message-channel (chan))
+
+(defn- add-class [e class]
+  (let [classes (aget e "className")
+        cs (-> classes
+               (clojure.string/split #" +")
+               set)]
+    (->> class
+         (conj cs)
+         (clojure.string/join " ")
+         (aset e "className"))))
+
+(defn- remove-class [e class]
+  (let [classes (aget e "className")
+        cs (-> classes
+               (clojure.string/split #" +")
+               set)]
+    (->> (remove #{class} cs)
+         (clojure.string/join " ")
+         (aset e "className"))))
+
+(go-loop []
+         (when-let [msg (<! message-channel)]
+           (let [m (.getElementById js/document "message")]
+             (remove-class m "hidden")
+             (add-class m (:type msg))
+             (add-class m "visible")
+             (aset m "innerHTML" (:body msg))
+             (go (<! (timeout 5000))
+                   (add-class m "hidden")
+                   (remove-class m (:type msg))
+                   (remove-class m "visible"))
+             (recur))))
+
 (defn save-job-control-bus [job job-name]
   (if-let [messages (first (b/validate job :job/name [v/required [v/matches #"^[\w\-]+$"]]))]
-    ;; TODO: Handler error.
-    (.error js/console (str messages))
-    ;; (om/set-state! owner :message {:class "error"
-    ;;                                :header "Invalid job format"
-    ;;                                :body [:ul
-    ;;                                       (for [msg (->> messages
-    ;;                                                      (postwalk #(if (map? %) (vals %) %))
-    ;;                                                      flatten)]
-    ;;                                         [:li msg])]})
+    (do
+      (.error js/console (str messages))
+      (put! message-channel {:type "error"
+                             :body (str "<ul>"
+                                        (for [msg (->> messages
+                                                       (postwalk #(if (map? %) (vals %) %))
+                                                       flatten)]
+                                              (str "<li>" msg "</li>"))
+                                        "</ul>")}))
     (api/request (str "/" app-name (if job-name (str "/job/" job-name) "/jobs"))
                  (if job-name :PUT :POST)
                  job
                  {:handler (fn [_] (.close js/window))
                   :forbidden-handler (fn [response]
                                        (.error js/console "Forbidden.")
-                                       ;; TODO: Handler error.
-                                       ;; (om/set-state! owner :message {:class "error"
-                                       ;;                                :header "Save failed"
-                                       ;;                                :body [:p "You are unauthorized save job."]})
-                                       )
+                                       (.close js/window))
                   :error-handler (fn [response]
-                                   (.error js/console "Something wrong.")
-                                   ;; TODO: Handler error.
-                                   ;; (om/set-state! owner :message {:class "error"
-                                   ;;                                :header "Save failed"
-                                   ;;                                :body [:p "Somethig is wrong."]})
-                                   )})))
+                                   (.error js/console (str "Something wrong :" (:message response)))
+                                   (put! message-channel {:type "error"
+                                                          :body (:message response)}))})))
 
 (defn save-job [job-name xml svg]
   (let [uri (goog.Uri. (.-href js/location))
@@ -75,20 +105,14 @@
                                (api/request (str "/" app-name "/job/" (:job/name response))
                                             {:handler (fn[_]
                                                         (.error js/console (str "Job name:" (:job/name response) " is already used."))
-                                                        ;; TODO: Display error message.
-                                                        ;; (om/set-state! owner :message {:class "error"
-                                                        ;;                                :header "Name Already Used"
-                                                        ;;                                :body [:p "This job name is already used"]})
-                                                        )
+                                                        (put! message-channel {:type "error"
+                                                                               :body "This job name is already used."}))
                                              :error-handler (fn[_] (save-job-control-bus (assoc response
                                                                                            :job/bpmn-xml-notation xml
                                                                                            :job/svg-notation svg) job-name))})))
                   :error-handler (fn [response]
-                                   ;; TODO: Display error message.
-                                   ;; (om/set-state! owner :message {:class "error"
-                                   ;;                                :header "Invalid job format"
-                                   ;;                                :body [:p (:message response)]})
-                                   )
+                                   (put! message-channel {:type "error"
+                                                          :body (:message response)}))
                   :format :xml})))
 
 (defn render []
@@ -123,6 +147,6 @@
     (.addEventListener js/window
                        "DOMContentLoaded"
                        (fn []
-                         (let [link (.getElementById js/document "save-job")]
-                           (aset link "className" "active")
-                           (.addEventListener link "click" save-job-handler))))))
+                         (let [save (.getElementById js/document "save-job")]
+                           (remove-class save "disabled")
+                           (.addEventListener save "click" save-job-handler))))))
