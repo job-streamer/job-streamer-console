@@ -453,7 +453,7 @@
          [:button.ui.primary.button
           {:type "button"
            :on-click (fn [e]
-                       (let [w (js/window.open (str "/" app-name "/job/" name "/edit") name "width=1200,height=600")]
+                       (let [w (js/window.open (str "/" app-name "/job/" name "/edit") name "width=1200,height=800")]
                          (.addEventListener w "unload" (fn [] (js/setTimeout (fn [] (put! refresh-job-ch true))) 10))))}
           "Edit"]]]]
       [:div {:style {:height "200px"
