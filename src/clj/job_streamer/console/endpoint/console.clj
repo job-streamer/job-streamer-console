@@ -61,10 +61,10 @@
             [:input {:type "password" :name "password" :placeholder "Password"}]]]
           [:button.ui.fluid.large.teal.submit.button {:type "submit"} "Login"]]]]]]))
 
-(defn login [{:keys [control-bus-url]} username password]
+(defn login [{:keys [control-bus-url-from-backend]} username password]
   (try
     (let [{:keys [status body cookies]}
-          (client/post (str control-bus-url "/auth")
+          (client/post (str control-bus-url-from-backend "/auth")
                        {:content-type :edn
                         :body (pr-str {:user/id username
                                        :user/password password})
