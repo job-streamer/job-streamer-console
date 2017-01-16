@@ -37,16 +37,29 @@
   {:builds
    [{:id "dev"
      :source-paths ["src/cljs"]
-     :compiler {:output-to "target/cljsbuild/job-streamer-console/public/js/job-streamer.js"
+     :compiler {:output-dir "target/cljsbuild/job-streamer-console/public/js/"
                 :libs ["resources/closure-js/libs"]
                 :pretty-print true
-                :optimizations :simple}}
+                :optimizations :simple
+                :modules {:main
+                          {:output-to "target/cljsbuild/job-streamer-console/public/js/job-streamer.js"
+                           :entries #{job-streamer.console.core}}
+                          :flowchart
+                          {:output-to "target/cljsbuild/job-streamer-console/public/js/flowchart.js" 
+                           :entries #{job-streamer.console.flowchart}}}}}
     {:id "production"
      :source-paths ["src/cljs"]
-     :compiler {:output-to "resources/job-streamer-console/public/js/job-streamer.min.js"
-                :libs ["resources/clojure-js/libs"]
+     :compiler {:output-dir "resources/job-streamer-console/public/js/"
                 :pretty-print false
-                :optimizations :advanced}}]}
+                :optimizations :advanced
+                :libs ["resources/clojure-js/libs"]
+                :externs ["resources/job-streamer-console/public/js/jsr-352.js"]
+                :modules {:main
+                          {:output-to "resources/job-streamer-console/public/js/job-streamer.min.js"
+                           :entries #{job-streamer.console.core}}
+                          :flowchart
+                          {:output-to "resources/job-streamer-console/public/js/flowchart.min.js" 
+                           :entries #{job-streamer.console.flowchart}}}}}]}
 
   :aliases {"run-task" ["with-profile" "+repl" "run" "-m"]
             "setup"    ["run-task" "dev.tasks/setup"]}

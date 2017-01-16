@@ -151,3 +151,5 @@
                          (let [save (.getElementById js/document "save-job")]
                            (remove-class save "disabled")
                            (.addEventListener save "click" save-job-handler))))))
+
+(render)
