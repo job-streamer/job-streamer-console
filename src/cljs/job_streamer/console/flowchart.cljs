@@ -74,10 +74,11 @@
       (.error js/console (str messages))
       (put! message-channel {:type "error"
                              :body (str "<ul>"
-                                        (for [msg (->> messages
-                                                       (postwalk #(if (map? %) (vals %) %))
-                                                       flatten)]
-                                              (str "<li>" msg "</li>"))
+                                        (apply str
+                                          (for [msg (->> messages
+                                                         (postwalk #(if (map? %) (vals %) %))
+                                                         flatten)]
+                                                (str "<li>" msg "</li>")))
                                         "</ul>")}))
     (api/request (str "/" app-name (if job-name (str "/job/" job-name) "/jobs"))
                  (if job-name :PUT :POST)
