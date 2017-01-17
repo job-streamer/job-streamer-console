@@ -70,7 +70,7 @@
           (select-keys ["ring-session"])
           (update "ring-session" #(select-keys % [:value :domain :path :secure :http-only :max-age :expires]))))))
 
-(defn bpmn [{:keys [control-bus-url]} job-name]
+(defn flowchart [{:keys [control-bus-url]} job-name]
   (html5
     [:head
      [:meta {:charset "utf-8"}]
@@ -114,10 +114,12 @@
            (assoc :cookies cookies))
        (login-view config (assoc-in request [:params :error] true))))
 
-   (GET "/jobs/new" [] (bpmn config nil))
+   (GET ["/:app-name/jobs/new" :app-name #".*"]
+        [app-name]
+        (flowchart config nil))
    (GET ["/:app-name/job/:job-name/edit" :app-name #".*" :job-name #".*"]
         [app-name job-name]
-        (bpmn config job-name))
+        (flowchart config job-name))
 
    (GET "/" [] (index config))
    (POST "/job/from-xml" [:as request]
