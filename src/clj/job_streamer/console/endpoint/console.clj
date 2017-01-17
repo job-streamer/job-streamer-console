@@ -30,9 +30,7 @@
 (defn index [config]
   (layout config
    [:div#app.ui.full.height.page]
-   (include-js (when-not (:dev env)
-                 "/js/cljs_base.js")
-               (str "/js/job-streamer"
+   (include-js (str "/js/job-streamer"
                     (when-not (:dev env) ".min") ".js"))))
 
 (defn login-view [_ request]
@@ -104,11 +102,7 @@
      [:ul.buttons
       [:li [:button.ui.positive.button.submit.disabled {:id "save-job" :type "button"} [:i.save.icon] "Save"]]
       [:li [:button.ui.black.deny.button {:id "cancel" :type "button" :onClick "window.close();"} "Cancel"]]]]
-    (include-js  "/js/vendors/vis.min.js"
-                 "/js/vendors/kalendae.standalone.min.js")
-    (include-js (when-not (:dev env)
-                  "/js/cljs_base.js")
-                "/js/jsr-352.js"
+    (include-js "/js/jsr-352.js"
                 (str "/js/flowchart" (when-not (:dev env) ".min") ".js"))]))
 
 (defn console-endpoint [config]

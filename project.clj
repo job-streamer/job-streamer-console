@@ -37,29 +37,30 @@
   {:builds
    [{:id "dev"
      :source-paths ["src/cljs"]
-     :compiler {:output-dir "target/cljsbuild/job-streamer-console/public/js/"
+     :compiler {:output-to "target/cljsbuild/job-streamer-console/public/js/job-streamer.js"
                 :libs ["resources/closure-js/libs"]
                 :pretty-print true
-                :optimizations :simple
-                :modules {:main
-                          {:output-to "target/cljsbuild/job-streamer-console/public/js/job-streamer.js"
-                           :entries #{job-streamer.console.core}}
-                          :flowchart
-                          {:output-to "target/cljsbuild/job-streamer-console/public/js/flowchart.js" 
-                           :entries #{job-streamer.console.flowchart}}}}}
+                :optimizations :simple}}
+   {:id "dev-flowchart"
+     :source-paths ["src/cljs-flowchart"]
+     :compiler {:output-to "target/cljsbuild/job-streamer-console/public/js/flowchart.js"
+                :libs ["resources/closure-js/libs"]
+                :pretty-print true
+                :optimizations :simple}}
     {:id "production"
      :source-paths ["src/cljs"]
-     :compiler {:output-dir "resources/job-streamer-console/public/js/"
+     :compiler {:output-to "resources/job-streamer-console/public/js/job-streamer.min.js"
                 :pretty-print false
                 :optimizations :advanced
-                :libs ["resources/clojure-js/libs"]
+                :libs ["resources/clojure-js/libs"]}}
+    {:id "production-flowchart"
+     :source-paths ["src/cljs-flowchart"]
+     :compiler {:output-to "resources/job-streamer-console/public/js/flowchart.min.js"
+                :pretty-print false
+                :optimizations :advanced
                 :externs ["resources/job-streamer-console/public/js/jsr-352.js"]
-                :modules {:main
-                          {:output-to "resources/job-streamer-console/public/js/job-streamer.min.js"
-                           :entries #{job-streamer.console.core}}
-                          :flowchart
-                          {:output-to "resources/job-streamer-console/public/js/flowchart.min.js" 
-                           :entries #{job-streamer.console.flowchart}}}}}]}
+                :closure-warnings {:externs-validation :off
+                                   :non-standard-jsdoc :off}}}]}
 
   :aliases {"run-task" ["with-profile" "+repl" "run" "-m"]
             "setup"    ["run-task" "dev.tasks/setup"]}
