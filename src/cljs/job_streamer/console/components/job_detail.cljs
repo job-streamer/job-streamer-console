@@ -1,6 +1,5 @@
 (ns job-streamer.console.components.job-detail
-  (:require-macros [cljs.core.async.macros :refer [go go-loop]]
-                   [job-streamer.console.utils :refer [defblock]])
+  (:require-macros [cljs.core.async.macros :refer [go go-loop]])
   (:require [om.core :as om :include-macros true]
             [om-tools.core :refer-macros [defcomponent]]
             [sablono.core :as html :refer-macros [html]]
@@ -13,12 +12,9 @@
             [goog.Uri.QueryData :as query-data]
             [job-streamer.console.api :as api]
             [job-streamer.console.validators :as cv]
-            [job-streamer.console.format :as fmt]
-            [job-streamer.console.blocks :as blocks]
-            [Blockly])
+            [job-streamer.console.format :as fmt])
   (:use [cljs.reader :only [read-string]]
         [clojure.walk :only [postwalk]]
-        [job-streamer.console.blocks :only [job->xml]]
         [job-streamer.console.components.job-settings :only [job-settings-view]]
         [job-streamer.console.components.pagination :only [pagination-view]]
         [job-streamer.console.components.execution :only [execution-view]])
@@ -29,60 +25,6 @@
 
 ;; Now, app-name is static.
 (def app-name "default")
-
-(defn save-job-control-bus [job owner job-name jobs-channel]
-  (if-let [messages (first (b/validate job
-                                       :job/name [v/required [v/matches #"^[\w\-]+$"]]
-                                       :job/components [cv/more-than-one]))]
-    (om/set-state! owner :message {:class "error"
-                                   :header "Invalid job format"
-                                   :body [:ul
-                                          (for [msg (->> messages
-                                                         (postwalk #(if (map? %) (vals %) %))
-                                                         flatten)]
-                                            [:li msg])]})
-
-    (api/request (str "/" app-name (if job-name (str "/job/" job-name) "/jobs"))
-                 (if job-name :PUT :POST)
-                 job
-                 {:handler (fn [response]
-                             (put! jobs-channel [:refresh-jobs true]
-                                   #(if (= (.-hash js/location) "#/jobs/new")
-                                        (do
-                                          (set! (.-href js/location) "#/")
-                                          (set! (.-href js/location) "/"))
-                                        (set! (.-href js/location) "#/"))))
-                  :forbidden-handler (fn [response]
-                                       (om/set-state! owner :message {:class "error"
-                                                                      :header "Save failed"
-                                                                      :body [:p "You are unauthorized save job."]}))
-                  :error-handler (fn [response]
-                                   (om/set-state! owner :message {:class "error"
-                                                                  :header "Save failed"
-                                                                  :body [:p "Somethig is wrong."]}))})))
-
-(defn save-job [xml owner job-name jobs-channel]
-  (let [uri (goog.Uri. (.-href js/location))
-        port (.getPort uri)]
-    (api/request (str (.getScheme uri) "://" (.getDomain uri) (when port (str ":" port)) "/job/from-xml")
-                 :POST
-                 xml
-                 {:handler (fn [response]
-                             (if job-name
-                               (save-job-control-bus response owner job-name jobs-channel)
-                               (api/request (str "/" app-name "/job/" (:job/name response))
-                                            {:handler (fn[_]
-                                                        (om/set-state! owner :message {:class "error"
-                                                                                       :header "Name Already Used"
-                                                                                       :body [:p "This job name is already used"]}))
-                                             :error-handler (fn[_] (save-job-control-bus response owner job-name jobs-channel))}))
-
-                             )
-                  :error-handler (fn [response]
-                                   (om/set-state! owner :message {:class "error"
-                                                                  :header "Invalid job format"
-                                                                  :body [:p (:message response)]}))
-                  :format :xml})))
 
 (defn search-executions [job-name query cb]
   (let [uri (.. (Uri. (str "/" app-name "/job/" job-name "/executions"))
@@ -129,29 +71,6 @@
                 :forbidden-handler (fn [response]
                                      (put! error-ch {:message "You are unauthorized to drop schedule."}))}))
 
-(defn render-job-structure [job-name owner]
-  (let [xhrio (net/xhr-connection)
-        fetch-job-ch (chan)]
-    #_(loop [node (.querySelectorAll js/document ".job-blocks-inner")]
-        (when-let [first-child (.-firstChild node)]
-          (.removeChild node first-child)
-          (recur node)))
-
-    (go
-     (let [job (<! fetch-job-ch)
-           xml (job->xml (read-string (:job/edn-notation job)))]
-       (om/set-state! owner :job job)
-       (.domToWorkspace Blockly.Xml Blockly/mainWorkspace
-                        (.textToDom Blockly.Xml (str "<xml>" xml "</xml>")))))
-
-    (api/request (str "/" app-name "/job/" job-name)
-                 {:handler (fn [response]
-                             (put! fetch-job-ch response))})
-    (Blockly/inject
-     (.querySelector js/document ".job-blocks-inner")
-     (clj->js {:toolbox "<xml></xml>"
-               :readOnly true}))))
-
 (defn status-color [status]
   (case status
     :batch-status/completed "green"
@@ -169,16 +88,6 @@
    :jobs.detail.current.edit {:name "Edit" :href "#/job/%s/edit"}
    :jobs.detail.history {:name "History" :href "#/job/%s/history"}
    :jobs.detail.settings {:name "Settings" :href "#/job/%s/settings"}})
-
-(defn inject-and-dom-to-workspace[job owner]
-  (when-let [edn (:job/edn-notation job)]
-    (Blockly/inject
-     (.. (om/get-node owner) (querySelector ".job-blocks-inner"))
-     (clj->js {:toolbox (.getElementById js/document "job-toolbox")}))
-    (let [xml (job->xml (read-string edn))]
-      (.domToWorkspace Blockly.Xml
-                       Blockly/mainWorkspace
-                       (.textToDom Blockly.Xml (str "<xml>" xml "</xml>"))))))
 
 (defcomponent breadcrumb-view [mode owner]
   (render-state [_ {:keys [job-name]}]
@@ -203,51 +112,6 @@
                           (conj (vec (drop-last res))
                                 (into [:div.section.active] (-> res last (get-in [1 2])))))))
                     (repeat [:i.right.chevron.icon.divider])))])))
-
-(defcomponent job-edit-view [job owner {:keys [jobs-channel]}]
-  (render-state [_ {:keys [message]}]
-                (html [:div.ui.grid
-                       [:div.row {:style {:display (if message "block" "none")}}
-                        [:div.column
-                         [:div.ui.message {:class (:class message)}
-                          [:div.header (:header message)]
-                          [:div (:body message)]]]]
-
-                       [:div.row
-                        [:div.column
-                         [:div.job-blocks-inner {:style {:min-height "500px"}}]]]
-                       [:div.row
-                        [:div.column
-                         [:div.ui.grid
-                          [:div.right.aligned.column
-                           [:div.icon.ui.buttons
-                            [:button.ui.positive.button
-                             {:on-click (fn [e]
-                                          (let [xml (.workspaceToDom Blockly.Xml Blockly/mainWorkspace)]
-                                            (save-job (.domToText Blockly.Xml xml)
-                                                      owner (:job/name job) jobs-channel)))}
-                             [:i.save.icon] "Save"]]]]]]]))
-  (did-mount [_]
-             (inject-and-dom-to-workspace job owner))
-  (will-receive-props [_ next-props]
-                      (inject-and-dom-to-workspace next-props owner)))
-
-
-(defcomponent job-new-view [jobs owner opts]
-  (render-state [_ {:keys [message mode]}]
-    (html [:div
-           (om/build breadcrumb-view mode{:react-key "job-new-breadcrumb"})
-           (om/build job-edit-view nil {:opts opts
-                                        :react-key "job-new"})]))
-  (will-mount[_]
-    (let [ch (chan)]
-      (go
-        (let [_ (<! ch)]
-          (Blockly/inject
-           (.. (om/get-node owner) (querySelector ".job-blocks-inner"))
-           (clj->js {:toolbox (.getElementById js/document "job-toolbox")}))))
-      (blocks/get-classes ch))))
-
 
 (defcomponent job-history-view [job owner opts]
   (init-state [_]
@@ -477,10 +341,6 @@
                 (let [this-mode (->> mode (drop 3) first)]
                   (html
                    (case this-mode
-                     :edit
-                     (om/build job-edit-view job-detail {:opts opts
-                                                         :react-key "job-current-edit"})
-
                      ;;default
                      [:div.ui.stackable.two.column.grid
                       [:div.column

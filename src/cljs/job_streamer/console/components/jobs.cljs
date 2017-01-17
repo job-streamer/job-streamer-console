@@ -7,7 +7,7 @@
             (job-streamer.console.format :as fmt)
             (job-streamer.console.api :as api))
   (:use (job-streamer.console.components.timeline :only [timeline-view])
-        (job-streamer.console.components.job-detail :only [job-new-view job-detail-view])
+        (job-streamer.console.components.job-detail :only [job-detail-view])
         (job-streamer.console.components.execution :only [execution-view])
         (job-streamer.console.components.pagination :only [pagination-view])
         (job-streamer.console.components.dialog :only[dangerously-action-dialog])
@@ -396,12 +396,6 @@
           "Job"
           [:div.sub.header "Edit and execute a job."]]]
         (case this-mode
-          :new
-          (om/build job-new-view (get-in app [:jobs :results])
-                    {:state {:mode (:mode app)}
-                     :opts {:jobs-channel jobs-channel}
-                     :react-key "job-new"})
-
           :detail
           (if (:jobs app)
             (let [idx (->> (get-in app [:jobs :results])
