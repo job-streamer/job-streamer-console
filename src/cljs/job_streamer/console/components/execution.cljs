@@ -14,7 +14,7 @@
          [:div.top.aligned.image
           [:i.play.icon]]
          [:div.content
-          [:div.header (get-in step-execution [:step-execution/step :step/name])]
+          [:div.header (:step-execution/step-name step-execution)]
           (fmt/date-short (:step-execution/start-time step-execution))
           " - "
           (fmt/date-short (:step-execution/end-time step-execution))
