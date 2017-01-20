@@ -27,21 +27,10 @@
   (sec/defroute "/" []
     (om/update! app-state :mode [:jobs :list]))
 
-  (sec/defroute #"/jobs/new" []
-    (om/transact! app-state
-                  #(assoc %
-                          :mode [:jobs :new])))
-
   (sec/defroute #"/job/([\w\-]+)" [job-name]
     (om/transact! app-state
                   #(assoc %
                           :mode [:jobs :detail :current]
-                          :job-name job-name)))
-
-  (sec/defroute #"/job/([\w\-]+)/edit" [job-name]
-    (om/transact! app-state
-                  #(assoc %
-                          :mode [:jobs :detail :current :edit]
                           :job-name job-name)))
 
   (sec/defroute #"/job/([\w\-]+)/history" [job-name]

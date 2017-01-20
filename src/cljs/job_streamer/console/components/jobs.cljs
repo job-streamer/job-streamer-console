@@ -7,7 +7,7 @@
             (job-streamer.console.format :as fmt)
             (job-streamer.console.api :as api))
   (:use (job-streamer.console.components.timeline :only [timeline-view])
-        (job-streamer.console.components.job-detail :only [job-new-view job-detail-view])
+        (job-streamer.console.components.job-detail :only [job-detail-view])
         (job-streamer.console.components.execution :only [execution-view])
         (job-streamer.console.components.pagination :only [pagination-view])
         (job-streamer.console.components.dialog :only[dangerously-action-dialog])
@@ -96,7 +96,8 @@
                [:input {:type "text"
                         :name param-name
                         :value (get params (keyword param-name))
-                        :on-change (fn [e] (om/update-state! owner :params
+                        :on-change (fn [e]
+                                     (om/update-state! owner :params
                                                              #(assoc % (keyword param-name) (.. e -target -value))))}]])]]
           [:div (case type
                   :execute "Execute now?"
@@ -173,7 +174,8 @@
             [:p [:button.ui.primary.button
                  {:type "button"
                   :on-click (fn [e]
-                              (set! (.-href js/location) "#/jobs/new"))}
+                              (let [w (js/window.open (str "/" app-name "/jobs/new") "New" "width=1200,height=800")]
+                                (.addEventListener w "unload" (fn [] (js/setTimeout (fn [] (set! (.-href js/location) "/"))) 10))))}
                  [:i.plus.icon] "Create the first job"]]]]]]]
        [:div.ui.grid
         [:div.ui.two.column.row
@@ -181,7 +183,8 @@
           [:button.ui.basic.green.button
            {:type "button"
             :on-click (fn [e]
-                        (set! (.-href js/location) "#/jobs/new"))}
+                        (let [w (js/window.open (str "/" app-name "/jobs/new") "New" "width=1200,height=800")]
+                          (.addEventListener w "unload" (fn [] (js/setTimeout (fn [] (set! (.-href js/location) "/"))) 10))))}
            [:i.plus.icon] "New"]]
          [:div.ui.right.aligned.column
           [:button.ui.circular.basic.orange.icon.button
@@ -318,6 +321,7 @@
                                     [:i.stop.icon])]]
 
                                 (#{:batch-status/stopped :batch-status/failed} status)
+                                (when (not (false? (:job/restartable? job)))
                                 [:div
                                  [:button.ui.circular.red.icon.basic.button
                                   {:on-click (fn [_]
@@ -329,7 +333,7 @@
                                                (api/request (str "/" app-name "/job/" job-name)
                                                             {:handler (fn [job]
                                                                         (put! jobs-view-channel [:restart-dialog {:job job}]))}))}
-                                  [:i.play.icon]]]
+                                  [:i.play.icon]]])
 
                                 (#{:batch-status/starting  :batch-status/stopping} status)
                                 [:div]
@@ -394,12 +398,6 @@
           "Job"
           [:div.sub.header "Edit and execute a job."]]]
         (case this-mode
-          :new
-          (om/build job-new-view (get-in app [:jobs :results])
-                    {:state {:mode (:mode app)}
-                     :opts {:jobs-channel jobs-channel}
-                     :react-key "job-new"})
-
           :detail
           (if (:jobs app)
             (let [idx (->> (get-in app [:jobs :results])

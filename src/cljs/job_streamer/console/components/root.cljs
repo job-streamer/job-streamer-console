@@ -25,14 +25,6 @@
 (defn export-calendars []
   (api/download "/calendars/download"))
 
-(defn import-xml-job [jobxml callback message-channel]
-  (api/request (str "/" app-name "/jobs") :POST jobxml
-               {:format :xml
-                :handler callback
-                :forbidden-handler (fn [response]
-                                     (put! message-channel {:type "error"
-                                                            :body "Cannot import. Unauthorized."}))}))
-
 (defn import-edn-jobs [jobs callback message-channel]
   (let [ch (chan)]
     (go-loop [cnt 1]
@@ -40,11 +32,13 @@
             rest-jobs (not-empty (rest jobs))]
         (when-let [job (first jobs)]
           (api/request (str "/" app-name "/jobs") :POST
-                       (merge (read-string (:job/edn-notation job))
-                              (select-keys job [:job/schedule
-                                                :job/exclusive?
-                                                :job/time-monitor
-                                                :job/status-notifications]))
+                       (select-keys job [:job/name
+                                         :job/bpmn-xml-notation
+                                         :job/svg-notation
+                                         :job/schedule
+                                         :job/exclusive?
+                                         :job/time-monitor
+                                         :job/status-notifications])
                        {:handler (fn [_]
                                    (if rest-jobs
                                      (put! ch rest-jobs)
@@ -221,9 +215,6 @@
               "file-jobs"
               (fn [file result callback-fn]
                 (cond
-                   (gstring/endsWith (.-name file) ".xml")
-                   (import-xml-job result callback-fn message-channel)
-
                    (gstring/endsWith (.-name file) ".edn")
                    (import-edn-jobs (read-string result) callback-fn message-channel)
 
@@ -258,7 +249,9 @@
           [:a.item {:on-click (fn[e]
                                 (put! header-channel [:version-dialog true]))}
             [:i.circle.help.icon] "version"]
-          [:a.item {:href (api/url-for (str "/logout?next=" (.-origin js/window.location) "/login"))}
+          [:a.item {:on-click #(api/request (api/url-for "/auth") :DELETE
+                                            {:handler (fn [response]
+                                                        (set! (.-href js/location) "/login"))})}
             [:i.sign.out.icon] "Logout"]]]
         (when open-version-dialog
           (om/build version-dialog app

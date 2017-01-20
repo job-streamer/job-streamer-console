@@ -12,7 +12,7 @@
   {:app {:middleware [[wrap-not-found :not-found]
                       [wrap-defaults :defaults]]
          :not-found  "Resource Not Found"
-         :defaults   (meta-merge api-defaults {:static {:resources "job-streamer-console/public"}})}})
+         :defaults   (meta-merge api-defaults {:static {:resources "job-streamer-console/public"} :cookies true})}})
 
 (defn new-system [config]
   (let [config (meta-merge base-config config)]

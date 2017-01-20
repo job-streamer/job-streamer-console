@@ -1,6 +1,5 @@
 (ns job-streamer.console.components.job-detail
-  (:require-macros [cljs.core.async.macros :refer [go go-loop]]
-                   [job-streamer.console.utils :refer [defblock]])
+  (:require-macros [cljs.core.async.macros :refer [go go-loop]])
   (:require [om.core :as om :include-macros true]
             [om-tools.core :refer-macros [defcomponent]]
             [sablono.core :as html :refer-macros [html]]
@@ -13,12 +12,9 @@
             [goog.Uri.QueryData :as query-data]
             [job-streamer.console.api :as api]
             [job-streamer.console.validators :as cv]
-            [job-streamer.console.format :as fmt]
-            [job-streamer.console.blocks :as blocks]
-            [Blockly])
+            [job-streamer.console.format :as fmt])
   (:use [cljs.reader :only [read-string]]
         [clojure.walk :only [postwalk]]
-        [job-streamer.console.blocks :only [job->xml]]
         [job-streamer.console.components.job-settings :only [job-settings-view]]
         [job-streamer.console.components.pagination :only [pagination-view]]
         [job-streamer.console.components.execution :only [execution-view]])
@@ -29,60 +25,6 @@
 
 ;; Now, app-name is static.
 (def app-name "default")
-
-(defn save-job-control-bus [job owner job-name jobs-channel]
-  (if-let [messages (first (b/validate job
-                                       :job/name [v/required [v/matches #"^[\w\-]+$"]]
-                                       :job/components [cv/more-than-one]))]
-    (om/set-state! owner :message {:class "error"
-                                   :header "Invalid job format"
-                                   :body [:ul
-                                          (for [msg (->> messages
-                                                         (postwalk #(if (map? %) (vals %) %))
-                                                         flatten)]
-                                            [:li msg])]})
-
-    (api/request (str "/" app-name (if job-name (str "/job/" job-name) "/jobs"))
-                 (if job-name :PUT :POST)
-                 job
-                 {:handler (fn [response]
-                             (put! jobs-channel [:refresh-jobs true]
-                                   #(if (= (.-hash js/location) "#/jobs/new")
-                                        (do
-                                          (set! (.-href js/location) "#/")
-                                          (set! (.-href js/location) "/"))
-                                        (set! (.-href js/location) "#/"))))
-                  :forbidden-handler (fn [response]
-                                       (om/set-state! owner :message {:class "error"
-                                                                      :header "Save failed"
-                                                                      :body [:p "You are unauthorized save job."]}))
-                  :error-handler (fn [response]
-                                   (om/set-state! owner :message {:class "error"
-                                                                  :header "Save failed"
-                                                                  :body [:p "Somethig is wrong."]}))})))
-
-(defn save-job [xml owner job-name jobs-channel]
-  (let [uri (goog.Uri. (.-href js/location))
-        port (.getPort uri)]
-    (api/request (str (.getScheme uri) "://" (.getDomain uri) (when port (str ":" port)) "/job/from-xml")
-                 :POST
-                 xml
-                 {:handler (fn [response]
-                             (if job-name
-                               (save-job-control-bus response owner job-name jobs-channel)
-                               (api/request (str "/" app-name "/job/" (:job/name response))
-                                            {:handler (fn[_]
-                                                        (om/set-state! owner :message {:class "error"
-                                                                                       :header "Name Already Used"
-                                                                                       :body [:p "This job name is already used"]}))
-                                             :error-handler (fn[_] (save-job-control-bus response owner job-name jobs-channel))}))
-
-                             )
-                  :error-handler (fn [response]
-                                   (om/set-state! owner :message {:class "error"
-                                                                  :header "Invalid job format"
-                                                                  :body [:p (:message response)]}))
-                  :format :xml})))
 
 (defn search-executions [job-name query cb]
   (let [uri (.. (Uri. (str "/" app-name "/job/" job-name "/executions"))
@@ -129,34 +71,37 @@
                 :forbidden-handler (fn [response]
                                      (put! error-ch {:message "You are unauthorized to drop schedule."}))}))
 
-(defn render-job-structure [job-name owner]
-  (let [xhrio (net/xhr-connection)
-        fetch-job-ch (chan)]
-    #_(loop [node (.querySelectorAll js/document ".job-blocks-inner")]
-        (when-let [first-child (.-firstChild node)]
-          (.removeChild node first-child)
-          (recur node)))
-
-    (go
-     (let [job (<! fetch-job-ch)
-           xml (job->xml (read-string (:job/edn-notation job)))]
-       (om/set-state! owner :job job)
-       (.domToWorkspace Blockly.Xml Blockly/mainWorkspace
-                        (.textToDom Blockly.Xml (str "<xml>" xml "</xml>")))))
-
-    (api/request (str "/" app-name "/job/" job-name)
-                 {:handler (fn [response]
-                             (put! fetch-job-ch response))})
-    (Blockly/inject
-     (.querySelector js/document ".job-blocks-inner")
-     (clj->js {:toolbox "<xml></xml>"
-               :readOnly true}))))
-
 (defn status-color [status]
   (case status
     :batch-status/completed "green"
     :batch-status/failed "red"
     ""))
+
+(defn to-cron-expression-daily [hour]
+  (if (not-empty hour)
+    (str "0 0 " hour " * * ?")
+    ""))
+
+(defn to-cron-expression-weekly [hour day-of-week]
+  (if (and (not-empty hour) (not-empty day-of-week))
+    (str "0 0 " hour " ? * " day-of-week)
+    ""))
+
+(defn to-cron-expression-monthly[hour day]
+  (if (and (not-empty hour) (not-empty day))
+    (str "0 0 " hour " " day " * ?")
+  ""))
+
+(defn to-cron-expression[{:keys [schedule scheduling-type scheduling-hour scheduling-date scheduling-day-of-week]}]
+  (condp = scheduling-type
+    "Daily"
+    (to-cron-expression-daily scheduling-hour)
+    "Weekly"
+    (to-cron-expression-weekly scheduling-hour scheduling-day-of-week)
+    "Monthly"
+    (to-cron-expression-monthly scheduling-hour scheduling-date)
+    (:schedule/cron-notation schedule)))
+
 
 ;;;
 ;;; Om view components
@@ -169,16 +114,6 @@
    :jobs.detail.current.edit {:name "Edit" :href "#/job/%s/edit"}
    :jobs.detail.history {:name "History" :href "#/job/%s/history"}
    :jobs.detail.settings {:name "Settings" :href "#/job/%s/settings"}})
-
-(defn inject-and-dom-to-workspace[job owner]
-  (when-let [edn (:job/edn-notation job)]
-    (Blockly/inject
-     (.. (om/get-node owner) (querySelector ".job-blocks-inner"))
-     (clj->js {:toolbox (.getElementById js/document "job-toolbox")}))
-    (let [xml (job->xml (read-string edn))]
-      (.domToWorkspace Blockly.Xml
-                       Blockly/mainWorkspace
-                       (.textToDom Blockly.Xml (str "<xml>" xml "</xml>"))))))
 
 (defcomponent breadcrumb-view [mode owner]
   (render-state [_ {:keys [job-name]}]
@@ -203,51 +138,6 @@
                           (conj (vec (drop-last res))
                                 (into [:div.section.active] (-> res last (get-in [1 2])))))))
                     (repeat [:i.right.chevron.icon.divider])))])))
-
-(defcomponent job-edit-view [job owner {:keys [jobs-channel]}]
-  (render-state [_ {:keys [message]}]
-                (html [:div.ui.grid
-                       [:div.row {:style {:display (if message "block" "none")}}
-                        [:div.column
-                         [:div.ui.message {:class (:class message)}
-                          [:div.header (:header message)]
-                          [:div (:body message)]]]]
-
-                       [:div.row
-                        [:div.column
-                         [:div.job-blocks-inner {:style {:min-height "500px"}}]]]
-                       [:div.row
-                        [:div.column
-                         [:div.ui.grid
-                          [:div.right.aligned.column
-                           [:div.icon.ui.buttons
-                            [:button.ui.positive.button
-                             {:on-click (fn [e]
-                                          (let [xml (.workspaceToDom Blockly.Xml Blockly/mainWorkspace)]
-                                            (save-job (.domToText Blockly.Xml xml)
-                                                      owner (:job/name job) jobs-channel)))}
-                             [:i.save.icon] "Save"]]]]]]]))
-  (did-mount [_]
-             (inject-and-dom-to-workspace job owner))
-  (will-receive-props [_ next-props]
-                      (inject-and-dom-to-workspace next-props owner)))
-
-
-(defcomponent job-new-view [jobs owner opts]
-  (render-state [_ {:keys [message mode]}]
-    (html [:div
-           (om/build breadcrumb-view mode{:react-key "job-new-breadcrumb"})
-           (om/build job-edit-view nil {:opts opts
-                                        :react-key "job-new"})]))
-  (will-mount[_]
-    (let [ch (chan)]
-      (go
-        (let [_ (<! ch)]
-          (Blockly/inject
-           (.. (om/get-node owner) (querySelector ".job-blocks-inner"))
-           (clj->js {:toolbox (.getElementById js/document "job-toolbox")}))))
-      (blocks/get-classes ch))))
-
 
 (defcomponent job-history-view [job owner opts]
   (init-state [_]
@@ -318,7 +208,11 @@
   (init-state [_]
     {:error-ch (chan)
      :has-error false
-     :schedule (:job/schedule job)})
+     :schedule (:job/schedule job)
+     :scheduling-type ""
+     :scheduling-hour ""
+     :scheduling-date ""
+     :scheduling-day-of-week "Sun"})
 
   (will-mount [_]
     (go
@@ -328,7 +222,7 @@
                  {:handler (fn [response]
                              (om/set-state! owner :calendars response))}))
 
-  (render-state [_ {:keys [schedule scheduling-ch calendars refresh-job-ch error-ch has-error]}]
+  (render-state [_ {:keys [schedule scheduling-ch calendars refresh-job-ch error-ch has-error scheduling-type scheduling-hour scheduling-date scheduling-day-of-week] :as state}]
     (html
      [:form.ui.form
       (merge {:on-submit (fn [e]
@@ -341,19 +235,93 @@
         [:div.ui.error.message
          [:p has-error]])
       [:div.fields
-       [:div.field (when has-error {:class "error"})
-        [:label "Quartz format"]
-        [:input {:id "cron-notation" :type "text" :placeholder "Quartz format"
-                 :value (:schedule/cron-notation schedule)
-                 :on-change (fn [e]
-                              (let [value (.. js/document (getElementById "cron-notation") -value)]
-                                (om/set-state! owner [:schedule :schedule/cron-notation] value)))}]]
+         [:div.field (when has-error {:class "error"})
+          [:label "Easy Scheduling"]
+          [:select {:id "scheduling-type"
+                    :value (or scheduling-type "")
+                    :on-change (fn [e]
+                                 (let [value (.. js/document (getElementById "scheduling-type") -value)]
+                                   (om/set-state! owner :scheduling-type value)
+                                   (om/set-state! owner [:schedule :schedule/cron-notation] (to-cron-expression (assoc state :scheduling-type value)))))}
+           [:option {:value ""} ""]
+           [:option {:value "Daily"} "Daily"]
+           [:option {:value "Weekly"} "Weekly"]
+           [:option {:value "Monthly"} "Monthly"]]
+          (when (= scheduling-type "Daily")
+            [:div
+             "Fire at"
+             [:input
+              {:type "text"
+               :id "scheduling-hour"
+               :value (or scheduling-hour "")
+               :on-change (fn [e]
+                            (let [hour (.. js/document (getElementById "scheduling-hour") -value)]
+                              (om/set-state! owner :scheduling-hour hour)
+                              (om/set-state! owner [:schedule :schedule/cron-notation] (to-cron-expression-daily hour))))}]
+             "o'clock every day"])
+          (when (= scheduling-type "Weekly")
+            [:div
+             "Fire at"
+             [:input
+              {:type "text"
+               :id "scheduling-hour"
+               :value (or scheduling-hour "")
+               :on-change (fn [e]
+                            (let [hour (.. js/document (getElementById "scheduling-hour") -value)
+                                  day-of-week (.. js/document (getElementById "scheduling-day-of-week") -value)]
+                              (om/set-state! owner :scheduling-hour hour)
+                              (om/set-state! owner [:schedule :schedule/cron-notation] (to-cron-expression-weekly hour day-of-week))))}]
+             "o'clock at every"
+             [:select
+              {:id "scheduling-day-of-week"
+               :value (or scheduling-day-of-week "")
+               :on-change (fn [e]
+                            (let [hour (.. js/document (getElementById "scheduling-hour") -value)
+                                  day-of-week (.. js/document (getElementById "scheduling-day-of-week") -value)]
+                              (om/set-state! owner :scheduling-day-of-week day-of-week)
+                              (om/set-state! owner [:schedule :schedule/cron-notation] (to-cron-expression-weekly hour day-of-week))))}
+              [:option {:value "Sun"} "Sun"]
+              [:option {:value "Mon"} "Mon"]
+              [:option {:value "Tue"} "Tue"]
+              [:option {:value "Wed"} "Wed"]
+              [:option {:value "Thu"} "Thu"]
+              [:option {:value "Fri"} "Fri"]
+              [:option {:value "Sat"} "Sat"]]])
+          (when (= scheduling-type "Monthly")
+            [:div
+             "Fire at"
+             [:input
+              {:type "text"
+               :id "scheduling-hour"
+               :value (or scheduling-hour "")
+               :on-change (fn [e]
+                            (let [hour (.. js/document (getElementById "scheduling-hour") -value)
+                                  date (.. js/document (getElementById "scheduling-date") -value)]
+                              (om/set-state! owner :scheduling-hour hour)
+                              (om/set-state! owner [:schedule :schedule/cron-notation] (to-cron-expression-monthly hour date))))}]
+             "o'clock every"
+             [:input
+              {:type "text"
+               :id "scheduling-date"
+               :value (or scheduling-date "")
+               :on-change (fn [e]
+                            (let [hour (.. js/document (getElementById "scheduling-hour") -value)
+                                  date (.. js/document (getElementById "scheduling-date") -value)]
+                              (om/set-state! owner :scheduling-date date)
+                              (om/set-state! owner [:schedule :schedule/cron-notation] (to-cron-expression-monthly hour date))))}]])
+          [:label "Quartz format"]
+          [:input {:id "cron-notation" :type "text" :placeholder "Quartz format"
+                   :value (or (:schedule/cron-notation schedule) "")
+                   :on-change (fn [e]
+                                (let [value (.. js/document (getElementById "cron-notation") -value)]
+                                  (om/set-state! owner [:schedule :schedule/cron-notation] value)))}]]
        (when calendars
          [:div.field
           [:label "Calendar"]
-          [:select {:value (get-in schedule [:schedule/calendar :calendar/name])
+          [:select {:value (or (get-in schedule [:schedule/calendar :calendar/name]) "")
+                    :id "scheduling-calendar"
                     :on-change (fn [_]
-                                 (let [value (.. (om/get-node owner) (querySelector "select") -value)]
+                                 (let [value (.. js/document (getElementById "scheduling-calendar") -value)]
                                    (om/set-state! owner [:schedule :schedule/calendar :calendar/name] value)))}
            [:option {:value ""} ""]
            (for [cal calendars]
@@ -372,7 +340,7 @@
     {:scheduling-ch (chan)
      :has-error false
      :error-ch (chan)
-     :scheduling?   false})
+     :scheduling? false})
 
   (will-mount [_]
     (let [ch (chan)]
@@ -416,7 +384,7 @@
                  [:div.content
                   [:div.header "Pausing"]
                   [:div.description (:schedule/cron-notation schedule)]]])
-              ]
+             ]
              [:div.ui.labeled.icon.menu
               (if exe
                 [:a.item {:on-click (fn [e]
@@ -439,8 +407,8 @@
                          (om/set-state! owner :scheduling? true))}
             "Schedule this job"]]))])))
 
-(defcomponent job-structure-view [job-name owner]
-  (render-state [_ {:keys [dimmed?]}]
+(defcomponent job-structure-view [{:keys [job/name job/svg-notation] :as job-detail} owner]
+  (render-state [_ {:keys [refresh-job-ch dimmed?]}]
     (html
      [:div.dimmable.image.dimmed
       {:on-mouse-enter (fn [e]
@@ -453,11 +421,14 @@
          [:button.ui.primary.button
           {:type "button"
            :on-click (fn [e]
-                       (set! (.-href js/location) (str "#/job/" job-name "/edit")))}
+                       (let [w (js/window.open (str "/" app-name "/job/" name "/edit") name "width=1200,height=800")]
+                         (.addEventListener w "unload" (fn [] (js/setTimeout (fn [] (put! refresh-job-ch true))) 10))))}
           "Edit"]]]]
-      [:div.job-blocks-inner.ui.big.image]]))
-  (did-mount [_]
-    (render-job-structure job-name owner)))
+      [:div {:style {:height "200px"
+                     :width "100%"
+                     :background-repeat "no-repeat"
+                     :background-size "contain"
+                     :background-image (str "url(\"data:image/svg+xml;base64," (js/window.btoa svg-notation) "\")")}}]])))
 
 (defcomponent current-job-view [job owner opts]
   (init-state [_]
@@ -474,16 +445,14 @@
                 (let [this-mode (->> mode (drop 3) first)]
                   (html
                    (case this-mode
-                     :edit
-                     (om/build job-edit-view job-detail {:opts opts
-                                                         :react-key "job-current-edit"})
-
                      ;;default
                      [:div.ui.stackable.two.column.grid
                       [:div.column
                        [:div.ui.special.cards
                         [:div.job-detail.card
-                         (om/build job-structure-view (:job/name job) {:react-key "job-structure"})
+                         (when job-detail
+                           (om/build job-structure-view job-detail {:init-state {:refresh-job-ch refresh-job-ch}
+                                                                    :react-key "job-structure"}))
                          [:div.content
                           [:div.header.name (:job/name job)]
                           [:div.description
