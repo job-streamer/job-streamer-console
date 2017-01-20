@@ -7,6 +7,7 @@
                  [environ "1.0.3"]
                  [org.jsoup/jsoup "1.9.2"]
                  [clj-http "2.3.0"]
+                 [org.clojure/tools.logging "0.3.1"]
 
                  [com.stuartsierra/component "0.3.1"]
                  [duct "0.7.0"]

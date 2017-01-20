@@ -5,6 +5,7 @@
             [ring.util.response :refer [resource-response content-type header redirect]]
             [environ.core :refer [env]]
             [clj-http.client :as client]
+            [clojure.tools.logging :as log]
             (job-streamer.console [style :as style]
                                   [jobxml :as jobxml])))
 
@@ -49,7 +50,7 @@
                   {:class "error"}))
          [:div.ui.stacked.segment
           [:div.ui.error.message
-           [:p "User name or password is wrong."]]
+           (map #(vec [:p %]) (get-in request [:params :error]))]
           [:div.field
            [:div.ui.left.icon.input
             [:i.user.icon]
@@ -60,15 +61,25 @@
             [:input {:type "password" :name "password" :placeholder "Password"}]]]
           [:button.ui.fluid.large.teal.submit.button {:type "submit"} "Login"]]]]]]))
 
-(defn login [{:keys [control-bus-url]} username password]
-  (let [{:keys [body cookies] :as res} (client/post (str control-bus-url "/auth")
-                                            {:content-type :edn
-                                             :body (pr-str {:user/id username
-                                                    :user/password password})})]
-    (when-let  [token (:token (read-string body))]
-      (-> cookies
-          (select-keys ["ring-session"])
-          (update "ring-session" #(select-keys % [:value :domain :path :secure :http-only :max-age :expires]))))))
+(defn login [{:keys [control-bus-url-from-backend]} username password]
+  (try
+    (let [{:keys [status body cookies]}
+          (client/post (str control-bus-url-from-backend "/auth")
+                       {:content-type :edn
+                        :body (pr-str {:user/id username
+                                       :user/password password})
+                        :throw-exceptions false})]
+      (if (== status 201)
+        (let [token (:token (read-string body))]
+          (log/infof "Authentificated with token: %s." token)
+          (as-> cookies c
+                (select-keys c ["ring-session"])
+                (update c "ring-session" #(select-keys % [:value :domain :path :secure :http-only :max-age :expires]))
+                (assoc {} :cookies c)))
+        (read-string body)))
+    (catch java.net.ConnectException ex
+      (log/error "A Control bus is NOT found.")
+      {:messages ["A Control bus is NOT found."]})))
 
 (defn bpmn [{:keys [control-bus-url]} job-name]
   (html5
@@ -115,10 +126,11 @@
   (routes
    (GET "/login" request (login-view config request))
    (POST "/login" {{:keys [username password appname]} :params :as request}
-     (if-let [cookies (login config username password)]
-       (-> (redirect (get-in request [:query-params "next"] "/"))
-           (assoc :cookies cookies))
-       (login-view config (assoc-in request [:params :error] true))))
+     (let [{:keys [cookies messages]} (login config username password)]
+       (if cookies
+         (-> (redirect (get-in request [:query-params "next"] "/"))
+             (assoc :cookies cookies))
+         (login-view config (assoc-in request [:params :error] messages)))))
 
    (GET "/jobs/new" [] (bpmn config nil))
    (GET ["/:app-name/job/:job-name/edit" :app-name #".*" :job-name #".*"]
