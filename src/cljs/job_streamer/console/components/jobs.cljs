@@ -78,7 +78,7 @@
 (defcomponent job-execution-dialog [[type {:keys [job backto]}] owner opts]
   (init-state [_]
     {:params {}})
-  (render-state [_ {:keys [jobs-view-channel params message-channel] :as owner}]
+  (render-state [_ {:keys [jobs-view-channel params message-channel]}]
     (html
      [:div.ui.dimmer.modals.page.transition.visible.active
       [:div.ui.modal.scrolling.transition.visible.active
@@ -96,7 +96,8 @@
                [:input {:type "text"
                         :name param-name
                         :value (get params (keyword param-name))
-                        :on-change (fn [e] (om/update-state! owner :params
+                        :on-change (fn [e]
+                                     (om/update-state! owner :params
                                                              #(assoc % (keyword param-name) (.. e -target -value))))}]])]]
           [:div (case type
                   :execute "Execute now?"
