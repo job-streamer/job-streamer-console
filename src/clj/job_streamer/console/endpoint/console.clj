@@ -81,7 +81,7 @@
       (log/error "A Control bus is NOT found.")
       {:messages ["A Control bus is NOT found."]})))
 
-(defn bpmn [{:keys [control-bus-url]} job-name]
+(defn flowchart [{:keys [control-bus-url]} job-name]
   (html5
     [:head
      [:meta {:charset "utf-8"}]
@@ -90,37 +90,31 @@
      [:meta {:name "control-bus-url" :content control-bus-url}]
      [:meta {:name "job-name" :content job-name}]
      (include-css
+       "//cdn.jsdelivr.net/semantic-ui/2.0.3/semantic.min.css"
+       "/css/vendors/vis.min.css"
+       "/css/job-streamer.css"
        "/css/diagram-js.css"
        "/vendor/bpmn-font/css/bpmn.css"
        "/vendor/bpmn-font/css/bpmn-embedded.css"
-       "/css/app.css")]
-     [:style "html, body, #canvas, #canvas > div {
-                height: 100%;
-              }
-
-              .icon-jsr352-batchlet-step {
-                background: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" stroke-width=\"8\" stroke=\"#48a\" fill=\"none\" viewBox=\"0 0 120 120\"><rect width=\"100\" height=\"80\" rx=\"10\" ry=\"10\" x=\"5\" y=\"10\"/><g font-family=\"sans-serif\" font-size=\"3\" font-weight=\"normal\"><text x=\"10\" y=\"50\" stroke=\"none\" fill=\"black\">Batchlet</text></g></svg>');
-              }
-
-              .icon-jsr352-chunk-step {
-                background: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" stroke-width=\"8\" stroke=\"#48a\" fill=\"none\" viewBox=\"0 0 120 120\"><rect width=\"100\" height=\"80\" rx=\"10\" ry=\"10\" x=\"5\" y=\"10\"/><g font-family=\"sans-serif\" font-size=\"3\" font-weight=\"normal\"><text x=\"10\" y=\"50\" stroke=\"none\" fill=\"black\">Chunk</text></g></svg>');
-              }
-
-              .icon-jsr352-flow {
-                background: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" stroke-width=\"8\" stroke=\"#48a\" fill=\"none\" viewBox=\"0 0 120 120\"><rect width=\"100\" height=\"80\" rx=\"10\" ry=\"10\" x=\"5\" y=\"10\"/><g font-family=\"sans-serif\" font-size=\"3\" font-weight=\"normal\"><text x=\"10\" y=\"50\" stroke=\"none\" fill=\"black\">Flow</text></g></svg>');
-              }
-              .icon-jsr352-split {
-                background: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" stroke-width=\"8\" stroke=\"#48a\" fill=\"none\" viewBox=\"0 0 120 120\"><rect width=\"100\" height=\"80\" rx=\"0\" ry=\"0\" x=\"5\" y=\"10\"/><g font-family=\"sans-serif\" font-size=\"3\" font-weight=\"normal\"><text x=\"10\" y=\"50\" stroke=\"none\" fill=\"black\">Split</text></g></svg>');
-              }"]
+       "/css/jsr-352.css")]
    [:body
-    [:h1 job-name]
-    [:div#canvas]
-    [:div#js-properties-panel]
-    [:ul.buttons
-     [:li [:a#save-job {:title "Save Job"} "Save"]]]
-    [:script {:src "/js/jsr-352.js"}]
-    (include-js (str "/js/flowchart"
-                     (when-not (:dev env) ".min") ".js"))]))
+    [:div.ui.fixed.inverted.teal.menu
+      [:div.header.item [:img.ui.image {:alt "JobStreamer" :src "/img/logo.png"}]]]
+    [:div.main.grid.content.full.height
+     [:div.ui.grid
+      [:div.ui.row
+       [:div.ui.column
+        [:h2.ui.violet.header
+         [:div.content
+          (or job-name "New")]]
+          [:div#message.ui.floating.message.hidden]]]]
+     [:div#canvas]
+     [:div#js-properties-panel {:style "top: 47px;"}]
+     [:ul.buttons
+      [:li [:button.ui.positive.button.submit.disabled {:id "save-job" :type "button"} [:i.save.icon] "Save"]]
+      [:li [:button.ui.black.deny.button {:id "cancel" :type "button" :onClick "window.close();"} "Cancel"]]]]
+    (include-js "/js/jsr-352.js"
+                (str "/js/flowchart" (when-not (:dev env) ".min") ".js"))]))
 
 (defn console-endpoint [config]
   (routes
@@ -132,10 +126,12 @@
              (assoc :cookies cookies))
          (login-view config (assoc-in request [:params :error] messages)))))
 
-   (GET "/jobs/new" [] (bpmn config nil))
+   (GET ["/:app-name/jobs/new" :app-name #".*"]
+        [app-name]
+        (flowchart config nil))
    (GET ["/:app-name/job/:job-name/edit" :app-name #".*" :job-name #".*"]
         [app-name job-name]
-        (bpmn config job-name))
+        (flowchart config job-name))
 
    (GET "/" [] (index config))
    (POST "/job/from-xml" [:as request]

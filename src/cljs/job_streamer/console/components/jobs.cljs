@@ -7,7 +7,7 @@
             (job-streamer.console.format :as fmt)
             (job-streamer.console.api :as api))
   (:use (job-streamer.console.components.timeline :only [timeline-view])
-        (job-streamer.console.components.job-detail :only [job-new-view job-detail-view])
+        (job-streamer.console.components.job-detail :only [job-detail-view])
         (job-streamer.console.components.execution :only [execution-view])
         (job-streamer.console.components.pagination :only [pagination-view])
         (job-streamer.console.components.dialog :only[dangerously-action-dialog])
@@ -173,7 +173,7 @@
             [:p [:button.ui.primary.button
                  {:type "button"
                   :on-click (fn [e]
-                              (let [w (js/window.open (str "/jobs/new") "New" "width=800,height=600,scrollbars=yes")]
+                              (let [w (js/window.open (str "/" app-name "/jobs/new") "New" "width=1200,height=800")]
                                 (.addEventListener w "unload" (fn [] (js/setTimeout (fn [] (set! (.-href js/location) "/"))) 10))))}
                  [:i.plus.icon] "Create the first job"]]]]]]]
        [:div.ui.grid
@@ -182,7 +182,7 @@
           [:button.ui.basic.green.button
            {:type "button"
             :on-click (fn [e]
-                        (let [w (js/window.open "/jobs/new" "New" "width=800,height=600,scrollbars=yes")]
+                        (let [w (js/window.open (str "/" app-name "/jobs/new") "New" "width=1200,height=800")]
                           (.addEventListener w "unload" (fn [] (js/setTimeout (fn [] (set! (.-href js/location) "/"))) 10))))}
            [:i.plus.icon] "New"]]
          [:div.ui.right.aligned.column
@@ -397,12 +397,6 @@
           "Job"
           [:div.sub.header "Edit and execute a job."]]]
         (case this-mode
-          :new
-          (om/build job-new-view (get-in app [:jobs :results])
-                    {:state {:mode (:mode app)}
-                     :opts {:jobs-channel jobs-channel}
-                     :react-key "job-new"})
-
           :detail
           (if (:jobs app)
             (let [idx (->> (get-in app [:jobs :results])

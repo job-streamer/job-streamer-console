@@ -28,16 +28,15 @@
                  :output-dir "target/figwheel/job-streamer-console/public/js"
                  :source-map true
                  :source-map-path "/js"}}
-               {:source-paths ["src/cljs" "dev"]
+               {:source-paths ["src/cljs-flowchart"]
                 :build-options
                 {:optimizations :none
-                 :main "cljs.flowchart"
-                 :asset-path "/js"
-                 :libs ["resources/closure-js/libs"]
+                 :main "job-streamer.console.flowchart"
+                 :asset-path "/js-flowchart"
                  :output-to  "target/figwheel/job-streamer-console/public/js/flowchart.js"
-                 :output-dir "target/figwheel/job-streamer-console/public/js"
+                 :output-dir "target/figwheel/job-streamer-console/public/js-flowchart"
                  :source-map true
-                 :source-map-path "/js"}}]}})
+                 :source-map-path "/js-flowchart"}}]}})
 
 (def config
   (meta-merge config/defaults

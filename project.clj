@@ -5,7 +5,6 @@
                  [garden "1.3.2" :exclusions [org.clojure/clojure]]
                  [compojure "1.5.1"]
                  [environ "1.0.3"]
-                 [org.jsoup/jsoup "1.9.2"]
                  [clj-http "2.3.0"]
                  [org.clojure/tools.logging "0.3.1"]
 
@@ -43,12 +42,26 @@
                 :libs ["resources/closure-js/libs"]
                 :pretty-print true
                 :optimizations :simple}}
+   {:id "dev-flowchart"
+     :source-paths ["src/cljs-flowchart"]
+     :compiler {:output-to "target/cljsbuild/job-streamer-console/public/js/flowchart.js"
+                :libs ["resources/closure-js/libs"]
+                :pretty-print true
+                :optimizations :simple}}
     {:id "production"
      :source-paths ["src/cljs"]
      :compiler {:output-to "resources/job-streamer-console/public/js/job-streamer.min.js"
-                :libs ["resources/clojure-js/libs"]
                 :pretty-print false
-                :optimizations :advanced}}]}
+                :optimizations :advanced
+                :libs ["resources/clojure-js/libs"]}}
+    {:id "production-flowchart"
+     :source-paths ["src/cljs-flowchart"]
+     :compiler {:output-to "resources/job-streamer-console/public/js/flowchart.min.js"
+                :pretty-print false
+                :optimizations :advanced
+                :externs ["resources/job-streamer-console/public/js/jsr-352.js"]
+                :closure-warnings {:externs-validation :off
+                                   :non-standard-jsdoc :off}}}]}
 
   :aliases {"run-task" ["with-profile" "+repl" "run" "-m"]
             "setup"    ["run-task" "dev.tasks/setup"]}
