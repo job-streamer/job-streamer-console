@@ -100,7 +100,7 @@
    [:body
     [:div.ui.fixed.inverted.teal.menu
       [:div.header.item [:img.ui.image {:alt "JobStreamer" :src "/img/logo.png"}]]]
-    [:div.main.grid.content.full.height
+    [:div.main.grid.full.height
      [:div.ui.grid
       [:div.ui.row
        [:div.ui.column
@@ -113,7 +113,7 @@
      [:ul.buttons
       [:li [:button.ui.positive.button.submit.disabled {:id "save-job" :type "button"} [:i.save.icon] "Save"]]
       [:li [:button.ui.black.deny.button {:id "cancel" :type "button" :onClick "window.close();"} "Cancel"]]]]
-    (include-js "/js/jsr-352.js"
+    (include-js "/js/jsr-352.min.js"
                 (str "/js/flowchart" (when-not (:dev env) ".min") ".js"))]))
 
 (defn console-endpoint [config]
