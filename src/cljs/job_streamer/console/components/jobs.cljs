@@ -144,7 +144,7 @@
           (if (->> (get-in @app [:jobs :results])
                    (filter #(#{:batch-status/started :batch-status/starting
                                :batch-status/undispatched :batch-status/queued
-                               :batch-status/unrestarted}
+                               :batch-status/unrestarted :batch-status/stopping}
                              (get-in % [:job/latest-execution :job-execution/batch-status :db/ident])))
                    not-empty)
             (let [page (om/get-state owner :page)
