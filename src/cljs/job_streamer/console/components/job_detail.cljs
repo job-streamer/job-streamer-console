@@ -39,6 +39,15 @@
                              (om/update-state! owner [:executions :results idx]
                                                #(assoc % :job-execution/step-executions steps))))}))
 
+(defn delete-executions [job-name owner error-ch]
+  (api/request (str "/" app-name "/job/" job-name "/executions") :DELETE
+               {:handler (fn [response]
+                           (om/set-state! owner :executions []))
+                :forbidden-handler (fn [response]
+                                     (put! error-ch {:message "You are unauthorized to delete executions."}))
+                :error-handler (fn [response]
+                                 (put! error-ch response))}))
+
 (defn schedule-job [job schedule refresh-job-ch scheduling-ch error-ch]
   (api/request (str "/" app-name "/job/" (:job/name job) "/schedule") :POST
                schedule
@@ -142,14 +151,31 @@
 (defcomponent job-history-view [job owner opts]
   (init-state [_]
               {:page 1
-               :per 20})
+               :per 20
+               :error-ch (chan)
+               :has-error false})
   (will-mount [_]
+              (go
+                (let [{message :message} (<! (om/get-state owner :error-ch))]
+                  (om/set-state! owner :has-error message)))
               (search-executions (:job/name @job) {:offset 1 :limit (om/get-state owner :per)}
                                  (fn [response]
                                    (om/set-state! owner :executions response))))
-  (render-state [_ {:keys [executions page per]}]
+  (render-state [_ {:keys [executions page per error-ch has-error]}]
                 (html
                  [:div.ui.grid
+                  (when has-error
+                    [:div.row
+                   [:div.center.aligned.column
+                     [:div.ui.error.message
+                      [:p has-error]]]])
+                  [:div.row
+                   [:div.right.aligned.column
+                    [:button.ui.right.red.button
+                     {:type "button"
+                      :on-click (fn [e]
+                                  (delete-executions (:job/name job) owner error-ch))}
+                     "Delete all"]]]
                   [:div.row
                    [:div.column
                     [:table.ui.compact.table
