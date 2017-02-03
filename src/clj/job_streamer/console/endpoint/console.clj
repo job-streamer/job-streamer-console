@@ -100,25 +100,25 @@
    [:body
     [:div.ui.fixed.inverted.teal.menu
       [:div.header.item [:img.ui.image {:alt "JobStreamer" :src "/img/logo.png"}]]]
-    [:div.main.grid.full.height
+    [:div.main.grid.flowchart.full.height
      [:div.ui.grid
       [:div.ui.row
-       [:div.ui.column
+       [:div.ui.thirteen.wide.column
         [:h2.ui.violet.header
          [:div.content
           (or job-name "New")]]
-          [:div#message.ui.floating.message.hidden]]]]
-     [:div.ui.grid
-      [:h2.ui.violet.header
-         [:div.content "TEST"]]
-      [:div.row
-       [:div.left.aligned.column
-        [:i#test.play.icon]]]
-      [:div.row
-       [:div.ten.wide.column
-        [:div#progress.ui.progress.hidden
-             [:div#progress-bar.bar
-                          [:div.progress]]]]]]
+        [:div#message.ui.floating.message.hidden]
+         [:div.ui.segment
+         [:h3.ui.header
+          [:div.content "TEST"]]
+         [:div.row
+          [:div.left.aligned.column
+           [:i#test.play.large.icon {:style "cursor: pointer"}]]]
+         [:div.row
+          [:div.ten.wide.column
+           [:div#progress.ui.progress.hidden
+            [:div#progress-bar.bar
+             [:div.progress]]]]]]]]]
      [:div#canvas]
      [:div#js-properties-panel {:style "top: 47px;"}]
      [:ul.buttons

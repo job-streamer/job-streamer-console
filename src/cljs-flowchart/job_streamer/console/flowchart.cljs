@@ -93,14 +93,16 @@
     (.saveXML modeler
               #js {:format true}
               (fn [err xml]
-                (println xml)
                 (save-test-job-control-bus
                   {:job/bpmn-xml-notation xml
                    :job/name job-name} handler)))))
 
 (defn execute-test []
   (put! execution-channel :start)
-  (let [progress (.getElementById js/document "progress")]
+  (let [progress (.getElementById js/document "progress")
+        progress-bar (.getElementById js/document "progress-bar")]
+    (set! (.-dataPercent progress) 0)
+    (set! (.-width (.-style progress-bar)) "0%")
     (remove-class progress "hidden")
     (remove-class progress "success")
     (remove-class progress "error"))
@@ -134,30 +136,29 @@
                                       (do
                                         (swap! app-state assoc :last-execution last-execution)
                                         (swap! app-state assoc :refresh false)
-                                        (println (some-> last-execution
-                                                    (get-in [:job-execution/batch-status :db/ident])))
                                         (if (some-> last-execution
                                                     (get-in [:job-execution/batch-status :db/ident])
                                                     #{:batch-status/completed :batch-status/stopped :batch-status/failed :batch-status/abandoned})
-                                          (swap! app-state assoc :progress-count 0)
-                                          (swap! app-state update-in [:progress-count] inc)))))))
-             (let [progress (.getElementById js/document "progress")
-                   progress-bar (.getElementById js/document "progress-bar")]
-               (when (:last-execution @app-state)
-                 (remove-class progress "hidden"))
-               (let [dummy-progress-percent (min (* 20 (:progress-count @app-state)) 90)
-                     display-progress-percent (if (some-> (:last-execution @app-state)
-                                                          (get-in [:job-execution/batch-status :db/ident])
-                                                          #{:batch-status/completed :batch-status/stopped :batch-status/failed :batch-status/abandoned}) 100 dummy-progress-percent)]
-                 ;change dom
-                 (add-class progress
-                            (case (get-in (:last-execution @app-state) [:job-execution/batch-status :db/ident])
-                              :batch-status/completed "success"
-                              (:batch-status/stopped :batch-status/failed :batch-status/abandoned) "error"
-                              ""))
-                 (set! (.-dataPercent progress) display-progress-percent)
-                 (set! (.-width (.-style progress-bar)) (str display-progress-percent "%"))
-                 )))
+                                          (api/request (str "/" app-name "/job/" test-job-name ) :DELETE
+                                                       {:forbidden-handler (fn [response]
+                                                                             (when message-channel
+                                                                               (put! message-channel {:type "error" :body "You are unauthorized to delete job."})))})
+                                          (swap! app-state update-in [:progress-count] inc)))))
+                                  (let [progress (.getElementById js/document "progress")
+                                        progress-bar (.getElementById js/document "progress-bar")]
+                                    (when (:last-execution @app-state)
+                                      (remove-class progress "hidden"))
+                                    (let [dummy-progress-percent (min (* 20 (:progress-count @app-state)) 90)
+                                          display-progress-percent (if (some-> (:last-execution @app-state)
+                                                                               (get-in [:job-execution/batch-status :db/ident])
+                                                                               #{:batch-status/completed :batch-status/stopped :batch-status/failed :batch-status/abandoned}) 100 dummy-progress-percent)]
+                                      (add-class progress
+                                                 (case (get-in (:last-execution @app-state) [:job-execution/batch-status :db/ident])
+                                                   :batch-status/completed "success"
+                                                   (:batch-status/stopped :batch-status/failed :batch-status/abandoned) "error"
+                                                   ""))
+                                      (set! (.-dataPercent progress) display-progress-percent)
+                                      (set! (.-width (.-style progress-bar)) (str display-progress-percent "%")))))))
            (<! (timeout 1000))
            (put! execution-channel :continue)
            (recur)))

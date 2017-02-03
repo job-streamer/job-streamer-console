@@ -8,6 +8,9 @@
     [:.login.grid {:height "50%"}
      [:.column {:max-width (px 450)}]]]
    [:.full.height {:height "100%"}]
+   [:.main.flowchart {:padding-top (px 50)
+                      :padding-left (px 30)
+                      :padding-right (px 100)}]
    [:.main.content {:min-height "100%"
                     :max-width (px 960)
                     :margin {:left "auto" :right "auto"}
@@ -86,8 +89,8 @@
    [:div.ui.input.block {:display "block"}]
    [:table.ui.table
    [:th.can-sort {:cursor "pointer"}]]
-   [:#job-search.item [:i.search.icon {:cursor "pointer"}]]]
-)
+   [:#job-search.item [:i.search.icon {:cursor "pointer"}]]
+   [:#progress.hidden {:display "none"}]])
 
 
 (defn build []
