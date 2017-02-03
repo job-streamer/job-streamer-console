@@ -230,84 +230,6 @@
                                                                             (om/set-state! owner :executions executions))))}
                                :react-key "job-histry-pagination"})]]])))
 
-(defcomponent job-test-view [job owner]
-  (init-state [_]
-              {:error-ch (chan)
-               :has-error false
-               :refresh true
-               :progress-count 0})
-  (will-mount [_]
-              (go
-                (let [{message :message} (<! (om/get-state owner :error-ch))]
-                  (om/set-state! owner :has-error message))))
-  (did-mount [_]
-    (let [ch (chan)]
-      (om/set-state! owner :test-refresh-timer ch)
-      (go-loop []
-        (when-let [_ (<! ch)]
-          (when (or (some-> (om/get-state owner :last-execution)
-                        (get-in [:job-execution/batch-status :db/ident])
-                         #{:batch-status/started :batch-status/starting
-                                     :batch-status/undispatched :batch-status/queued
-                                     :batch-status/unrestarted :batch-status/stopping :batch-status/unknown})
-                    (om/get-state owner :refresh))
-            (search-executions (:job/name @job) {:filter-mode :test}
-                               (fn [response]
-                                 (let [last-execution (-> response :results first)]
-                                   (if (and (:db/id last-execution) (= (:db/id last-execution) (om/get-state owner :prev-execution-id)))
-                                     (do (om/set-state! owner :refresh true)
-                                       (om/update-state! owner :progress-count inc))
-                                     (do (om/set-state! owner :last-execution last-execution)
-                                       (om/set-state! owner :refresh false)
-                                       (if (some-> last-execution
-                                                     (get-in [:job-execution/batch-status :db/ident])
-                                                   #{:batch-status/completed :batch-status/stopped :batch-status/failed :batch-status/abandoned})
-                                         (om/set-state! owner :progress-count 0)
-                                         (om/update-state! owner :progress-count inc))))))))
-          (<! (timeout 1000))
-          (put! ch :continue)
-          (recur)))
-      (put! ch :start)))
-  (will-unmount [_]
-    (when-let [refresh-timer (om/get-state owner :test-refresh-timer)]
-      (close! refresh-timer)))
-  (render-state [_ {:keys [last-execution error-ch has-error test-refresh-timer refresh prev-execution-id progress-count]}]
-                (html
-                  [:div.ui.raised.segment (when has-error {:class "error"})
-                   [:h3.ui.header "Test"]
-                  (when has-error
-                    [:div.row
-                   [:div.center.aligned.column
-                     [:div.ui.error.message
-                      [:p has-error]]]])
-                  [:div.row
-                   [:div.right.aligned.column
-                    [:i.play.icon
-                     {:on-click (fn [e]
-                                  (om/set-state! owner :prev-execution-id (:db/id last-execution))
-                                  (om/set-state! owner :last-execution {})
-                                  (api/request (str "/" app-name "/job/" (:job/name job) "/executions") :POST
-                                               {:test? true}
-                                               {:handler (om/set-state! owner :refresh true)
-                                                :forbidden-handler (fn [response]
-                                                                     (when error-ch
-                                                                       (put! error-ch {:type "error" :body "You are unauthorized to execute job."})))}))}]]]
-                  [:div.row
-                   [:div.column
-                    (when last-execution
-                      (let [dummy-progress-percent (min (* 20 progress-count) 90)
-                            display-progress-percent (if (some-> last-execution
-                                                                 (get-in [:job-execution/batch-status :db/ident])
-                                                                 #{:batch-status/completed :batch-status/stopped :batch-status/failed :batch-status/abandoned}) 100 dummy-progress-percent)]
-                        [:div.ui.progress
-                         {:data-percent display-progress-percent
-                          :class (case (get-in last-execution [:job-execution/batch-status :db/ident])
-                                   :batch-status/completed "success"
-                                   (:batch-status/stopped :batch-status/failed :batch-status/abandoned) "error"
-                                   "")}
-                         [:div.bar
-                          {:style {:width (str display-progress-percent "%")}}
-                          [:div.progress]]]))]]])))
 
 (defcomponent scheduling-view [job owner]
   (init-state [_]
@@ -611,8 +533,7 @@
                                (get-in exe [:job-execution/agent :agent/name])] ]]]])]
                        (om/build next-execution-view job-detail
                                  {:init-state {:refresh-job-ch refresh-job-ch}
-                                  :react-key "job-current-next-execution"})
-                       (om/build job-test-view job {:react-key "job-test"})]])))))
+                                  :react-key "job-current-next-execution"})]])))))
 
 (defcomponent job-detail-view [job owner opts]
   (render-state [_ {:keys [mode message breadcrumbs]}]
