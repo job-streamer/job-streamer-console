@@ -108,6 +108,17 @@
          [:div.content
           (or job-name "New")]]
           [:div#message.ui.floating.message.hidden]]]]
+     [:div.ui.grid
+      [:h2.ui.violet.header
+         [:div.content "TEST"]]
+      [:div.row
+       [:div.left.aligned.column
+        [:i#test.play.icon]]]
+      [:div.row
+       [:div.ten.wide.column
+        [:div#progress.ui.progress.hidden
+             [:div#progress-bar.bar
+                          [:div.progress]]]]]]
      [:div#canvas]
      [:div#js-properties-panel {:style "top: 47px;"}]
      [:ul.buttons
