@@ -560,8 +560,7 @@
                       (om/build (case this-mode
                                   :current current-job-view
                                   :history job-history-view
-                                  :settings job-settings-view
-                                  :test job-test-view)
+                                  :settings job-settings-view)
                                 job
                                 {:state {:mode mode}
                                  :opts opts
