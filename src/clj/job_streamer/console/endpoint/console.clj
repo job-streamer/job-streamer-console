@@ -1,10 +1,8 @@
 (ns job-streamer.console.endpoint.console
   (:require [compojure.core :refer :all]
-            [hiccup.core :refer [html]]
             [hiccup.page :refer [html5 include-css include-js]]
-            [ring.util.response :refer [resource-response content-type header redirect]]
+            [ring.util.response :refer [resource-response content-type header]]
             [environ.core :refer [env]]
-            [clj-http.client :as client]
             [clojure.tools.logging :as log]
             (job-streamer.console [style :as style]
                                   [jobxml :as jobxml])))
@@ -34,52 +32,11 @@
    (include-js (str "/js/job-streamer"
                     (when-not (:dev env) ".min") ".js"))))
 
-(defn login-view [_ request]
-  (layout request
-    [:div.ui.fixed.inverted.teal.menu
-      [:div.header.item [:img.ui.image {:alt "JobStreamer" :src "/img/logo.png"}]]]
-    [:div.main.grid.content.full.height
-      [:div.ui.middle.aligned.center.aligned.login.grid
-       [:div.column
-        [:h2.ui.header
-         [:div.content
-          [:img.ui.image {:src "/img/logo.png"}]]]
-        [:form.ui.large.login.form
-         (merge {:method "post" :action "/login"}
-                (when (get-in request [:params :error])
-                  {:class "error"}))
-         [:div.ui.stacked.segment
-          [:div.ui.error.message
-           (map #(vec [:p %]) (get-in request [:params :error]))]
-          [:div.field
-           [:div.ui.left.icon.input
-            [:i.user.icon]
-            [:input {:type "text" :name "username" :placeholder "User name"}]]]
-          [:div.field
-           [:div.ui.left.icon.input
-            [:i.lock.icon]
-            [:input {:type "password" :name "password" :placeholder "Password"}]]]
-          [:button.ui.fluid.large.teal.submit.button {:type "submit"} "Login"]]]]]]))
-
-(defn login [{:keys [control-bus-url-from-backend]} username password]
-  (try
-    (let [{:keys [status body cookies]}
-          (client/post (str control-bus-url-from-backend "/auth")
-                       {:content-type :edn
-                        :body (pr-str {:user/id username
-                                       :user/password password})
-                        :throw-exceptions false})]
-      (if (== status 201)
-        (let [token (:token (read-string body))]
-          (log/infof "Authentificated with token: %s." token)
-          (as-> cookies c
-                (select-keys c ["ring-session"])
-                (update c "ring-session" #(select-keys % [:value :domain :path :secure :http-only :max-age :expires]))
-                (assoc {} :cookies c)))
-        (read-string body)))
-    (catch java.net.ConnectException ex
-      (log/error "A Control bus is NOT found.")
-      {:messages ["A Control bus is NOT found."]})))
+(defn login-view [config]
+  (layout config
+   [:div#login.ui.full.height.page]
+   (include-js (str "/js/job-streamer"
+                    (when-not (:dev env) ".min") ".js"))))
 
 (defn flowchart [{:keys [control-bus-url]} job-name]
   (html5
@@ -118,14 +75,6 @@
 
 (defn console-endpoint [config]
   (routes
-   (GET "/login" request (login-view config request))
-   (POST "/login" {{:keys [username password appname]} :params :as request}
-     (let [{:keys [cookies messages]} (login config username password)]
-       (if cookies
-         (-> (redirect (get-in request [:query-params "next"] "/"))
-             (assoc :cookies cookies))
-         (login-view config (assoc-in request [:params :error] messages)))))
-
    (GET ["/:app-name/jobs/new" :app-name #".*"]
         [app-name]
         (flowchart config nil))
@@ -134,6 +83,7 @@
         (flowchart config job-name))
 
    (GET "/" [] (index config))
+   (GET "/login" [] (login-view config))
    (POST "/job/from-xml" [:as request]
      (when-let [body (:body request)]
        (let [xml (slurp body)]

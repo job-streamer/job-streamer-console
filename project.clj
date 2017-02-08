@@ -5,7 +5,6 @@
                  [garden "1.3.2" :exclusions [org.clojure/clojure]]
                  [compojure "1.5.1"]
                  [environ "1.0.3"]
-                 [clj-http "2.3.0"]
                  [org.clojure/tools.logging "0.3.1"]
 
                  [com.stuartsierra/component "0.3.1"]

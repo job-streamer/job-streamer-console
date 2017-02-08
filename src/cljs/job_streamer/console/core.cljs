@@ -1,7 +1,7 @@
 (ns job-streamer.console.core
   (:require [om.core :as om :include-macros true]
             [job-streamer.console.common :refer [app-name]])
-  (:use [job-streamer.console.components.root :only [root-view]]))
+  (:use [job-streamer.console.components.root :only [root-view login-view]]))
 
 (def app-state (atom {:query ""
                       :job-sort-order nil
@@ -13,5 +13,8 @@
                       :mode [:jobs]}
                       :version {:console-version 0 :control-bus-version 0}))
 
-(om/root root-view app-state
-         {:target (.getElementById js/document "app")})
+(if (.getElementById js/document "app")
+  (om/root root-view app-state
+           {:target (.getElementById js/document "app")})
+  (om/root login-view app-state
+           {:target (.getElementById js/document "login")}))
