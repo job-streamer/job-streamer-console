@@ -351,7 +351,8 @@
                                   (api/request (api/url-for "/auth") :POST
                                                     {:user/id username :user/password password}
                                                     {:handler #(set! (.-href js/location) "/")
-                                                     :error-handler #(om/set-state! owner :errors (:messages %))
+                                                     :error-handler #(om/set-state! owner :errors (or (:messages %)
+                                                                                                      ["A Control bus is NOT found."]))
                                                      :unauthorized-handler #(om/set-state! owner :errors (:messages %))}))}
                     (when errors {:class "error"}))
              [:div.ui.stacked.segment
