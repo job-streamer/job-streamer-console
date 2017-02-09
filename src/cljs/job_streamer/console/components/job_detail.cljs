@@ -3,7 +3,7 @@
   (:require [om.core :as om :include-macros true]
             [om-tools.core :refer-macros [defcomponent]]
             [sablono.core :as html :refer-macros [html]]
-            [cljs.core.async :refer [put! <! chan timeout close! pub sub unsub-all]]
+            [cljs.core.async :refer [put! <! chan close! pub sub unsub-all]]
             [clojure.browser.net :as net]
             [clojure.string :as string]
             [goog.string :as gstring]
@@ -230,7 +230,6 @@
                                                                             (om/set-state! owner :executions executions))))}
                                :react-key "job-histry-pagination"})]]])))
 
-
 (defcomponent scheduling-view [job owner]
   (init-state [_]
     {:error-ch (chan)
@@ -243,7 +242,7 @@
 
   (will-mount [_]
     (go
-      (when-let [{message :message} (<! (om/get-state owner :error-ch))]
+      (let [{message :message} (<! (om/get-state owner :error-ch))]
         (om/set-state! owner :has-error message)))
     (api/request "/calendars" :GET
                  {:handler (fn [response]
