@@ -16,7 +16,6 @@
 (def app-state (atom
                  {:refresh true
                   :progress-count 0}))
-(def test-job-name (str "test-job" (rand-int 1000)))
 
 (def initial-diagram
   (str "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -70,32 +69,7 @@
              (add-class m (:type msg))
              (add-class m "visible")
              (aset m "innerHTML" (:body msg))
-             (go (<! (timeout 5000))
-                   (add-class m "hidden")
-                   (remove-class m (:type msg))
-                   (remove-class m "visible"))
              (recur))))
-
-(defn search-executions [job-name query cb]
-  (let [uri (.. (Uri. (str "/" app-name "/job/" job-name "/executions"))
-                (setQueryData (query-data/createFromMap (clj->js query))))]
-    (api/request (.toString uri)
-                 {:handler cb})))
-
-(defn save-test-job-control-bus [job handler]
-    (api/request (str "/" app-name "/jobs")
-                 :POST
-                 job
-                 {:handler handler}))
-
-(defn save-test-job[job-name handler]
-  (let [modeler js/window.bpmnjs]
-    (.saveXML modeler
-              #js {:format true}
-              (fn [err xml]
-                (save-test-job-control-bus
-                  {:job/bpmn-xml-notation xml
-                   :job/name job-name} handler)))))
 
 (defn execute-test []
   (put! execution-channel :start)
@@ -106,59 +80,59 @@
     (remove-class progress "hidden")
     (remove-class progress "success")
     (remove-class progress "error"))
-  (swap! app-state assoc :prev-execution-id (:db/id (:last-execution @app-state)))
-  (swap! app-state assoc :last-execution {})
   (swap! app-state assoc :progress-count 0)
-  (save-test-job test-job-name
-                 #(api/request (str "/" app-name "/job/" test-job-name "/executions") :POST
-                              {:test? true}
-                              {:handler
-                               (swap! app-state assoc :refresh true)
-                               :forbidden-handler (fn [response]
-                                                    (when message-channel
-                                                      (put! message-channel {:type "error" :body "You are unauthorized to execute job."})))})))
-
+  (let [modeler js/window.bpmnjs]
+    (.saveXML modeler
+              #js {:format true}
+              (fn [err xml]
+                (api/request "/test-executions"
+                             :POST
+                             {:bpmn xml}
+                             {:handler (fn [response]
+                                         (swap! app-state assoc :refresh true)
+                                         (swap! app-state assoc :state-id (:state-id response)))})))))
 (go-loop []
          (when-let [_ (<! execution-channel)]
-           (when (or (some-> (:last-execution @app-state)
-                             (get-in [:job-execution/batch-status :db/ident])
-                             #{:batch-status/started :batch-status/starting
-                               :batch-status/undispatched :batch-status/queued
-                               :batch-status/unrestarted :batch-status/stopping :batch-status/unknown})
-                     (:refresh @app-state))
-             (search-executions test-job-name {:filter-mode :test}
-                                (fn [response]
-                                  (let [last-execution (-> response :results first)]
-                                    (if (and (:db/id last-execution) (= (:db/id last-execution) (:prev-execution-id @app-state)))
-                                      (do
-                                        (swap! app-state assoc :refresh true)
-                                        (swap! app-state update-in [:progress-count] inc))
-                                      (do
-                                        (swap! app-state assoc :last-execution last-execution)
-                                        (swap! app-state assoc :refresh false)
-                                        (if (some-> last-execution
-                                                    (get-in [:job-execution/batch-status :db/ident])
-                                                    #{:batch-status/completed :batch-status/stopped :batch-status/failed :batch-status/abandoned})
-                                          (api/request (str "/" app-name "/job/" test-job-name ) :DELETE
-                                                       {:forbidden-handler (fn [response]
-                                                                             (when message-channel
-                                                                               (put! message-channel {:type "error" :body "You are unauthorized to delete job."})))})
-                                          (swap! app-state update-in [:progress-count] inc)))))
-                                  (let [progress (.getElementById js/document "progress")
-                                        progress-bar (.getElementById js/document "progress-bar")]
-                                    (when (:last-execution @app-state)
-                                      (remove-class progress "hidden"))
-                                    (let [dummy-progress-percent (min (* 20 (:progress-count @app-state)) 90)
-                                          display-progress-percent (if (some-> (:last-execution @app-state)
-                                                                               (get-in [:job-execution/batch-status :db/ident])
-                                                                               #{:batch-status/completed :batch-status/stopped :batch-status/failed :batch-status/abandoned}) 100 dummy-progress-percent)]
-                                      (add-class progress
-                                                 (case (get-in (:last-execution @app-state) [:job-execution/batch-status :db/ident])
-                                                   :batch-status/completed "success"
-                                                   (:batch-status/stopped :batch-status/failed :batch-status/abandoned) "error"
-                                                   ""))
-                                      (set! (.-dataPercent progress) display-progress-percent)
-                                      (set! (.-width (.-style progress-bar)) (str display-progress-percent "%")))))))
+           (when (and (or (some-> (get-in @app-state [:test-execution :batch-status])
+                                  #{:batch-status/started :batch-status/starting
+                                    :batch-status/undispatched :batch-status/queued
+                                    :batch-status/unrestarted :batch-status/stopping :batch-status/unknown})
+                          (:refresh @app-state))
+                      (:state-id @app-state))
+             (api/request (str "/test-execution/" (:state-id @app-state))
+                          {:handler
+                           (fn [response]
+                             (swap! app-state assoc :test-execution response)
+                             (let [batch-status (:batch-status response)
+                                   log-message (:log-message response)
+                                   log-exception (:log-exception response)]
+                               (if (or (#{:batch-status/completed} batch-status)
+                                       log-message)
+                                 (do
+                                   (when log-message
+                                     (.error js/console (str log-message \newline log-exception))
+                                     (put! message-channel {:type "error"
+                                                            :body (str log-message \newline log-exception)}))
+                                   (swap! app-state assoc :refresh false)
+                                   (api/request (str "/test-execution/" (:state-id @app-state)) :DELETE {}))
+                                 (do
+                                   (swap! app-state assoc :refresh true)
+                                   (swap! app-state update-in [:progress-count] inc))))
+                             (let [progress (.getElementById js/document "progress")
+                                   progress-bar (.getElementById js/document "progress-bar")]
+                               (when (:test-execution @app-state)
+                                 (remove-class progress "hidden"))
+                               (let [dummy-progress-percent (min (* 20 (:progress-count @app-state)) 90)
+                                     display-progress-percent (if (some-> (:test-execution @app-state)
+                                                                          (:batch-status)
+                                                                          #{:batch-status/completed :batch-status/stopped :batch-status/failed :batch-status/abandoned}) 100 dummy-progress-percent)]
+                                 (add-class progress
+                                            (case (get-in @app-state [:test-execution :batch-status])
+                                              :batch-status/completed "success"
+                                              (:batch-status/stopped :batch-status/failed :batch-status/abandoned) "error"
+                                              ""))
+                                 (set! (.-dataPercent progress) display-progress-percent)
+                                 (set! (.-width (.-style progress-bar)) (str display-progress-percent "%")))))}))
            (<! (timeout 1000))
            (put! execution-channel :continue)
            (recur)))
