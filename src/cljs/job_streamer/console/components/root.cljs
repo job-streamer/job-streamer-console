@@ -68,15 +68,19 @@
   [:input
    {:type "file"
     :name el-name
+    :id el-name
     :style {:display "none"}
+    :value ""
     :on-change
     (fn [e]
+      ;IE cannot refresh value so on-change will not be called after second time.
+      (when-not (= "" (-> js/document (.getElementById  el-name) (. -value)))
       (let [file (aget (.. e -target -files) 0)
             reader (js/FileReader.)]
         (set! (.-onload reader)
               #(let [result (.. % -target -result)]
                  (upload-fn file result callback-fn)))
-        (.readAsText reader file)))}])
+        (.readAsText reader file))))}])
 
 (defcomponent version-dialog [app owner {:keys [header-channel]}]
   (will-mount [_]
