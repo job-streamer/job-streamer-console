@@ -175,7 +175,7 @@
                  {:type "button"
                   :on-click (fn [e]
                               (let [w (js/window.open (str "/" app-name "/jobs/new") "New" "width=1200,height=800")]
-                                (.addEventListener w "unload" (fn [] (js/setTimeout (fn [] (set! (.-href js/location) "/"))) 10))))}
+                                (.addEventListener w "unload" (fn [] (js/setTimeout (fn [] (put! jobs-view-channel [:refresh-jobs true]))) 10))))}
                  [:i.plus.icon] "Create the first job"]]]]]]]
        [:div.ui.grid
         [:div.ui.two.column.row
@@ -184,7 +184,7 @@
            {:type "button"
             :on-click (fn [e]
                         (let [w (js/window.open (str "/" app-name "/jobs/new") "New" "width=1200,height=800")]
-                          (.addEventListener w "unload" (fn [] (js/setTimeout (fn [] (set! (.-href js/location) "/"))) 10))))}
+                          (.addEventListener w "unload" (fn [] (js/setTimeout (fn [] (put! jobs-view-channel [:refresh-jobs true]))) 10))))}
            [:i.plus.icon] "New"]]
          [:div.ui.right.aligned.column
           [:button.ui.circular.basic.orange.icon.button
@@ -378,7 +378,7 @@
             :close-dialog (do (om/set-state! owner :executing-job nil)
                               (search-jobs app {:q (:query app) :sort-by (-> app :job-sort-order parse-sort-order) } message-channel))
             :refresh-jobs (do (search-jobs app {:q (:query app) :sort-by (-> app :job-sort-order parse-sort-order) } message-channel)
-                              (put! header-channel [:refresh-stats true]))
+                            (put! header-channel [:refresh-stats true]))
             :delete-job (do
                           (fn [results]
                             (remove #(= % msg) results))

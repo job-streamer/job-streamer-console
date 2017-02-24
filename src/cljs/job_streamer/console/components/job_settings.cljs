@@ -13,8 +13,7 @@
   (api/request (str "/" app-name "/job/" (:job/name job)) :DELETE
                {:handler (fn [response]
                            (put! jobs-channel [:delete-job job])
-                           (set! (.-href js/location) "#/")
-                           (set! (.-href js/location) "/"))
+                           (set! (.-href js/location) "#/"))
                 :forbidden-handler (fn [response]
                                      (om/set-state! owner :message {:class "error"
                                                                     :header "Save failed"
