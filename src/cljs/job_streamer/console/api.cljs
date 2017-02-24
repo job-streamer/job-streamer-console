@@ -38,7 +38,7 @@
    (request path :GET nil options))
   ([path method options]
    (request path method nil options))
-  ([path method body {:keys [handler error-handler format forbidden-handler]}]
+  ([path method body {:keys [handler error-handler format forbidden-handler unauthorized-handler]}]
    (let [xhrio (net/xhr-connection)]
 
      (when handler
@@ -53,7 +53,9 @@
                           ;; Unahthorized
                           (= (.getStatus xhrio) 401)
                           ;; TODO: Manage application name.
-                          (set! (.-pathname js/window.location) "/login")
+                          (if (fn? unauthorized-handler)
+                            (unauthorized-handler res (.getLastErrorCode xhrio))
+                            (set! (.-pathname js/window.location) "/login"))
 
                           ;; Forbidden
                           (and (= (.getStatus xhrio) 403) (fn? forbidden-handler))

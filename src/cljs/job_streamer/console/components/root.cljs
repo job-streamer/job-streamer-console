@@ -249,9 +249,9 @@
           [:a.item {:on-click (fn[e]
                                 (put! header-channel [:version-dialog true]))}
             [:i.circle.help.icon] "version"]
-          [:a.item {:on-click #(api/request (api/url-for "/auth") :DELETE
-                                            {:handler (fn [response]
-                                                        (set! (.-href js/location) "/login"))})}
+            [:a.item {:on-click #(api/request (api/url-for "/auth") :DELETE
+                                              {:handler (fn [response]
+                                                          (set! (.-href js/location) "/login"))})}
             [:i.sign.out.icon] "Logout"]]]
         (when open-version-dialog
           (om/build version-dialog app
@@ -328,3 +328,48 @@
                                            :opts {:calendars-channel calendars-channel
                                                   :react-key "calendar"}})
             :apps (om/build apps-view app))]))])))
+
+(defcomponent login-view [app owner]
+  (init-state [_]
+    {:errors nil
+     :username ""
+     :password ""})
+  (render-state [_ {:keys [username password errors]}]
+    (html
+      [:div.full.height
+        [:div.ui.fixed.inverted.teal.menu
+          [:div.header.item [:img.ui.image {:alt "JobStreamer" :src "/img/logo.png"}]]]
+        [:div.main.grid.content.full.height
+          [:div.ui.middle.aligned.center.aligned.login.grid
+           [:div.column
+            [:h2.ui.header
+             [:div.content
+              [:img.ui.image {:src "/img/logo.png"}]]]
+            [:form.ui.large.login.form
+             (merge {:on-submit (fn [e]
+                                  (.preventDefault e)
+                                  (api/request (api/url-for "/auth") :POST
+                                                    {:user/id username :user/password password}
+                                                    {:handler #(set! (.-href js/location) "/")
+                                                     :error-handler #(om/set-state! owner :errors (or (:messages %)
+                                                                                                      ["A Control bus is NOT found."]))
+                                                     :unauthorized-handler #(om/set-state! owner :errors (:messages %))}))}
+                    (when errors {:class "error"}))
+             [:div.ui.stacked.segment
+              [:div.ui.error.message
+               (map #(vec [:p %]) errors)]
+              [:div.field
+               [:div.ui.left.icon.input
+                [:i.user.icon]
+                [:input {:type "text" :name "username" :id "username" :placeholder "User name" :value username
+                         :on-change (fn [e]
+                                      (let [username (.. js/document (getElementById "username") -value)]
+                                        (om/set-state! owner :username username)))}]]]
+              [:div.field
+               [:div.ui.left.icon.input
+                [:i.lock.icon]
+                [:input {:type "password" :name "password" :id "password" :placeholder "Password" :value password
+                         :on-change (fn [e]
+                                      (let [password (.. js/document (getElementById "password") -value)]
+                                        (om/set-state! owner :password password)))}]]]
+              [:button.ui.fluid.large.teal.submit.button{:type "submit"} "Login"]]]]]]])))
