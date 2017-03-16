@@ -136,7 +136,7 @@
       (put! ch :start)))
 
   (did-mount [_]
-    (let [ch (chan)]
+    (let [ch (chan) delay-ch (chan)]
       (om/set-state! owner :refresh-timer ch)
       (go-loop []
         (when-let [_ (<! ch)]
@@ -153,7 +153,15 @@
               {:page page}))
           (put! ch :continue)
           (recur)))
-      (put! ch :start)))
+      (put! ch :start)
+      (om/set-state! owner :delay-channel delay-ch)
+      (go-loop []
+        (when-let [[cred func] (<! delay-ch)]
+          (<! (timeout 1000))
+          (if (cred)
+              (func)
+              (put! delay-ch [cred func]))
+          (recur)))))
 
   (will-unmount [_]
     (when-let [now-timer (om/get-state owner :now-timer)]
@@ -161,7 +169,7 @@
     (when-let [refresh-timer (om/get-state owner :refresh-timer)]
       (close! refresh-timer)))
 
-  (render-state [_ {:keys [jobs-view-channel now page per]}]
+  (render-state [_ {:keys [jobs-view-channel delay-channel now page per]}]
     (html
      (if (= (get-in app [:stats :jobs-count]) 0)
        [:div.ui.grid
@@ -174,8 +182,10 @@
             [:p [:button.ui.primary.button
                  {:type "button"
                   :on-click (fn [e]
-                              (let [w (js/window.open (str "/" app-name "/jobs/new") "New" "width=1200,height=800")]
-                                (.addEventListener w "unload" (fn [] (js/setTimeout (fn [] (put! jobs-view-channel [:refresh-jobs true]))) 10))))}
+                              (let [w (js/window.open (str "/" app-name "/jobs/new") "New" "width=1200,height=800")
+                                    notify (fn [] (.addEventListener w "unload"
+                                                                     (fn [] (put! jobs-view-channel [:refresh-jobs true]))))]
+                                (put! delay-channel [(fn [] w) notify])))}
                  [:i.plus.icon] "Create the first job"]]]]]]]
        [:div.ui.grid
         [:div.ui.two.column.row
@@ -183,8 +193,10 @@
           [:button.ui.basic.green.button
            {:type "button"
             :on-click (fn [e]
-                        (let [w (js/window.open (str "/" app-name "/jobs/new") "New" "width=1200,height=800")]
-                          (.addEventListener w "unload" (fn [] (js/setTimeout (fn [] (put! jobs-view-channel [:refresh-jobs true]))) 10))))}
+                        (let [w (js/window.open (str "/" app-name "/jobs/new") "New" "width=1200,height=800")
+                              notify (fn [] (.addEventListener w "unload"
+                                                               (fn [] (put! jobs-view-channel [:refresh-jobs true]))))]
+                          (put! delay-channel [(fn [] w) notify])))}
            [:i.plus.icon] "New"]]
          [:div.ui.right.aligned.column
           [:button.ui.circular.basic.orange.icon.button
