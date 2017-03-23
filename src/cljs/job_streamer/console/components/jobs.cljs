@@ -10,6 +10,7 @@
         (job-streamer.console.components.job-detail :only [job-detail-view])
         (job-streamer.console.components.execution :only [execution-view])
         (job-streamer.console.components.pagination :only [pagination-view])
+        (job-streamer.console.components.job-progress :only [big-job-progress-view])
         (job-streamer.console.components.dialog :only[dangerously-action-dialog])
         [job-streamer.console.search :only [search-jobs parse-sort-order toggle-sort-order]]))
 
@@ -407,6 +408,11 @@
                         {:opts {:jobs-channel jobs-channel}
                          :state {:mode (:mode app)}
                          :react-key "job-detail"}))
+            [:img {:src "/img/loader.gif"}])
+          :progress
+          (if (:jobs app)
+              (om/build big-job-progress-view (:job-name app)
+                        {:react-key "job-progress"})
             [:img {:src "/img/loader.gif"}])
 
           ;; default

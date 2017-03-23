@@ -17,7 +17,8 @@
         [clojure.walk :only [postwalk]]
         [job-streamer.console.components.job-settings :only [job-settings-view]]
         [job-streamer.console.components.pagination :only [pagination-view]]
-        [job-streamer.console.components.execution :only [execution-view]])
+        [job-streamer.console.components.execution :only [execution-view]]
+        [job-streamer.console.components.job-progress :only [job-progress-view]])
   (:import [goog.ui.tree TreeControl]
            [goog Uri]))
 
@@ -122,7 +123,8 @@
    :jobs.detail {:name "Job: %s" :href "#/job/%s"}
    :jobs.detail.current.edit {:name "Edit" :href "#/job/%s/edit"}
    :jobs.detail.history {:name "History" :href "#/job/%s/history"}
-   :jobs.detail.settings {:name "Settings" :href "#/job/%s/settings"}})
+   :jobs.detail.settings {:name "Settings" :href "#/job/%s/settings"}
+   :jobs.detail.progress {:name "Progress" :href "#/job/%s/progress"}})
 
 (defcomponent breadcrumb-view [mode owner]
   (render-state [_ {:keys [job-name]}]
@@ -447,14 +449,15 @@
          [:button.ui.primary.button
           {:type "button"
            :on-click (fn [e]
-                       (let [w (js/window.open (str "/" app-name "/job/" name "/edit") name "width=1200,height=800")]
-                         (.addEventListener w "unload" (fn [] (js/setTimeout (fn [] (put! refresh-job-ch true))) 10))))}
-          "Edit"]]]]
+                       (set! (.-href js/location) (str "#/job/" name "/progress")))}
+          "Show Progress"]]]]
       [:div {:style {:height "200px"
-                     :width "100%"
-                     :background-repeat "no-repeat"
-                     :background-size "contain"
-                     :background-image (str "url(\"data:image/svg+xml;base64," (js/window.btoa svg-notation) "\")")}}]])))
+                     :width "100%"}}
+       (om/build job-progress-view
+                 {:job job-detail
+                  :width 400
+                  :height 200}
+                 {:react-key "job-progress"})]])))
 
 (defcomponent current-job-view [job owner opts]
   (init-state [_]
@@ -529,7 +532,7 @@
                             [:div.content
                              [:div.description
                               [:a {:href (str "#/agent/" (get-in exe [:job-execution/agent :agent/instance-id]))}
-                               (get-in exe [:job-execution/agent :agent/name])] ]]]])]
+                               (get-in exe [:job-execution/agent :agent/name])]]]]])]
                        (om/build next-execution-view job-detail
                                  {:init-state {:refresh-job-ch refresh-job-ch}
                                   :react-key "job-current-next-execution"})]])))))
