@@ -149,7 +149,7 @@
                    not-empty)
             (let [page (om/get-state owner :page)
                   per  (om/get-state owner :per)]
-              (search-jobs app {:q (:query app) :sort-by (-> app :job-sort-order parse-sort-order) :offset (inc (* (dec page) per)) :limit per} message-channel)
+              (search-jobs app {:q (:query @app) :sort-by (-> @app :job-sort-order parse-sort-order) :offset (inc (* (dec page) per)) :limit per} message-channel)
               {:page page}))
           (put! ch :continue)
           (recur)))
@@ -368,7 +368,7 @@
     {:dangerously-action-data nil
      :page 1})
   (will-mount [_]
-    (search-jobs app {:q (:query app) :sort-by (-> app :job-sort-order parse-sort-order) :p 1} message-channel)
+    (search-jobs app {:q (:query @app) :sort-by (-> @app :job-sort-order parse-sort-order) :p 1} message-channel)
     (go-loop []
       (let [[cmd msg] (<! jobs-channel)]
         (try
@@ -376,8 +376,8 @@
             :execute-dialog  (om/set-state! owner :executing-job [:execute msg])
             :restart-dialog  (om/set-state! owner :executing-job [:restart msg])
             :close-dialog (do (om/set-state! owner :executing-job nil)
-                              (search-jobs app {:q (:query app) :sort-by (-> app :job-sort-order parse-sort-order) } message-channel))
-            :refresh-jobs (do (search-jobs app {:q (:query app) :sort-by (-> app :job-sort-order parse-sort-order) } message-channel)
+                              (search-jobs app {:q (:query @app) :sort-by (-> @app :job-sort-order parse-sort-order) } message-channel))
+            :refresh-jobs (do (search-jobs app {:q (:query @app) :sort-by (-> @app :job-sort-order parse-sort-order) } message-channel)
                             (put! header-channel [:refresh-stats true]))
             :delete-job (do
                           (fn [results]
