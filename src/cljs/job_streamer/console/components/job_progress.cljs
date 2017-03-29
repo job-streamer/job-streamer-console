@@ -90,31 +90,32 @@
   (render [_]
           (html
             [:div
-             [:span.item
-              [:div.ui.horizontal.label
-               {:style
-                {:background-color completed-color}}]
-              "completed"]
-             [:span.item
-              [:div.ui.horizontal.label
-               {:style
-                {:background-color failed-color}}]
-              "failed or abandoned"]
-             [:span.item
-              [:div.ui.horizontal.label
-               {:style
-                {:background-color started-color}}]
-              "started or starting"]
-             [:span.item
-              [:div.ui.horizontal.label
-               {:style
-                {:background-color stopped-color}}]
-              "stopped or stopping"]
-             [:span.item
-              [:div.ui.horizontal.label
-               {:style
-                {:background-color else-color}}]
-              "else"]])))
+             [:div.ui.horizontal.list
+              [:span.item
+               [:div.ui.horizontal.label
+                {:style
+                 {:background-color completed-color}}]
+               "completed"]
+              [:span.item
+               [:div.ui.horizontal.label
+                {:style
+                 {:background-color failed-color}}]
+               "failed or abandoned"]
+              [:span.item
+               [:div.ui.horizontal.label
+                {:style
+                 {:background-color started-color}}]
+               "started or starting"]
+              [:span.item
+               [:div.ui.horizontal.label
+                {:style
+                 {:background-color stopped-color}}]
+               "stopped or stopping"]
+              [:span.item
+               [:div.ui.horizontal.label
+                {:style
+                 {:background-color else-color}}]
+               "else"]]])))
 
 
 (defcomponent big-job-progress-view [job-name owner]
