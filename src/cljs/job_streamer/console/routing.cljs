@@ -45,6 +45,12 @@
                           :mode [:jobs :detail :settings]
                           :job-name job-name)))
 
+  (sec/defroute #"/job/([\w\-]+)/progress" [job-name]
+    (om/transact! app-state
+                  #(assoc %
+                          :mode [:jobs :progress :large-view]
+                          :job-name job-name)))
+
   (sec/defroute "/jobs/timeline" []
     (om/update! app-state :mode [:jobs :timeline]))
 
