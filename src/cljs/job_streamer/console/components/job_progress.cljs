@@ -11,11 +11,11 @@
 
 ;; Now, app-name is static.
 (def app-name "default")
-(def completed-color "#7fff7f")
-(def failed-color "#ff7f7f")
-(def started-color "#7f7fff")
-(def stopped-color "#ffff7f")
-(def else-color "#bf7fff")
+(def completed-color "#73cbc4")
+(def failed-color "#f47b8c")
+(def started-color "#1dace6")
+(def stopped-color "#e4e444")
+(def else-color "#94949c")
 
 (defn search-execution [owner job-name execution-id]
   (api/request (str "/" app-name "/job/" job-name "/execution/" execution-id)
