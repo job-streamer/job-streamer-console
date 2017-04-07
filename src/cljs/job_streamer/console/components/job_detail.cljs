@@ -3,7 +3,7 @@
   (:require [om.core :as om :include-macros true]
             [om-tools.core :refer-macros [defcomponent]]
             [sablono.core :as html :refer-macros [html]]
-            [cljs.core.async :refer [put! <! chan close! pub sub unsub-all]]
+            [cljs.core.async :refer [put! <! chan close! pub timeout sub unsub-all]]
             [clojure.browser.net :as net]
             [clojure.string :as string]
             [goog.string :as gstring]
@@ -434,7 +434,22 @@
             "Schedule this job"]]))])))
 
 (defcomponent job-structure-view [{:keys [job/name job/svg-notation] :as job-detail} owner]
-  (render-state [_ {:keys [refresh-job-ch dimmed?]}]
+  (did-mount [_]
+    (let [delay-ch (chan)]
+      (om/set-state! owner :delay-channel delay-ch)
+      (go-loop []
+        (when-let [[cred func] (<! delay-ch)]
+          (<! (timeout 1000))
+          (if (cred)
+              (func)
+              (put! delay-ch [cred func]))
+          (recur)))))
+
+  (will-unmount [_]
+    (when-let [delay-channel (om/get-state owner :delay-channel)]
+      (close! delay-channel)))
+
+  (render-state [_ {:keys [refresh-job-ch dimmed? delay-channel]}]
     (html
      [:div.dimmable.image.dimmed
       {:on-mouse-enter (fn [e]
@@ -447,8 +462,10 @@
          [:button.ui.primary.button
           {:type "button"
            :on-click (fn [e]
-                       (let [w (js/window.open (str "/" app-name "/job/" name "/edit") name "width=1200,height=800")]
-                         (.addEventListener w "unload" (fn [] (js/setTimeout (fn [] (put! refresh-job-ch true))) 10))))}
+                       (let [w (js/window.open (str "/" app-name "/job/" name "/edit") name "width=1200,height=800")
+                             notify (fn [] (.addEventListener w "unload"
+                                                              (fn [] (put! refresh-job-ch true))))]
+                         (put! delay-channel [(fn [] w) notify])))}
           "Edit"]]]]
       [:div {:style {:height "200px"
                      :width "100%"
