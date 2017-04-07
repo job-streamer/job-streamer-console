@@ -445,6 +445,10 @@
               (put! delay-ch [cred func]))
           (recur)))))
 
+  (will-unmount [_]
+    (when-let [delay-channel (om/get-state owner :delay-channel)]
+      (close! delay-channel)))
+
   (render-state [_ {:keys [refresh-job-ch dimmed? delay-channel]}]
     (html
      [:div.dimmable.image.dimmed

@@ -167,7 +167,9 @@
     (when-let [now-timer (om/get-state owner :now-timer)]
       (close! now-timer))
     (when-let [refresh-timer (om/get-state owner :refresh-timer)]
-      (close! refresh-timer)))
+      (close! refresh-timer))
+    (when-let [delay-channel (om/get-state owner :delay-channel)]
+      (close! delay-channel)))
 
   (render-state [_ {:keys [jobs-view-channel delay-channel now page per]}]
     (html
