@@ -139,14 +139,14 @@
                                                                    (map name)
                                                                    (string/join ".")
                                                                    keyword))]
-                                             [:div.section
+                                             [:div.section {:key (str "div-" i)}
                                               [:a {:href (gstring/format (:href item) job-name)
                                                    :title job-name}
                                                (gstring/format (:name item) job-name)]])))
                         (let [res (keep identity items)]
                           (conj (vec (drop-last res))
-                                (into [:div.section.active] (-> res last (get-in [1 2])))))))
-                    (repeat [:i.right.chevron.icon.divider])))])))
+                                (into [:div.section.active {:key "div-active"}] (-> res last (get-in [2 2])))))))
+                    (map #(vec [:i.right.chevron.icon.divider {:key (str "i-" %)}]) (range))))])))
 
 (defcomponent job-history-view [job owner opts]
   (init-state [_]
@@ -190,7 +190,7 @@
                       (map-indexed
                        (fn [idx {:keys [job-execution/start-time job-execution/end-time] :as execution}]
                          (list
-                          [:tr
+                          [:tr {:key "tr-1"}
                            [:td.log-link
                             [:a {:on-click
                                  (fn [_]
@@ -213,7 +213,7 @@
                                             "")}
                               status])]
                           (when-let [step-executions (not-empty (:job-execution/step-executions execution))]
-                            [:tr
+                            [:tr {:key "tr-1"}
                              [:td {:colSpan 5}
                               (om/build execution-view step-executions {:react-key "job-histry-execution"})]])))
                        (:results executions))]]]]
