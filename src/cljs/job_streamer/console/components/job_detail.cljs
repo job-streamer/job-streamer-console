@@ -91,9 +91,12 @@
     (str "0 0 " hour " * * ?")
     ""))
 
+(defn get-week-day-sort-key [day-of-week]
+  (get {"Sun" 0 "Mon" 1 "Tue" 2 "Wed" 3 "Thu" 4 "Fri" 5 "Sat" 6} day-of-week))
+
 (defn to-cron-expression-weekly [hour day-of-weeks]
   (if (and (not-empty hour) (not-empty day-of-weeks))
-    (str "0 0 " hour " ? * " (clojure.string/join "," day-of-weeks))
+    (str "0 0 " hour " ? * " (->> day-of-weeks (sort-by get-week-day-sort-key) (clojure.string/join ",")))
     ""))
 
 (defn to-cron-expression-monthly[hour day]
@@ -110,19 +113,6 @@
     "Monthly"
     (to-cron-expression-monthly scheduling-hour scheduling-date)
     (:schedule/cron-notation schedule)))
-
-(defn update-scheduling-day-of-weeks! [owner]
-  (let [day-of-weeks
-      (cond-> []
-        (om/get-state owner :scheduling-sunday) (conj "Sun")
-        (om/get-state owner :scheduling-monday) (conj "Mon")
-        (om/get-state owner :scheduling-tuesday) (conj "Tue")
-        (om/get-state owner :scheduling-wednesday) (conj "Wed")
-        (om/get-state owner :scheduling-thursday) (conj "Thu")
-        (om/get-state owner :scheduling-friday) (conj "Fri")
-        (om/get-state owner :scheduling-saturday) (conj "Sat"))]
-    (om/set-state! owner :scheduling-day-of-weeks day-of-weeks)
-    day-of-weeks))
 
 ;;;
 ;;; Om view components
@@ -243,18 +233,22 @@
                                :react-key "job-histry-pagination"})]]])))
 
 
-(defn weekday-checkbox-view [owner kw label]
-  [:div.ui.checkbox {}
-    [:div.field {}
-      [:input
-        {:type "checkbox"
-        :checked (om/get-state owner kw)
-        :on-change (fn [e]
-                    (let [hour (om/get-state owner :scheduling-hour)]
-                      (om/set-state! owner kw (.. e -target -checked))
-                      (om/set-state! owner [:schedule :schedule/cron-notation]
-                                    (to-cron-expression-weekly hour (update-scheduling-day-of-weeks! owner)))))}]
-      [:label {} label]]])
+(defn weekday-checkbox-view [owner label]
+  (let [day-of-weeks (om/get-state owner :scheduling-day-of-weeks)]
+    [:div.ui.checkbox {}
+      [:div.field {}
+        [:input
+          {:type "checkbox"
+          :checked (some #(= label %) day-of-weeks)
+          :on-change (fn [e]
+                      (let [hour (om/get-state owner :scheduling-hour)
+                            day-of-weeks (if (.. e -target -checked)
+                                           (-> day-of-weeks (conj label) set vec)
+                                           (filter #(not= label %) day-of-weeks))]
+                        (om/set-state! owner :scheduling-day-of-weeks day-of-weeks)
+                        (om/set-state! owner [:schedule :schedule/cron-notation]
+                                      (to-cron-expression-weekly hour day-of-weeks))))}]
+        [:label {} label]]]))
 
 (defcomponent scheduling-view [job owner]
   (init-state [_]
@@ -286,14 +280,7 @@
        :scheduling-type scheduling-type
        :scheduling-hour (some-> cron-expressions (nth 2))
        :scheduling-date (if (= scheduling-type "Monthly") (some-> cron-expressions (nth 3)) "")
-       :scheduling-day-of-weeks day-of-weeks
-       :scheduling-sunday (some #(= % "Sun") day-of-weeks)
-       :scheduling-monday (some #(= % "Mon") day-of-weeks)
-       :scheduling-tuesday (some #(= % "Tue") day-of-weeks)
-       :scheduling-wednesday (some #(= % "Wed") day-of-weeks)
-       :scheduling-thursday (some #(= % "Thu") day-of-weeks)
-       :scheduling-friday (some #(= % "Fri") day-of-weeks)
-       :scheduling-saturday (some #(= % "Sat") day-of-weeks)}))
+       :scheduling-day-of-weeks day-of-weeks}))
 
   (will-mount [_]
     (go
@@ -322,7 +309,6 @@
                     :on-change (fn [e]
                                  (let [value (.. e -target -value)]
                                    (om/set-state! owner :scheduling-type value)
-                                   (update-scheduling-day-of-weeks! owner)
                                    (om/set-state! owner [:schedule :schedule/cron-notation] (to-cron-expression (om/get-state owner)))))}
            [:option {:value ""} ""]
            [:option {:value "Daily"} "Daily"]
@@ -353,15 +339,15 @@
              "o'clock at every"
                [:div.inline.fields
                 {}
-                (weekday-checkbox-view owner :scheduling-sunday "Sun")
-                (weekday-checkbox-view owner :scheduling-monday "Mon")
-                (weekday-checkbox-view owner :scheduling-tuesday "Tue")
-                (weekday-checkbox-view owner :scheduling-wednesday "Wed")]
+                (weekday-checkbox-view owner "Sun")
+                (weekday-checkbox-view owner "Mon")
+                (weekday-checkbox-view owner "Tue")
+                (weekday-checkbox-view owner "Wed")]
                [:div.inline.fields
                 {}
-                (weekday-checkbox-view owner :scheduling-thursday "Thu")
-                (weekday-checkbox-view owner :scheduling-friday "Fri")
-                (weekday-checkbox-view owner :scheduling-saturday "Sat")]])
+                (weekday-checkbox-view owner "Thu")
+                (weekday-checkbox-view owner "Fri")
+                (weekday-checkbox-view owner "Sat")]])
           (when (= scheduling-type "Monthly")
             [:div
              "Fire at"
