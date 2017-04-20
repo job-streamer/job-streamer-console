@@ -253,27 +253,27 @@
 (defcomponent scheduling-view [job owner]
   (init-state [_]
     (let [cron-expressions (some-> job
-                               (get-in [:job/schedule :schedule/cron-notation])
-                               (string/split #"\s"))
+                                   (get-in [:job/schedule :schedule/cron-notation])
+                                   (string/split #"\s"))
           day-of-weeks (some-> cron-expressions
-                           (nth 5)
-                           (string/split #","))
+                               (nth 5)
+                               (string/split #","))
           scheduling-type (if cron-expressions
-                              (cond (and (= (nth cron-expressions 0) "0")
-                                         (= (nth cron-expressions 1) "0")
-                                         (= (nth cron-expressions 3) "*")
-                                         (= (nth cron-expressions 4) "*")
-                                         (= (nth cron-expressions 5) "?")) "Daily"
-                                    (and (= (nth cron-expressions 0) "0")
-                                         (= (nth cron-expressions 1) "0")
-                                         (= (nth cron-expressions 3) "?")
-                                         (= (nth cron-expressions 4) "*")
-                                         (not= (nth cron-expressions 5) "?")) "Weekly"
-                                    (and (= (nth cron-expressions 0) "0")
-                                         (= (nth cron-expressions 1) "0")
-                                         (not= (nth cron-expressions 3) "*")
-                                         (= (nth cron-expressions 4) "*")
-                                         (= (nth cron-expressions 5) "?")) "Monthly") "")]
+                            (cond (and (= (nth cron-expressions 0) "0")
+                                       (= (nth cron-expressions 1) "0")
+                                       (= (nth cron-expressions 3) "*")
+                                       (= (nth cron-expressions 4) "*")
+                                       (= (nth cron-expressions 5) "?")) "Daily"
+                                  (and (= (nth cron-expressions 0) "0")
+                                       (= (nth cron-expressions 1) "0")
+                                       (= (nth cron-expressions 3) "?")
+                                       (= (nth cron-expressions 4) "*")
+                                       (not= (nth cron-expressions 5) "?")) "Weekly"
+                                  (and (= (nth cron-expressions 0) "0")
+                                       (= (nth cron-expressions 1) "0")
+                                       (not= (nth cron-expressions 3) "*")
+                                       (= (nth cron-expressions 4) "*")
+                                       (= (nth cron-expressions 5) "?")) "Monthly") "")]
       {:error-ch (chan)
        :has-error false
        :schedule (:job/schedule job)
