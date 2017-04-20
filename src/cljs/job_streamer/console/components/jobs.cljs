@@ -286,7 +286,7 @@
            [:tbody
             (apply concat
                    (for [{job-name :job/name :as job} (get-in app [:jobs :results])]
-                     [[:tr
+                     [[:tr {:key "tr-1"}
                        [:td.job-name
                         [:div
                          [:a {:href (str "#/job/" job-name)
@@ -298,7 +298,7 @@
                            (let [start (:job-execution/start-time latest-execution)
                                  end (or (:job-execution/end-time  latest-execution) now)]
                              (list
-                              [:td.log-link
+                              [:td.log-link {:key "td-1"}
                                (when start
                                  (let [id (:db/id latest-execution)]
                                    [:a {:on-click (fn [_]
@@ -306,10 +306,12 @@
                                                       (om/update! latest-execution :job-execution/step-executions nil)
                                                       (search-execution latest-execution job-name id)))}
                                     (fmt/date-medium start)]))]
-                              [:td (let [duration (fmt/duration-between start end)]
-                                     (if (= duration 0) "-" duration)) ]
+                              [:td {:key "td-2"}
+                               (let [duration (fmt/duration-between start end)]
+                                 (if (= duration 0) "-" duration)) ]
                               (let [status (name (get-in latest-execution [:job-execution/batch-status :db/ident]))]
-                                [:td {:class (condp = status
+                                [:td {:key "td-3"
+                                      :class (condp = status
                                                "completed" "positive"
                                                "failed" "negative"
                                                "")}
@@ -360,7 +362,7 @@
                                                                        (put! jobs-view-channel [:execute-dialog {:job job}]))}))}
                                  [:i.play.icon]]))]]
                       (when-let [step-executions (not-empty (get-in job [:job/latest-execution :job-execution/step-executions]))]
-                        [:tr
+                        [:tr {:key "tr-2"}
                          [:td {:colSpan 8}
                           (om/build execution-view step-executions {:react-key "job-execution"})]])]))]]]]
         [:div.row

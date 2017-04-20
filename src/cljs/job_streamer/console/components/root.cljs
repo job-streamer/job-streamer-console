@@ -316,14 +316,14 @@
       (if-let [system-error (:system-error app)]
         (om/build system-error-view app {:react-key "error"})
         (list
-         [:div.ui.fixed.inverted.teal.menu
+         [:div.ui.fixed.inverted.teal.menu {:key "div-1"}
           [:div.header.item [:a {:href "#/" } [:img.ui.image {:alt "JobStreamer" :src "img/logo.png"}]]]
           (om/build right-menu-view app {:opts {:header-channel  header-channel
                                                 :jobs-channel    jobs-channel
                                                 :calendars-channel calendars-channel
                                                 :message-channel message-channel
                                                 :react-key "menu"}})]
-         [:div.main.grid.content.full.height
+         [:div.main.grid.content.full.height {:key "div-2"}
           [:div#message.ui.floating.message
            {:style {:float "right"}
             :class (if message
