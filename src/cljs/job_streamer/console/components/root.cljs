@@ -173,6 +173,8 @@
         [:div#job-search.item
          [:form {:on-submit (fn [e]
                               (.preventDefault e)
+                              (om/transact! app #(assoc %
+                                                   :query (.-value (.getElementById js/document "job-query"))))
                               (search-jobs app {:q (.-value (.getElementById js/document "job-query")) :sort-by (-> app :job-sort-order parse-sort-order)} message-channel) false)}
           [:div.ui.icon.transparent.inverted.input
            [:input#job-query {:type "text"}]]

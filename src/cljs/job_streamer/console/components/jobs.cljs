@@ -163,7 +163,7 @@
                    not-empty)
             (let [page (om/get-state owner :page)
                   per  (om/get-state owner :per)]
-              (search-jobs app {:q (:query app) :sort-by (-> app :job-sort-order parse-sort-order) :offset (inc (* (dec page) per)) :limit per} message-channel)
+              (search-jobs app {:q (:query @app) :sort-by (-> @app :job-sort-order parse-sort-order) :offset (inc (* (dec page) per)) :limit per} message-channel)
               {:page page}))
           (put! ch :continue)
           (recur)))
@@ -189,7 +189,7 @@
                  {:type "button"
                   :on-click (fn [e]
                               (let [w (js/window.open (str "/" app-name "/jobs/new") "New" "width=1200,height=800")]
-                                (.addEventListener w "unload" (fn [] (js/setTimeout (fn [] (put! jobs-view-channel [:refresh-jobs true]))) 10))))}
+                                (js/setTimeout (fn [] (.addEventListener w "unload" (fn [] (js/setTimeout (fn [] (put! jobs-view-channel [:refresh-jobs true]))) 10))) 10)))}
                  [:i.plus.icon] "Create the first job"]]]]]]]
        [:div.ui.grid
         [:div.ui.two.column.row
@@ -198,7 +198,7 @@
            {:type "button"
             :on-click (fn [e]
                         (let [w (js/window.open (str "/" app-name "/jobs/new") "New" "width=1200,height=800")]
-                          (.addEventListener w "unload" (fn [] (js/setTimeout (fn [] (put! jobs-view-channel [:refresh-jobs true]))) 10))))}
+                          (js/setTimeout (fn [] (.addEventListener w "unload" (fn [] (js/setTimeout (fn [] (put! jobs-view-channel [:refresh-jobs true]))) 10))) 10)))}
            [:i.plus.icon] "New"]]
          [:div.ui.right.aligned.column
           [:button.ui.circular.basic.orange.icon.button
@@ -384,7 +384,7 @@
     {:dangerously-action-data nil
      :page 1})
   (will-mount [_]
-    (search-jobs app {:q (:query app) :sort-by (-> app :job-sort-order parse-sort-order) :p 1} message-channel)
+    (search-jobs app {:q (:query @app) :sort-by (-> @app :job-sort-order parse-sort-order) :p 1} message-channel)
     (go-loop []
       (let [[cmd msg] (<! jobs-channel)]
         (try
@@ -392,8 +392,8 @@
             :execute-dialog  (om/set-state! owner :executing-job [:execute msg])
             :restart-dialog  (om/set-state! owner :executing-job [:restart msg])
             :close-dialog (do (om/set-state! owner :executing-job nil)
-                              (search-jobs app {:q (:query app) :sort-by (-> app :job-sort-order parse-sort-order) } message-channel))
-            :refresh-jobs (do (search-jobs app {:q (:query app) :sort-by (-> app :job-sort-order parse-sort-order) } message-channel)
+                              (search-jobs app {:q (:query @app) :sort-by (-> @app :job-sort-order parse-sort-order) } message-channel))
+            :refresh-jobs (do (search-jobs app {:q (:query @app) :sort-by (-> @app :job-sort-order parse-sort-order) } message-channel)
                             (put! header-channel [:refresh-stats true]))
             :delete-job (do
                           (fn [results]
