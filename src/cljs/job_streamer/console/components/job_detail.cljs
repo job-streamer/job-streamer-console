@@ -104,7 +104,7 @@
     (str "0 0 " hour " " day " * ?")
   ""))
 
-(defn to-cron-expression[{:keys [schedule scheduling-type scheduling-hour scheduling-date scheduling-day-of-weeks]}]
+(defn to-cron-expression [{:keys [schedule scheduling-type scheduling-hour scheduling-date scheduling-day-of-weeks]}]
   (condp = scheduling-type
     "Daily"
     (to-cron-expression-daily scheduling-hour)
@@ -132,7 +132,7 @@
                  [:div.ui.breadcrumb
                   (drop-last
                    (interleave
-                    (loop [i 1, items []]
+                    (loop [i 1 items []]
                       (if (<= i (count mode))
                         (recur (inc i)
                                (conj items (if-let [item (get breadcrumb-elements
@@ -239,15 +239,15 @@
       [:div.field {}
         [:input
           {:type "checkbox"
-          :checked (some #(= label %) day-of-weeks)
-          :on-change (fn [e]
-                      (let [hour (om/get-state owner :scheduling-hour)
-                            day-of-weeks (if (.. e -target -checked)
-                                           (-> day-of-weeks (conj label) set vec)
-                                           (filter #(not= label %) day-of-weeks))]
-                        (om/set-state! owner :scheduling-day-of-weeks day-of-weeks)
-                        (om/set-state! owner [:schedule :schedule/cron-notation]
-                                      (to-cron-expression-weekly hour day-of-weeks))))}]
+           :checked (some #(= label %) day-of-weeks)
+           :on-change (fn [e]
+                        (let [hour (om/get-state owner :scheduling-hour)
+                              day-of-weeks (if (.. e -target -checked)
+                                             (-> day-of-weeks (conj label) set vec)
+                                             (filter #(not= label %) day-of-weeks))]
+                          (om/set-state! owner :scheduling-day-of-weeks day-of-weeks)
+                          (om/set-state! owner [:schedule :schedule/cron-notation]
+                                         (to-cron-expression-weekly hour day-of-weeks))))}]
         [:label {} label]]]))
 
 (defcomponent scheduling-view [job owner]
@@ -260,20 +260,20 @@
                            (string/split #","))
           scheduling-type (if cron-expressions
                               (cond (and (= (nth cron-expressions 0) "0")
-                                        (= (nth cron-expressions 1) "0")
-                                        (= (nth cron-expressions 3) "*")
-                                        (= (nth cron-expressions 4) "*")
-                                        (= (nth cron-expressions 5) "?")) "Daily"
+                                         (= (nth cron-expressions 1) "0")
+                                         (= (nth cron-expressions 3) "*")
+                                         (= (nth cron-expressions 4) "*")
+                                         (= (nth cron-expressions 5) "?")) "Daily"
                                     (and (= (nth cron-expressions 0) "0")
-                                        (= (nth cron-expressions 1) "0")
-                                        (= (nth cron-expressions 3) "?")
-                                        (= (nth cron-expressions 4) "*")
-                                        (not= (nth cron-expressions 5) "?")) "Weekly"
+                                         (= (nth cron-expressions 1) "0")
+                                         (= (nth cron-expressions 3) "?")
+                                         (= (nth cron-expressions 4) "*")
+                                         (not= (nth cron-expressions 5) "?")) "Weekly"
                                     (and (= (nth cron-expressions 0) "0")
-                                        (= (nth cron-expressions 1) "0")
-                                        (not= (nth cron-expressions 3) "*")
-                                        (= (nth cron-expressions 4) "*")
-                                        (= (nth cron-expressions 5) "?")) "Monthly") "")]
+                                         (= (nth cron-expressions 1) "0")
+                                         (not= (nth cron-expressions 3) "*")
+                                         (= (nth cron-expressions 4) "*")
+                                         (= (nth cron-expressions 5) "?")) "Monthly") "")]
       {:error-ch (chan)
        :has-error false
        :schedule (:job/schedule job)
@@ -337,14 +337,12 @@
                               (om/set-state! owner :scheduling-hour hour)
                               (om/set-state! owner [:schedule :schedule/cron-notation] (to-cron-expression-weekly hour day-of-weeks))))}]
              "o'clock at every"
-               [:div.inline.fields
-                {}
+               [:div.inline.fields {}
                 (weekday-checkbox-view owner "Sun")
                 (weekday-checkbox-view owner "Mon")
                 (weekday-checkbox-view owner "Tue")
                 (weekday-checkbox-view owner "Wed")]
-               [:div.inline.fields
-                {}
+               [:div.inline.fields {}
                 (weekday-checkbox-view owner "Thu")
                 (weekday-checkbox-view owner "Fri")
                 (weekday-checkbox-view owner "Sat")]])
@@ -441,8 +439,7 @@
                 [:div.item
                  [:div.content
                   [:div.header "Pausing"]
-                  [:div.description (:schedule/cron-notation schedule)]]])
-             ]
+                  [:div.description (:schedule/cron-notation schedule)]]])]
              [:div.ui.labeled.icon.menu
               (if exe
                 [:a.item {:on-click (fn [e]
