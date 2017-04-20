@@ -43,13 +43,16 @@
                                    (if rest-jobs
                                      (put! ch rest-jobs)
                                      (callback cnt)))
-                        :forbidden-handler (fn [response]
+                        :error-handler (fn [response]
+                                         (put! message-channel {:type "error"
+                                                                :body (:message response)}))
+                        :forbidden-handler (fn [_]
                                              (put! message-channel {:type "error"
                                                                     :body "Cannot import. Unauthorized."}))})
           (recur (inc cnt)))))
     (put! ch jobs)))
 
-(defn import-edn-calendars [calendars callback]
+(defn import-edn-calendars [calendars callback message-channel]
   (let [ch (chan)]
     (go-loop [cnt 1]
       (let [calendars (<! ch)
@@ -60,7 +63,13 @@
                        {:handler (fn [_]
                                    (if rest-calendars
                                      (put! ch rest-calendars)
-                                     (callback cnt)))})
+                                     (callback cnt)))
+                        :error-handler (fn [response]
+                                         (put! message-channel {:type "error"
+                                                                :body (:message response)}))
+                        :forbidden-handler (fn [_]
+                                             (put! message-channel {:type "error"
+                                                                    :body "Cannot import. Unauthorized."}))})
           (recur (inc cnt)))))
     (put! ch calendars)))
 
@@ -238,7 +247,7 @@
              (upload-dialog
               "file-calendars"
               (fn [file result callback-fn]
-                (import-edn-calendars (read-string result) callback-fn))
+                (import-edn-calendars (read-string result) callback-fn message-channel))
               (fn [cnt]
                 (put! message-channel {:type "success"
                                        :body (str "Imported " cnt " calendars!")})

@@ -21,6 +21,10 @@
                parameters
                {:handler (fn [response]
                            (put! channel [:close-dialog nil]))
+                :error-handler (fn [response]
+                                 (when message-channel
+                                   (put! message-channel {:type "error" :body (:message response)}))
+                                 (put! channel [:close-dialog nil]))
                 :forbidden-handler (fn [response]
                                      (when message-channel
                                        (put! message-channel {:type "error" :body "You are unauthorized to execute job."}))
@@ -36,6 +40,9 @@
                              (om/update! latest-execution
                                          [:job-execution/batch-status :db/ident]
                                          :batch-status/stopping))
+                  :error-handler (fn [response]
+                                   (when message-channel
+                                     (put! message-channel {:type "error" :body (:message response)})))
                   :forbidden-handler (fn [response]
                                        (when message-channel
                                          (put! message-channel {:type "error" :body "You are unauthorized to stop execution job."})))})))
@@ -50,6 +57,9 @@
                              (om/update! latest-execution
                                          [:job-execution/batch-status :db/ident]
                                          :batch-status/abandoned))
+                  :error-handler (fn [response]
+                                   (when message-channel
+                                     (put! message-channel {:type "error" :body (:message response)})))
                   :forbidden-handler (fn [response]
                                        (when message-channel
                                          (put! message-channel {:type "error" :body "You are unauthorized to abandon execution job."})))})))
@@ -63,6 +73,10 @@
                  parameters
                  {:handler (fn [response]
                              (put! channel [:close-dialog nil]))
+                  :error-handler (fn [response]
+                                   (when message-channel
+                                     (put! message-channel {:type "error" :body (:message response)}))
+                                   (put! channel [:close-dialog nil]))
                   :forbidden-handler (fn [response]
                                        (when message-channel
                                          (put! message-channel {:type "error" :body "You are unauthorized to restart execution job."}))
