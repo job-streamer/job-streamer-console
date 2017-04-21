@@ -43,13 +43,16 @@
                                    (if rest-jobs
                                      (put! ch rest-jobs)
                                      (callback cnt)))
-                        :forbidden-handler (fn [response]
+                        :error-handler (fn [response]
+                                         (put! message-channel {:type "error"
+                                                                :body (:message response)}))
+                        :forbidden-handler (fn [_]
                                              (put! message-channel {:type "error"
                                                                     :body "Cannot import. Unauthorized."}))})
           (recur (inc cnt)))))
     (put! ch jobs)))
 
-(defn import-edn-calendars [calendars callback]
+(defn import-edn-calendars [calendars callback message-channel]
   (let [ch (chan)]
     (go-loop [cnt 1]
       (let [calendars (<! ch)
@@ -60,7 +63,13 @@
                        {:handler (fn [_]
                                    (if rest-calendars
                                      (put! ch rest-calendars)
-                                     (callback cnt)))})
+                                     (callback cnt)))
+                        :error-handler (fn [response]
+                                         (put! message-channel {:type "error"
+                                                                :body (:message response)}))
+                        :forbidden-handler (fn [_]
+                                             (put! message-channel {:type "error"
+                                                                    :body "Cannot import. Unauthorized."}))})
           (recur (inc cnt)))))
     (put! ch calendars)))
 
@@ -164,6 +173,8 @@
         [:div#job-search.item
          [:form {:on-submit (fn [e]
                               (.preventDefault e)
+                              (om/transact! app #(assoc %
+                                                   :query (.-value (.getElementById js/document "job-query"))))
                               (search-jobs app {:q (.-value (.getElementById js/document "job-query")) :sort-by (-> app :job-sort-order parse-sort-order)} message-channel) false)}
           [:div.ui.icon.transparent.inverted.input
            [:input#job-query {:type "text"}]]
@@ -238,7 +249,7 @@
              (upload-dialog
               "file-calendars"
               (fn [file result callback-fn]
-                (import-edn-calendars (read-string result) callback-fn))
+                (import-edn-calendars (read-string result) callback-fn message-channel))
               (fn [cnt]
                 (put! message-channel {:type "success"
                                        :body (str "Imported " cnt " calendars!")})
@@ -307,14 +318,14 @@
       (if-let [system-error (:system-error app)]
         (om/build system-error-view app {:react-key "error"})
         (list
-         [:div.ui.fixed.inverted.teal.menu
+         [:div.ui.fixed.inverted.teal.menu {:key "div-1"}
           [:div.header.item [:a {:href "#/" } [:img.ui.image {:alt "JobStreamer" :src "img/logo.png"}]]]
           (om/build right-menu-view app {:opts {:header-channel  header-channel
                                                 :jobs-channel    jobs-channel
                                                 :calendars-channel calendars-channel
                                                 :message-channel message-channel
                                                 :react-key "menu"}})]
-         [:div.main.grid.content.full.height
+         [:div.main.grid.content.full.height {:key "div-2"}
           [:div#message.ui.floating.message
            {:style {:float "right"}
             :class (if message

@@ -3,7 +3,7 @@
   (:require [om.core :as om :include-macros true]
             [om-tools.core :refer-macros [defcomponent]]
             [sablono.core :as html :refer-macros [html]]
-            [cljs.core.async :refer [put! <! chan pub sub unsub-all]]
+            [cljs.core.async :refer [put! <! chan pub sub unsub-all timeout]]
             [clojure.browser.net :as net]
             [clojure.string :as string]
             [goog.events :as events]
@@ -23,12 +23,13 @@
            [goog.events EventType]
            [goog Uri]))
 
-(defn save-calendar [calendar owner calendars-channel]
+(defn save-calendar [calendar owner calendars-channel message-channel]
   (letfn [(on-success [_] (do
-                            (om/set-state! owner :save-status true)
+                            (put! message-channel {:type "info" :body "Saved calendar successfully."})
                             (put! calendars-channel [:save-calendar calendar]
                                   #(set! (.-href js/location)  "#/calendars"))))
-          (on-failure [res error-code] (om/set-state! owner :save-error error-code))]
+          (on-failure [res error-code]
+                      (put! message-channel {:type "error" :body (:message res)}))]
     (if (:new? calendar)
       (api/request "/calendars" :POST calendar
                    {:handler on-success
@@ -134,7 +135,7 @@
      :kalendae nil
      :save-status false
      :save-error nil})
-  (render-state [_ {:keys [kalendae calendar error-map save-error save-status mode]}]
+  (render-state [_ {:keys [kalendae calendar error-map save-error save-status mode message-channel]}]
     (html
      [:form.ui.form
       (om/build breadcrumb-view mode {:init-state {:calendar-name cal-name}
@@ -223,13 +224,9 @@
                                      [result map] (b/validate calendar :calendar/name v/required)]
                                  (if result
                                    (om/set-state! owner :error-map (:bouncer.core/errors map))
-                                   (save-calendar calendar owner calendars-channel))))}
+                                   (save-calendar calendar owner calendars-channel message-channel))))}
                   (when (not-empty error-map) {:class "disabled"}))
-           [:i.save.icon] "Save"]
-          (if save-status
-            [:i.checkmark.green.icon]
-            (when save-error
-              [:div.red save-error]))]]]]]))
+           [:i.save.icon] "Save"]]]]]]))
 
   (did-mount [_]
     (om/set-state! owner :kalendae
@@ -315,7 +312,8 @@
 
 (defcomponent calendars-view [app owner {:keys [calendars-channel]}]
   (init-state [_]
-    {:dangerously-action-data nil})
+    {:dangerously-action-data nil
+     :message-channel (chan)})
   (will-mount [_]
     (go-loop []
       (let [[cmd msg] (<! calendars-channel)]
@@ -337,8 +335,14 @@
             :open-dangerously-dialog (om/set-state! owner :dangerously-action-data msg))
           (catch js/Error e))
         (when (not= cmd :close-chan-listener)
-          (recur)))))
-  (render-state [_ {:keys [dangerously-action-data]}]
+          (recur))))
+    (go-loop []
+      (when-let [msg (<! (om/get-state owner :message-channel))]
+        (om/set-state! owner :message msg)
+        (go (<! (timeout 5000))
+          (om/set-state! owner :message nil))
+        (recur))))
+  (render-state [_ {:keys [dangerously-action-data message message-channel]}]
     (let [mode (second (:mode app))]
       (html
        [:div.ui.grid
@@ -351,15 +355,19 @@
             [:div.sub.header "Calendars"]]]]]
         [:div.ui.row
          [:div.ui.column
+          (when message [:div#message.ui.floating.message {:class (str "visible " (:type message))} (:body message)])
           (case mode
-            :new (om/build calendar-edit-view (:calendars app) {:state {:mode (:mode app)}
-                                                                :opts {:calendars-channel calendars-channel}
+            :new (om/build calendar-edit-view (:calendars app) {:init-state {:message-channel message-channel}
+                                                                :state {:mode (:mode app)}
+                                                                :opts {:calendars-channel calendars-channel
+                                                                       :message-channel message-channel}
                                                                 :react-key "calendar-new"})
             :detail (om/build calendar-detail-view (:cal-name app) {:state {:mode (:mode app)}
                                                                     :opts {:calendars-channel calendars-channel}
                                                                     :react-key "calendar-detail"})
             :edit (om/build calendar-edit-view (:calendars app)
-                            {:opts {:cal-name (:cal-name app)
+                            {:init-state {:message-channel message-channel}
+                             :opts {:cal-name (:cal-name app)
                                     :calendars-channel calendars-channel}
                              :state {:mode (:mode app)}
                              :react-key "calendar-edit"})

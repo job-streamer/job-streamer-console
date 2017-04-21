@@ -21,6 +21,10 @@
                parameters
                {:handler (fn [response]
                            (put! channel [:close-dialog nil]))
+                :error-handler (fn [response]
+                                 (when message-channel
+                                   (put! message-channel {:type "error" :body (:message response)}))
+                                 (put! channel [:close-dialog nil]))
                 :forbidden-handler (fn [response]
                                      (when message-channel
                                        (put! message-channel {:type "error" :body "You are unauthorized to execute job."}))
@@ -36,6 +40,9 @@
                              (om/update! latest-execution
                                          [:job-execution/batch-status :db/ident]
                                          :batch-status/stopping))
+                  :error-handler (fn [response]
+                                   (when message-channel
+                                     (put! message-channel {:type "error" :body (:message response)})))
                   :forbidden-handler (fn [response]
                                        (when message-channel
                                          (put! message-channel {:type "error" :body "You are unauthorized to stop execution job."})))})))
@@ -50,6 +57,9 @@
                              (om/update! latest-execution
                                          [:job-execution/batch-status :db/ident]
                                          :batch-status/abandoned))
+                  :error-handler (fn [response]
+                                   (when message-channel
+                                     (put! message-channel {:type "error" :body (:message response)})))
                   :forbidden-handler (fn [response]
                                        (when message-channel
                                          (put! message-channel {:type "error" :body "You are unauthorized to abandon execution job."})))})))
@@ -63,6 +73,10 @@
                  parameters
                  {:handler (fn [response]
                              (put! channel [:close-dialog nil]))
+                  :error-handler (fn [response]
+                                   (when message-channel
+                                     (put! message-channel {:type "error" :body (:message response)}))
+                                   (put! channel [:close-dialog nil]))
                   :forbidden-handler (fn [response]
                                        (when message-channel
                                          (put! message-channel {:type "error" :body "You are unauthorized to restart execution job."}))
@@ -149,7 +163,7 @@
                    not-empty)
             (let [page (om/get-state owner :page)
                   per  (om/get-state owner :per)]
-              (search-jobs app {:q (:query app) :sort-by (-> app :job-sort-order parse-sort-order) :offset (inc (* (dec page) per)) :limit per} message-channel)
+              (search-jobs app {:q (:query @app) :sort-by (-> @app :job-sort-order parse-sort-order) :offset (inc (* (dec page) per)) :limit per} message-channel)
               {:page page}))
           (put! ch :continue)
           (recur)))
@@ -272,7 +286,7 @@
            [:tbody
             (apply concat
                    (for [{job-name :job/name :as job} (get-in app [:jobs :results])]
-                     [[:tr
+                     [[:tr {:key (str "tr-1-" job-name)}
                        [:td.job-name
                         [:div
                          [:a {:href (str "#/job/" job-name)
@@ -284,7 +298,7 @@
                            (let [start (:job-execution/start-time latest-execution)
                                  end (or (:job-execution/end-time  latest-execution) now)]
                              (list
-                              [:td.log-link
+                              [:td.log-link {:key "td-1"}
                                (when start
                                  (let [id (:db/id latest-execution)]
                                    [:a {:on-click (fn [_]
@@ -292,10 +306,12 @@
                                                       (om/update! latest-execution :job-execution/step-executions nil)
                                                       (search-execution latest-execution job-name id)))}
                                     (fmt/date-medium start)]))]
-                              [:td (let [duration (fmt/duration-between start end)]
-                                     (if (= duration 0) "-" duration)) ]
+                              [:td {:key "td-2"}
+                               (let [duration (fmt/duration-between start end)]
+                                 (if (= duration 0) "-" duration)) ]
                               (let [status (name (get-in latest-execution [:job-execution/batch-status :db/ident]))]
-                                [:td {:class (condp = status
+                                [:td {:key "td-3"
+                                      :class (condp = status
                                                "completed" "positive"
                                                "failed" "negative"
                                                "")}
@@ -346,7 +362,7 @@
                                                                        (put! jobs-view-channel [:execute-dialog {:job job}]))}))}
                                  [:i.play.icon]]))]]
                       (when-let [step-executions (not-empty (get-in job [:job/latest-execution :job-execution/step-executions]))]
-                        [:tr
+                        [:tr {:key (str "tr-2-" job-name)}
                          [:td {:colSpan 8}
                           (om/build execution-view step-executions {:react-key "job-execution"})]])]))]]]]
         [:div.row
@@ -368,7 +384,7 @@
     {:dangerously-action-data nil
      :page 1})
   (will-mount [_]
-    (search-jobs app {:q (:query app) :sort-by (-> app :job-sort-order parse-sort-order) :p 1} message-channel)
+    (search-jobs app {:q (:query @app) :sort-by (-> @app :job-sort-order parse-sort-order) :p 1} message-channel)
     (go-loop []
       (let [[cmd msg] (<! jobs-channel)]
         (try
@@ -376,8 +392,8 @@
             :execute-dialog  (om/set-state! owner :executing-job [:execute msg])
             :restart-dialog  (om/set-state! owner :executing-job [:restart msg])
             :close-dialog (do (om/set-state! owner :executing-job nil)
-                              (search-jobs app {:q (:query app) :sort-by (-> app :job-sort-order parse-sort-order) } message-channel))
-            :refresh-jobs (do (search-jobs app {:q (:query app) :sort-by (-> app :job-sort-order parse-sort-order) } message-channel)
+                              (search-jobs app {:q (:query @app) :sort-by (-> @app :job-sort-order parse-sort-order) } message-channel))
+            :refresh-jobs (do (search-jobs app {:q (:query @app) :sort-by (-> @app :job-sort-order parse-sort-order) } message-channel)
                             (put! header-channel [:refresh-stats true]))
             :delete-job (do
                           (fn [results]
