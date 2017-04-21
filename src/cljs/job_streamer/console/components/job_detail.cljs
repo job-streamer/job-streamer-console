@@ -91,12 +91,11 @@
     (str "0 0 " hour " * * ?")
     ""))
 
-(defn get-week-day-sort-key [day-of-week]
-  (get {"Sun" 0 "Mon" 1 "Tue" 2 "Wed" 3 "Thu" 4 "Fri" 5 "Sat" 6} day-of-week))
-
 (defn to-cron-expression-weekly [hour day-of-weeks]
+  (println (pr-str day-of-weeks))
   (if (and (not-empty hour) (not-empty day-of-weeks))
-    (str "0 0 " hour " ? * " (->> day-of-weeks (sort-by get-week-day-sort-key) (clojure.string/join ",")))
+    (letfn [(get-week-day-sort-key [day-of-week] (get {"Sun" 0 "Mon" 1 "Tue" 2 "Wed" 3 "Thu" 4 "Fri" 5 "Sat" 6} day-of-week))]
+      (str "0 0 " hour " ? * " (->> day-of-weeks (sort-by get-week-day-sort-key) (clojure.string/join ","))))
     ""))
 
 (defn to-cron-expression-monthly[hour day]
@@ -104,15 +103,16 @@
     (str "0 0 " hour " " day " * ?")
   ""))
 
-(defn to-cron-expression [{:keys [schedule scheduling-type scheduling-hour scheduling-date scheduling-day-of-weeks]}]
-  (condp = scheduling-type
-    "Daily"
-    (to-cron-expression-daily scheduling-hour)
-    "Weekly"
-    (to-cron-expression-weekly scheduling-hour scheduling-day-of-weeks)
-    "Monthly"
-    (to-cron-expression-monthly scheduling-hour scheduling-date)
-    (:schedule/cron-notation schedule)))
+(defn to-cron-expression [owner]
+  (let [{:keys [schedule scheduling-type scheduling-hour scheduling-date scheduling-day-of-weeks]} (om/get-state owner)]
+    (condp = scheduling-type
+      "Daily"
+      (to-cron-expression-daily scheduling-hour)
+      "Weekly"
+      (to-cron-expression-weekly nil [])
+      "Monthly"
+      (to-cron-expression-monthly scheduling-hour scheduling-date)
+      (:schedule/cron-notation schedule))))
 
 ;;;
 ;;; Om view components
@@ -255,9 +255,6 @@
     (let [cron-expressions (some-> job
                                    (get-in [:job/schedule :schedule/cron-notation])
                                    (string/split #"\s"))
-          day-of-weeks (some-> cron-expressions
-                               (nth 5)
-                               (string/split #","))
           scheduling-type (if cron-expressions
                             (cond (and (= (nth cron-expressions 0) "0")
                                        (= (nth cron-expressions 1) "0")
@@ -273,7 +270,12 @@
                                        (= (nth cron-expressions 1) "0")
                                        (not= (nth cron-expressions 3) "*")
                                        (= (nth cron-expressions 4) "*")
-                                       (= (nth cron-expressions 5) "?")) "Monthly") "")]
+                                       (= (nth cron-expressions 5) "?")) "Monthly") "")
+          day-of-weeks (if (= scheduling-type "Weekly")
+                         (some-> cron-expressions
+                                 (nth 5)
+                                 (string/split #","))
+                         [])]
       {:error-ch (chan)
        :has-error false
        :schedule (:job/schedule job)
@@ -309,11 +311,9 @@
                     :on-change (fn [e]
                                  (let [value (.. e -target -value)]
                                    (om/set-state! owner :scheduling-type value)
-                                   (om/set-state! owner [:schedule :schedule/cron-notation] (to-cron-expression (om/get-state owner)))))}
-           [:option {:value ""} ""]
-           [:option {:value "Daily"} "Daily"]
-           [:option {:value "Weekly"} "Weekly"]
-           [:option {:value "Monthly"} "Monthly"]]
+                                   (om/set-state! owner [:schedule :schedule/cron-notation] (to-cron-expression owner))))}
+           (for [v ["" "Daily" "Weekly" "Monthly"]]
+             [:option {:value v :key v} v])]
           (when (= scheduling-type "Daily")
             [:div
              "Fire at"
@@ -379,9 +379,9 @@
                     :on-change (fn [e]
                                  (let [value (.. e -target -value)]
                                    (om/set-state! owner [:schedule :schedule/calendar :calendar/name] value)))}
-           [:option {:value ""} ""]
-           (for [cal calendars]
-             [:option {:value (cal :calendar/name)} (cal :calendar/name)])]])]
+           [:option {:value "" :key ""} ""]
+           (for [{:keys [calendar/name]} calendars]
+             [:option {:value name :key name} name])]])]
       [:div.ui.buttons
        [:button.ui.button
         {:type "button"
