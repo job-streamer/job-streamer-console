@@ -286,7 +286,7 @@
            [:tbody
             (apply concat
                    (for [{job-name :job/name :as job} (get-in app [:jobs :results])]
-                     [[:tr {:key "tr-1"}
+                     [[:tr {:key (str "tr-1-" job-name)}
                        [:td.job-name
                         [:div
                          [:a {:href (str "#/job/" job-name)
@@ -362,7 +362,7 @@
                                                                        (put! jobs-view-channel [:execute-dialog {:job job}]))}))}
                                  [:i.play.icon]]))]]
                       (when-let [step-executions (not-empty (get-in job [:job/latest-execution :job-execution/step-executions]))]
-                        [:tr {:key "tr-2"}
+                        [:tr {:key (str "tr-2-" job-name)}
                          [:td {:colSpan 8}
                           (om/build execution-view step-executions {:react-key "job-execution"})]])]))]]]]
         [:div.row
