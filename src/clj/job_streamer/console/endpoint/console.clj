@@ -111,5 +111,6 @@
    (GET "/css/job-streamer.css" [] (-> {:body (style/build)}
                                        (content-type "text/css")))
    (GET "/version" [] (-> {:body  (clojure.string/replace (str "\"" (slurp "VERSION") "\"") "\n" "")}
-                                       (content-type "text/plain")))))
+                                       (content-type "text/plain")))
+   (GET "/healthcheck" [] (do {:status 200}))                                      ))
 
