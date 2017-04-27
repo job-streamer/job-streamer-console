@@ -113,3 +113,4 @@
    (GET "/version" [] (-> {:body  (clojure.string/replace (str "\"" (slurp "VERSION") "\"") "\n" "")}
                                        (content-type "text/plain")))
    (GET "/healthcheck" [] (do {:status 200}))))
+
