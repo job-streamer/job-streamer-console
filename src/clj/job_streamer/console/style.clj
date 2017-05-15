@@ -90,7 +90,10 @@
    [:table.ui.table
    [:th.can-sort {:cursor "pointer"}]]
    [:#job-search.item [:i.search.icon {:cursor "pointer"}]]
-   [:#progress.hidden {:display "none"}]])
+   [:#progress.hidden {:display "none"}]
+   [:#job-query {:border {:radius 0
+                          :bottom "0.3px solid"
+                          :color "#fff !important"}}]])
 
 
 (defn build []
