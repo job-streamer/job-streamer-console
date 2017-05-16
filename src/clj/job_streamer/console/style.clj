@@ -90,7 +90,8 @@
    [:table.ui.table
    [:th.can-sort {:cursor "pointer"}]]
    [:#job-search.item [:i.search.icon {:cursor "pointer"}]]
-   [:#progress.hidden {:display "none"}]])
+   [:#progress.hidden {:display "none"}]
+   [:#calendar-detail-view-content [:.k-days {:pointer-events "none"}]]])
 
 
 (defn build []

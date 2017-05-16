@@ -85,7 +85,7 @@
                   [:div
                    (om/build breadcrumb-view mode {:init-state {:calendar-name cal-name}
                                                    :react-key "calendar-detail-breadcrumb"})
-                   [:div.ui.grid
+                   [:div#calendar-detail-view-content.ui.grid
                     [:div.row
                      [:div.column
                       [:h3.ui.header (:calendar/name calendar)]]]
