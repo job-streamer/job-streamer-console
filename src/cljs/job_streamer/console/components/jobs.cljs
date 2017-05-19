@@ -4,6 +4,7 @@
             [om-tools.core :refer-macros [defcomponent]]
             [sablono.core :as html :refer-macros [html]]
             [cljs.core.async :refer [put! <! chan timeout close!]]
+            [job-streamer.console.components.job-util :as job-util]
             (job-streamer.console.format :as fmt)
             (job-streamer.console.api :as api))
   (:use (job-streamer.console.components.timeline :only [timeline-view])
@@ -29,40 +30,6 @@
                                      (when message-channel
                                        (put! message-channel {:type "error" :body "You are unauthorized to execute job."}))
                                      (put! channel [:close-dialog nil]))}))
-
-(defn stop-job [job message-channel]
-  (when-let [latest-execution (:job/latest-execution job)]
-    (api/request (str "/" app-name
-                      "/job/" (:job/name job)
-                      "/execution/" (:db/id latest-execution) "/stop")
-                 :PUT
-                 {:handler (fn [response]
-                             (om/update! latest-execution
-                                         [:job-execution/batch-status :db/ident]
-                                         :batch-status/stopping))
-                  :error-handler (fn [response]
-                                   (when message-channel
-                                     (put! message-channel {:type "error" :body (:message response)})))
-                  :forbidden-handler (fn [response]
-                                       (when message-channel
-                                         (put! message-channel {:type "error" :body "You are unauthorized to stop execution job."})))})))
-
-(defn abandon-job [job message-channel]
-  (when-let [latest-execution (:job/latest-execution job)]
-    (api/request (str "/" app-name
-                      "/job/" (:job/name job)
-                      "/execution/" (:db/id latest-execution) "/abandon")
-                 :PUT
-                 {:handler (fn [response]
-                             (om/update! latest-execution
-                                         [:job-execution/batch-status :db/ident]
-                                         :batch-status/abandoned))
-                  :error-handler (fn [response]
-                                   (when message-channel
-                                     (put! message-channel {:type "error" :body (:message response)})))
-                  :forbidden-handler (fn [response]
-                                       (when message-channel
-                                         (put! message-channel {:type "error" :body "You are unauthorized to abandon execution job."})))})))
 
 (defn restart-job [job parameters channel message-channel]
   (when-let [latest-execution (:job/latest-execution job)]
@@ -328,8 +295,8 @@
                                  [:button.ui.circular.orange.icon.button.visible.content
                                   {:on-click (fn [_]
                                                (if (#{:batch-status/started} status)
-                                                 (stop-job job message-channel)
-                                                 (abandon-job job message-channel)))}
+                                                 (job-util/stop-job job message-channel)
+                                                 (job-util/abandon-job job message-channel)))}
                                   [:i.setting.loading.icon]]
                                  [:button.ui.circular.red.icon.basic.button.hidden.content
                                   (if (#{:batch-status/started} status)
@@ -342,7 +309,7 @@
                                  [:button.ui.circular.red.icon.inverted.button
                                   {:title "abandon"
                                    :on-click (fn [_]
-                                               (:job-util/abandon-job job message-channel))}
+                                               (job-util/abandon-job job message-channel))}
                                   [:i.stop.icon]]
                                  [:button.ui.circular.yellow.icon.inverted.button
                                   {:title "restart"
