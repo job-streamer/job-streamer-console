@@ -339,11 +339,12 @@
                                 (#{:batch-status/stopped :batch-status/failed} status)
                                 (when (not (false? (:job/restartable? job)))
                                 [:div
-                                 [:button.ui.circular.red.icon.basic.button
-                                  {:on-click (fn [_]
-                                               (abandon-job job message-channel))}
+                                 [:button.ui.circular.red.icon.inverted.button
+                                  {:title "abandon"
+                                   :on-click (fn [_]
+                                               (:job-util/abandon-job job message-channel))}
                                   [:i.stop.icon]]
-                                 [:button.ui.circular.yellow.icon.basic.button
+                                 [:button.ui.circular.yellow.icon.inverted.button
                                   {:title "restart"
                                    :on-click (fn [_]
                                                (api/request (str "/" app-name "/job/" job-name)
@@ -355,8 +356,9 @@
                                 [:div]
 
                                 :else
-                                [:button.ui.circular.icon.green.basic.button
-                                 {:on-click (fn [_]
+                                [:button.ui.circular.icon.green.inverted.button
+                                 {:title "start"
+                                  :on-click (fn [_]
                                               (api/request (str "/" app-name "/job/" job-name)
                                                            {:handler (fn [job]
                                                                        (put! jobs-view-channel [:execute-dialog {:job job}]))}))}
