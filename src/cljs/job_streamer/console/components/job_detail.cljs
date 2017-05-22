@@ -522,47 +522,18 @@
                             [:div.statistic
                              [:div.value (get-in job-detail [:job/stats :failure])]
                              [:div.label "Failed"]]
-                            (let [status (get-in job [:job/latest-execution :job-execution/batch-status :db/ident])]
-                              (cond
-                                (#{:batch-status/undispatched :batch-status/unrestarted :batch-status/queued :batch-status/started} status)
-                                [:div.ui.fade.reveal
-                                 [:button.ui.circular.orange.icon.button.visible.content
-                                  {:on-click (fn [_]
-                                               (if (#{:batch-status/started} status)
-                                                 (job-util/stop-job job refresh-job-ch)
-                                                 (job-util/abandon-job job refresh-job-ch)))}
-                                  [:i.setting.loading.icon]]
-                                 [:button.ui.circular.red.icon.basic.button.hidden.content
-                                  (if (#{:batch-status/started} status)
-                                    [:i.pause.icon]
-                                    [:i.stop.icon])]]
-
-                                (#{:batch-status/stopped :batch-status/failed} status)
-                                (when (not (false? (:job/restartable? job)))
-                                [:div
-                                 [:button.ui.circular.red.icon.inverted.button
-                                  {:title "abandon"
-                                   :on-click (fn [_]
-                                                (job-util/abandon-job job refresh-job-ch)
-                                               )}
-                                  [:i.stop.icon]]
-                                 [:button.ui.circular.yellow.icon.inverted.button
-                                  {:title "restart"
-                                   :on-click (fn [_]
-                                              (put! (:jobs-channel opts) [:restart-dialog {:job job-detail :backto (.-href js/location)}])
-                                              (set! (.-href js/location) "#"))}
-                                  [:i.play.icon]]])
-
-                                (#{:batch-status/starting  :batch-status/stopping} status)
-                                [:div]
-
-                                :else
-                                [:button.ui.circular.icon.green.inverted.button
-                                  {:title "start"
-                                   :on-click (fn  [_]
-                                              (put! (:jobs-channel opts) [:execute-dialog {:job job-detail :backto (.-href js/location)}])
-                                              (set! (.-href js/location) "#"))}
-                                  [:i.play.icon]]))]
+                            (job-util/job-execute-button-view job {:progress (fn [_]
+                                                                               (if (#{:batch-status/started} (get-in job [:job/latest-execution :job-execution/batch-status :db/ident]))
+                                                                                 (job-util/stop-job job refresh-job-ch)
+                                                                                 (job-util/abandon-job job refresh-job-ch)))
+                                                                   :abandon (fn [_]
+                                                                              (job-util/abandon-job job refresh-job-ch))
+                                                                   :restart (fn [_]
+                                                                              (put! (:jobs-channel opts) [:restart-dialog {:job job-detail :backto (.-href js/location)}])
+                                                                              (set! (.-href js/location) "#"))
+                                                                   :start (fn  [_]
+                                                                            (put! (:jobs-channel opts) [:execute-dialog {:job job-detail :backto (.-href js/location)}])
+                                                                            (set! (.-href js/location) "#"))})]
                            [:hr.ui.divider]
                            [:div.ui.tiny.horizontal.statistics
                             [:div.statistic

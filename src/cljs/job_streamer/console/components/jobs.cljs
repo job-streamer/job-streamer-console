@@ -288,48 +288,21 @@
                         (if-let [next-execution (:job/next-execution job)]
                           (fmt/date-medium (:job-execution/start-time next-execution))
                           "-")]
-                       [:td (let [status (get-in job [:job/latest-execution :job-execution/batch-status :db/ident])]
-                              (cond
-                                (#{:batch-status/undispatched :batch-status/unrestarted :batch-status/queued :batch-status/started} status)
-                                [:div.ui.fade.reveal
-                                 [:button.ui.circular.orange.icon.button.visible.content
-                                  {:on-click (fn [_]
-                                               (if (#{:batch-status/started} status)
-                                                 (job-util/stop-job job message-channel)
-                                                 (job-util/abandon-job job message-channel)))}
-                                  [:i.setting.loading.icon]]
-                                 [:button.ui.circular.red.icon.basic.button.hidden.content
-                                  (if (#{:batch-status/started} status)
-                                    [:i.pause.icon]
-                                    [:i.stop.icon])]]
-
-                                (#{:batch-status/stopped :batch-status/failed} status)
-                                (when (not (false? (:job/restartable? job)))
-                                [:div
-                                 [:button.ui.circular.red.icon.inverted.button
-                                  {:title "abandon"
-                                   :on-click (fn [_]
-                                               (job-util/abandon-job job message-channel))}
-                                  [:i.stop.icon]]
-                                 [:button.ui.circular.yellow.icon.inverted.button
-                                  {:title "restart"
-                                   :on-click (fn [_]
-                                               (api/request (str "/" app-name "/job/" job-name)
-                                                            {:handler (fn [job]
-                                                                        (put! jobs-view-channel [:restart-dialog {:job job}]))}))}
-                                  [:i.play.icon]]])
-
-                                (#{:batch-status/starting  :batch-status/stopping} status)
-                                [:div]
-
-                                :else
-                                [:button.ui.circular.icon.green.inverted.button
-                                 {:title "start"
-                                  :on-click (fn [_]
-                                              (api/request (str "/" app-name "/job/" job-name)
-                                                           {:handler (fn [job]
-                                                                       (put! jobs-view-channel [:execute-dialog {:job job}]))}))}
-                                 [:i.play.icon]]))]]
+                       [:td
+                        (job-util/job-execute-button-view job {:progress (fn [_]
+                                                                           (if (#{:batch-status/started} (get-in job [:job/latest-execution :job-execution/batch-status :db/ident]))
+                                                                             (job-util/stop-job job message-channel)
+                                                                             (job-util/abandon-job job message-channel)))
+                                                               :abandon (fn [_]
+                                                                          (job-util/abandon-job job message-channel))
+                                                               :restart (fn [_]
+                                                                          (api/request (str "/" app-name "/job/" job-name)
+                                                                                       {:handler (fn [job]
+                                                                                                   (put! jobs-view-channel [:restart-dialog {:job job}]))}))
+                                                               :start(fn [_]
+                                                                       (api/request (str "/" app-name "/job/" job-name)
+                                                                                    {:handler (fn [job]
+                                                                                                (put! jobs-view-channel [:execute-dialog {:job job}]))}))})]]
                       (when-let [step-executions (not-empty (get-in job [:job/latest-execution :job-execution/step-executions]))]
                         [:tr {:key (str "tr-2-" job-name)}
                          [:td {:colSpan 8}
