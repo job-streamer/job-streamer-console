@@ -69,76 +69,77 @@
        [:div.content
         [:div.ui.input.block.form
          [:div.inline.fields
-          [:div.field
-           "When the "
-           [:select.ui.selection.dropdown
-            {:on-change (fn [e]
-                          (om/set-state! owner [:status-notification :status-notification/status-type]
-                                        (keyword (.. e -target -value))))}
-            [:option {:value "batch-status"} "batch status"]
-            [:option {:value "exit-status"} "exit status"]]
-           " is "
-           (case (:status-notification/status-type status-notification)
-             :exit-status
+           [:label "When the"]
+           [:div.field
+            [:select.ui.selection.dropdown
+             {:on-change (fn [e]
+                           (om/set-state! owner [:status-notification :status-notification/status-type]
+                                          (keyword (.. e -target -value))))}
+             [:option {:value "batch-status"} "batch status"]
+             [:option {:value "exit-status"} "exit status"]]]
+           [:label " is "]
+           [:div.field
+            (case (:status-notification/status-type status-notification)
+              :exit-status
+              [:input {:type "text"
+                       :value (:status-notification/exit-status status-notification)
+                       :on-change (fn [e]
+                                    (om/set-state! owner [:status-notification :status-notification/exit-status]
+                                                   (.. e -target -value)))}]
+
+              :batch-status
+              [:select.ui.selection.dropdown
+               {:value (:status-notification/batch-status status-notification)
+                :on-change (fn [e]
+                             (om/set-state! owner [:status-notification :status-notification/batch-status]
+                                            (.. e -target -value)))}
+               [:option {:value ""} ""]
+               [:option {:value "abandoned"} "abandoned"]
+               [:option {:value "completed"} "completed"]
+               [:option {:value "failed"} "failed"]])]
+           [:label ", send notification by"]
+           [:div.field
              [:input {:type "text"
-                      :value (:status-notification/exit-status status-notification)
+                      :value (:status-notification/type status-notification)
                       :on-change (fn [e]
-                                   (om/set-state! owner [:status-notification :status-notification/exit-status]
-                                                  (.. e -target -value)))}]
-
-             :batch-status
-             [:select.ui.selection.dropdown
-              {:value (:status-notification/batch-status status-notification)
-               :on-change (fn [e]
-                            (om/set-state! owner [:status-notification :status-notification/batch-status]
-                                           (.. e -target -value)))}
-              [:option {:value ""} ""]
-              [:option {:value "abandoned"} "abandoned"]
-              [:option {:value "completed"} "completed"]
-              [:option {:value "failed"} "failed"]])
-
-           ", send notification by "
-           [:input {:type "text"
-                    :value (:status-notification/type status-notification)
-                    :on-change (fn [e]
-                                 (om/set-state! owner [:status-notification :status-notification/type]
-                                                (.. e -target -value)))}]
+                                   (om/set-state! owner [:status-notification :status-notification/type]
+                                                  (.. e -target -value)))}]]
            [:button.ui.positive.button
             (merge
-             {:type "button"
-              :on-click (fn [e]
-                          (let [status-notification (om/get-state owner :status-notification)
-                                status-notification (case (:status-notification/status-type status-notification)
-                                                      :batch-status {:status-notification/type (:status-notification/type status-notification)
-                                                                     :status-notification/batch-status
-                                                                     (keyword "batch-status"
-                                                                              (:status-notification/batch-status status-notification))}
-                                                      :exit-status  (select-keys status-notification [:status-notification/type
-                                                                                                      :status-notification/exit-status]))]
-                            (save-settings (:job/name job)
-                                           :PUT
-                                           owner
-                                           :status-notification
-                                           status-notification
-                                           :handler (fn [resp]
-                                                      (om/update-state!
-                                                       owner [:settings :job/status-notifications]
-                                                       (fn [notifications]
-                                                         (conj notifications (assoc status-notification
-                                                                                    :db/id (:db/id resp))))))
-                                           :error-handler (fn [resp]
-                                                            (om/set-state! owner :message {:class "error"
-                                                                                 :header "Failed to save."
-                                                                                 :body [:p (:message resp)]}))
-                                           :forbidden-handler (fn [_]
-                                                                (om/set-state! owner :message {:class "error"
-                                                                                     :header "Failed to save."
-                                                                                     :body [:p "You are unauthorized to chnange job setting."]})))))}
-             (when-not (b/valid? status-notification
-                                 :status-notification/exit-status [[v/required :pre #(= (:status-notification/status-type %) :exit-status)]]
-                                 :status-notification/type [[v/required]])
-               {:class "disabled"}) )
-            "Add"]]]]
+              {:type "button"
+               :on-click (fn [e]
+                           (let [status-notification (om/get-state owner :status-notification)
+                                 status-notification (case (:status-notification/status-type status-notification)
+                                                       :batch-status {:status-notification/type (:status-notification/type status-notification)
+                                                                      :status-notification/batch-status
+                                                                                                (keyword "batch-status"
+                                                                                                         (:status-notification/batch-status status-notification))}
+                                                       :exit-status  (select-keys status-notification [:status-notification/type
+                                                                                                       :status-notification/exit-status]))]
+                             (save-settings (:job/name job)
+                                            :PUT
+                                            owner
+                                            :status-notification
+                                            status-notification
+                                            :handler (fn [resp]
+                                                       (om/update-state!
+                                                         owner [:settings :job/status-notifications]
+                                                         (fn [notifications]
+                                                           (conj notifications (assoc status-notification
+                                                                                 :db/id (:db/id resp))))))
+                                            :error-handler (fn [resp]
+                                                             (om/set-state! owner :message {:class "error"
+                                                                                            :header "Failed to save."
+                                                                                            :body [:p (:message resp)]}))
+                                            :forbidden-handler (fn [_]
+                                                                 (om/set-state! owner :message {:class "error"
+                                                                                                :header "Failed to save."
+                                                                                                :body [:p "You are unauthorized to chnange job setting."]})))))}
+              (when-not (b/valid? status-notification
+                                  :status-notification/exit-status [[v/required :pre #(= (:status-notification/status-type %) :exit-status)]]
+                                  :status-notification/type [[v/required]])
+                {:class "disabled"}) )
+            "Add"]]]
         (if (not-empty (:job/status-notifications settings))
           [:table.ui.compact.table
            [:thead
@@ -243,10 +244,10 @@
                       :value (:time-monitor/duration time-monitor)
                       :on-change (fn [_]
                                    (let [duration (js/parseInt (.-value (.getElementById js/document "time-monitor-duration")))]
-                                     (om/set-state! owner [:time-monitor :time-monitor/duration] (if (> duration 0) duration 0))))}]
-             [:div.ui.label "minutes"]
-
-             "Action:"
+                                     (om/set-state! owner [:time-monitor :time-monitor/duration] (if (> duration 0) duration 0))))}]]
+            [:div.ui.label "minutes"]
+            [:label "Action:"]
+            [:div.field
              [:select.ui.selection.dropdown
               {:id "time-monitor-action"
                :value (if-let [action (:time-monitor/action time-monitor)]
@@ -265,28 +266,29 @@
                         :on-change (fn [_]
                                      (let [notification-type (.-value (.getElementById js/document "time-monitor-notification-type"))]
                                        (om/set-state! owner [:time-monitor :time-monitor/notification-type] notification-type)))}])
-             [:button.ui.tiny.positive.button
-              (merge {:type "button"
-                      :on-click (fn [_]
-                                  (save-settings (:job/name job) :PUT
-                                                 owner :time-monitor
-                                                 time-monitor
-                                                 :handler (fn [_]
-                                                            (om/set-state! owner [:settings :job/time-monitor] time-monitor))
-                                                 :error-handler (fn [resp]
-                                                                  (om/set-state! owner :message {:class "error"
-                                                                                                 :header "Failed to save."
-                                                                                                 :body [:p (:message resp)]}))
-                                                 :forbidden-handler (fn [_]
-                                                                      (om/set-state! owner :message {:class "error"
-                                                                                           :header "Failed to save."
-                                                                                           :body [:p "You are unauthorized save job."]}))))}
-                     (when (or (= (:time-monitor/duration time-monitor) 0)
-                               (not (keyword? (:time-monitor/action time-monitor)))
-                               (and (= (:time-monitor/action time-monitor) :action/alert)
-                                    (empty? (:time-monitor/notification-type time-monitor))))
-                       {:class "disabled"}))
-              "Save"]]]])]]
+             ]
+            [:button.ui.tiny.positive.button
+             (merge {:type "button"
+                     :on-click (fn [_]
+                                 (save-settings (:job/name job) :PUT
+                                                owner :time-monitor
+                                                time-monitor
+                                                :handler (fn [_]
+                                                           (om/set-state! owner [:settings :job/time-monitor] time-monitor))
+                                                :error-handler (fn [resp]
+                                                                 (om/set-state! owner :message {:class "error"
+                                                                                                :header "Failed to save."
+                                                                                                :body [:p (:message resp)]}))
+                                                :forbidden-handler (fn [_]
+                                                                     (om/set-state! owner :message {:class "error"
+                                                                                                    :header "Failed to save."
+                                                                                                    :body [:p "You are unauthorized save job."]}))))}
+                    (when (or (= (:time-monitor/duration time-monitor) 0)
+                              (not (keyword? (:time-monitor/action time-monitor)))
+                              (and (= (:time-monitor/action time-monitor) :action/alert)
+                                   (empty? (:time-monitor/notification-type time-monitor))))
+                      {:class "disabled"}))
+             "Save"]]])]]
 
       [:div.ui.segment
        [:div.ui.top.attached.label "Danger Zone"]
