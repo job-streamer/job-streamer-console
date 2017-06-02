@@ -4,7 +4,7 @@
             [om-tools.core :refer-macros [defcomponent]]
             [sablono.core :as html :refer-macros [html]]
             [cljs.core.async :refer [put! <! chan timeout close!]]
-            [job-streamer.console.components.job-util :as job-util]
+            [job-streamer.console.utils.job-util :as job-util]
             (job-streamer.console.format :as fmt)
             (job-streamer.console.api :as api))
   (:use (job-streamer.console.components.timeline :only [timeline-view])

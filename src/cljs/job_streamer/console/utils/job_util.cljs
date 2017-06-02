@@ -1,4 +1,4 @@
-(ns job-streamer.console.components.job-util
+(ns job-streamer.console.utils.job-util
   (:require [om.core :as om :include-macros true]
             [cljs.core.async :refer [put! <! chan timeout close!]]
             (job-streamer.console.api :as api)))

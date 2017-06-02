@@ -13,7 +13,7 @@
             [job-streamer.console.api :as api]
             [job-streamer.console.validators :as cv]
             [job-streamer.console.format :as fmt]
-            [job-streamer.console.components.job-util :as job-util])
+            [job-streamer.console.utils.job-util :as job-util])
   (:use [cljs.reader :only [read-string]]
         [clojure.walk :only [postwalk]]
         [job-streamer.console.components.job-settings :only [job-settings-view]]
