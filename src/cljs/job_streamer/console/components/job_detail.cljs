@@ -440,7 +440,7 @@
                  [:div.content
                   [:div.header "Pausing"]
                   [:div.description (:schedule/cron-notation schedule)]]])]
-             [:div.ui.labeled.icon.menu
+             [:div.ui.labeled.icon.compact.menu
               (if exe
                 [:a.item {:on-click (fn [e]
                                       (pause-schedule job owner refresh-job-ch error-ch))}
