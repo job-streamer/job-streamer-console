@@ -12,7 +12,8 @@
             [goog.Uri.QueryData :as query-data]
             [job-streamer.console.api :as api]
             [job-streamer.console.validators :as cv]
-            [job-streamer.console.format :as fmt])
+            [job-streamer.console.format :as fmt]
+            [job-streamer.console.utils.job-util :as job-util])
   (:use [cljs.reader :only [read-string]]
         [clojure.walk :only [postwalk]]
         [job-streamer.console.components.job-settings :only [job-settings-view]]
@@ -521,14 +522,18 @@
                             [:div.statistic
                              [:div.value (get-in job-detail [:job/stats :failure])]
                              [:div.label "Failed"]]
-                            (let [batch-status (get-in job [:job/latest-execution :job-execution/batch-status :db/ident])]
-                              (if (or (#{:batch-status/abandoned :batch-status/completed nil} batch-status) (nil? batch-status))
-                                [:button.ui.circular.icon.green.basic.button
-                                  {:on-click (fn  [_]
-                                              (put! (:jobs-channel opts) [:execute-dialog {:job job-detail :backto (.-href js/location)}])
-                                              (set! (.-href js/location) "#"))}
-                                  [:i.play.icon]]
-                                [:div]))]
+                            (job-util/job-execute-button-view job {:progress (fn [_]
+                                                                               (if (#{:batch-status/started} (get-in job [:job/latest-execution :job-execution/batch-status :db/ident]))
+                                                                                 (job-util/stop-job job refresh-job-ch)
+                                                                                 (job-util/abandon-job job refresh-job-ch)))
+                                                                   :abandon (fn [_]
+                                                                              (job-util/abandon-job job refresh-job-ch))
+                                                                   :restart (fn [_]
+                                                                              (put! (:jobs-channel opts) [:restart-dialog {:job job-detail :backto (.-href js/location)}])
+                                                                              (set! (.-href js/location) "#"))
+                                                                   :start (fn  [_]
+                                                                            (put! (:jobs-channel opts) [:execute-dialog {:job job-detail :backto (.-href js/location)}])
+                                                                            (set! (.-href js/location) "#"))})]
                            [:hr.ui.divider]
                            [:div.ui.tiny.horizontal.statistics
                             [:div.statistic

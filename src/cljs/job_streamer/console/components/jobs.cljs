@@ -4,6 +4,7 @@
             [om-tools.core :refer-macros [defcomponent]]
             [sablono.core :as html :refer-macros [html]]
             [cljs.core.async :refer [put! <! chan timeout close!]]
+            [job-streamer.console.utils.job-util :as job-util]
             (job-streamer.console.format :as fmt)
             (job-streamer.console.api :as api))
   (:use (job-streamer.console.components.timeline :only [timeline-view])
@@ -29,40 +30,6 @@
                                      (when message-channel
                                        (put! message-channel {:type "error" :body "You are unauthorized to execute job."}))
                                      (put! channel [:close-dialog nil]))}))
-
-(defn stop-job [job message-channel]
-  (when-let [latest-execution (:job/latest-execution job)]
-    (api/request (str "/" app-name
-                      "/job/" (:job/name job)
-                      "/execution/" (:db/id latest-execution) "/stop")
-                 :PUT
-                 {:handler (fn [response]
-                             (om/update! latest-execution
-                                         [:job-execution/batch-status :db/ident]
-                                         :batch-status/stopping))
-                  :error-handler (fn [response]
-                                   (when message-channel
-                                     (put! message-channel {:type "error" :body (:message response)})))
-                  :forbidden-handler (fn [response]
-                                       (when message-channel
-                                         (put! message-channel {:type "error" :body "You are unauthorized to stop execution job."})))})))
-
-(defn abandon-job [job message-channel]
-  (when-let [latest-execution (:job/latest-execution job)]
-    (api/request (str "/" app-name
-                      "/job/" (:job/name job)
-                      "/execution/" (:db/id latest-execution) "/abandon")
-                 :PUT
-                 {:handler (fn [response]
-                             (om/update! latest-execution
-                                         [:job-execution/batch-status :db/ident]
-                                         :batch-status/abandoned))
-                  :error-handler (fn [response]
-                                   (when message-channel
-                                     (put! message-channel {:type "error" :body (:message response)})))
-                  :forbidden-handler (fn [response]
-                                       (when message-channel
-                                         (put! message-channel {:type "error" :body "You are unauthorized to abandon execution job."})))})))
 
 (defn restart-job [job parameters channel message-channel]
   (when-let [latest-execution (:job/latest-execution job)]
@@ -321,46 +288,21 @@
                         (if-let [next-execution (:job/next-execution job)]
                           (fmt/date-medium (:job-execution/start-time next-execution))
                           "-")]
-                       [:td (let [status (get-in job [:job/latest-execution :job-execution/batch-status :db/ident])]
-                              (cond
-                                (#{:batch-status/undispatched :batch-status/unrestarted :batch-status/queued :batch-status/started} status)
-                                [:div.ui.fade.reveal
-                                 [:button.ui.circular.orange.icon.button.visible.content
-                                  {:on-click (fn [_]
-                                               (if (#{:batch-status/started} status)
-                                                 (stop-job job message-channel)
-                                                 (abandon-job job message-channel)))}
-                                  [:i.setting.loading.icon]]
-                                 [:button.ui.circular.red.icon.basic.button.hidden.content
-                                  (if (#{:batch-status/started} status)
-                                    [:i.pause.icon]
-                                    [:i.stop.icon])]]
-
-                                (#{:batch-status/stopped :batch-status/failed} status)
-                                (when (not (false? (:job/restartable? job)))
-                                [:div
-                                 [:button.ui.circular.red.icon.basic.button
-                                  {:on-click (fn [_]
-                                               (abandon-job job message-channel))}
-                                  [:i.stop.icon]]
-                                 [:button.ui.circular.yellow.icon.basic.button
-                                  {:title "restart"
-                                   :on-click (fn [_]
-                                               (api/request (str "/" app-name "/job/" job-name)
-                                                            {:handler (fn [job]
-                                                                        (put! jobs-view-channel [:restart-dialog {:job job}]))}))}
-                                  [:i.play.icon]]])
-
-                                (#{:batch-status/starting  :batch-status/stopping} status)
-                                [:div]
-
-                                :else
-                                [:button.ui.circular.icon.green.basic.button
-                                 {:on-click (fn [_]
-                                              (api/request (str "/" app-name "/job/" job-name)
-                                                           {:handler (fn [job]
-                                                                       (put! jobs-view-channel [:execute-dialog {:job job}]))}))}
-                                 [:i.play.icon]]))]]
+                       [:td
+                        (job-util/job-execute-button-view job {:progress (fn [_]
+                                                                           (if (#{:batch-status/started} (get-in job [:job/latest-execution :job-execution/batch-status :db/ident]))
+                                                                             (job-util/stop-job job message-channel)
+                                                                             (job-util/abandon-job job message-channel)))
+                                                               :abandon (fn [_]
+                                                                          (job-util/abandon-job job message-channel))
+                                                               :restart (fn [_]
+                                                                          (api/request (str "/" app-name "/job/" job-name)
+                                                                                       {:handler (fn [job]
+                                                                                                   (put! jobs-view-channel [:restart-dialog {:job job}]))}))
+                                                               :start(fn [_]
+                                                                       (api/request (str "/" app-name "/job/" job-name)
+                                                                                    {:handler (fn [job]
+                                                                                                (put! jobs-view-channel [:execute-dialog {:job job}]))}))})]]
                       (when-let [step-executions (not-empty (get-in job [:job/latest-execution :job-execution/step-executions]))]
                         [:tr {:key (str "tr-2-" job-name)}
                          [:td {:colSpan 8}
