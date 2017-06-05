@@ -10,7 +10,7 @@
    [:.full.height {:height "100%"}]
    [:.main.flowchart {:padding-top (px 50)
                       :padding-left (px 30)
-                      :padding-right (px 100)}]
+                      :padding-right (px 260)}]
    [:.main.content {:min-height "100%"
                     :max-width (px 960)
                     :margin {:left "auto" :right "auto"}
