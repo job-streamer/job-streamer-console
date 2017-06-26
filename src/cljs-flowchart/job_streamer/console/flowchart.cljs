@@ -195,7 +195,7 @@
                           (.error js/console (str "something went wrong:" err))
                           (.. modeler
                               (get "canvas")
-                              (zoom "fit-viewport"))))
+                              (zoom 0.8))))
         save-job-handler (fn [e]
                            (.preventDefault e)
                            (.stopPropagation e)
