@@ -397,13 +397,13 @@
                [:button.ui.fluid.large.teal.submit.button{:type "submit"} "Login"]]]]]
            [:div.row
             [:div.column
-             [:div.ui.stacked.segment
-              (for [[id {:keys [name icon]}] oauth-providers]
+             [:div.ui.stacked.segments
+              (for [[id {:keys [name class-name]}] oauth-providers]
                 [:div.ui.segment
-                 [:form.ui.large.login.form
-                  {:on-submit (fn [e]
-                                (.preventDefault e)
-                                (set! (.-href js/location) (api/url-for (str "/oauth/" id))))}
-                  [:button.ui.fluid.large.teal.submit.button {:type "submit"}
-                   [:i.icon {:class (or icon "openid")}]
-                   (str "Login using " name)]]])]]]]]])))
+                 [:button.ui.fluid.large.button {:class (or class-name "teal")
+                                                 :on-click (fn [e]
+                                                             (.preventDefault e)
+                                                             (set! (.-href js/location) (api/url-for (str "/oauth/" id))))}
+                  [:i.icon {:class (or class-name "openid")}]
+                  (str "Login using " name)]])]]]]]])))
+
