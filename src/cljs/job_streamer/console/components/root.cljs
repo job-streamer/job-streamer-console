@@ -395,15 +395,16 @@
                                        (let [password (.. js/document (getElementById "password") -value)]
                                          (om/set-state! owner :password password)))}]]]
                [:button.ui.fluid.large.teal.submit.button{:type "submit"} "Login"]]]]]
-           [:div.row
-            [:div.column
-             [:div.ui.stacked.segments
-              (for [[id {:keys [name class-name]}] oauth-providers]
-                [:div.ui.segment
-                 [:button.ui.fluid.large.button {:class (or class-name "teal")
-                                                 :on-click (fn [e]
-                                                             (.preventDefault e)
-                                                             (set! (.-href js/location) (api/url-for (str "/oauth/" id))))}
-                  [:i.icon {:class (or class-name "openid")}]
-                  (str "Login using " name)]])]]]]]])))
+           (when (not-empty oauth-providers)
+             [:div.row
+              [:div.column
+               [:div.ui.stacked.segments
+                (for [[id {:keys [name class-name]}] oauth-providers]
+                  [:div.ui.segment
+                   [:button.ui.fluid.large.button {:class (or class-name "teal")
+                                                   :on-click (fn [e]
+                                                               (.preventDefault e)
+                                                               (set! (.-href js/location) (api/url-for (str "/oauth/" id))))}
+                    [:i.icon {:class (or class-name "openid")}]
+                    (str "Login using " name)]])]]])]]])))
 
