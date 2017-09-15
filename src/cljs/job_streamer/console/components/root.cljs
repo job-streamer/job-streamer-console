@@ -305,6 +305,12 @@
      :message nil})
   (will-mount [_]
     (routing/init app owner)
+    (api/request "/account"
+                 {:handler (fn [response]
+                             (let [roles (->> (get-in response [:applications app-name :roles])
+                                              (map keyword)
+                                              vec)]
+                               (om/update! app [:roles] roles)))})
     (go-loop []
       (when-let [msg (<! (om/get-state owner :message-channel))]
         (om/set-state! owner :message msg)
