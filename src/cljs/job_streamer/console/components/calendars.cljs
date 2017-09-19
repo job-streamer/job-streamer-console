@@ -29,22 +29,32 @@
                             (put! calendars-channel [:save-calendar calendar]
                                   #(set! (.-href js/location)  "#/calendars"))))
           (on-failure [res error-code]
-                      (put! message-channel {:type "error" :body (:message res)}))]
+                      (put! message-channel {:type "error"
+                                             :header "Failed to save."
+                                             :body (:message res)}))
+          (on-forbidden [res error-code]
+                        (put! message-channel {:type "error"
+                                               :header "Failed to save."
+                                               :body "You are unauthorized to save a calendar."}))]
     (if (:new? calendar)
       (api/request "/calendars" :POST calendar
                    {:handler on-success
-                    :error-handler on-failure})
+                    :error-handler on-failure
+                    :forbidden-handler on-forbidden})
       (api/request (str "/calendar/" (:calendar/name calendar)) :PUT calendar
                    {:handler on-success
-                    :error-handler on-failure}))))
+                    :error-handler on-failure
+                    :forbidden-handler on-forbidden}))))
 
 (defn delete-calendar [calendar owner calendars-channel]
   (api/request (str "/calendar/" (:calendar/name calendar)) :DELETE
                {:handler (fn [response]
                            (put! calendars-channel [:delete-calendar calendar])
                            (set! (.-href js/location) "#/calendars"))
-                :error-handler (fn[res error-code]
-                                 (om/set-state! owner :delete-error res))}))
+                :error-handler (fn [res error-code]
+                                 (om/set-state! owner :delete-error {:messages [res]}))
+                :forbidden-handler (fn [res]
+                                     (om/set-state! owner :delete-error {:messages ["You are unauthorized to delete a calendar."]}))}))
 
 (defn hh:mm? [hh:mm-string]
   (if hh:mm-string
@@ -248,7 +258,7 @@
         [:div.row {:style {:display (if messages "block" "none")}}
          [:div.column
           [:div.ui.message {:class "error"}
-           [:div.header "Failed to delete calendar"]
+           [:div.header "Failed to delete."]
            [:div.body
             (for[message messages] message)]]]])
 
@@ -355,7 +365,11 @@
             [:div.sub.header "Calendars"]]]]]
         [:div.ui.row
          [:div.ui.column
-          (when message [:div#message.ui.floating.message {:class (str "visible " (:type message))} (:body message)])
+          (when message [:div#message.ui.floating.message
+                         {:class (str "visible " (:type message))}
+                         [:div.column
+                          [:div.header (:header message)]
+                          [:div (:body message)]]])
           (case mode
             :new (om/build calendar-edit-view (:calendars app) {:init-state {:message-channel message-channel}
                                                                 :state {:mode (:mode app)}
