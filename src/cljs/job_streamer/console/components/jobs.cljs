@@ -142,7 +142,7 @@
     (when-let [refresh-timer (om/get-state owner :refresh-timer)]
       (close! refresh-timer)))
 
-  (render-state [_ {:keys [jobs-view-channel now page per roles]}]
+  (render-state [_ {:keys [jobs-view-channel now page per]}]
     (html
      (if (= (get-in app [:stats :jobs-count]) 0)
        [:div.ui.grid
@@ -161,7 +161,7 @@
        [:div.ui.grid
         [:div.ui.two.column.row
          [:div.column
-          (if (= "admin" (name (first roles)))
+          (if (= "admin" (name (first (:roles app))))
             [:button.ui.basic.green.button
              {:type "button"
               :on-click (fn [e]
@@ -289,8 +289,8 @@
                         (if-let [next-execution (:job/next-execution job)]
                           (fmt/date-medium (:job-execution/start-time next-execution))
                           "-")]
-                       (if (or (= "admin" (name (first roles)))
-                               (= "operator" (name (first roles))))
+                       (if (or (= "admin" (name (first (:roles app))))
+                               (= "operator" (name (first (:roles app)))))
                          [:td
                           (job-util/job-execute-button-view job {:progress (fn [_]
                                                                                (if (#{:batch-status/started} (get-in job [:job/latest-execution :job-execution/batch-status :db/ident]))
@@ -392,8 +392,7 @@
                            job-list-view)
                          app {:init-state {:jobs-view-channel jobs-channel
                                            :message-channel message-channel}
-                              :state {:page page
-                                      :roles (:roles (om/root-cursor app))}
+                              :state {:page page}
                               :react-key "job-mode"}))]]
            (when executing-job
              (om/build job-execution-dialog executing-job {:init-state {:jobs-view-channel jobs-channel
