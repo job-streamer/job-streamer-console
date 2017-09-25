@@ -164,7 +164,7 @@
               (search-executions (:job/name @job) {:offset 1 :limit (om/get-state owner :per)}
                                  (fn [response]
                                    (om/set-state! owner :executions response))))
-  (render-state [_ {:keys [executions page per error-ch has-error]}]
+  (render-state [_ {:keys [executions page per error-ch has-error roles]}]
                 (html
                  [:div.ui.grid
                   (when has-error
@@ -172,13 +172,14 @@
                    [:div.center.aligned.column
                      [:div.ui.error.message
                       [:p has-error]]]])
-                  [:div.row
-                   [:div.right.aligned.column
-                    [:button.ui.right.red.button
-                     {:type "button"
-                      :on-click (fn [e]
-                                  (delete-executions (:job/name job) owner error-ch))}
-                     "Delete all"]]]
+                  (if (= "admin" (name (first roles)))
+                    [:div.row
+                     [:div.right.aligned.column
+                      [:button.ui.right.red.button
+                       {:type "button"
+                        :on-click (fn [e]
+                                      (delete-executions (:job/name job) owner error-ch))}
+                       "Delete all"]]])
                   [:div.row
                    [:div.column
                     [:table.ui.compact.table
@@ -416,7 +417,7 @@
     (when-let [scheduling-monitor (om/get-state owner :scheduling-monitor)]
       (close! scheduling-monitor)))
 
-  (render-state [_ {:keys [refresh-job-ch scheduling-ch scheduling? error-ch has-error]}]
+  (render-state [_ {:keys [refresh-job-ch scheduling-ch scheduling? error-ch has-error roles]}]
     (html
      [:div.ui.raised.segment (when has-error {:class "error"})
       [:h3.ui.header "Next"]
@@ -441,45 +442,48 @@
                  [:div.content
                   [:div.header "Pausing"]
                   [:div.description (:schedule/cron-notation schedule)]]])]
-             [:div.ui.labeled.icon.compact.menu
-              (if exe
+             (if (= "admin" (name (first roles)))
+               [:div.ui.labeled.icon.compact.menu
+                (if exe
+                  [:a.item {:on-click (fn [e]
+                                          (pause-schedule job owner refresh-job-ch error-ch))}
+                   [:i.pause.icon] "Pause"]
+                  [:a.item {:on-click (fn [e]
+                                          (resume-schedule job owner refresh-job-ch error-ch))}
+                   [:i.play.icon] "Resume"])
                 [:a.item {:on-click (fn [e]
-                                      (pause-schedule job owner refresh-job-ch error-ch))}
-                 [:i.pause.icon] "Pause"]
+                                        (drop-schedule job owner refresh-job-ch error-ch))}
+                 [:i.remove.icon] "Drop"]
                 [:a.item {:on-click (fn [e]
-                                      (resume-schedule job owner refresh-job-ch error-ch))}
-                 [:i.play.icon] "Resume"])
-              [:a.item {:on-click (fn [e]
-                                    (drop-schedule job owner refresh-job-ch error-ch))}
-               [:i.remove.icon] "Drop"]
-              [:a.item {:on-click (fn [e]
-                                    (om/set-state! owner :scheduling? true))}
-               [:i.calendar.icon] "Edit"]]])
+                                        (om/set-state! owner :scheduling? true))}
+                 [:i.calendar.icon] "Edit"]])])
 
-          [:div
-           [:div.header "No schedule"]
-           [:button.ui.primary.button
-            {:on-click (fn [e]
-                         (om/set-state! owner :scheduling? true))}
-            "Schedule this job"]]))])))
+          (if (= "admin" (name (first roles)))
+            [:div
+             [:div.header "No schedule"]
+             [:button.ui.primary.button
+              {:on-click (fn [e]
+                             (om/set-state! owner :scheduling? true))}
+              "Schedule this job"]])))])))
 
 (defcomponent job-structure-view [{:keys [job/name job/svg-notation] :as job-detail} owner]
-  (render-state [_ {:keys [refresh-job-ch dimmed?]}]
+  (render-state [_ {:keys [refresh-job-ch dimmed? roles]}]
     (html
      [:div.dimmable.image.dimmed
       {:on-mouse-enter (fn [e]
                          (om/set-state! owner :dimmed? true))
        :on-mouse-leave (fn [e]
                          (om/set-state! owner :dimmed? false))}
-      [:div.ui.inverted.dimmer (when dimmed? {:class "visible"})
-       [:div.content
-        [:div.center
-         [:button.ui.primary.button
-          {:type "button"
-           :on-click (fn [e]
-                       (let [w (js/window.open (str "/" app-name "/job/" name "/edit") name "width=1200,height=800")]
-                         (js/setTimeout (fn [] (.addEventListener w "unload" (fn [] (js/setTimeout (fn [] (put! refresh-job-ch true))) 10))) 10)))}
-          "Edit"]]]]
+      (if (= "admin" (-name (first roles)))
+        [:div.ui.inverted.dimmer (when dimmed? {:class "visible"})
+         [:div.content
+          [:div.center
+           [:button.ui.primary.button
+            {:type "button"
+             :on-click (fn [e]
+                           (let [w (js/window.open (str "/" app-name "/job/" name "/edit") name "width=1200,height=800")]
+                                (js/setTimeout (fn [] (.addEventListener w "unload" (fn [] (js/setTimeout (fn [] (put! refresh-job-ch true))) 10))) 10)))}
+            "Edit"]]]])
       [:div {:style {:height "200px"
                      :width "100%"
                      :background-repeat "no-repeat"
@@ -497,7 +501,7 @@
                                                   (om/set-state! owner :job-detail response))})
                          (recur)))
               (put! (om/get-state owner :refresh-job-ch) true))
-  (render-state [_ {:keys [job-detail refresh-job-ch mode]}]
+  (render-state [_ {:keys [job-detail refresh-job-ch mode roles]}]
                 (let [this-mode (->> mode (drop 3) first)]
                   (html
                    (case this-mode
@@ -508,6 +512,7 @@
                         [:div.job-detail.card
                          (when job-detail
                            (om/build job-structure-view job-detail {:init-state {:refresh-job-ch refresh-job-ch}
+                                                                    :state {:roles roles}
                                                                     :react-key "job-structure"}))
                          [:div.content
                           [:div.header.name (:job/name job)]
@@ -522,18 +527,20 @@
                             [:div.statistic
                              [:div.value (get-in job-detail [:job/stats :failure])]
                              [:div.label "Failed"]]
-                            (job-util/job-execute-button-view job {:progress (fn [_]
-                                                                               (if (#{:batch-status/started} (get-in job [:job/latest-execution :job-execution/batch-status :db/ident]))
-                                                                                 (job-util/stop-job job refresh-job-ch)
-                                                                                 (job-util/abandon-job job refresh-job-ch)))
-                                                                   :abandon (fn [_]
-                                                                              (job-util/abandon-job job refresh-job-ch))
-                                                                   :restart (fn [_]
-                                                                              (put! (:jobs-channel opts) [:restart-dialog {:job job-detail :backto (.-href js/location)}])
-                                                                              (set! (.-href js/location) "#"))
-                                                                   :start (fn  [_]
-                                                                            (put! (:jobs-channel opts) [:execute-dialog {:job job-detail :backto (.-href js/location)}])
-                                                                            (set! (.-href js/location) "#"))})]
+                            (if (or (= "admin" (name (first roles)))
+                                    (= "operator" (name (first roles))))
+                              (job-util/job-execute-button-view job {:progress (fn [_]
+                                                                                   (if (#{:batch-status/started} (get-in job [:job/latest-execution :job-execution/batch-status :db/ident]))
+                                                                                     (job-util/stop-job job refresh-job-ch)
+                                                                                     (job-util/abandon-job job refresh-job-ch)))
+                                                                     :abandon (fn [_]
+                                                                                  (job-util/abandon-job job refresh-job-ch))
+                                                                     :restart (fn [_]
+                                                                                  (put! (:jobs-channel opts) [:restart-dialog {:job job-detail :backto (.-href js/location)}])
+                                                                                  (set! (.-href js/location) "#"))
+                                                                     :start (fn  [_]
+                                                                                 (put! (:jobs-channel opts) [:execute-dialog {:job job-detail :backto (.-href js/location)}])
+                                                                                 (set! (.-href js/location) "#"))}))]
                            [:hr.ui.divider]
                            [:div.ui.tiny.horizontal.statistics
                             [:div.statistic
@@ -566,10 +573,11 @@
                                (get-in exe [:job-execution/agent :agent/name])] ]]]])]
                        (om/build next-execution-view job-detail
                                  {:init-state {:refresh-job-ch refresh-job-ch}
+                                  :state {:roles roles}
                                   :react-key "job-current-next-execution"})]])))))
 
 (defcomponent job-detail-view [job owner opts]
-  (render-state [_ {:keys [mode message breadcrumbs]}]
+  (render-state [_ {:keys [mode message breadcrumbs roles]}]
                 (let [this-mode (->> mode (drop 2) first)]
                   (html
                    [:div
@@ -595,6 +603,7 @@
                                   :history job-history-view
                                   :settings job-settings-view)
                                 job
-                                {:state {:mode mode}
+                                {:state {:mode mode
+                                         :roles roles}
                                  :opts opts
                                  :react-key "job-detail-mode"})]]]))))

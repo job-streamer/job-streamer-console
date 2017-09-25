@@ -142,7 +142,7 @@
     (when-let [refresh-timer (om/get-state owner :refresh-timer)]
       (close! refresh-timer)))
 
-  (render-state [_ {:keys [jobs-view-channel now page per]}]
+  (render-state [_ {:keys [jobs-view-channel now page per roles]}]
     (html
      (if (= (get-in app [:stats :jobs-count]) 0)
        [:div.ui.grid
@@ -161,12 +161,13 @@
        [:div.ui.grid
         [:div.ui.two.column.row
          [:div.column
-          [:button.ui.basic.green.button
-           {:type "button"
-            :on-click (fn [e]
-                        (let [w (js/window.open (str "/" app-name "/jobs/new") "New" "width=1200,height=800")]
-                          (js/setTimeout (fn [] (.addEventListener w "unload" (fn [] (js/setTimeout (fn [] (put! jobs-view-channel [:refresh-jobs true]))) 10))) 10)))}
-           [:i.plus.icon] "New"]]
+          (if (= "admin" (name (first roles)))
+            [:button.ui.basic.green.button
+             {:type "button"
+              :on-click (fn [e]
+                            (let [w (js/window.open (str "/" app-name "/jobs/new") "New" "width=1200,height=800")]
+                                 (js/setTimeout (fn [] (.addEventListener w "unload" (fn [] (js/setTimeout (fn [] (put! jobs-view-channel [:refresh-jobs true]))) 10))) 10)))}
+             [:i.plus.icon] "New"])]
          [:div.ui.right.aligned.column
           [:button.ui.circular.basic.orange.icon.button
            {:type "button"
@@ -288,21 +289,23 @@
                         (if-let [next-execution (:job/next-execution job)]
                           (fmt/date-medium (:job-execution/start-time next-execution))
                           "-")]
-                       [:td
-                        (job-util/job-execute-button-view job {:progress (fn [_]
-                                                                           (if (#{:batch-status/started} (get-in job [:job/latest-execution :job-execution/batch-status :db/ident]))
-                                                                             (job-util/stop-job job message-channel)
-                                                                             (job-util/abandon-job job message-channel)))
-                                                               :abandon (fn [_]
-                                                                          (job-util/abandon-job job message-channel))
-                                                               :restart (fn [_]
-                                                                          (api/request (str "/" app-name "/job/" job-name)
-                                                                                       {:handler (fn [job]
-                                                                                                   (put! jobs-view-channel [:restart-dialog {:job job}]))}))
-                                                               :start(fn [_]
-                                                                       (api/request (str "/" app-name "/job/" job-name)
-                                                                                    {:handler (fn [job]
-                                                                                                (put! jobs-view-channel [:execute-dialog {:job job}]))}))})]]
+                       (if (or (= "admin" (name (first roles)))
+                               (= "operator" (name (first roles))))
+                         [:td
+                          (job-util/job-execute-button-view job {:progress (fn [_]
+                                                                               (if (#{:batch-status/started} (get-in job [:job/latest-execution :job-execution/batch-status :db/ident]))
+                                                                                 (job-util/stop-job job message-channel)
+                                                                                 (job-util/abandon-job job message-channel)))
+                                                                 :abandon (fn [_]
+                                                                              (job-util/abandon-job job message-channel))
+                                                                 :restart (fn [_]
+                                                                              (api/request (str "/" app-name "/job/" job-name)
+                                                                                           {:handler (fn [job]
+                                                                                                         (put! jobs-view-channel [:restart-dialog {:job job}]))}))
+                                                                 :start(fn [_]
+                                                                           (api/request (str "/" app-name "/job/" job-name)
+                                                                                        {:handler (fn [job]
+                                                                                                      (put! jobs-view-channel [:execute-dialog {:job job}]))}))})])]
                       (when-let [step-executions (not-empty (get-in job [:job/latest-execution :job-execution/step-executions]))]
                         [:tr {:key (str "tr-2-" job-name)}
                          [:td {:colSpan 8}
@@ -363,7 +366,8 @@
                            first)]
               (om/build job-detail-view (get-in app [:jobs :results idx])
                         {:opts {:jobs-channel jobs-channel}
-                         :state {:mode (:mode app)}
+                         :state {:mode (:mode app)
+                                 :roles (:roles (om/root-cursor app))}
                          :react-key "job-detail"}))
             [:img {:src "/img/loader.gif"}])
 
@@ -388,7 +392,8 @@
                            job-list-view)
                          app {:init-state {:jobs-view-channel jobs-channel
                                            :message-channel message-channel}
-                              :state {:page page}
+                              :state {:page page
+                                      :roles (:roles (om/root-cursor app))}
                               :react-key "job-mode"}))]]
            (when executing-job
              (om/build job-execution-dialog executing-job {:init-state {:jobs-view-channel jobs-channel
