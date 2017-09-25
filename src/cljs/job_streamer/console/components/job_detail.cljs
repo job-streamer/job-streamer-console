@@ -172,7 +172,7 @@
                    [:div.center.aligned.column
                      [:div.ui.error.message
                       [:p has-error]]]])
-                  (if (= "admin" (name (first roles)))
+                  (if (some #(= :admin %) roles)
                     [:div.row
                      [:div.right.aligned.column
                       [:button.ui.right.red.button
@@ -442,7 +442,7 @@
                  [:div.content
                   [:div.header "Pausing"]
                   [:div.description (:schedule/cron-notation schedule)]]])]
-             (if (= "admin" (name (first roles)))
+             (if (some #(= :admin %) roles)
                [:div.ui.labeled.icon.compact.menu
                 (if exe
                   [:a.item {:on-click (fn [e]
@@ -458,7 +458,7 @@
                                         (om/set-state! owner :scheduling? true))}
                  [:i.calendar.icon] "Edit"]])])
 
-          (if (= "admin" (name (first roles)))
+          (if (some #(= :admin %) roles)
             [:div
              [:div.header "No schedule"]
              [:button.ui.primary.button
@@ -474,7 +474,7 @@
                          (om/set-state! owner :dimmed? true))
        :on-mouse-leave (fn [e]
                          (om/set-state! owner :dimmed? false))}
-      (if (= "admin" (-name (first roles)))
+      (if (some #(= :admin %) roles)
         [:div.ui.inverted.dimmer (when dimmed? {:class "visible"})
          [:div.content
           [:div.center
@@ -527,8 +527,7 @@
                             [:div.statistic
                              [:div.value (get-in job-detail [:job/stats :failure])]
                              [:div.label "Failed"]]
-                            (if (or (= "admin" (name (first roles)))
-                                    (= "operator" (name (first roles))))
+                            (if (some #(or (= :admin %) (= :operator %)) roles)
                               (job-util/job-execute-button-view job {:progress (fn [_]
                                                                                    (if (#{:batch-status/started} (get-in job [:job/latest-execution :job-execution/batch-status :db/ident]))
                                                                                      (job-util/stop-job job refresh-job-ch)

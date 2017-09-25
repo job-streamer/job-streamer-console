@@ -67,7 +67,7 @@
       [:div.ui.segment
        [:div.ui.top.attached.label "Notification"]
        [:div.content
-        (if (= "admin" (name (first roles)))
+        (if (some #(= :admin %) roles)
           [:div.ui.input.block.form
            [:div.inline.fields
             [:label "When the"]
@@ -147,7 +147,7 @@
             [:tr
              [:th "Status"]
              [:th "Notification"]
-             (if (= "admin" (name (first roles)))
+             (if (some #(= :admin %) roles)
                [:th ""])]]
            [:tbody
             (for [notification (:job/status-notifications settings)]
@@ -168,7 +168,7 @@
                    [:td
                     [:div.ui.label "Unknown"]])
                  [:td (:status-notification/type notification)]
-                 (if (= "admin" (name (first roles)))
+                 (if (some #(= :admin %) roles)
                    [:td [:a
                          [:i.remove.red.icon
                           {:on-click (fn [_]
@@ -239,10 +239,10 @@
                                                                 (om/set-state! owner :message {:class "error"
                                                                                                :header "Failed to save."
                                                                                                :body [:p "You are unauthorized to chnange job setting."]}))))}
-            (if (= "admin" (name (first roles)))
+            (if (some #(= :admin %) roles)
               [:i.remove.red.icon])]]
 
-          (if (= "admin" (name (first roles)))
+          (if (some #(= :admin %) roles)
             [:div.ui.right.labeled.block.input.form
              [:div.inline.fields
               [:div.field
@@ -296,7 +296,7 @@
                             {:class "disabled"}))
                "Save"]]]))]]
 
-      (if (= "admin" (name (first roles)))
+      (if (some #(= :admin %) roles)
         [:div.ui.segment
          [:div.ui.top.attached.label "Danger Zone"]
          [:div.content

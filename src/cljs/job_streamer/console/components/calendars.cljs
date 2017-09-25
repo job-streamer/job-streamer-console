@@ -92,7 +92,7 @@
                     [:div.row
                      [:div.column
                       [:div#holiday-selector]]]
-                    (if (= "admin" (-name (first (:roles app))))
+                    (if (some #(= :admin %) (:roles app))
                       [:div.row
                        [:div.column
                         [:button.ui.basic.button
@@ -253,7 +253,7 @@
            [:div.body
             (for[message messages] message)]]]])
 
-      (if (= "admin" (-name (first (:roles app))))
+      (if (some #(= :admin %) (:roles app))
         [:div.ui.two.column.row
          [:div.column
           [:button.ui.basic.green.button
@@ -287,7 +287,7 @@
                                       "descending"))}]]
             [:th "Holidays"]
             [:th "Day start"]
-            (if (= "admin" (-name (first (:roles app))))
+            (if (some #(= :admin %) (:roles app))
               [:th "Operations"])]]
           [:tbody
            (for [cal calendars]
@@ -302,7 +302,7 @@
                           (when (> (count (:calendar/holidays cal)) 3)
                             ",...")))]
               [:td (:calendar/day-start cal)]
-              (if (= "admin" (-name (first (:roles app))))
+              (if (some #(= :admin %) (:roles app))
                 [:td
                  [:button.ui.red.button
                   {:type "button"
@@ -366,8 +366,8 @@
                                                                        :message-channel message-channel}
                                                                 :react-key "calendar-new"})
             :detail (om/build calendar-detail-view app {:state {:mode (:mode app)}
-                                                                    :opts {:calendars-channel calendars-channel}
-                                                                    :react-key "calendar-detail"})
+                                                                :opts {:calendars-channel calendars-channel}
+                                                                :react-key "calendar-detail"})
             :edit (om/build calendar-edit-view (:calendars app)
                             {:init-state {:message-channel message-channel}
                              :opts {:cal-name (:cal-name app)

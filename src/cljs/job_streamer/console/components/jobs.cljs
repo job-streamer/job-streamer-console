@@ -161,7 +161,7 @@
        [:div.ui.grid
         [:div.ui.two.column.row
          [:div.column
-          (if (= "admin" (name (first (:roles app))))
+          (if (some #(= :admin %) (:roles app))
             [:button.ui.basic.green.button
              {:type "button"
               :on-click (fn [e]
@@ -289,8 +289,7 @@
                         (if-let [next-execution (:job/next-execution job)]
                           (fmt/date-medium (:job-execution/start-time next-execution))
                           "-")]
-                       (if (or (= "admin" (name (first (:roles app))))
-                               (= "operator" (name (first (:roles app)))))
+                       (if (some #(or (= :admin %) (= :operator %)) (:roles app))
                          [:td
                           (job-util/job-execute-button-view job {:progress (fn [_]
                                                                                (if (#{:batch-status/started} (get-in job [:job/latest-execution :job-execution/batch-status :db/ident]))
