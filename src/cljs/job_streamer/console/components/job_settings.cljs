@@ -67,7 +67,6 @@
       [:div.ui.segment
        [:div.ui.top.attached.label "Notification"]
        [:div.content
-        ;通知
         (if (= "admin" (name (first roles)))
           [:div.ui.input.block.form
            [:div.inline.fields
@@ -212,7 +211,9 @@
                                                                                   :body [:p "You are unauthorized to chnange job setting."]})))))}
           (when (:job/exclusive? settings)
             {:class "checked"}))
-         [:input {:id "exclusive-checkbox" :type "checkbox" :checked (:job/exclusive? settings)}]
+         [:input {:id "exclusive-checkbox" :type "checkbox" :checked (:job/exclusive? settings) :disabled (if (or (= "operator" (name (first roles)))
+                                                                                                                  (= "watcher" (name (first roles))))
+                                                                                                            true false)}]
          [:label {:for "exclusive-checkbox"} "If this job should be executed exclusively, check this"
           (when (:exclusive save-status) [:i.checkmark.green.icon])]]
 

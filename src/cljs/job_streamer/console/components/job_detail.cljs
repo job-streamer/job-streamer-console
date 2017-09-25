@@ -474,7 +474,7 @@
                          (om/set-state! owner :dimmed? true))
        :on-mouse-leave (fn [e]
                          (om/set-state! owner :dimmed? false))}
-      (if (= "admin" (name (first roles)))
+      (if (= "admin" (-name (first roles)))
         [:div.ui.inverted.dimmer (when dimmed? {:class "visible"})
          [:div.content
           [:div.center
@@ -527,7 +527,6 @@
                             [:div.statistic
                              [:div.value (get-in job-detail [:job/stats :failure])]
                              [:div.label "Failed"]]
-                            ; ここボタン
                             (if (or (= "admin" (name (first roles)))
                                     (= "operator" (name (first roles))))
                               (job-util/job-execute-button-view job {:progress (fn [_]
@@ -541,8 +540,7 @@
                                                                                   (set! (.-href js/location) "#"))
                                                                      :start (fn  [_]
                                                                                  (put! (:jobs-channel opts) [:execute-dialog {:job job-detail :backto (.-href js/location)}])
-                                                                                 (set! (.-href js/location) "#"))}))
-                            ]
+                                                                                 (set! (.-href js/location) "#"))}))]
                            [:hr.ui.divider]
                            [:div.ui.tiny.horizontal.statistics
                             [:div.statistic
