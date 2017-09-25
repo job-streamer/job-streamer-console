@@ -148,16 +148,17 @@
        [:div.ui.grid
         [:div.ui.one.column.row
          [:div.column
-          [:div.ui.icon.message
-           [:i.child.icon]
-           [:div.content
-            [:div.header "Let's create a job!"]
-            [:p [:button.ui.primary.button
-                 {:type "button"
-                  :on-click (fn [e]
-                              (let [w (js/window.open (str "/" app-name "/jobs/new") "New" "width=1200,height=800")]
-                                (js/setTimeout (fn [] (.addEventListener w "unload" (fn [] (js/setTimeout (fn [] (put! jobs-view-channel [:refresh-jobs true]))) 10))) 10)))}
-                 [:i.plus.icon] "Create the first job"]]]]]]]
+          (when (some #(= :admin %) (:roles app))
+            [:div.ui.icon.message
+             [:i.child.icon]
+             [:div.content
+              [:div.header "Let's create a job!"]
+              [:p [:button.ui.primary.button
+                   {:type "button"
+                    :on-click (fn [e]
+                                (let [w (js/window.open (str "/" app-name "/jobs/new") "New" "width=1200,height=800")]
+                                  (js/setTimeout (fn [] (.addEventListener w "unload" (fn [] (js/setTimeout (fn [] (put! jobs-view-channel [:refresh-jobs true]))) 10))) 10)))}
+                   [:i.plus.icon] "Create the first job"]]]])]]]
        [:div.ui.grid
         [:div.ui.two.column.row
          [:div.column
