@@ -382,7 +382,20 @@
                                    (om/set-state! owner [:schedule :schedule/calendar :calendar/name] value)))}
            [:option {:value "" :key ""} ""]
            (for [{:keys [calendar/name]} calendars]
-             [:option {:value name :key name} name])]])]
+             [:option {:value name :key name} name])]
+          (when-not (empty? (om/get-state owner [:schedule :schedule/calendar :calendar/name]))
+            [:div
+             [:div
+              [:label "Substitution"]]
+             [:div.ui.fitted.toggle.checkbox {:id "substitution-div"}
+              (when (:substitution schedule)
+                {:class "checked"})
+              [:input {:id "substitution"
+                       :type "checkbox"
+                       :on-change (fn [e]
+                                    (let [value (.. e -target -checked)]
+                                      (om/set-state! owner [:schedule :schedule/substitution] value)))}]
+              [:label]]])])]
       [:div.ui.buttons
        [:button.ui.button
         {:type "button"
