@@ -391,8 +391,8 @@
                               :type "checkbox"
                               :on-change (fn [e]
                                            (let [value (.. e -target -checked)]
-                                             (om/set-state! owner [:schedule :schedule/substitution] value)))}
-                             (when (:schedule/substitution schedule)
+                                             (om/set-state! owner [:schedule :schedule/substitution?] value)))}
+                             (when (:schedule/substitution? schedule)
                                {:checked "checked"}))]
               [:label]]])])]
       [:div.ui.buttons
