@@ -92,7 +92,7 @@
                     [:div.row
                      [:div.column
                       [:div#holiday-selector]]]
-                    (if (some #(= :admin %) (:roles app))
+                    (if (some #(or (= :admin %) (= :operator %)) (:roles app))
                       [:div.row
                        [:div.column
                         [:button.ui.basic.button
@@ -253,7 +253,7 @@
            [:div.body
             (for[message messages] message)]]]])
 
-      (if (some #(= :admin %) (:roles app))
+      (if (some #(or (= :admin %) (= :operator %)) (:roles app))
         [:div.ui.two.column.row
          [:div.column
           [:button.ui.basic.green.button
@@ -287,7 +287,7 @@
                                       "descending"))}]]
             [:th "Holidays"]
             [:th "Day start"]
-            (if (some #(= :admin %) (:roles app))
+            (if (some #(or (= :admin %) (= :operator %)) (:roles app))
               [:th "Operations"])]]
           [:tbody
            (for [cal calendars]
@@ -302,7 +302,7 @@
                           (when (> (count (:calendar/holidays cal)) 3)
                             ",...")))]
               [:td (:calendar/day-start cal)]
-              (if (some #(= :admin %) (:roles app))
+              (if (some #(or (= :admin %) (= :operator %)) (:roles app))
                 [:td
                  [:button.ui.red.button
                   {:type "button"

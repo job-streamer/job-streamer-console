@@ -442,7 +442,7 @@
                  [:div.content
                   [:div.header "Pausing"]
                   [:div.description (:schedule/cron-notation schedule)]]])]
-             (if (some #(= :admin %) roles)
+             (if (some #(or (= :admin %) (= :operator %)) roles)
                [:div.ui.labeled.icon.compact.menu
                 (if exe
                   [:a.item {:on-click (fn [e]
@@ -458,7 +458,7 @@
                                         (om/set-state! owner :scheduling? true))}
                  [:i.calendar.icon] "Edit"]])])
 
-          (if (some #(= :admin %) roles)
+          (if (some #(or (= :admin %) (= :operator %)) roles)
             [:div
              [:div.header "No schedule"]
              [:button.ui.primary.button

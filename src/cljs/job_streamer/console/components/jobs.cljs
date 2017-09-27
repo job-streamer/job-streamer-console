@@ -367,7 +367,7 @@
               (om/build job-detail-view (get-in app [:jobs :results idx])
                         {:opts {:jobs-channel jobs-channel}
                          :state {:mode (:mode app)
-                                 :roles (:roles (om/root-cursor app))}
+                                 :roles (:roles app)}
                          :react-key "job-detail"}))
             [:img {:src "/img/loader.gif"}])
 
