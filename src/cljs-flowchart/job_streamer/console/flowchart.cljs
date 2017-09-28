@@ -5,6 +5,7 @@
             [bouncer.validators :as v]
             [cljs.core.async :refer [put! <! chan timeout]]
             [clojure.walk :refer [postwalk]]
+            [goog.object :as o]
             [goog.Uri.QueryData :as query-data])
   (:import [goog Uri]))
 (enable-console-print!)
@@ -44,7 +45,7 @@
 
 
 (defn- add-class [e class]
-  (let [classes (aget e "className")
+  (let [classes (o/get e "className")
         cs (-> classes
                (clojure.string/split #" +")
                set)]
@@ -54,7 +55,7 @@
          (aset e "className"))))
 
 (defn- remove-class [e class]
-  (let [classes (aget e "className")
+  (let [classes (o/get e "className")
         cs (-> classes
                (clojure.string/split #" +")
                set)]

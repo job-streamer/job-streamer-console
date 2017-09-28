@@ -6,6 +6,7 @@
             [cljs.core.async :refer [put! <! chan]]
             [clojure.browser.net :as net]
             [goog.ui.Component]
+            [goog.object :as o]
             (job-streamer.console.format :as fmt))
   (:use [cljs.reader :only [read-string]])
   (:import [goog.i18n DateTimeFormat]))
@@ -31,7 +32,7 @@
                                           :end (:job-execution/end-time exe)
                                           :className (name (get-in exe [:job-execution/batch-status :db/ident]))}))
                                   (filter #(and (:start %))))))))
-  
+
   (render-state [_ {:keys [selected-job]}]
     (html
      [:div.ui.grid
@@ -51,7 +52,7 @@
                [:div.meta
                 [:span (fmt/date-medium (get item "start")) ]
                 [:span (fmt/date-medium (get item "end"))]]]]]]]))]))
-  
+
   (did-mount
    [_]
    (.. (Timeline.
@@ -59,5 +60,5 @@
         (om/get-state owner :data-set)
         (clj->js {:minHeight 400}))
        (on "select" (fn [e]
-                      (om/set-state! owner :selected-job (-> e (aget "items") (aget 0))))))))
+                      (om/set-state! owner :selected-job (-> e (o/get "items") (aget 0))))))))
 
