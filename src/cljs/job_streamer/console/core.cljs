@@ -10,7 +10,8 @@
                       :agents nil
                       :system-error nil
                       :stats {:jobs-count 0 :agents-count 0}
-                      :mode [:jobs]}
+                      :mode [:jobs]
+                      :roles []}
                       :version {:console-version 0 :control-bus-version 0}))
 
 (if (.getElementById js/document "app")

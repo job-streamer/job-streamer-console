@@ -89,11 +89,11 @@
                                    (into [:div.section.active] (rest (last res)))))))
                        (repeat [:i.right.chevron.icon.divider])))])))
 
-(defcomponent calendar-detail-view [cal-name owner]
+(defcomponent calendar-detail-view [app owner]
   (render-state [_ {:keys [calendar mode]}]
                 (html
                   [:div
-                   (om/build breadcrumb-view mode {:init-state {:calendar-name cal-name}
+                   (om/build breadcrumb-view mode {:init-state {:calendar-name (:cal-name app)}
                                                    :react-key "calendar-detail-breadcrumb"})
                    [:div#calendar-detail-view-content.ui.grid
                     [:div.row
@@ -102,16 +102,17 @@
                     [:div.row
                      [:div.column
                       [:div#holiday-selector]]]
-                    [:div.row
-                     [:div.column
-                      [:button.ui.basic.button
-                       {:type "button"
-                        :on-click (fn [e]
-                                    (set! (.-href js/location) (str "#/calendar/" (js/encodeURIComponent cal-name) "/edit")))}
-                       [:i.edit.icon] "Edit"]]]]]))
+                    (if (some #(or (= :admin %) (= :operator %)) (:roles app))
+                      [:div.row
+                       [:div.column
+                        [:button.ui.basic.button
+                         {:type "button"
+                          :on-click (fn [e]
+                                      (set! (.-href js/location) (str "#/calendar/" (js/encodeURIComponent (:cal-name app)) "/edit")))}
+                         [:i.edit.icon] "Edit"]]])]]))
 
   (did-mount [_]
-             (api/request (str "/calendar/" cal-name)
+             (api/request (str "/calendar/" (:cal-name app))
                           {:handler (fn [response]
                                       (om/update-state! owner
                                                         (fn [state]
@@ -262,12 +263,13 @@
            [:div.body
             (for[message messages] message)]]]])
 
-      [:div.ui.two.column.row
-       [:div.column
-        [:button.ui.basic.green.button
-         {:type "button"
-          :on-click #(set! (.-href js/location) "#/calendars/new")}
-         [:i.plus.icon] "New"]]]
+      (if (some #(or (= :admin %) (= :operator %)) (:roles app))
+        [:div.ui.two.column.row
+         [:div.column
+          [:button.ui.basic.green.button
+           {:type "button"
+            :on-click #(set! (.-href js/location) "#/calendars/new")}
+           [:i.plus.icon] "New"]]])
       [:div.row
        (when-let [calendars (not-empty (:calendars app))]
          [:table.ui.celled.striped.table
@@ -295,7 +297,8 @@
                                       "descending"))}]]
             [:th "Holidays"]
             [:th "Day start"]
-            [:th "Operations"]]]
+            (if (some #(or (= :admin %) (= :operator %)) (:roles app))
+              [:th "Operations"])]]
           [:tbody
            (for [cal calendars]
              [:tr
@@ -309,16 +312,16 @@
                           (when (> (count (:calendar/holidays cal)) 3)
                             ",...")))]
               [:td (:calendar/day-start cal)]
-              [:td
-               [:button.ui.red.button
-                {:type "button"
-                 :on-click (fn [e]
-                             (.preventDefault e)
-                             (put! calendars-channel [:open-dangerously-dialog
-                                                      {:ok-handler (fn []
-                                                                     (delete-calendar cal owner calendars-channel))
-                                                       :answer (:calendar/name cal)}]))}"Delete"]]])]])]])))
-
+              (if (some #(or (= :admin %) (= :operator %)) (:roles app))
+                [:td
+                 [:button.ui.red.button
+                  {:type "button"
+                   :on-click (fn [e]
+                               (.preventDefault e)
+                               (put! calendars-channel [:open-dangerously-dialog
+                                                        {:ok-handler (fn []
+                                                                       (delete-calendar cal owner calendars-channel))
+                                                         :answer (:calendar/name cal)}]))}"Delete"]])])]])]])))
 
 (defcomponent calendars-view [app owner {:keys [calendars-channel]}]
   (init-state [_]
@@ -376,9 +379,9 @@
                                                                 :opts {:calendars-channel calendars-channel
                                                                        :message-channel message-channel}
                                                                 :react-key "calendar-new"})
-            :detail (om/build calendar-detail-view (:cal-name app) {:state {:mode (:mode app)}
-                                                                    :opts {:calendars-channel calendars-channel}
-                                                                    :react-key "calendar-detail"})
+            :detail (om/build calendar-detail-view app {:state {:mode (:mode app)}
+                                                                :opts {:calendars-channel calendars-channel}
+                                                                :react-key "calendar-detail"})
             :edit (om/build calendar-edit-view (:calendars app)
                             {:init-state {:message-channel message-channel}
                              :opts {:cal-name (:cal-name app)
