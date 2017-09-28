@@ -93,7 +93,6 @@
     ""))
 
 (defn to-cron-expression-weekly [hour day-of-weeks]
-  (println (pr-str day-of-weeks))
   (if (and (not-empty hour) (not-empty day-of-weeks))
     (letfn [(get-week-day-sort-key [day-of-week] (get {"Sun" 0 "Mon" 1 "Tue" 2 "Wed" 3 "Thu" 4 "Fri" 5 "Sat" 6} day-of-week))]
       (str "0 0 " hour " ? * " (->> day-of-weeks (sort-by get-week-day-sort-key) (clojure.string/join ","))))
@@ -383,7 +382,20 @@
                                    (om/set-state! owner [:schedule :schedule/calendar :calendar/name] value)))}
            [:option {:value "" :key ""} ""]
            (for [{:keys [calendar/name]} calendars]
-             [:option {:value name :key name} name])]])]
+             [:option {:value name :key name} name])]
+          (when-not (empty? (om/get-state owner [:schedule :schedule/calendar :calendar/name]))
+            [:div
+             [:div
+              [:label "Substitution"]]
+             [:div.ui.fitted.toggle.checkbox {:id "substitution-div"}
+              [:input (merge {:id "substitution"
+                              :type "checkbox"
+                              :on-change (fn [e]
+                                           (let [value (.. e -target -checked)]
+                                             (om/set-state! owner [:schedule :schedule/substitution?] value)))}
+                             (when (:schedule/substitution? schedule)
+                               {:checked "checked"}))]
+              [:label]]])])]
       [:div.ui.buttons
        [:button.ui.button
         {:type "button"

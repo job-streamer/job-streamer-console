@@ -94,7 +94,8 @@
    [:#calendar-detail-view-content [:.k-days {:pointer-events "none"}]]
    [:#job-query {:border {:radius 0
                           :bottom "0.3px solid"
-                          :color "#fff !important"}}]])
+                          :color "#fff !important"}}]
+   [:#substitution-div {:margin-top "10px"}]])
 
 
 (defn build []
